@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GBATool"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="GBA Tool" Height="617.748" Width="939.57" 
+        WindowStartupLocation="CenterScreen" 
+        FrameworkElement.SizeChanged="Window_SizeChanged">
     <Grid>
 
     </Grid>

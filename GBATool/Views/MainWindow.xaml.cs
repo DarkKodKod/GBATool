@@ -1,6 +1,10 @@
-﻿using System;
+﻿using ArchitectureLibrary.Signals;
+using GBATool.Signals;
+using GBATool.VOs;
+using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace GBATool
 {
@@ -31,6 +35,53 @@ namespace GBATool
         public MainWindow()
         {
             InitializeComponent();
+
+            SignalManager.Get<SetUpWindowPropertiesSignal>().Listener += OnSetUpWindowProperties;
+        }
+
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Window window = GetWindow(this);
+            WindowInteropHelper wih = new(window);
+            IntPtr hWnd = wih.Handle;
+
+            const int MONITOR_DEFAULTTOPRIMARY = 1;
+            MonitorInfoEx mi = new();
+            mi.cbSize = Marshal.SizeOf(mi);
+            GetMonitorInfoEx(MonitorFromWindow(hWnd, MONITOR_DEFAULTTOPRIMARY), ref mi);
+
+            GetWindowRect(hWnd, out Rect appBounds);
+
+            double windowHeight = appBounds.Right - appBounds.Left;
+            double windowWidth = appBounds.Bottom - appBounds.Top;
+
+            double monitorHeight = mi.rcMonitor.Right - mi.rcMonitor.Left;
+            double monitorWidth = mi.rcMonitor.Bottom - mi.rcMonitor.Top;
+
+            bool fullScreen = !((windowHeight == monitorHeight) && (windowWidth == monitorWidth));
+
+            SignalManager.Get<SizeChangedSignal>().Dispatch(e, fullScreen);
+        }
+
+        private void OnSetUpWindowProperties(WindowVO vo)
+        {
+            WindowState = vo.IsFullScreen ? WindowState.Maximized : WindowState.Normal;
+
+            Height = vo.SizeY;
+            Width = vo.SizeX;
+
+            CenterWindowOnScreen();
+        }
+
+        private void CenterWindowOnScreen()
+        {
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            double windowWidth = Width;
+            double windowHeight = Height;
+
+            Left = (screenWidth / 2) - (windowWidth / 2);
+            Top = (screenHeight / 2) - (windowHeight / 2);
         }
     }
 }

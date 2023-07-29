@@ -9,7 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <PackageReference Include="Nett" Version="0.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ArchitectureLibrary\ArchitectureLibrary.csproj" />
   </ItemGroup>
 
 </Project>

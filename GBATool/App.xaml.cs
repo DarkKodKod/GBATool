@@ -24,7 +24,7 @@ namespace GBATool
         private static Assembly? OnResolveAssembly(object? sender, ResolveEventArgs args)
         {
             Assembly executingAssembly = Assembly.GetExecutingAssembly();
-            AssemblyName assemblyName = new (args.Name);
+            AssemblyName assemblyName = new(args.Name);
 
             string path = assemblyName.Name + ".dll";
 
@@ -34,7 +34,7 @@ namespace GBATool
             }
 
             using Stream? stream = executingAssembly?.GetManifestResourceStream(path);
-            
+
             if (stream == null)
             {
                 return null;
