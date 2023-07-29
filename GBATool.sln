@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GBATool", "GBATool\GBATool.csproj", "{19130454-4144-4D73-A326-14D7DA458EB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2D202BB4-F395-491A-889E-A3FEBDDAFF45} = {2D202BB4-F395-491A-889E-A3FEBDDAFF45}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchitectureLibrary", "ArchitectureLibrary\ArchitectureLibrary.csproj", "{2D202BB4-F395-491A-889E-A3FEBDDAFF45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19130454-4144-4D73-A326-14D7DA458EB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19130454-4144-4D73-A326-14D7DA458EB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19130454-4144-4D73-A326-14D7DA458EB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19130454-4144-4D73-A326-14D7DA458EB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D202BB4-F395-491A-889E-A3FEBDDAFF45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D202BB4-F395-491A-889E-A3FEBDDAFF45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D202BB4-F395-491A-889E-A3FEBDDAFF45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D202BB4-F395-491A-889E-A3FEBDDAFF45}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F468CCF-EE52-48BF-9A4A-A7E76B4DAEFC}
+	EndGlobalSection
+EndGlobal
