@@ -5,6 +5,7 @@ using GBATool.Commands;
 using GBATool.Models;
 using GBATool.Signals;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 namespace GBATool.ViewModels
@@ -87,7 +88,7 @@ namespace GBATool.ViewModels
                 if (!string.IsNullOrEmpty(project))
                 {
                     // Extract the name of the folder as our project name
-                    int startIndex = project.LastIndexOf("\\");
+                    int startIndex = project.LastIndexOf(Path.DirectorySeparatorChar);
                     string projectName = project.Substring(startIndex + 1, project.Length - startIndex - 1);
 
                     list.Add(new RecentProjectModel()

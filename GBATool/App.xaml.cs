@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ArchitectureLibrary.History;
+using GBATool.FileSystem;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -19,6 +21,9 @@ namespace GBATool
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            ProjectItemFileSystem.Initialize();
+            HistoryManager.Initialize();
         }
 
         private static Assembly? OnResolveAssembly(object? sender, ResolveEventArgs args)
