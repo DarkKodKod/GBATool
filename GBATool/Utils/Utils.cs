@@ -1,10 +1,26 @@
 ﻿using GBATool.Enums;
 using GBATool.Models;
+using System.Windows;
 
 namespace GBATool.Utils
 {
     public static class Util
     {
+        private const string _folderBanksKey = "folderBanks";
+        private const string _folderCharactersKey = "folderCharacters";
+        private const string _folderMapsKey = "folderMaps";
+        private const string _folderTileSetsKey = "folderTileSets";
+        private const string _folderPalettesKey = "folderPalettes";
+        private const string _folderWorldsKey = "folderWorlds";
+        private const string _folderEntitiesKey = "folderEntities";
+        private const string _extensionBanksKey = "extensionBanks";
+        private const string _extensionCharactersKey = "extensionCharacters";
+        private const string _extensionMapsKey = "extensionMaps";
+        private const string _extensionTileSetsKey = "extensionTileSets";
+        private const string _extensionPalettesKey = "extensionPalettes";
+        private const string _extensionWorldsKey = "extensionWorlds";
+        private const string _extensionEntitiesKey = "extensionEntities";
+
         public static AFileModel? FileModelFactory(ProjectItemType type)
         {
             return type switch
@@ -18,6 +34,79 @@ namespace GBATool.Utils
                 ProjectItemType.Entity => new EntityModel(),
                 _ => null,
             };
+        }
+
+        public static ProjectItemType GetItemType(string extension)
+        {
+            string extensionBanks = (string)Application.Current.FindResource(_extensionBanksKey);
+            string extensionCharacters = (string)Application.Current.FindResource(_extensionCharactersKey);
+            string extensionMaps = (string)Application.Current.FindResource(_extensionMapsKey);
+            string extensionTileSets = (string)Application.Current.FindResource(_extensionTileSetsKey);
+            string extensionPalettes = (string)Application.Current.FindResource(_extensionPalettesKey);
+            string extensionWorld = (string)Application.Current.FindResource(_extensionWorldsKey);
+            string extensionEntities = (string)Application.Current.FindResource(_extensionEntitiesKey);
+
+            if (extension == extensionBanks) return ProjectItemType.Bank;
+            if (extension == extensionCharacters) return ProjectItemType.Character;
+            if (extension == extensionMaps) return ProjectItemType.Map;
+            if (extension == extensionTileSets) return ProjectItemType.TileSet;
+            if (extension == extensionPalettes) return ProjectItemType.Palette;
+            if (extension == extensionWorld) return ProjectItemType.World;
+            if (extension == extensionEntities) return ProjectItemType.Entity;
+
+            return ProjectItemType.None;
+        }
+
+        public static string GetExtensionByType(ProjectItemType type)
+        {
+            string extensionBanks = (string)Application.Current.FindResource(_extensionBanksKey);
+            string extensionCharacters = (string)Application.Current.FindResource(_extensionCharactersKey);
+            string extensionMaps = (string)Application.Current.FindResource(_extensionMapsKey);
+            string extensionTileSets = (string)Application.Current.FindResource(_extensionTileSetsKey);
+            string extensionPalettes = (string)Application.Current.FindResource(_extensionPalettesKey);
+            string extensionWorlds = (string)Application.Current.FindResource(_extensionWorldsKey);
+            string extensionEntities = (string)Application.Current.FindResource(_extensionEntitiesKey);
+
+            return type switch
+            {
+                ProjectItemType.Bank => extensionBanks,
+                ProjectItemType.Character => extensionCharacters,
+                ProjectItemType.Map => extensionMaps,
+                ProjectItemType.TileSet => extensionTileSets,
+                ProjectItemType.Palette => extensionPalettes,
+                ProjectItemType.World => extensionWorlds,
+                ProjectItemType.Entity => extensionEntities,
+                _ => string.Empty,
+            };
+        }
+
+        public static string GetFolderExtension(string folderName)
+        {
+            string folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
+            string folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
+            string folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
+            string folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
+            string folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
+            string folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
+            string folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
+
+            string extensionBanks = (string)Application.Current.FindResource(_extensionBanksKey);
+            string extensionCharacters = (string)Application.Current.FindResource(_extensionCharactersKey);
+            string extensionMaps = (string)Application.Current.FindResource(_extensionMapsKey);
+            string extensionTileSets = (string)Application.Current.FindResource(_extensionTileSetsKey);
+            string extensionPalettes = (string)Application.Current.FindResource(_extensionPalettesKey);
+            string extensionWorlds = (string)Application.Current.FindResource(_extensionWorldsKey);
+            string extensionEntities = (string)Application.Current.FindResource(_extensionEntitiesKey);
+
+            if (folderName == folderBanks) return extensionBanks;
+            if (folderName == folderCharacters) return extensionCharacters;
+            if (folderName == folderMaps) return extensionMaps;
+            if (folderName == folderTileSets) return extensionTileSets;
+            if (folderName == folderPalettes) return extensionPalettes;
+            if (folderName == folderWorlds) return extensionWorlds;
+            if (folderName == folderEntities) return extensionEntities;
+
+            return string.Empty;
         }
     }
 }

@@ -1,0 +1,67 @@
+﻿<Window x:Class="GBATool.Views.ElementDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GBATool.Views"
+        xmlns:vm="clr-namespace:GBATool.ViewModels"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        Name="ElementDialogView"
+        mc:Ignorable="d"
+        Title="New Element" Height="360.682" Width="355.07" 
+		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Window.DataContext>
+        <vm:ElementDialogViewModel />
+    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseDialogCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <ListView Grid.Row="1" Grid.Column="1" 
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Stretch" 
+                  SelectionMode="Single"
+                  SelectedValue="{Binding SelectedType}"
+                  ItemsSource="{Binding ElementTypes}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel Margin="10, 10, 0, 0">
+                        <WrapPanel.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Margin" Value="10,0" />
+                                <Setter Property="Padding" Value="10,10" />
+                            </Style>
+                        </WrapPanel.Resources>
+                        <Image Source="{Binding Image}" Width="32" Height="32"/>
+                        <TextBlock Text="{Binding Name}"/>
+                    </WrapPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Margin="10" Content="Cancel" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="75" 
+					IsCancel="True"/>
+            <Button Grid.Column="2" Content="Create Element" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="100" 
+					Command="{Binding CreateElementCommand}" CommandParameter="{Binding SelectedType}" Click="OnClickOK"/>
+        </Grid>
+    </Grid>
+</Window>

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace GBATool.Utils.CustomTypeConverter
+namespace GBATool.Utils
 {
     public class ProjectItemTypeConverter : TypeConverter
     {

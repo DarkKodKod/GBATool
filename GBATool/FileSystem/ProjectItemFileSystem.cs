@@ -2,12 +2,12 @@
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
-using GBATool.ViewModels;
 using GBATool.Utils;
+using GBATool.ViewModels;
 using Nett;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using System;
 
 namespace GBATool.FileSystem
 {
@@ -104,9 +104,9 @@ namespace GBATool.FileSystem
             return result;
         }
 
-        private static async void OnRegisterFileHandler(ProjectItem item, string path)
+        private static async void OnRegisterFileHandler(ProjectItem item, string? path)
         {
-            FileHandler fileHandler = new() { Name = item.DisplayName, Path = path };
+            FileHandler fileHandler = new() { Name = item.DisplayName, Path = path ?? string.Empty };
 
             item.FileHandler = fileHandler;
 

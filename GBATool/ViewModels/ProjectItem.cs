@@ -2,20 +2,20 @@
 using ArchitectureLibrary.History.Signals;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
-using GBATool.Utils.CustomTypeConverter;
+using GBATool.Enums;
+using GBATool.HistoryActions;
+using GBATool.Models;
+using GBATool.Signals;
+using GBATool.Utils;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows;
-using GBATool.Enums;
-using GBATool.Models;
-using GBATool.Signals;
-using GBATool.HistoryActions;
 
 namespace GBATool.ViewModels
 {
