@@ -1,9 +1,9 @@
 ﻿namespace GBATool.VOs
 {
-    public class WindowVO
+    public record WindowVO
     {
-        public int SizeX { get; set; }
-        public int SizeY { get; set; }
-        public bool IsFullScreen { get; set; }
+        public int SizeX { get; init; }
+        public int SizeY { get; init; }
+        public bool IsFullScreen { get; init; }
     }
 }

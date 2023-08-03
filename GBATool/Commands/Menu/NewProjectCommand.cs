@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace GBATool.Commands
 {
-    internal class NewProjectCommand : Command
+    public class NewProjectCommand : Command
     {
         public override void Execute(object parameter)
         {

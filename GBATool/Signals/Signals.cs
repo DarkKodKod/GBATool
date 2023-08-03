@@ -1,7 +1,9 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Enums;
 using GBATool.ViewModels;
 using GBATool.VOs;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Signals
 {
@@ -14,16 +16,27 @@ namespace GBATool.Signals
     public class ProjectConfigurationSavedSignal : Signal { }
     public class ShowLoadingDialogSignal : Signal { }
     public class CloseDialogSignal : Signal { }
+    public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> { }
 
     // MainWindowViewModel
     public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
     public class LoadConfigSuccessSignal : Signal { }
+    public class ExitSuccessSignal : Signal { }
+    public class UpdateAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
+    public class MouseLeftButtonDownSignal : Signal<Point> { }
+    public class MouseLeftButtonUpSignal : Signal { }
+    public class MouseMoveSignal : Signal<MouseMoveVO> { }
     public class ProjectItemSelectedSignal : Signal<ProjectItem> { }
     public class ProjectItemUnselectedSignal : Signal<ProjectItem> { }
     public class CloseProjectSuccessSignal : Signal { }
     public class OpenProjectSuccessSignal : Signal<ProjectOpenVO> { }
     public class UpdateRecentProjectsSignal : Signal<string[]> { }
     public class DropElementSignal : Signal<ProjectItem, ProjectItem> { }
+    public class LoadProjectItemSignal : Signal<ProjectItem> { }
+    public class UpdateFolderSignal : Signal<ProjectItem> { }
+    public class CreateProjectSuccessSignal : Signal<string> { }
+    public class InitializeAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
+    public class DetachAdornersSignal : Signal { }
 
     // File system
     public class RegisterFileHandlerSignal : Signal<ProjectItem, string?> { }

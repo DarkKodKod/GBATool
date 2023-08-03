@@ -1,11 +1,16 @@
 ﻿using GBATool.Enums;
 using GBATool.Models;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GBATool.Utils
 {
     public static class Util
     {
+        private static readonly Regex _regex = new Regex(@"^[A-Za-z_][a-zA-Z0-9_\-\x20]*$");
+
         private const string _folderBanksKey = "folderBanks";
         private const string _folderCharactersKey = "folderCharacters";
         private const string _folderMapsKey = "folderMaps";
@@ -107,6 +112,69 @@ namespace GBATool.Utils
             if (folderName == folderEntities) return extensionEntities;
 
             return string.Empty;
+        }
+
+        public static bool ValidFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return true;
+            }
+
+            return _regex != null && _regex.IsMatch(fileName);
+        }
+
+        public static bool IsPointInTopHalf(ItemsControl itemsControl, DragEventArgs e)
+        {
+            UIElement? selectedItemContainer = GetItemContainerFromPoint(itemsControl, e.GetPosition(itemsControl));
+
+            if (selectedItemContainer != null) 
+            {
+                Point relativePosition = e.GetPosition(selectedItemContainer);
+
+                return relativePosition.Y < ((FrameworkElement)selectedItemContainer).ActualHeight / 2;
+            }
+
+            return false;
+        }
+
+        public static UIElement? GetItemContainerFromPoint(ItemsControl itemsControl, Point p)
+        {
+            UIElement? element = itemsControl?.InputHitTest(p) as UIElement;
+            while (element != null)
+            {
+                if (element == itemsControl)
+                {
+                    return element;
+                }
+
+                object? data = itemsControl?.ItemContainerGenerator.ItemFromContainer(element);
+
+                if (data != null && data != DependencyProperty.UnsetValue)
+                {
+                    return element;
+                }
+                else
+                {
+                    element = VisualTreeHelper.GetParent(element) as UIElement;
+                }
+            }
+
+            return null;
+        }
+
+        public static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
+        {
+            do
+            {
+                if (current is T t)
+                {
+                    return t;
+                }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            while (current != null);
+            return null;
         }
     }
 }

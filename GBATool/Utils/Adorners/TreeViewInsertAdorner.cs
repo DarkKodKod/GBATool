@@ -4,9 +4,9 @@ using System.Windows.Media.Animation;
 using System.Windows.Media;
 using System.Windows;
 
-namespace GBATool.Utils
+namespace GBATool.Utils.Adorners
 {
-    internal class TreeViewInsertAdorner : Adorner
+    public class TreeViewInsertAdorner : Adorner
     {
         public bool IsTopHalf { get; set; }
 

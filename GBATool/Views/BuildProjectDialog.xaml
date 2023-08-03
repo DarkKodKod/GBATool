@@ -1,0 +1,83 @@
+﻿<Window x:Class="GBATool.Views.BuildProjectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GBATool.ViewModels"
+        xmlns:local="clr-namespace:GBATool.Views"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        mc:Ignorable="d"
+        xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+        ShowInTaskbar="False"
+        Title="Build" Height="400" Width="700"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+        Closing="Window_Closing">
+    <Window.DataContext>
+        <vm:BuildProjectDialogViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseDialogCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Configuration" Margin="5" Padding="5">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.Column="1" Content="Output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+                    <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+					VerticalAlignment="Center" Width="30" Content="..." 
+					Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
+                    <TextBox Name="tbPath" Height="23" Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}" 
+					 TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Grid.Column="1" Header="Output" Margin="5" Padding="5">
+            <RichTextBox
+                ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                ScrollViewer.VerticalScrollBarVisibility="Visible"
+                IsReadOnly="True"
+                Background="LightGray"
+                x:Name="tbOutput">
+                <RichTextBox.Resources>
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </RichTextBox.Resources>
+            </RichTextBox>
+        </GroupBox>
+        <Grid Grid.Row="3" Grid.Column="1" VerticalAlignment="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Margin="10" Content="Cancel" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="75" 
+					IsCancel="True"/>
+            <Button Grid.Column="2" Content="Build" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="100" 
+					Command="{Binding BuildProjectCommand}">
+            </Button>
+        </Grid>
+    </Grid>
+</Window>

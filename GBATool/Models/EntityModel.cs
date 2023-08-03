@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace GBATool.Models
 {
-    internal class EntityModel : AFileModel
+    public class EntityModel : AFileModel
     {
         private const string _extensionKey = "extensionEntities";
 

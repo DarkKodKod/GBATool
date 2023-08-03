@@ -6,7 +6,7 @@ using GBATool.Enums;
 using GBATool.HistoryActions;
 using GBATool.Models;
 using GBATool.Signals;
-using GBATool.Utils;
+using GBATool.Utils.CustomTypeConverters;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

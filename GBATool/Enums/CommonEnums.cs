@@ -11,4 +11,19 @@
         World = 6,
         Entity = 7
     }
+
+    public enum OutputMessageType
+    {
+        Information = 0,
+        Warning,
+        Error
+    }
+
+    public enum EditFrameTools
+    {
+        None = 0,
+        Select = 1,
+        Paint = 2,
+        Erase = 3
+    }
 }

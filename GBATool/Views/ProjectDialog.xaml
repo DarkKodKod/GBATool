@@ -3,10 +3,73 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GBATool.ViewModels"
+		xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:GBATool.Views"
         mc:Ignorable="d"
-        Title="ProjectDialog" Height="450" Width="800">
+        Name="ProjectDialogView"
+        ShowInTaskbar="False"
+        Title="New Project" Height="227" Width="463" 
+		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+    </Window.Resources>
+    <Window.DataContext>
+        <vm:ProjectDialogViewModel />
+    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding CloseDialogCommand}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="1" Grid.Column="1" Content="Project name" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <DockPanel Grid.Row="2" Grid.Column="1" LastChildFill="True">
+            <TextBox Name="tbProjName" DockPanel.Dock="Right" Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}" 
+					 Height="23" TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+        </DockPanel>
+        <Label Grid.Row="3" Grid.Column="1" Content="Location" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+        <DockPanel Grid.Row="4" Grid.Column="1" LastChildFill="True">
+            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+					VerticalAlignment="Center" Width="30" Content="..." 
+					Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
+            <TextBox Name="tbPath" Height="23" Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}" 
+					 TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+        </DockPanel>
+        <Grid Grid.Row="6" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Margin="10" Content="Cancel" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="75" 
+					IsCancel="True"/>
+            <Button Grid.Column="2" Content="Create project" 
+					HorizontalAlignment="center" VerticalAlignment="center" Width="100" 
+					Command="{Binding CreateProjectCommand}" Click="OnClickOK">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="Text" ElementName="tbPath"/>
+                        <Binding Path="Text" ElementName="tbProjName"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+        </Grid>
     </Grid>
 </Window>

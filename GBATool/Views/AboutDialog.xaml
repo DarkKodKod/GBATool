@@ -3,10 +3,47 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:GBATool.ViewModels"
         xmlns:local="clr-namespace:GBATool.Views"
         mc:Ignorable="d"
-        Title="AboutDialog" Height="450" Width="800">
+        ShowInTaskbar="False"
+        Title="About GBATool" Height="272.16" Width="372.868"
+		ResizeMode="NoResize"
+		WindowStartupLocation="CenterOwner">
+    <Window.DataContext>
+        <vm:AboutDialogViewModel />
+    </Window.DataContext>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Grid.Row="1" Width="auto">
+            <Label FontSize="48" FontWeight="Bold" HorizontalAlignment="Center">GBATool</Label>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="2,0,2,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock>Version:</TextBlock>
+                <TextBlock Text="{Binding Version}" />
+            </StackPanel>
+            <TextBlock HorizontalAlignment="Center">
+				<Hyperlink Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/DarkKodKod/GBATool">https://github.com/DarkKodKod/GBATool</Hyperlink>
+            </TextBlock>
+            <Label HorizontalAlignment="Center">By Felipe Reinaud</Label>
+            <TextBlock HorizontalAlignment="Center">
+				<Hyperlink NavigateUri="mailto:freinaud@gmail.com">freinaud@gmail.com</Hyperlink>
+            </TextBlock>
+        </StackPanel>
+        <Button Width="100" Grid.Row="2" Grid.Column="1" IsCancel="True" Content="Ok" />
     </Grid>
 </Window>

@@ -2,9 +2,9 @@
 using System.Windows.Data;
 using System.Windows;
 
-namespace GBATool.Utils
+namespace GBATool.Utils.Selectors
 {
-    internal class TemplateSelector : DataTemplateSelector
+    public class TemplateSelector : DataTemplateSelector
     {
         public DataTemplate ItemTemplate { get; set; } = new();
         public DataTemplate NewButtonTemplate { get; set; } = new();

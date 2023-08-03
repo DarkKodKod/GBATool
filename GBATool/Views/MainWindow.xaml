@@ -5,13 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GBATool.ViewModels"
         xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
-        xmlns:cv="clr-namespace:GBATool.Utils"
+        xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+        xmlns:enum="clr-namespace:GBATool.Enums"
         xmlns:local="clr-namespace:GBATool"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:behaviors="clr-namespace:GBATool.Utils"
+        xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
         mc:Ignorable="d"
         Name="MainWindowView"
-        Title="GBA Tool" Height="617.748" Width="939.57" 
+        Title="{Binding Title, Mode=OneWay}"
+        Height="617.748" Width="939.57" 
         WindowStartupLocation="CenterScreen" 
         FrameworkElement.SizeChanged="Window_SizeChanged">
     <Window.Resources>
@@ -448,7 +450,235 @@
             </StatusBarItem>
         </StatusBar>
         <Grid>
-
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition MinWidth="100" Width="250"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3"/>
+            </Grid.ColumnDefinitions>
+            <TreeView Name="tvProjectItems" Grid.Column="1" ItemsSource="{Binding ProjectItems}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" AllowDrop="True">
+                <i:Interaction.Behaviors>
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseLeftButtonDownCommand}" Event="PreviewMouseLeftButtonDown"  PassArguments="True"/>
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseLeftButtonUpCommand}" Event="PreviewMouseLeftButtonUp" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand, Mode=OneWay}" Event="PreviewMouseMove" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding DropCommand}" Event="PreviewDrop" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding DragOverCommand}" Event="PreviewDragOver" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding DragLeaveCommand}" Event="DragLeave" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding DragEnterCommand}" Event="PreviewDragEnter" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding QueryContinueDragCommand}" Event="PreviewQueryContinueDrag" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding TreeviewSelectedItemChangedCommand}" Event="SelectedItemChanged" PassArguments="True"/>
+                </i:Interaction.Behaviors>
+                <TreeView.Resources>
+                    <ContextMenu x:Key="FolderPopup">
+                        <MenuItem Header="Create Folder" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.CreateFolderCommand}"/>
+                        <MenuItem Header="Create New Element" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.CreateElementFromMenuCommand}"/>
+                        <Separator/>
+                        <MenuItem Header="Copy" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.CopyElementCommand}">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="/resources/copy.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <fx:GrayscaleEffect />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Opacity" Value="0.5"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Paste" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.PasteElementCommand}">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="/resources/paste.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <fx:GrayscaleEffect />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Opacity" Value="0.5"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Delete" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.DeleteElementCommand}">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="/resources/delete.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <fx:GrayscaleEffect />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Opacity" Value="0.5"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Rename" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.EnableRenameElementCommand}" />
+                    </ContextMenu>
+                    <ContextMenu x:Key="ItemPopup">
+                        <MenuItem Header="Copy" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.CopyElementCommand}">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="/resources/copy.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <fx:GrayscaleEffect />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Opacity" Value="0.5"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Delete" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.DeleteElementCommand}">
+                            <MenuItem.Icon>
+                                <Image Width="16" Height="16" Source="/resources/delete.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsEnabled" Value="False">
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <fx:GrayscaleEffect />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Opacity" Value="0.5"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Rename" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type Window}}, Path=DataContext.EnableRenameElementCommand}" />
+                    </ContextMenu>
+                    <HierarchicalDataTemplate DataType="{x:Type vm:ProjectItem}" ItemsSource="{Binding Items}">
+                        <StackPanel Orientation="Horizontal" Loaded="StackPanel_Loaded">
+                            <Image Name="itemImage" Source="/Resources/closed_folder.png" Margin="0,0,5,0" />
+                            <TextBlock Name="txtDisplayName" Text="{Binding DisplayName}"/>
+                            <TextBox Name="editableTextBox" Visibility="Collapsed" MinWidth="100" 
+                                     Text="{Binding DisplayName, UpdateSourceTrigger=LostFocus}"
+                                     IsVisibleChanged="EditableTextBox_IsVisibleChanged"
+                                     PreviewTextInput="EditableTextBox_PreviewTextInput"
+                                     LostFocus="EditableTextBox_LostFocus"
+                                     KeyDown="EditableTextBox_KeyDown"/>
+                        </StackPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Character}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/character.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Bank}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/pattern_table.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Map}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/map.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.TileSet}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/tileset.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Palette}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/palette.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.World}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/world.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Entity}">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/entity.png" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsFolder}" Value="True">
+                                <Setter Property="Source" TargetName="itemImage" Value="/Resources/closed_folder.png" />
+                            </DataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsRoot}" Value="False"/>
+                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeViewItem}}}" Value="True"/>
+                                    <Condition Binding="{Binding IsInEditMode}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Visibility" TargetName="editableTextBox" Value="Visible" />
+                                    <Setter Property="Visibility" TargetName="txtDisplayName" Value="Collapsed" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsFolder}" Value="True"/>
+                                    <Condition Binding="{Binding IsExpanded, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type TreeViewItem}}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Source" TargetName="itemImage" Value="/Resources/open_folder.png" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </DataTemplate.Triggers>
+                    </HierarchicalDataTemplate>
+                </TreeView.Resources>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="FontWeight" Value="Normal" />
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Character}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Bank}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Map}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.TileSet}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Palette}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.World}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Type}" Value="{x:Static enum:ProjectItemType.Entity}">
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemPopup}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsFolder}" Value="True">
+                                <Setter Property="ContextMenu" Value="{StaticResource FolderPopup}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+            <GridSplitter Grid.Column="1" Width="5" />
+            <DockPanel Name="dpItemPanel" Grid.Column="2" LastChildFill="True">
+                <DockPanel.Background>
+                    <SolidColorBrush Color="#1E1E1E"/>
+                </DockPanel.Background>
+            </DockPanel>
         </Grid>
     </DockPanel>
 </Window>

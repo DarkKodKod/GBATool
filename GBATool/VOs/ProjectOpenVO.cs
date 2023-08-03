@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace GBATool.VOs
 {
-    public class ProjectOpenVO
+    public record ProjectOpenVO
     {
-        public List<ProjectItem> Items { get; set; } = new();
-        public string ProjectName { get; set; } = "";
+        public List<ProjectItem> Items { get; init; } = new();
+        public string ProjectName { get; init; } = string.Empty;
     }
 }

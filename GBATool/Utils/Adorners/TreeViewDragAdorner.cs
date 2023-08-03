@@ -3,9 +3,9 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows;
 
-namespace GBATool.Utils
+namespace GBATool.Utils.Adorners
 {
-    internal class TreeViewDragAdorner : Adorner
+    public class TreeViewDragAdorner : Adorner
     {
         private readonly ContentPresenter _contentPresenter;
         private readonly AdornerLayer _adornerLayer;
