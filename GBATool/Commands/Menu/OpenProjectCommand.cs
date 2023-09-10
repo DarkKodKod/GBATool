@@ -128,11 +128,11 @@ namespace GBATool.Commands
             projectModel.Load(directoryPath, projectFullPath);
 
             // load project folder
-            DirectoryInfo d = new DirectoryInfo(directoryPath);
+            DirectoryInfo d = new(directoryPath);
 
             DirectoryInfo[] directories = d.GetDirectories();
 
-            List<ProjectItem> projectItems = new List<ProjectItem>();
+            List<ProjectItem> projectItems = new();
 
             ScanDirectories(directories, ref projectItems);
 

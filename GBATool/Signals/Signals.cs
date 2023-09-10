@@ -17,6 +17,7 @@ namespace GBATool.Signals
     public class ShowLoadingDialogSignal : Signal { }
     public class CloseDialogSignal : Signal { }
     public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> { }
+    public class MouseWheelSignal : Signal<MouseWheelVO> { }
 
     // MainWindowViewModel
     public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
@@ -48,4 +49,7 @@ namespace GBATool.Signals
     public class DeleteElementSignal : Signal<ProjectItem> { }
     public class FindAndCreateElementSignal : Signal<ProjectItem> { }
     public class CreateNewElementSignal : Signal<ProjectItem> { }
+
+    // TileSet
+    public class UpdateTileSetImageSignal : Signal { }
 }

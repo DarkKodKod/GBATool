@@ -3,10 +3,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:cv="clr-namespace:GBATool.Utils.Converters"
              xmlns:local="clr-namespace:GBATool.Views"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             xmlns:vm="clr-namespace:GBATool.ViewModels"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+    <UserControl.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:TileSetViewModel />
+    </UserControl.DataContext>
+    <Grid Background="LightGray">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="350"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <DockPanel Grid.Row="0">
+                <TextBlock Name="tbPath" Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Width="30" HorizontalAlignment="Right" Content="..."
+                    Command="{Binding BrowseFileCommand}">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource parametersConverter}">
+                            <Binding Path="Text" ElementName="tbPath"/>
+                            <Binding Path="Filters"/>
+                            <Binding Path="NewFile"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
+            </DockPanel>
+            <ScrollViewer Grid.Row="2"
+                      Background="DarkGray"
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto">
+                <i:Interaction.Behaviors>
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseWheelCommand}" Event="PreviewMouseWheel" PassArguments="True" />
+                </i:Interaction.Behaviors>
+                <Canvas Name="cvsImage"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Width="{Binding ActualWidth}" 
+                    Height="{Binding ActualHeight}">
+                    <Canvas.RenderTransform>
+                        <ScaleTransform x:Name="scaleCanvas" />
+                    </Canvas.RenderTransform>
+                    <Image Source="{Binding ImgSource}" 
+                       Name="imgBig"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Stretch="None">
+                    </Image>
+                </Canvas>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

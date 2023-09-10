@@ -1,9 +1,13 @@
-﻿using GBATool.Enums;
+﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.Models;
+using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils
 {
@@ -175,6 +179,34 @@ namespace GBATool.Utils
             }
             while (current != null);
             return null;
+        }
+
+        public static void GenerateBitmapFromTileSet(TileSetModel model, out WriteableBitmap? bitmap)
+        {
+            bitmap = null;
+
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            if (string.IsNullOrEmpty(model.ImagePath))
+            {
+                return;
+            }
+
+            string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
+
+            if (File.Exists(path))
+            {
+                BitmapImage bmImage = new();
+
+                bmImage.BeginInit();
+                bmImage.CacheOption = BitmapCacheOption.OnLoad;
+                bmImage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bmImage.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                bmImage.EndInit();
+                bmImage.Freeze();
+
+                bitmap = BitmapFactory.ConvertToPbgra32Format(bmImage);
+            }
         }
     }
 }

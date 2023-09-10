@@ -219,7 +219,10 @@ namespace GBATool
 
         private void OnFinishedLoadingProject()
         {
-            _loadingDialog.Close();
+            Application.Current.Dispatcher.Invoke(new Action(() =>
+            {
+                _loadingDialog.Close();
+            }));
         }
 
         private void OnCloseProjectSuccess()

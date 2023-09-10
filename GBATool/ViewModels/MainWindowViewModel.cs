@@ -47,6 +47,7 @@ namespace GBATool.ViewModels
         public QueryContinueDragCommand QueryContinueDragCommand { get; } = new();
         public UndoCommand UndoCommand { get; } = new();
         public RedoCommand RedoCommand { get; } = new();
+        public TreeviewSelectedItemChangedCommand TreeviewSelectedItemChangedCommand { get; } = new();
         #endregion
 
         private const string _projectNameKey = "applicationTitle";

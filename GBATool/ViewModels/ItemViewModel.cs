@@ -2,7 +2,7 @@
 
 namespace GBATool.ViewModels
 {
-    internal class ItemViewModel : ViewModel
+    public class ItemViewModel : ViewModel
     {
         public ProjectItem? ProjectItem { get; set; } = null;
     }

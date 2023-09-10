@@ -9,6 +9,8 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 
@@ -67,7 +69,7 @@ namespace GBATool.Commands
             }
         }
 
-        private static /*async*/ void ProcessImage(ProjectItem item, TileSetModel tileSet, string filePath)
+        private static void ProcessImage(ProjectItem item, TileSetModel tileSet, string filePath)
         {
             string imagesFolder = (string)Application.Current.FindResource(_folderImagesKey);
 
@@ -80,27 +82,29 @@ namespace GBATool.Commands
                 _ = Directory.CreateDirectory(imageFolderFullPath);
             }
 
-            /*            PaletteQuantizer quantizer = new PaletteQuantizer
-                        {
-                            InputFileName = filePath,
-                            ColorCache = PaletteQuantizer.EColorCache.OctreeSearch,
-                            Method = PaletteQuantizer.EMethod.NESQuantizer
-                        };
+            string outputImagePath = Path.Combine(imageFolderFullPath, item.DisplayName + ".bmp");
 
-                        // todo: If the source image is the same as the output image, Crash!!
-                        Image outputImage = await quantizer.Convert();
+            if (filePath == outputImagePath)
+            {
+                return;
+            }
 
-                        string outputImagePath = Path.Combine(imageFolderFullPath, item.DisplayName + ".bmp");
+            Image image = Image.FromFile(filePath);
 
-                        tileSet.ImagePath = Path.Combine(imagesFolder, item.DisplayName + ".bmp");
-                        tileSet.ImageWidth = outputImage.Width;
-                        tileSet.ImageHeight = outputImage.Height;
+            if (File.Exists(outputImagePath))
+            {
+                File.Delete(outputImagePath);
+            }
 
-                        item.FileHandler.Save();
+            tileSet.ImagePath = outputImagePath;
+            tileSet.ImageWidth = image.Width;
+            tileSet.ImageHeight = image.Height;
 
-                        outputImage.Save(outputImagePath, ImageFormat.Bmp);
+            image.Save(outputImagePath, ImageFormat.Bmp);
 
-                        SignalManager.Get<UpdateTileSetImageSignal>().Dispatch();*/
+            item.FileHandler?.Save();
+
+            SignalManager.Get<UpdateTileSetImageSignal>().Dispatch();
         }
 
         private static ProjectItem CreateTileSetElement(string name)
@@ -116,7 +120,7 @@ namespace GBATool.Commands
                 name,
                 Util.GetExtensionByType(ProjectItemType.TileSet));
 
-            ProjectItem newElement = new ProjectItem()
+            ProjectItem newElement = new()
             {
                 DisplayName = name,
                 IsFolder = false,

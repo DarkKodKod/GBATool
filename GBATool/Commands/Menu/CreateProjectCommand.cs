@@ -58,19 +58,15 @@ namespace GBATool.Commands
             string path = (string)values[0];
             string projectName = (string)values[1];
 
-            int prgSize = (int)values[2];
-            int chrSize = (int)values[3];
-            int mapperId = (int)values[4];
-
             string projectFullPath = Path.Combine(path, projectName);
 
-            CreateProject(projectFullPath, prgSize, chrSize, mapperId);
+            CreateProject(projectFullPath);
 
             SignalManager.Get<CloseProjectSuccessSignal>().Dispatch();
             SignalManager.Get<CreateProjectSuccessSignal>().Dispatch(projectFullPath);
         }
 
-        private void CreateProject(string projectFullPath, int prgSize, int chrSize, int mapperIndex)
+        private static void CreateProject(string projectFullPath)
         {
             _ = Directory.CreateDirectory(projectFullPath);
 

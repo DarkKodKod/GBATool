@@ -37,9 +37,7 @@ namespace GBATool.Commands
 
             if (ClipboardManager.GetData() is ProjectItem newItem)
             {
-                string newItemPath = string.Empty;
-                string name = string.Empty;
-
+                string newItemPath;
                 if (ItemSelected.IsFolder)
                 {
                     newItemPath = Path.Combine(ItemSelected.FileHandler.Path, ItemSelected.FileHandler.Name);
@@ -49,6 +47,7 @@ namespace GBATool.Commands
                     newItemPath = ItemSelected.FileHandler.Path;
                 }
 
+                string name;
                 if (newItem.IsFolder)
                 {
                     name = ProjectItemFileSystem.GetValidFolderName(newItemPath, newItem.DisplayName);

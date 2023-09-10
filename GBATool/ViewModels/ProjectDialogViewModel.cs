@@ -18,16 +18,12 @@ namespace GBATool.ViewModels
             get => _projectName;
             set
             {
-                if (Util.ValidFileName(value))
-                {
-                    _projectName = value;
-                    _previousValidName = value;
-                    OnPropertyChanged("ProjectName");
-                }
-                else
-                {
-                    ProjectName = _previousValidName;
-                }
+                if (!Util.ValidFileName(value))
+                    return;
+
+                _projectName = value;
+                _previousValidName = value;
+                OnPropertyChanged("ProjectName");
             }
         }
 
@@ -42,9 +38,9 @@ namespace GBATool.ViewModels
         }
         #endregion
 
-        private string _previousValidName = "";
-        private string _projectName = "";
-        private string _folderPath = "";
+        private string _previousValidName = string.Empty;
+        private string _projectName = string.Empty;
+        private string _folderPath = string.Empty;
 
         public ProjectDialogViewModel()
         {
