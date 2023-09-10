@@ -11,7 +11,7 @@ namespace GBATool.Utils.Converters
         {
             ListView? l = o as ListView;
 
-            if (l?.View is GridView g) 
+            if (l?.View is GridView g)
             {
                 double total = 0;
 

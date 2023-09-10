@@ -325,7 +325,7 @@ namespace GBATool.ViewModels
 
             if ((_isDragging == false) && Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
             {
-                if (vo.OriginalSource  != null) 
+                if (vo.OriginalSource != null)
                 {
                     TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)vo.OriginalSource);
 
@@ -448,7 +448,7 @@ namespace GBATool.ViewModels
             if (ProjectItems == null)
             {
                 return;
-            }   
+            }
 
             foreach (ProjectItem item in ProjectItems)
             {

@@ -128,7 +128,7 @@ namespace GBATool.Utils
         {
             UIElement? selectedItemContainer = GetItemContainerFromPoint(itemsControl, e.GetPosition(itemsControl));
 
-            if (selectedItemContainer != null) 
+            if (selectedItemContainer != null)
             {
                 Point relativePosition = e.GetPosition(selectedItemContainer);
 

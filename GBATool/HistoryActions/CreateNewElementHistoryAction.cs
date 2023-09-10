@@ -17,7 +17,7 @@ namespace GBATool.HistoryActions
 
         public void Redo()
         {
-            if (_item.Parent != null) 
+            if (_item.Parent != null)
             {
                 SignalManager.Get<PasteElementSignal>().Dispatch(_item.Parent, _item);
             }

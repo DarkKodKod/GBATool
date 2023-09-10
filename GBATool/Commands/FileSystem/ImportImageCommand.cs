@@ -9,9 +9,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
 using System.Windows;
 
 namespace GBATool.Commands
@@ -82,27 +80,27 @@ namespace GBATool.Commands
                 _ = Directory.CreateDirectory(imageFolderFullPath);
             }
 
-/*            PaletteQuantizer quantizer = new PaletteQuantizer
-            {
-                InputFileName = filePath,
-                ColorCache = PaletteQuantizer.EColorCache.OctreeSearch,
-                Method = PaletteQuantizer.EMethod.NESQuantizer
-            };
+            /*            PaletteQuantizer quantizer = new PaletteQuantizer
+                        {
+                            InputFileName = filePath,
+                            ColorCache = PaletteQuantizer.EColorCache.OctreeSearch,
+                            Method = PaletteQuantizer.EMethod.NESQuantizer
+                        };
 
-            // todo: If the source image is the same as the output image, Crash!!
-            Image outputImage = await quantizer.Convert();
+                        // todo: If the source image is the same as the output image, Crash!!
+                        Image outputImage = await quantizer.Convert();
 
-            string outputImagePath = Path.Combine(imageFolderFullPath, item.DisplayName + ".bmp");
+                        string outputImagePath = Path.Combine(imageFolderFullPath, item.DisplayName + ".bmp");
 
-            tileSet.ImagePath = Path.Combine(imagesFolder, item.DisplayName + ".bmp");
-            tileSet.ImageWidth = outputImage.Width;
-            tileSet.ImageHeight = outputImage.Height;
+                        tileSet.ImagePath = Path.Combine(imagesFolder, item.DisplayName + ".bmp");
+                        tileSet.ImageWidth = outputImage.Width;
+                        tileSet.ImageHeight = outputImage.Height;
 
-            item.FileHandler.Save();
+                        item.FileHandler.Save();
 
-            outputImage.Save(outputImagePath, ImageFormat.Bmp);
+                        outputImage.Save(outputImagePath, ImageFormat.Bmp);
 
-            SignalManager.Get<UpdateTileSetImageSignal>().Dispatch();*/
+                        SignalManager.Get<UpdateTileSetImageSignal>().Dispatch();*/
         }
 
         private static ProjectItem CreateTileSetElement(string name)

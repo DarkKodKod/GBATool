@@ -50,7 +50,7 @@ namespace GBATool
         public static EditFrameTools ToolBarMapTool = EditFrameTools.Select;
 
         private ProjectItemType _currentViewType = ProjectItemType.None;
-        
+
         private readonly LoadingDialog _loadingDialog = new LoadingDialog();
         private readonly FieldInfo? _menuDropAlignmentField;
 
@@ -407,7 +407,7 @@ namespace GBATool
                             name = ProjectItemFileSystem.GetValidFileName(item.FileHandler.Path, tb.Text, extension);
                         }
 
-                        tb.Text = name;                       
+                        tb.Text = name;
                     }
                 }
 

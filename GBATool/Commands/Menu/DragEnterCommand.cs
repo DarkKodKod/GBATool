@@ -3,8 +3,8 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Commands
 {
@@ -35,7 +35,7 @@ namespace GBATool.Commands
                     dragEvent.Handled = true;
                     dragEvent.Effects = DragDropEffects.None;
                 }
-                
+
                 SignalManager.Get<DetachAdornersSignal>().Dispatch();
 
                 return false;

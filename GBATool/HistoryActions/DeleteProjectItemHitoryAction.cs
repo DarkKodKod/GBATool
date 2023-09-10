@@ -24,7 +24,7 @@ namespace GBATool.HistoryActions
 
         public void Undo()
         {
-            if (_item.Parent != null) 
+            if (_item.Parent != null)
             {
                 SignalManager.Get<PasteElementSignal>().Dispatch(_item.Parent, _item);
             }
@@ -32,7 +32,7 @@ namespace GBATool.HistoryActions
             if (_item.FileHandler != null)
             {
                 ProjectItemFileSystem.CreateElement(_item, _item.FileHandler.Path, _item.DisplayName);
-            }   
+            }
         }
     }
 }

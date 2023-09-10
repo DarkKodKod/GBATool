@@ -1,7 +1,7 @@
 ﻿using ArchitectureLibrary.ViewModel;
 using GBATool.Commands;
-using System.Reflection;
 using System;
+using System.Reflection;
 
 namespace GBATool.ViewModels
 {
@@ -29,7 +29,7 @@ namespace GBATool.ViewModels
             if (version != null)
             {
                 Version = version.ToString();
-            }   
+            }
         }
     }
 }

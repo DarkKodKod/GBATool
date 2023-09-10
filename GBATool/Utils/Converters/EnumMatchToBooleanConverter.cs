@@ -11,7 +11,7 @@ namespace GBATool.Utils.Converters
             string? checkValue = value.ToString();
             string? targetValue = parameter.ToString();
 
-            if (checkValue != null) 
+            if (checkValue != null)
             {
                 return checkValue.Equals(targetValue, StringComparison.InvariantCultureIgnoreCase);
             }

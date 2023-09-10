@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using System;
 using System.Reflection;
-using System.Windows.Input;
 using System.Windows;
+using System.Windows.Input;
 
 namespace GBATool.Utils.Behaviors
 {

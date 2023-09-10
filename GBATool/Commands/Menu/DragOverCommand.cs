@@ -4,8 +4,8 @@ using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using System;
-using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Commands
 {

@@ -27,7 +27,7 @@ namespace GBATool.Utils.Behaviors
             set => SetValue(RoutedEventProperty, value);
         }
 
-        private static MethodInfo? MemberwiseCloneMethod { get; } 
+        private static MethodInfo? MemberwiseCloneMethod { get; }
             = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
         private static void OnRoutedEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

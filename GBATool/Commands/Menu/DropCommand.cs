@@ -6,9 +6,9 @@ using GBATool.HistoryActions;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
-using System.Windows.Controls;
-using System.Windows;
 using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Commands
 {
@@ -59,7 +59,7 @@ namespace GBATool.Commands
 
                 if (dropTarget.IsFolder)
                 {
-                    if (dropTarget.FileHandler  != null)
+                    if (dropTarget.FileHandler != null)
                     {
                         destinationFolder = Path.Combine(dropTarget.FileHandler.Path, dropTarget.FileHandler.Name);
                     }
