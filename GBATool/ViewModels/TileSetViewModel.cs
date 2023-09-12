@@ -50,6 +50,8 @@ namespace GBATool.ViewModels
                 _imagePath = value;
 
                 OnPropertyChanged("ImagePath");
+
+                UpdateImage();
             }
         }
 

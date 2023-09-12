@@ -24,13 +24,58 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="3"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0">
+                <ToolBarTray>
+                    <ToolBar Name="Cursor">
+                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="8x8" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="16x16" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="32x32" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="64x64" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="16x8" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="32x8" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="32x16" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="64x32" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="32x64" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                            <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Button>
+                    </ToolBar>
+                </ToolBarTray>
+            </DockPanel>
+            <DockPanel Grid.Row="1">
                 <TextBlock Name="tbPath" Text="{Binding ImagePath, UpdateSourceTrigger=PropertyChanged}" />
                 <Button Width="30" HorizontalAlignment="Right" Content="..."
-                    Command="{Binding BrowseFileCommand}">
+                        Command="{Binding BrowseFileCommand}">
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource parametersConverter}">
                             <Binding Path="Text" ElementName="tbPath"/>

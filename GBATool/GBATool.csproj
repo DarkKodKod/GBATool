@@ -23,6 +23,7 @@
     <None Remove="Resources\closed_folder.png" />
     <None Remove="Resources\close_project.png" />
     <None Remove="Resources\copy.png" />
+    <None Remove="Resources\cursor32x32.png" />
     <None Remove="Resources\delete.png" />
     <None Remove="Resources\duplicate.png" />
     <None Remove="Resources\entity.png" />
@@ -81,6 +82,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\copy.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor32x32.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\delete.png">

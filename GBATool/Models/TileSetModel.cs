@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
 using Nett;
@@ -8,8 +9,19 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Models
 {
+    public struct Sprite
+    {
+        public string ID { get; set; }
+        public SpriteShape Shape { get; set; }
+        public SpriteSize Size { get; set; }
+        public int PosX { get; set; }
+        public int PosY { get; set; }
+    }
+
     public class TileSetModel : AFileModel
     {
+        public static readonly int MaxSpriteSize = 100;
+
         private const string _extensionKey = "extensionTileSets";
 
         [TomlIgnore]
@@ -30,7 +42,8 @@ namespace GBATool.Models
         public int ImageWidth { get; set; } = 0;
         public int ImageHeight { get; set; } = 0;
 
-        public static Dictionary<string, BitmapImage> BitmapCache = new();
+        private static readonly Dictionary<string, BitmapImage> BitmapCache = new();
+        public Sprite[] Sprites { get; set; } = new Sprite[MaxSpriteSize];
 
         public TileSetModel()
         {
