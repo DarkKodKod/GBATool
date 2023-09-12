@@ -30,7 +30,7 @@ namespace GBATool.Models
         public int ImageWidth { get; set; } = 0;
         public int ImageHeight { get; set; } = 0;
 
-        public static Dictionary<string, WriteableBitmap> BitmapCache = new();
+        public static Dictionary<string, BitmapImage> BitmapCache = new();
 
         public TileSetModel()
         {
@@ -44,7 +44,7 @@ namespace GBATool.Models
                 return;
             }
 
-            Util.GenerateBitmapFromTileSet(this, out WriteableBitmap? bitmap);
+            Util.GenerateBitmapFromTileSet(this, out BitmapImage? bitmap);
 
             if (bitmap != null && !BitmapCache.ContainsKey(GUID))
             {
@@ -52,9 +52,9 @@ namespace GBATool.Models
             }
         }
 
-        public static WriteableBitmap? LoadBitmap(TileSetModel tileSetModel, bool forceRedraw = false)
+        public static BitmapImage? LoadBitmap(TileSetModel tileSetModel, bool forceRedraw = false)
         {
-            bool exists = BitmapCache.TryGetValue(tileSetModel.GUID, out WriteableBitmap? bitmap);
+            bool exists = BitmapCache.TryGetValue(tileSetModel.GUID, out BitmapImage? bitmap);
 
             if (bitmap == null || !exists || forceRedraw)
             {

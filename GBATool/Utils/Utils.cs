@@ -181,7 +181,7 @@ namespace GBATool.Utils
             return null;
         }
 
-        public static void GenerateBitmapFromTileSet(TileSetModel model, out WriteableBitmap? bitmap)
+        public static void GenerateBitmapFromTileSet(TileSetModel model, out BitmapImage? bitmap)
         {
             bitmap = null;
 
@@ -196,16 +196,14 @@ namespace GBATool.Utils
 
             if (File.Exists(path))
             {
-                BitmapImage bmImage = new();
+                bitmap = new();
 
-                bmImage.BeginInit();
-                bmImage.CacheOption = BitmapCacheOption.OnLoad;
-                bmImage.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                bmImage.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                bmImage.EndInit();
-                bmImage.Freeze();
-
-                bitmap = BitmapFactory.ConvertToPbgra32Format(bmImage);
+                bitmap.BeginInit();
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                bitmap.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
+                bitmap.EndInit();
+                bitmap.Freeze();
             }
         }
     }
