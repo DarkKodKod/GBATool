@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Commands;
 using GBATool.Enums;
 using GBATool.ViewModels;
 using GBATool.VOs;
@@ -52,4 +53,17 @@ namespace GBATool.Signals
 
     // TileSet
     public class UpdateTileSetImageSignal : Signal { }
+    public class SpriteSelectCursorSignal : Signal { }
+    public class SpriteSize16x16Signal : Signal { }
+    public class SpriteSize16x32Signal : Signal { }
+    public class SpriteSize16x8Signal : Signal { }
+    public class SpriteSize32x16Signal : Signal { }
+    public class SpriteSize32x32Signal : Signal { }
+    public class SpriteSize32x64Signal : Signal { }
+    public class SpriteSize32x8Signal : Signal { }
+    public class SpriteSize64x32Signal : Signal { }
+    public class SpriteSize64x64Signal : Signal { }
+    public class SpriteSize8x16Signal : Signal { }
+    public class SpriteSize8x32Signal : Signal { }
+    public class SpriteSize8x8Signal : Signal { }
 }

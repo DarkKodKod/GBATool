@@ -30,45 +30,84 @@
             <DockPanel Grid.Row="0">
                 <ToolBarTray>
                     <ToolBar Name="Cursor">
-                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                        <ToggleButton Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSelectCursorCommand}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="8x8" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="8x8" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize8x8Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="16x16" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="16x16" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize16x16Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="32x32" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="32x32" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize32x32Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="64x64" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="64x64" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize64x64Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="16x8" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="16x8" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize16x8Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="32x8" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="32x8" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize32x8Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="32x16" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="32x16" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize32x16Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="64x32" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="64x32" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize64x32Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="32x64" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="8x16" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize8x16Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="8x32" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize8x32Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="16x32" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize16x32Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
-                        <Button Width="32" Height="32" ToolTip="Select" ToolBar.OverflowMode="AsNeeded">
+                        </ToggleButton>
+                        <ToggleButton Width="32" Height="32" ToolTip="32x64" ToolBar.OverflowMode="AsNeeded">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior  Command="{Binding SpriteSize32x64Command}" Event="Checked" PassArguments="True" />
+                            </i:Interaction.Behaviors>
                             <Image Width="32" Height="32" Source="/resources/cursor32x32.png" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Button>
+                        </ToggleButton>
                     </ToolBar>
                 </ToolBarTray>
             </DockPanel>
