@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Models
 {
-    public struct Sprite
+    public struct SpriteModel
     {
         public string ID { get; set; }
         public SpriteShape Shape { get; set; }
@@ -43,7 +43,7 @@ namespace GBATool.Models
         public int ImageHeight { get; set; } = 0;
 
         private static readonly Dictionary<string, BitmapImage> BitmapCache = new();
-        public Sprite[] Sprites { get; set; } = new Sprite[MaxSpriteSize];
+        public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
 
         public TileSetModel()
         {

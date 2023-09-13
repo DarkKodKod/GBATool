@@ -9,9 +9,7 @@ namespace GBATool.Commands
     {
         public override void Execute(object parameter)
         {
-            QueryContinueDragEventArgs? dragEvent = parameter as QueryContinueDragEventArgs;
-
-            if (dragEvent != null && dragEvent.EscapePressed)
+            if (parameter is QueryContinueDragEventArgs dragEvent && dragEvent.EscapePressed)
             {
                 dragEvent.Action = DragAction.Cancel;
 

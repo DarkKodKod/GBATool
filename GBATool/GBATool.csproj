@@ -50,6 +50,7 @@
     <None Remove="Resources\paste.png" />
     <None Remove="Resources\pattern_table.png" />
     <None Remove="Resources\redo.png" />
+    <None Remove="Resources\sprite_cross.png" />
     <None Remove="Resources\tileset.png" />
     <None Remove="Resources\undo.png" />
     <None Remove="Resources\world.png" />
@@ -175,6 +176,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\redo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\sprite_cross.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\tileset.png">

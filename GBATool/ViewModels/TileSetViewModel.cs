@@ -5,6 +5,7 @@ using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
 
@@ -19,6 +20,11 @@ namespace GBATool.ViewModels
         private bool _isSelecting = true;
         private SpriteShape _shape = SpriteShape.Shape00;
         private SpriteSize _size = SpriteSize.Size00;
+        private string _imageScale = "100%";
+        private int _originalWidth;
+
+        public List<SpriteVO> SpriteModels { get; set; } = new();
+        private SpriteVO _selectedSprite = new();
 
         #region Commands
         public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
@@ -36,6 +42,7 @@ namespace GBATool.ViewModels
         public DispatchSignalCommand<SpriteSize8x16Signal> SpriteSize8x16Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x32Signal> SpriteSize8x32Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
+        public DeleteSpriteCommand DeleteSpriteCommand { get; } = new();
         #endregion
 
         public TileSetModel? GetModel()
@@ -95,8 +102,8 @@ namespace GBATool.ViewModels
         }
 
         public bool IsSelecting
-        { 
-            get => _isSelecting; 
+        {
+            get => _isSelecting;
             set
             {
                 _isSelecting = value;
@@ -104,10 +111,10 @@ namespace GBATool.ViewModels
                 OnPropertyChanged("IsSelecting");
             }
         }
-        
+
         public SpriteShape Shape
         {
-            get => _shape; 
+            get => _shape;
             set
             {
                 _shape = value;
@@ -124,6 +131,27 @@ namespace GBATool.ViewModels
                 _size = value;
 
                 OnPropertyChanged("Size");
+            }
+        }
+
+        public SpriteVO SelectedSprite
+        {
+            get => _selectedSprite;
+            set
+            {
+                _selectedSprite = value;
+                OnPropertyChanged("SelectedSprite");
+            }
+        }
+
+        public string ImageScale
+        {
+            get => _imageScale;
+            set
+            {
+                _imageScale = value;
+
+                OnPropertyChanged("ImageScale");
             }
         }
         #endregion
@@ -197,6 +225,8 @@ namespace GBATool.ViewModels
                 ActualWidth /= ScaleRate;
                 ActualHeight /= ScaleRate;
             }
+
+            ImageScale = (((int)ActualWidth * 100) / _originalWidth).ToString() + "%";
         }
 
         public override void OnActivate()
@@ -240,8 +270,11 @@ namespace GBATool.ViewModels
 
             ActualWidth = model.ImageWidth;
             ActualHeight = model.ImageHeight;
+            _originalWidth = model.ImageWidth;
 
             UpdateImage();
+
+            LoadSprites();
         }
 
         public override void OnDeactivate()
@@ -266,6 +299,22 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
             #endregion
+        }
+
+        private void LoadSprites()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                SpriteVO sprite = new()
+                {
+                    SpriteID = "45464asdasd_" + i,
+                    Bitmap = null,
+                    Width = 0,
+                    Height = 0
+                };
+
+                SpriteModels.Add(sprite);
+            }
         }
 
         private void OnUpdateTileSetImage()
