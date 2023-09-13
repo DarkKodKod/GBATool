@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using GBATool.Commands;
+using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
@@ -15,6 +16,9 @@ namespace GBATool.ViewModels
         private ImageSource? _imgSource;
         private double _actualWidth;
         private double _actualHeight;
+        private bool _isSelecting = true;
+        private SpriteShape _shape = SpriteShape.Shape00;
+        private SpriteSize _size = SpriteSize.Size00;
 
         #region Commands
         public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
@@ -87,6 +91,39 @@ namespace GBATool.ViewModels
                 _actualWidth = value;
 
                 OnPropertyChanged("ActualWidth");
+            }
+        }
+
+        public bool IsSelecting
+        { 
+            get => _isSelecting; 
+            set
+            {
+                _isSelecting = value;
+
+                OnPropertyChanged("IsSelecting");
+            }
+        }
+        
+        public SpriteShape Shape
+        {
+            get => _shape; 
+            set
+            {
+                _shape = value;
+
+                OnPropertyChanged("Shape");
+            }
+        }
+
+        public SpriteSize Size
+        {
+            get => _size;
+            set
+            {
+                _size = value;
+
+                OnPropertyChanged("Size");
             }
         }
         #endregion
@@ -262,67 +299,158 @@ namespace GBATool.ViewModels
 
         private void OnSpriteSelectCursor()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = true;
+            Shape = SpriteShape.Shape00;
+            Size = SpriteSize.Size00;
         }
 
         private void OnSpriteSize16x16()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape00;
+            Size = SpriteSize.Size01;
         }
 
         private void OnSpriteSize16x32()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape10;
+            Size = SpriteSize.Size10;
         }
 
         private void OnSpriteSize16x8()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape01;
+            Size = SpriteSize.Size00;
         }
 
         private void OnSpriteSize32x16()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape01;
+            Size = SpriteSize.Size10;
         }
 
         private void OnSpriteSize32x32()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape01;
+            Size = SpriteSize.Size10;
         }
 
         private void OnSpriteSize32x64()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape10;
+            Size = SpriteSize.Size11;
         }
 
         private void OnSpriteSize32x8()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape01;
+            Size = SpriteSize.Size01;
         }
 
         private void OnSpriteSize64x32()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape01;
+            Size = SpriteSize.Size11;
         }
 
         private void OnSpriteSize64x64()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape00;
+            Size = SpriteSize.Size11;
         }
 
         private void OnSpriteSize8x16()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape10;
+            Size = SpriteSize.Size00;
         }
 
         private void OnSpriteSize8x32()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape10;
+            Size = SpriteSize.Size01;
         }
 
         private void OnSpriteSize8x8()
         {
+            if (!IsActive)
+            {
+                return;
+            }
 
+            IsSelecting = false;
+            Shape = SpriteShape.Shape00;
+            Size = SpriteSize.Size00;
         }
 
         private void UpdateImage(bool forceRedraw = false)

@@ -23,7 +23,19 @@
     <None Remove="Resources\closed_folder.png" />
     <None Remove="Resources\close_project.png" />
     <None Remove="Resources\copy.png" />
+    <None Remove="Resources\cursor16x16.png" />
+    <None Remove="Resources\cursor16x32.png" />
+    <None Remove="Resources\cursor16x8.png" />
+    <None Remove="Resources\cursor32x16.png" />
     <None Remove="Resources\cursor32x32.png" />
+    <None Remove="Resources\cursor32x64.png" />
+    <None Remove="Resources\cursor32x8.png" />
+    <None Remove="Resources\cursor64x32.png" />
+    <None Remove="Resources\cursor64x64.png" />
+    <None Remove="Resources\cursor8x16.png" />
+    <None Remove="Resources\cursor8x32.png" />
+    <None Remove="Resources\cursor8x8.png" />
+    <None Remove="Resources\cursorPointer.png" />
     <None Remove="Resources\delete.png" />
     <None Remove="Resources\duplicate.png" />
     <None Remove="Resources\entity.png" />
@@ -84,7 +96,43 @@
     <Resource Include="Resources\copy.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\cursor16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor16x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor16x8.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor32x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\cursor32x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor32x64.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor32x8.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor64x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor64x64.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor8x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor8x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursor8x8.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursorPointer.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\delete.png">
