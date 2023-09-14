@@ -5,9 +5,12 @@ using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
+using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.ViewModels
 {
@@ -22,8 +25,7 @@ namespace GBATool.ViewModels
         private SpriteSize _size = SpriteSize.Size00;
         private string _imageScale = "100%";
         private int _originalWidth;
-
-        public List<SpriteVO> SpriteModels { get; set; } = new();
+        private List<SpriteVO> _spriteModels = new();
         private SpriteVO _selectedSprite = new();
 
         #region Commands
@@ -43,6 +45,7 @@ namespace GBATool.ViewModels
         public DispatchSignalCommand<SpriteSize8x32Signal> SpriteSize8x32Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
         public DeleteSpriteCommand DeleteSpriteCommand { get; } = new();
+        public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
         #endregion
 
         public TileSetModel? GetModel()
@@ -63,6 +66,17 @@ namespace GBATool.ViewModels
                 _imgSource = value;
 
                 OnPropertyChanged("ImgSource");
+            }
+        }
+
+        public List<SpriteVO> SpriteModels
+        {
+            get => _spriteModels;
+            set
+            {
+                _spriteModels = value;
+
+                OnPropertyChanged("SpriteModels");
             }
         }
 
@@ -257,13 +271,14 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x16Signal>().Listener += OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
+            SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
             #endregion
 
             if (!string.IsNullOrEmpty(model.ImagePath))
             {
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-                string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
+                string path = System.IO.Path.Combine(projectModel.ProjectPath, model.ImagePath);
 
                 ImagePath = path;
             }
@@ -275,6 +290,83 @@ namespace GBATool.ViewModels
             UpdateImage();
 
             LoadSprites();
+        }
+
+        private void OnMouseImageSelected(Image image, Point point)
+        {
+            if (IsSelecting)
+            {
+                return;
+            }
+
+            int width = 0;
+            int height = 0;
+
+            GetWidthHeight(ref width, ref height);
+
+            WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image.Source as BitmapSource);
+
+            // TODO!!!! this is wrong! this is picking the sprite as if was everything made out of 8x8 pixels
+            // I need to pick the exact pixel to get the area the user wants
+            int x = (int)Math.Floor(point.X / 8) * 8;
+            int y = (int)Math.Floor(point.Y / 8) * 8;
+
+            WriteableBitmap cropped = writeableBmp.Crop(x, y, width, height);
+
+            if (cropped.PixelWidth != width || cropped.PixelHeight != height)
+            {
+                MessageBox.Show("The sprite you are trying to create is bigger than the area left from the given pixel", "Error", MessageBoxButton.OK);
+                return;
+            }
+
+            AddSpriteToTheList(width, height, Guid.NewGuid().ToString(), cropped);
+
+            SignalManager.Get<AddedNewSpriteSignal>().Dispatch();
+        }
+
+        public void GetWidthHeight(ref int width, ref int height)
+        {
+            //shape\size  00	01	    10	    11
+            //   00	      8x8	16x16	32x32	64x64
+            //   01	      16x8	32x8	32x16	64x32
+            //   10	      8x16	8x32	16x32	32x64
+
+            if (Size == SpriteSize.Size00)
+            {
+                switch (Shape)
+                {
+                    case SpriteShape.Shape00: width = 8; height = 8; break;
+                    case SpriteShape.Shape01: width = 16; height = 8; break;
+                    case SpriteShape.Shape10: width = 8; height = 16; break;
+                }
+            }
+            else if (Size == SpriteSize.Size01)
+            {
+                switch (Shape)
+                {
+                    case SpriteShape.Shape00: width = 16; height = 16; break;
+                    case SpriteShape.Shape01: width = 32; height = 8; break;
+                    case SpriteShape.Shape10: width = 8; height = 32; break;
+                }
+            }
+            else if (Size == SpriteSize.Size10)
+            {
+                switch (Shape)
+                {
+                    case SpriteShape.Shape00: width = 32; height = 32; break;
+                    case SpriteShape.Shape01: width = 32; height = 16; break;
+                    case SpriteShape.Shape10: width = 16; height = 32; break;
+                }
+            }
+            else if (Size == SpriteSize.Size11)
+            {
+                switch (Shape)
+                {
+                    case SpriteShape.Shape00: width = 64; height = 64; break;
+                    case SpriteShape.Shape01: width = 64; height = 32; break;
+                    case SpriteShape.Shape10: width = 32; height = 64; break;
+                }
+            }
         }
 
         public override void OnDeactivate()
@@ -303,18 +395,47 @@ namespace GBATool.ViewModels
 
         private void LoadSprites()
         {
-            for (int i = 0; i < 2; i++)
-            {
-                SpriteVO sprite = new()
-                {
-                    SpriteID = "45464asdasd_" + i,
-                    Bitmap = null,
-                    Width = 0,
-                    Height = 0
-                };
+            int[] sizeX = { 32, 16, 64 };
+            int[] sizeY = { 16, 8, 64 };
 
-                SpriteModels.Add(sprite);
+            for (int i = 0; i < sizeX.Length; i++)
+            {
+                int width = sizeX[i];
+                int height = sizeY[i];
+
+                System.Windows.Media.Color color = System.Windows.Media.Color.FromRgb(255, 0, 0);
+                List<System.Windows.Media.Color> colors = new List<System.Windows.Media.Color>();
+                colors.Add(color);
+
+                BitmapSource image = BitmapSource.Create(
+                    width,
+                    height,
+                    96,
+                    96,
+                    PixelFormats.Indexed1,
+                    new BitmapPalette(colors),
+                    new byte[height * (width / 8)],
+                    width / 8);
+
+                AddSpriteToTheList(width, height, "45464asdasd_" + i, image);
             }
+        }
+
+        private void AddSpriteToTheList(int width, int height, string id, BitmapSource bitmap)
+        {
+            // Scaling here otherwise is too small for display
+            width *= 4;
+            height *= 4;
+
+            SpriteVO sprite = new()
+            {
+                SpriteID = id,
+                Bitmap = bitmap,
+                Width = width,
+                Height = height
+            };
+
+            SpriteModels.Add(sprite);
         }
 
         private void OnUpdateTileSetImage()
@@ -335,7 +456,7 @@ namespace GBATool.ViewModels
             {
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-                string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
+                string path = System.IO.Path.Combine(projectModel.ProjectPath, model.ImagePath);
 
                 ImagePath = path;
             }
@@ -414,7 +535,7 @@ namespace GBATool.ViewModels
             }
 
             IsSelecting = false;
-            Shape = SpriteShape.Shape01;
+            Shape = SpriteShape.Shape00;
             Size = SpriteSize.Size10;
         }
 

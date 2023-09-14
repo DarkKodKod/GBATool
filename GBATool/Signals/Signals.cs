@@ -18,6 +18,7 @@ namespace GBATool.Signals
     public class CloseDialogSignal : Signal { }
     public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> { }
     public class MouseWheelSignal : Signal<MouseWheelVO> { }
+    public class MouseImageSelectedSignal : Signal<Image, Point> { }
 
     // MainWindowViewModel
     public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
@@ -66,4 +67,5 @@ namespace GBATool.Signals
     public class SpriteSize8x32Signal : Signal { }
     public class SpriteSize8x8Signal : Signal { }
     public class DeletingSpriteSignal : Signal<SpriteVO> { }
+    public class AddedNewSpriteSignal : Signal { }
 }

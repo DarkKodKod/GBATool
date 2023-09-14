@@ -152,6 +152,9 @@
                            Name="imgBig"
                            RenderOptions.BitmapScalingMode="NearestNeighbor"
                            Stretch="None">
+                        <i:Interaction.Behaviors>
+                            <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
+                        </i:Interaction.Behaviors>
                     </Image>
                 </Canvas>
             </ScrollViewer>
@@ -162,25 +165,42 @@
                    VerticalAlignment="Bottom"/>
         </Grid>
         <Grid Grid.Column="1">
-            <ListView Grid.Row="1" Grid.Column="1" 
-                      HorizontalAlignment="Stretch" 
+            <ListView HorizontalAlignment="Stretch" 
                       VerticalAlignment="Stretch" 
                       SelectionMode="Single"
+                      Name="lvSprites"
+                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       SelectedValue="{Binding SelectedSprite}"
                       ItemsSource="{Binding SpriteModels}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Margin="10, 10, 10, 0" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <Image Source="{Binding Bitmap}"/>
-                            <TextBlock Text="{Binding SpriteID}"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
                             <Image Source="/resources/sprite_cross.png" 
+                                   Grid.Row="0"
                                    Width="10" Height="10" 
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
                                    ToolTip="Delete sprite">
                                 <i:Interaction.Behaviors>
                                     <behaviors:EventToCommandBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.DeleteSpriteCommand}" Event="MouseUp" PassArguments="True" />
                                 </i:Interaction.Behaviors>
                             </Image>
-                        </StackPanel>
+                            <Image Source="{Binding Bitmap}"
+                                   Width="{Binding Width}"
+                                   Height="{Binding Height}"
+                                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                   Grid.Row="1">
+                            </Image>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

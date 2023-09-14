@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Model;
+using ArchitectureLibrary.Signals;
 using GBATool.Enums;
 using GBATool.Models;
 using System;
