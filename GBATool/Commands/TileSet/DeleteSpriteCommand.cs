@@ -25,7 +25,7 @@ namespace GBATool.Commands
                 {
                     SignalManager.Get<DeletingSpriteSignal>().Dispatch(sprite);
                 }
-            }   
+            }
         }
     }
 }

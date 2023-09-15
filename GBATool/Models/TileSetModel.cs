@@ -2,10 +2,12 @@
 using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
+using GBATool.VOs;
 using Nett;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace GBATool.Models
 {
@@ -80,6 +82,27 @@ namespace GBATool.Models
             }
 
             return bitmap;
+        }
+
+        public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size)
+        {
+            for (int i = 0; i < MaxSpriteSize; i++)
+            {
+                if (string.IsNullOrEmpty(Sprites[i].ID))
+                {
+                    Sprites[i].ID = spriteID;
+                    Sprites[i].Shape = shape;
+                    Sprites[i].Size = size;
+                    Sprites[i].PosX = posX;
+                    Sprites[i].PosY = posY;
+
+                    return true;
+                }
+            }
+
+            MessageBox.Show($"Cannot save more sprites under this TileSet, max of {MaxSpriteSize} limit is reached", "Error", MessageBoxButton.OK);
+
+            return false;
         }
     }
 }
