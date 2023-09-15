@@ -188,6 +188,11 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       SelectedValue="{Binding SelectedSprite}"
                       ItemsSource="{Binding SpriteModels}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding DataContext.SelectSpriteCommand, ElementName=lvSprites }" CommandParameter="{Binding SelectedSprite}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Margin="10, 10, 10, 0" />

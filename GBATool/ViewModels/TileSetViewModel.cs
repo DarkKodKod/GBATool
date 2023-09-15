@@ -46,6 +46,7 @@ namespace GBATool.ViewModels
         public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
         public DeleteSpriteCommand DeleteSpriteCommand { get; } = new();
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
+        public SelectSpriteCommand SelectSpriteCommand { get; } = new();
         #endregion
 
         public TileSetModel? GetModel()
@@ -287,6 +288,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
             SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
+            SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
             #endregion
 
             if (!string.IsNullOrEmpty(model.ImagePath))
@@ -305,6 +307,23 @@ namespace GBATool.ViewModels
             UpdateImage();
 
             LoadSprites();
+        }
+
+        private void OnDeletingSprite(SpriteVO sprite)
+        {
+            foreach (var item in SpriteModels)
+            {
+                if (item.SpriteID == sprite.SpriteID)
+                {
+                    SpriteModels.Remove(item);
+
+                    SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
+
+                    DeleteSprite(sprite);
+
+                    return;
+                }
+            }
         }
 
         private void OnMouseImageSelected(System.Windows.Controls.Image image, Point point)
@@ -339,8 +358,8 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            SignalManager.Get<AddedNewSpriteSignal>().Dispatch();
-            
+            SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
+
             SaveNewSprite(sprite.SpriteID, x, y, width, height);
         }
 
@@ -359,6 +378,23 @@ namespace GBATool.ViewModels
             ConvertToShapeSize(width, height, ref shape, ref size);
 
             bool ret = model.StoreNewSprite(spriteID, posX, posY, shape, size);
+
+            if (ret == true)
+            {
+                ProjectItem?.FileHandler?.Save();
+            }
+        }
+
+        private void DeleteSprite(SpriteVO sprite)
+        {
+            TileSetModel? model = GetModel();
+
+            if (model == null || sprite.SpriteID == null)
+            {
+                return;
+            }
+
+            bool ret = model.RemoveSprite(sprite.SpriteID);
 
             if (ret == true)
             {
@@ -387,6 +423,8 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x16Signal>().Listener -= OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
+            SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
+            SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
             #endregion
         }
 
@@ -394,7 +432,7 @@ namespace GBATool.ViewModels
         {
             TileSetModel? model = GetModel();
 
-            if (model  == null)
+            if (model == null)
             {
                 return;
             }
@@ -402,7 +440,7 @@ namespace GBATool.ViewModels
             for (int i = 0; i < model.Sprites.Length; i++)
             {
                 if (string.IsNullOrEmpty(model.Sprites[i].ID))
-                { 
+                {
                     continue;
                 }
 

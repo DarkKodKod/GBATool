@@ -2,12 +2,10 @@
 using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
-using GBATool.VOs;
 using Nett;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GBATool.Models
 {
@@ -82,6 +80,21 @@ namespace GBATool.Models
             }
 
             return bitmap;
+        }
+
+        public bool RemoveSprite(string spriteID)
+        {
+            for (int i = 0; i < MaxSpriteSize; i++)
+            {
+                if (Sprites[i].ID == spriteID)
+                {
+                    Sprites[i].ID = string.Empty;
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size)
