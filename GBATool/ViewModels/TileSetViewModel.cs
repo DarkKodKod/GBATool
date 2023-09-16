@@ -27,6 +27,11 @@ namespace GBATool.ViewModels
         private List<SpriteVO> _spriteModels = new();
         private SpriteVO _selectedSprite = new();
         private Visibility _gridVisibility = Visibility.Hidden;
+        private Visibility _spriteRectVisibility = Visibility.Hidden;
+        private double _spriteRectLeft;
+        private double _spriteRectWidth;
+        private double _spriteRectHeight;
+        private double _spriteRectTop;
 
         #region Commands
         public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
@@ -91,6 +96,61 @@ namespace GBATool.ViewModels
                 OnPropertyChanged("ImagePath");
 
                 UpdateImage();
+            }
+        }
+
+        public Visibility SpriteRectVisibility
+        {
+            get { return _spriteRectVisibility; }
+            set
+            {
+                _spriteRectVisibility = value;
+
+                OnPropertyChanged("SpriteRectVisibility");
+            }
+        }
+
+        public double SpriteRectLeft
+        {
+            get { return _spriteRectLeft; }
+            set
+            {
+                _spriteRectLeft = value;
+
+                OnPropertyChanged("SpriteRectLeft");
+            }
+        }
+
+        public double SpriteRectWidth
+        {
+            get { return _spriteRectWidth; }
+            set
+            {
+                _spriteRectWidth = value;
+
+                OnPropertyChanged("SpriteRectWidth");
+            }
+        }
+
+        public double SpriteRectHeight
+        {
+            get { return _spriteRectHeight; }
+            set
+            {
+                _spriteRectHeight = value;
+
+                OnPropertyChanged("SpriteRectHeight");
+            }
+        }
+
+        public double SpriteRectTop
+        {
+            get { return _spriteRectTop; }
+            set
+            {
+                _spriteRectTop = value;
+
+                OnPropertyChanged("SpriteRectTop");
             }
         }
 
@@ -289,6 +349,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
             SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
             SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
+            SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
             #endregion
 
             if (!string.IsNullOrEmpty(model.ImagePath))
@@ -309,12 +370,43 @@ namespace GBATool.ViewModels
             LoadSprites();
         }
 
+        private void OnSelectSprite(SpriteVO sprite)
+        {
+            TileSetModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            foreach (SpriteModel item in model.Sprites)
+            {
+                if (item.ID == sprite.SpriteID)
+                {
+                    SpriteRectVisibility = Visibility.Visible;
+
+                    int width = 0;
+                    int height = 0;
+                    ConvertToWidthHeight(item.Shape, item.Size, ref width, ref height);
+
+                    SpriteRectLeft = item.PosX;
+                    SpriteRectWidth = width;
+                    SpriteRectHeight = height;
+                    SpriteRectTop = item.PosY;
+
+                    return;
+                }
+            }
+        }
+
         private void OnDeletingSprite(SpriteVO sprite)
         {
-            foreach (var item in SpriteModels)
+            foreach (SpriteVO item in SpriteModels)
             {
                 if (item.SpriteID == sprite.SpriteID)
                 {
+                    SpriteRectVisibility = Visibility.Hidden;
+
                     SpriteModels.Remove(item);
 
                     SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
@@ -425,6 +517,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
             SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
             SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
+            SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
             #endregion
         }
 

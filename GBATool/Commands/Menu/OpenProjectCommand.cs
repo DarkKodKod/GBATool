@@ -16,31 +16,31 @@ namespace GBATool.Commands
     public class OpenProjectCommand : Command
     {
         private const string _projectFileNameKey = "projectFileName";
-        private const string _folderBanksKey = "folderBanks";
-        private const string _folderCharactersKey = "folderCharacters";
-        private const string _folderMapsKey = "folderMaps";
+        //private const string _folderBanksKey = "folderBanks";
+        //private const string _folderCharactersKey = "folderCharacters";
+        //private const string _folderMapsKey = "folderMaps";
         private const string _folderTileSetsKey = "folderTileSets";
-        private const string _folderPalettesKey = "folderPalettes";
-        private const string _folderWorldsKey = "folderWorlds";
-        private const string _folderEntitiesKey = "folderEntities";
+        //private const string _folderPalettesKey = "folderPalettes";
+        //private const string _folderWorldsKey = "folderWorlds";
+        //private const string _folderEntitiesKey = "folderEntities";
 
-        private readonly string _folderBanks;
-        private readonly string _folderCharacters;
-        private readonly string _folderMaps;
+        //private readonly string _folderBanks;
+        //private readonly string _folderCharacters;
+        //private readonly string _folderMaps;
         private readonly string _folderTileSets;
-        private readonly string _folderPalettes;
-        private readonly string _folderWorlds;
-        private readonly string _folderEntities;
+        //private readonly string _folderPalettes;
+        //private readonly string _folderWorlds;
+        //private readonly string _folderEntities;
 
         public OpenProjectCommand()
         {
-            _folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
-            _folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
-            _folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
+            //_folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
+            //_folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
+            //_folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
             _folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
-            _folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
-            _folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
-            _folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
+            //_folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
+            //_folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
+            //_folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
         }
 
         public override bool CanExecute(object parameter)
@@ -148,13 +148,13 @@ namespace GBATool.Commands
             foreach (DirectoryInfo directory in directories)
             {
                 // Discard any unknown folder in the root of the project
-                if (directory.Name != _folderBanks &&
-                    directory.Name != _folderCharacters &&
-                    directory.Name != _folderMaps &&
+                if (//directory.Name != _folderBanks &&
+                    //directory.Name != _folderCharacters &&
+                    //directory.Name != _folderMaps &&
                     directory.Name != _folderTileSets &&
-                    directory.Name != _folderPalettes &&
-                    directory.Name != _folderWorlds &&
-                    directory.Name != _folderEntities &&
+                    //directory.Name != _folderPalettes &&
+                    //directory.Name != _folderWorlds &&
+                    //directory.Name != _folderEntities &&
                     parent == null)
                 {
                     continue;

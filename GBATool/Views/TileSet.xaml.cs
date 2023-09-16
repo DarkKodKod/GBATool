@@ -32,7 +32,6 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
             SignalManager.Get<UpdateSpriteListSignal>().Listener += OnUpdateSpriteList;
-            SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
             #endregion
 
             OnSpriteSelectCursor();
@@ -80,13 +79,7 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
             SignalManager.Get<UpdateSpriteListSignal>().Listener -= OnUpdateSpriteList;
-            SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
             #endregion
-        }
-
-        private void OnSelectSprite(SpriteVO sprite)
-        {
-            // TODO:
         }
 
         private void OnUpdateSpriteList()

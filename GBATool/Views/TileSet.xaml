@@ -162,7 +162,7 @@
                                          Viewport="0,0,1,1" ViewportUnits="Absolute" 
                                          Viewbox="0,0,1,1" ViewboxUnits="Absolute">
                                 <VisualBrush.Visual>
-                                    <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100" Opacity="0.5" />
+                                    <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100" Opacity="0.4" />
                                 </VisualBrush.Visual>
                             </VisualBrush>
                         </Border.Background>
@@ -172,6 +172,13 @@
                             </i:Interaction.Behaviors>
                         </Canvas>
                     </Border>
+                    <Rectangle Width="{Binding SpriteRectWidth}"
+                               Height="{Binding SpriteRectHeight}" 
+                               Stroke="Magenta" 
+                               StrokeThickness="0.2"
+                               Canvas.Top="{Binding SpriteRectTop}"
+                               Canvas.Left="{Binding SpriteRectLeft}"
+                               Visibility="{Binding SpriteRectVisibility}"/>
                 </Canvas>
             </ScrollViewer>
             <Label Content="{Binding ImageScale}" Grid.Row="2" 
