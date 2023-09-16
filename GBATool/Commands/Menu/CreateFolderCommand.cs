@@ -44,7 +44,7 @@ namespace GBATool.Commands
 
             string name = ProjectItemFileSystem.GetValidFolderName(path, _newFolderName);
 
-            ProjectItem newFolder = new ProjectItem()
+            ProjectItem newFolder = new()
             {
                 DisplayName = name,
                 IsFolder = true,

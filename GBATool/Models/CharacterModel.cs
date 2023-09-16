@@ -20,5 +20,10 @@ namespace GBATool.Models
                 return _fileExtension;
             }
         }
+
+        public override void CopyModel(AFileModel? model)
+        {
+            //
+        }
     }
 }

@@ -16,6 +16,34 @@ namespace GBATool.Models
         public SpriteSize Size { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
+
+        public override readonly bool Equals(object? obj)
+        {
+            if (obj == null || obj is not SpriteModel)
+            {
+                return false;
+            }
+
+            return PosX.Equals(((SpriteModel)obj).PosX) 
+                && PosY.Equals(((SpriteModel)obj).PosY) 
+                && Shape.Equals(((SpriteModel)obj).Shape) 
+                && Size.Equals(((SpriteModel)obj).Size);
+        }
+
+        public override readonly int GetHashCode()
+        {
+            return System.HashCode.Combine(PosX, PosY, Shape, Size);
+        }
+
+        public static bool operator ==(SpriteModel left, SpriteModel right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(SpriteModel left, SpriteModel right)
+        {
+            return !(left == right);
+        }
     }
 
     public class TileSetModel : AFileModel
@@ -41,13 +69,26 @@ namespace GBATool.Models
         public string ImagePath { get; set; } = string.Empty;
         public int ImageWidth { get; set; } = 0;
         public int ImageHeight { get; set; } = 0;
+        public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
 
         private static readonly Dictionary<string, BitmapImage> BitmapCache = new();
-        public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
 
         public TileSetModel()
         {
             SignalManager.Get<ProjectItemLoadedSignal>().Listener += OnProjectItemLoaded;
+        }
+
+        public override void CopyModel(AFileModel? model)
+        {
+            if (model is not TileSetModel)
+            {
+                return;
+            }
+
+            ((TileSetModel)model).ImageHeight = ImageHeight;
+            ((TileSetModel)model).ImageWidth = ImageWidth;
+            ((TileSetModel)model).ImagePath = ImagePath;
+            ((TileSetModel)model).Sprites = Sprites;
         }
 
         private void OnProjectItemLoaded(string id)

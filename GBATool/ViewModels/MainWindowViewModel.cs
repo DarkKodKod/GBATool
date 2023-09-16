@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands;
+using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
@@ -167,6 +168,19 @@ namespace GBATool.ViewModels
             else
             {
                 newItem.Parent = item.Parent;
+
+                if (item.FileHandler != null)
+                {
+                    ProjectItemFileSystem.CreateFileElement(newItem, item.FileHandler.Path, newItem.DisplayName);
+
+                    if (newItem.FileHandler != null && newItem.FileHandler.FileModel != null)
+                    {
+                        item.FileHandler.FileModel?.CopyModel(newItem.FileHandler.FileModel);
+
+                        newItem.FileHandler.Save();
+                    }
+                }
+
                 item.Parent?.Items.Add(newItem);
             }
 
