@@ -45,8 +45,6 @@ namespace GBATool.Commands
             SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new DuplicateProjectItemHistoryAction(newItem));
 
             SignalManager.Get<PasteElementSignal>().Dispatch(ItemSelected, newItem);
-
-            ProjectItemFileSystem.CreateFileElement(newItem, ItemSelected.FileHandler.Path, name);
         }
     }
 }
