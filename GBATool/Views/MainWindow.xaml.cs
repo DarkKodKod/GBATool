@@ -3,7 +3,6 @@ using GBATool.Commands;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Signals;
-using GBATool.UserControls;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.Views;

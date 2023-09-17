@@ -1,7 +1,6 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Enums;
 using GBATool.Signals;
-using GBATool.UserControls;
 using GBATool.Utils;
 using System;
 using System.Windows;

@@ -1,4 +1,4 @@
-﻿namespace GBATool.UserControls
+﻿namespace GBATool.Utils
 {
     interface ICleanable
     {

@@ -1,6 +1,6 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Signals;
-using GBATool.UserControls;
+using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.VOs;
 using System.Windows.Controls;
