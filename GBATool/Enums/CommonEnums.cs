@@ -26,4 +26,10 @@
         Paint = 2,
         Erase = 3
     }
+
+    public enum SpritePattern
+    {
+        Format1D = 0,
+        Format2D = 1
+    }
 }

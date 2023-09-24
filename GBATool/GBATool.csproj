@@ -41,6 +41,7 @@
     <None Remove="Resources\entity.png" />
     <None Remove="Resources\erase.png" />
     <None Remove="Resources\help.png" />
+    <None Remove="Resources\left_arrow.png" />
     <None Remove="Resources\map.png" />
     <None Remove="Resources\new_element.png" />
     <None Remove="Resources\new_project.png" />
@@ -149,6 +150,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\help.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\left_arrow.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\map.png">

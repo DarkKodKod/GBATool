@@ -28,7 +28,7 @@ namespace GBATool.Commands
         {
             object[] values = (object[])parameter;
             Window window = (Window)values[0];
-            string projectName = (string)values[1];
+            _ = (string)values[1];
 
             ProjectPropertiesDialog dialog = new()
             {

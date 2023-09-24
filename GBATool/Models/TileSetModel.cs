@@ -24,9 +24,9 @@ namespace GBATool.Models
                 return false;
             }
 
-            return PosX.Equals(((SpriteModel)obj).PosX) 
-                && PosY.Equals(((SpriteModel)obj).PosY) 
-                && Shape.Equals(((SpriteModel)obj).Shape) 
+            return PosX.Equals(((SpriteModel)obj).PosX)
+                && PosY.Equals(((SpriteModel)obj).PosY)
+                && Shape.Equals(((SpriteModel)obj).Shape)
                 && Size.Equals(((SpriteModel)obj).Size);
         }
 

@@ -68,5 +68,13 @@ namespace GBATool.Signals
     public class SpriteSize8x8Signal : Signal { }
     public class DeletingSpriteSignal : Signal<SpriteVO> { }
     public class UpdateSpriteListSignal : Signal { }
+    public class ConfirmSpriteDeletionSignal : Signal<SpriteVO> { }
     public class SelectSpriteSignal : Signal<SpriteVO> { }
+    public class AddSpriteSignal : Signal<SpriteVO> { }
+
+    // Banks
+    public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
+    public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
+    public class CleanupTileSetLinksSignal : Signal { }
+    public class SelectTileSetSignal : Signal<string> { }
 }

@@ -6,7 +6,6 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,8 +23,6 @@ namespace GBATool.ViewModels
         private SpriteSize _size = SpriteSize.Size00;
         private string _imageScale = "100%";
         private int _originalWidth;
-        private List<SpriteVO> _spriteModels = new();
-        private SpriteVO _selectedSprite = new();
         private Visibility _gridVisibility = Visibility.Hidden;
         private Visibility _spriteRectVisibility = Visibility.Hidden;
         private double _spriteRectLeft;
@@ -49,7 +46,6 @@ namespace GBATool.ViewModels
         public DispatchSignalCommand<SpriteSize8x16Signal> SpriteSize8x16Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x32Signal> SpriteSize8x32Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
-        public DeleteSpriteCommand DeleteSpriteCommand { get; } = new();
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
         public SelectSpriteCommand SelectSpriteCommand { get; } = new();
         #endregion
@@ -72,17 +68,6 @@ namespace GBATool.ViewModels
                 _imgSource = value;
 
                 OnPropertyChanged("ImgSource");
-            }
-        }
-
-        public List<SpriteVO> SpriteModels
-        {
-            get => _spriteModels;
-            set
-            {
-                _spriteModels = value;
-
-                OnPropertyChanged("SpriteModels");
             }
         }
 
@@ -206,16 +191,6 @@ namespace GBATool.ViewModels
                 _size = value;
 
                 OnPropertyChanged("Size");
-            }
-        }
-
-        public SpriteVO SelectedSprite
-        {
-            get => _selectedSprite;
-            set
-            {
-                _selectedSprite = value;
-                OnPropertyChanged("SelectedSprite");
             }
         }
 
@@ -348,8 +323,8 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
             SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
-            SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
             SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
+            SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener += ConfirmSpriteDeletion;
             #endregion
 
             if (!string.IsNullOrEmpty(model.ImagePath))
@@ -399,23 +374,11 @@ namespace GBATool.ViewModels
             }
         }
 
-        private void OnDeletingSprite(SpriteVO sprite)
+        private void ConfirmSpriteDeletion(SpriteVO sprite)
         {
-            foreach (SpriteVO item in SpriteModels)
-            {
-                if (item.SpriteID == sprite.SpriteID)
-                {
-                    SpriteRectVisibility = Visibility.Hidden;
+            SpriteRectVisibility = Visibility.Hidden;
 
-                    SpriteModels.Remove(item);
-
-                    SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
-
-                    DeleteSprite(sprite);
-
-                    return;
-                }
-            }
+            DeleteSprite(sprite);
         }
 
         private void OnMouseImageSelected(System.Windows.Controls.Image image, Point point)
@@ -516,8 +479,8 @@ namespace GBATool.ViewModels
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
             SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
-            SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
             SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
+            SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener -= ConfirmSpriteDeletion;
             #endregion
         }
 
@@ -550,7 +513,7 @@ namespace GBATool.ViewModels
             }
         }
 
-        private SpriteVO AddSpriteToTheList(int width, int height, string id, BitmapSource bitmap)
+        private static SpriteVO AddSpriteToTheList(int width, int height, string id, BitmapSource bitmap)
         {
             // Scaling here otherwise is too small for display
             width *= 4;
@@ -564,7 +527,7 @@ namespace GBATool.ViewModels
                 Height = height
             };
 
-            SpriteModels.Add(sprite);
+            SignalManager.Get<AddSpriteSignal>().Dispatch(sprite);
 
             return sprite;
         }

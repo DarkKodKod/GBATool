@@ -16,7 +16,7 @@ namespace GBATool.Commands
     public class OpenProjectCommand : Command
     {
         private const string _projectFileNameKey = "projectFileName";
-        //private const string _folderBanksKey = "folderBanks";
+        private const string _folderBanksKey = "folderBanks";
         //private const string _folderCharactersKey = "folderCharacters";
         //private const string _folderMapsKey = "folderMaps";
         private const string _folderTileSetsKey = "folderTileSets";
@@ -24,7 +24,7 @@ namespace GBATool.Commands
         //private const string _folderWorldsKey = "folderWorlds";
         //private const string _folderEntitiesKey = "folderEntities";
 
-        //private readonly string _folderBanks;
+        private readonly string _folderBanks;
         //private readonly string _folderCharacters;
         //private readonly string _folderMaps;
         private readonly string _folderTileSets;
@@ -34,7 +34,7 @@ namespace GBATool.Commands
 
         public OpenProjectCommand()
         {
-            //_folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
+            _folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
             //_folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
             //_folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
             _folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
@@ -148,7 +148,7 @@ namespace GBATool.Commands
             foreach (DirectoryInfo directory in directories)
             {
                 // Discard any unknown folder in the root of the project
-                if (//directory.Name != _folderBanks &&
+                if (directory.Name != _folderBanks &&
                     //directory.Name != _folderCharacters &&
                     //directory.Name != _folderMaps &&
                     directory.Name != _folderTileSets &&

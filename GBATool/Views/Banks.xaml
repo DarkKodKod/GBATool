@@ -3,10 +3,153 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:GBATool.Views"
              mc:Ignorable="d" 
+             xmlns:ex="clr-namespace:GBATool.Utils.Extensions"
+             xmlns:enum="clr-namespace:GBATool.Enums"
+             xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
+             xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+             xmlns:vm="clr-namespace:GBATool.ViewModels"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+    <UserControl.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+        <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:BanksViewModel />
+    </UserControl.DataContext>
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Column="1" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedSpritePatternFormat}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Button Width="100" Content="Remove Sprite">
+                    </Button>
+                </StackPanel>
+                <Border Grid.Row="4" Width="510" Height="510"
+                        VerticalAlignment="Top">
+                    <Canvas Width="256" Height="256" 
+		                    Background="DarkGray"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <Canvas.RenderTransform>
+                            <ScaleTransform ScaleX="2" ScaleY="2"/>
+                        </Canvas.RenderTransform>
+                        <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                               Source="{Binding PTImage}"
+	                           Width="256"
+	                           Height="256"
+                               Name="imgBank"
+	                           Stretch="UniformToFill">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
+                            </i:Interaction.Behaviors>
+                        </Image>
+                        <Border>
+                            <Border.Background>
+                                <VisualBrush TileMode="Tile"
+					                         Viewport="0,0,8,8" ViewportUnits="Absolute" 
+					                         Viewbox="0,0,8,8" ViewboxUnits="Absolute">
+                                    <VisualBrush.Visual>
+                                        <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Border.Background>
+                            <Canvas Width="256" Height="256" Background="Transparent">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
+                                </i:Interaction.Behaviors>
+                            </Canvas>
+                        </Border>
+                    </Canvas>
+                </Border>
+            </Grid>
+            <StackPanel Grid.Column="2" Grid.Row="1"
+                        VerticalAlignment="Center">
+                <Button Height="32" Width="32"
+                        Command="{Binding MoveSpriteToBankCommand}">
+                    <Image Width="32" Height="32" 
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Source="/resources/left_arrow.png">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <fx:GrayscaleEffect />
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Opacity" Value="0.5"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+                </Button>
+            </StackPanel>
+            <Grid Grid.Row="1" Grid.Column="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Row="0">
+                    <ComboBox Width="200"
+                              ItemsSource="{Binding TileSets}" 
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Index"
+                              SelectedValue="{Binding Path=SelectedTileSet}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+                        </i:Interaction.Behaviors>
+                    </ComboBox>
+                </StackPanel>
+                <ScrollViewer Grid.Row="2"
+                              Background="DarkGray"
+                              VerticalScrollBarVisibility="Auto" 
+                              HorizontalScrollBarVisibility="Auto">
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+        <ScrollViewer Grid.Row="1" Background="White">
+            <WrapPanel Margin="5" Name="wpLinks">
+                <WrapPanel.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="9,0"/>
+                        <Setter Property="Padding" Value="2,2"/>
+                    </Style>
+                </WrapPanel.Resources>
+            </WrapPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

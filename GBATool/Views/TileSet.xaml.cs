@@ -16,6 +16,8 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
+            slSprites.OnActivate();
+
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
@@ -31,7 +33,6 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener += OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
-            SignalManager.Get<UpdateSpriteListSignal>().Listener += OnUpdateSpriteList;
             #endregion
 
             OnSpriteSelectCursor();
@@ -78,21 +79,9 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener -= OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
-            SignalManager.Get<UpdateSpriteListSignal>().Listener -= OnUpdateSpriteList;
             #endregion
-        }
 
-        private void OnUpdateSpriteList()
-        {
-            if (DataContext is TileSetViewModel viewModel)
-            {
-                if (!viewModel.IsActive)
-                {
-                    return;
-                }
-
-                lvSprites.Items.Refresh();
-            }
+            slSprites.OnDeactivate();
         }
 
         private void OnSpriteSelectCursor()
