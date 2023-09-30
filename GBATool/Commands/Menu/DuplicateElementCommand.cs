@@ -34,13 +34,19 @@ namespace GBATool.Commands
 
             ProjectItem newItem = new(ItemSelected.GetContent());
 
-            string name = ProjectItemFileSystem.GetValidFileName(
-                ItemSelected.FileHandler.Path,
-                newItem.DisplayName,
-                Util.GetExtensionByType(ItemSelected.Type));
+            string extension = Util.GetExtensionByType(ItemSelected.Type);
+            string newItemPath = ItemSelected.FileHandler.Path;
+            string name = ProjectItemFileSystem.GetValidFileName(newItemPath, newItem.DisplayName, extension);
+
+            if (newItem.FileHandler != null)
+            {
+                newItem.FileHandler.Name = name;
+                newItem.FileHandler.Path = newItemPath;
+            }
 
             newItem.RenamedFromAction = true;
             newItem.DisplayName = name;
+            newItem.IsLoaded = true;
 
             SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new DuplicateProjectItemHistoryAction(newItem));
 

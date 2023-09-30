@@ -1,5 +1,4 @@
 ﻿using ArchitectureLibrary.Signals;
-using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
@@ -7,7 +6,6 @@ using GBATool.ViewModels;
 using Nett;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace GBATool.FileSystem
 {
@@ -34,6 +32,11 @@ namespace GBATool.FileSystem
                 string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + fileHandler.FileModel.FileExtension);
                 string itemNewPath = Path.Combine(fileHandler.Path, item.DisplayName + fileHandler.FileModel.FileExtension);
 
+                if (itemPath == itemNewPath)
+                {
+                    return;
+                }
+
                 if (File.Exists(itemPath))
                 {
                     File.Move(itemPath, itemNewPath);
@@ -47,6 +50,11 @@ namespace GBATool.FileSystem
 
                 if (Directory.Exists(itemPath))
                 {
+                    if (itemPath == itemNewPath)
+                    {
+                        return;
+                    }
+
                     Directory.Move(itemPath, itemNewPath);
 
                     UpdatePath(item, itemNewPath);
@@ -54,54 +62,6 @@ namespace GBATool.FileSystem
             }
 
             fileHandler.Name = item.DisplayName;
-        }
-
-        private static async Task<AFileModel?> ReadFileAndLoadModelAsync(string filePath, ProjectItemType type)
-        {
-            byte[] content = await ReadTextAsync(filePath).ConfigureAwait(false);
-
-            AFileModel? model = null;
-
-            switch (type)
-            {
-                case ProjectItemType.Bank:
-                    model = Toml.ReadStream<BankModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Character:
-                    model = Toml.ReadStream<CharacterModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Map:
-                    model = Toml.ReadStream<MapModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.TileSet:
-                    model = Toml.ReadStream<TileSetModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Palette:
-                    model = Toml.ReadStream<PaletteModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.World:
-                    model = Toml.ReadStream<WorldModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Entity:
-                    model = Toml.ReadStream<EntityModel>(new MemoryStream(content));
-                    break;
-            }
-
-            return model;
-        }
-
-        private static async Task<byte[]> ReadTextAsync(string filePath)
-        {
-            byte[] result;
-
-            using (FileStream sourceStream = File.Open(filePath, FileMode.Open))
-            {
-                result = new byte[sourceStream.Length];
-
-                _ = await sourceStream.ReadAsync(result, 0, (int)sourceStream.Length).ConfigureAwait(false);
-            }
-
-            return result;
         }
 
         private static async void OnRegisterFileHandler(ProjectItem item, string? path)
@@ -129,7 +89,7 @@ namespace GBATool.FileSystem
                 return;
             }
 
-            fileHandler.FileModel = await ReadFileAndLoadModelAsync(itemPath, item.Type).ConfigureAwait(false);
+            fileHandler.FileModel = await FileUtils.ReadFileAndLoadModelAsync(itemPath, item.Type).ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(fileHandler.FileModel?.GUID))
             {

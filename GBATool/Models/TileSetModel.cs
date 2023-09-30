@@ -3,7 +3,7 @@ using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
 using Nett;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -71,24 +71,11 @@ namespace GBATool.Models
         public int ImageHeight { get; set; } = 0;
         public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
 
-        private static readonly Dictionary<string, BitmapImage> BitmapCache = new();
+        private static readonly ConcurrentDictionary<string, BitmapImage> BitmapCache = new();
 
         public TileSetModel()
         {
             SignalManager.Get<ProjectItemLoadedSignal>().Listener += OnProjectItemLoaded;
-        }
-
-        public override void CopyModel(AFileModel? model)
-        {
-            if (model is not TileSetModel)
-            {
-                return;
-            }
-
-            ((TileSetModel)model).ImageHeight = ImageHeight;
-            ((TileSetModel)model).ImageWidth = ImageWidth;
-            ((TileSetModel)model).ImagePath = ImagePath;
-            ((TileSetModel)model).Sprites = Sprites;
         }
 
         private void OnProjectItemLoaded(string id)
@@ -102,7 +89,7 @@ namespace GBATool.Models
 
             if (bitmap != null && !BitmapCache.ContainsKey(GUID))
             {
-                BitmapCache.Add(GUID, bitmap);
+                BitmapCache.TryAdd(GUID, bitmap);
             }
         }
 

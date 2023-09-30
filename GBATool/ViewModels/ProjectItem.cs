@@ -6,12 +6,14 @@ using GBATool.Enums;
 using GBATool.HistoryActions;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.Utils;
 using GBATool.Utils.CustomTypeConverters;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -32,7 +34,9 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            ProjectItem? item = ParseAndCreateObject(content);
+            Task<ProjectItem?> task = Task.Run(async () => await ParseAndCreateObject(content).ConfigureAwait(false));
+
+            ProjectItem? item = task.Result;
 
             if (item != null)
             {
@@ -60,6 +64,10 @@ namespace GBATool.ViewModels
             sb.Append(';');
             sb.Append("IsFolder:" + (IsFolder ? "true" : "false"));
             sb.Append(';');
+            sb.Append("ModelFilePath:");
+            sb.Append(IsFolder ? "null" : FileHandler?.Path + Path.DirectorySeparatorChar + FileHandler?.Name + FileHandler?.FileModel?.FileExtension);
+            sb.Append(';');
+
             sb.Append("Items:");
 
             if (Items.Count == 0)
@@ -169,7 +177,7 @@ namespace GBATool.ViewModels
             }
         }
 
-        private ProjectItem? ParseAndCreateObject(string content)
+        private async Task<ProjectItem?> ParseAndCreateObject(string content)
         {
             ProjectItem item = new()
             {
@@ -206,6 +214,25 @@ namespace GBATool.ViewModels
                         break;
                     case "IsFolder":
                         item.IsFolder = value == "true";
+                        break;
+                    case "ModelFilePath":
+                        {
+                            if (value != "null")
+                            {
+                                string? name = Path.GetFileNameWithoutExtension(value);
+                                string? path = Path.GetDirectoryName(value);
+
+                                if (path != null && name != null)
+                                {
+                                    item.FileHandler = new()
+                                    {
+                                        Name = name,
+                                        Path = path,
+                                        FileModel = await FileUtils.ReadFileAndLoadModelAsync(value, item.Type).ConfigureAwait(false)
+                                    };
+                                }
+                            }
+                        }
                         break;
                     case "Items":
                         Items = new ObservableCollection<ProjectItem>();
@@ -251,7 +278,7 @@ namespace GBATool.ViewModels
                                         // last braket?
                                         if (countOpenBrakets == 0)
                                         {
-                                            ProjectItem? itm = ParseAndCreateObject(sb.ToString());
+                                            ProjectItem? itm = await ParseAndCreateObject(sb.ToString());
 
                                             if (itm != null)
                                             {
@@ -321,6 +348,7 @@ namespace GBATool.ViewModels
             IsFolder = item.IsFolder;
             Parent = item.Parent;
             Items = new ObservableCollection<ProjectItem>(item.Items);
+            FileHandler = item.FileHandler;
         }
 
         private void OnUnSelectItemChanged() => SignalManager.Get<ProjectItemUnselectedSignal>().Dispatch(this);

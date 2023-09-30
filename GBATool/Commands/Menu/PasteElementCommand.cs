@@ -59,6 +59,12 @@ namespace GBATool.Commands
                     name = ProjectItemFileSystem.GetValidFileName(newItemPath, newItem.DisplayName, extension);
                 }
 
+                if (newItem.FileHandler != null)
+                {
+                    newItem.FileHandler.Name = name;
+                    newItem.FileHandler.Path = newItemPath;
+                }
+
                 newItem.RenamedFromAction = true;
                 newItem.DisplayName = name;
                 newItem.IsLoaded = true;

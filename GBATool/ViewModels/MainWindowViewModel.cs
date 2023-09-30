@@ -158,30 +158,26 @@ namespace GBATool.ViewModels
             return copy;
         }
 
-        private void OnPasteElement(ProjectItem item, ProjectItem newItem)
+        private void OnPasteElement(ProjectItem selectedItem, ProjectItem newItem)
         {
-            if (item.IsFolder)
+            if (selectedItem.IsFolder)
             {
-                newItem.Parent = item;
-                item.Items.Add(newItem);
+                newItem.Parent = selectedItem;
+                selectedItem.Items.Add(newItem);
             }
             else
             {
-                newItem.Parent = item.Parent;
+                newItem.Parent = selectedItem.Parent;
+                selectedItem.Parent?.Items.Add(newItem);
+            }
 
-                if (item.FileHandler != null)
-                {
-                    ProjectItemFileSystem.CreateFileElement(newItem, item.FileHandler.Path, newItem.DisplayName);
+            if (newItem.FileHandler != null && newItem.FileHandler.FileModel != null)
+            {
+                newItem.FileHandler.FileModel.GUID = Guid.NewGuid().ToString();
 
-                    if (newItem.FileHandler != null && newItem.FileHandler.FileModel != null)
-                    {
-                        item.FileHandler.FileModel?.CopyModel(newItem.FileHandler.FileModel);
+                ProjectFiles.Handlers.Add(newItem.FileHandler.FileModel.GUID, newItem.FileHandler);
 
-                        newItem.FileHandler.Save();
-                    }
-                }
-
-                item.Parent?.Items.Add(newItem);
+                newItem.FileHandler.Save();
             }
 
             OnPropertyChanged("ProjectItems");

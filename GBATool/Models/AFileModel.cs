@@ -17,8 +17,6 @@ namespace GBATool.Models
             GUID = Guid.NewGuid().ToString();
         }
 
-        public abstract void CopyModel(AFileModel? model);
-
         public void Save(string path, string name)
         {
             try
