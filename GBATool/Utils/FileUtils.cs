@@ -3,6 +3,7 @@ using GBATool.Models;
 using Nett;
 using System.IO;
 using System.Threading.Tasks;
+using System;
 
 namespace GBATool.Utils
 {
@@ -16,7 +17,7 @@ namespace GBATool.Utils
             {
                 result = new byte[sourceStream.Length];
 
-                _ = await sourceStream.ReadAsync(result, 0, (int)sourceStream.Length).ConfigureAwait(false);
+                _ = await sourceStream.ReadAsync(result.AsMemory(0, (int)sourceStream.Length)).ConfigureAwait(false);
             }
 
             return result;

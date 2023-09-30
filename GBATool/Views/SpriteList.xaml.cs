@@ -22,6 +22,7 @@ namespace GBATool.Views
 
         #region Commands
         public DeleteSpriteCommand DeleteSpriteCommand { get; } = new();
+        public SelectSpriteCommand SelectSpriteCommand { get; } = new();
         #endregion
 
         #region get/set

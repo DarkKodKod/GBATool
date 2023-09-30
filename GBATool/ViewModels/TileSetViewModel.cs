@@ -47,7 +47,6 @@ namespace GBATool.ViewModels
         public DispatchSignalCommand<SpriteSize8x32Signal> SpriteSize8x32Command { get; } = new();
         public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
-        public SelectSpriteCommand SelectSpriteCommand { get; } = new();
         #endregion
 
         public TileSetModel? GetModel()
@@ -749,7 +748,7 @@ namespace GBATool.ViewModels
             {
                 switch (height)
                 {
-                    case 8: shape = SpriteShape.Shape10; size = SpriteSize.Size00; break;
+                    case 8: shape = SpriteShape.Shape01; size = SpriteSize.Size00; break;
                     case 16: shape = SpriteShape.Shape00; size = SpriteSize.Size01; break;
                     case 32: shape = SpriteShape.Shape10; size = SpriteSize.Size10; break;
                 }

@@ -278,7 +278,7 @@ namespace GBATool.ViewModels
                                         // last braket?
                                         if (countOpenBrakets == 0)
                                         {
-                                            ProjectItem? itm = await ParseAndCreateObject(sb.ToString());
+                                            ProjectItem? itm = await ParseAndCreateObject(sb.ToString()).ConfigureAwait(false);
 
                                             if (itm != null)
                                             {
