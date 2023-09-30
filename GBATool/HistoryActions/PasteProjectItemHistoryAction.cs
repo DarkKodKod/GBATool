@@ -21,11 +21,6 @@ namespace GBATool.HistoryActions
             {
                 SignalManager.Get<PasteElementSignal>().Dispatch(_item.Parent, _item);
             }
-
-            if (_item.FileHandler != null)
-            {
-                ProjectItemFileSystem.CreateElement(_item, _item.FileHandler.Path, _item.DisplayName);
-            }
         }
 
         public void Undo()
