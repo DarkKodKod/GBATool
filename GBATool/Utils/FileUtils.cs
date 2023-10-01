@@ -1,9 +1,9 @@
 ﻿using GBATool.Enums;
 using GBATool.Models;
 using Nett;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using System;
 
 namespace GBATool.Utils
 {

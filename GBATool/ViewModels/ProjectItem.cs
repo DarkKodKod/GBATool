@@ -34,9 +34,14 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            Task<ProjectItem?> task = Task.Run(async () => await ParseAndCreateObject(content).ConfigureAwait(false));
+            Task.Run(() => ParseContent(content));
+        }
 
-            ProjectItem? item = task.Result;
+        private async Task ParseContent(string content)
+        {
+            Task<ProjectItem?> task = ParseAndCreateObject(content);
+
+            ProjectItem? item = await task.ConfigureAwait(false);
 
             if (item != null)
             {
