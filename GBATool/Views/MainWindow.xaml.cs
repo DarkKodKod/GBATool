@@ -244,15 +244,13 @@ namespace GBATool
                 {
                     if (pi.IsRoot || pi.IsFolder)
                     {
-                        TreeViewItem? tvi = (TreeViewItem?)tvProjectItems.ItemContainerGenerator.ContainerFromItem(pi);
-                        tvi ??= (TreeViewItem?)ic.ItemContainerGenerator.ContainerFromItem(pi);
+                        TreeViewItem? tvi = (TreeViewItem?)ic.ItemContainerGenerator.ContainerFromItem(pi);
 
                         if (tvi != null)
                         {
                             if (tvi.IsExpanded == false)
                             {
-                                tvi.IsExpanded = true;
-                                tvi.BringIntoView();
+                                tvi.ExpandSubtree();
                             }
 
                             projectItem = FindTviFromObjectRecursive(tvi);
