@@ -69,6 +69,7 @@ namespace GBATool.Views
             SignalManager.Get<AddSpriteSignal>().Listener += OnAddSprite;
             SignalManager.Get<UpdateSpriteListSignal>().Listener += OnUpdateSpriteList;
             SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
+            SignalManager.Get<CleanUpSpriteListSignal>().Listener += OnCleanUpSpriteList;
         }
 
         public void OnDeactivate()
@@ -76,6 +77,7 @@ namespace GBATool.Views
             SignalManager.Get<AddSpriteSignal>().Listener -= OnAddSprite;
             SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
             SignalManager.Get<UpdateSpriteListSignal>().Listener -= OnUpdateSpriteList;
+            SignalManager.Get<CleanUpSpriteListSignal>().Listener -= OnCleanUpSpriteList;
         }
 
         private void OnDeletingSprite(SpriteVO sprite)
@@ -108,6 +110,11 @@ namespace GBATool.Views
         protected virtual void OnPropertyChanged(string propname)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
+        }
+
+        private void OnCleanUpSpriteList()
+        {
+            SpriteModels.Clear();
         }
     }
 }

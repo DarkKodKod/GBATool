@@ -8,6 +8,7 @@ namespace GBATool.VOs
         private string? _name;
 
         public int Index { get; set; }
+        public string? Path { get; set; }
         public string? Name
         {
             get { return _name; }

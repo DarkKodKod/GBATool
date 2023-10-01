@@ -175,7 +175,7 @@ namespace GBATool.ViewModels
             {
                 newItem.FileHandler.FileModel.GUID = Guid.NewGuid().ToString();
 
-                ProjectFiles.Handlers.Add(newItem.FileHandler.FileModel.GUID, newItem.FileHandler);
+                _ = ProjectFiles.Handlers.TryAdd(newItem.FileHandler.FileModel.GUID, newItem.FileHandler);
 
                 newItem.FileHandler.Save();
             }

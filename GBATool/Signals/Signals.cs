@@ -39,6 +39,7 @@ namespace GBATool.Signals
     public class CreateProjectSuccessSignal : Signal<string> { }
     public class InitializeAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
     public class DetachAdornersSignal : Signal { }
+    public class GotoProjectItemSignal : Signal<string> { }
 
     // File system
     public class RegisterFileHandlerSignal : Signal<ProjectItem, string?> { }
@@ -66,11 +67,14 @@ namespace GBATool.Signals
     public class SpriteSize8x16Signal : Signal { }
     public class SpriteSize8x32Signal : Signal { }
     public class SpriteSize8x8Signal : Signal { }
-    public class DeletingSpriteSignal : Signal<SpriteVO> { }
-    public class UpdateSpriteListSignal : Signal { }
     public class ConfirmSpriteDeletionSignal : Signal<SpriteVO> { }
     public class SelectSpriteSignal : Signal<SpriteVO> { }
+
+    // SpriteList
+    public class UpdateSpriteListSignal : Signal { }
+    public class CleanUpSpriteListSignal : Signal { }
     public class AddSpriteSignal : Signal<SpriteVO> { }
+    public class DeletingSpriteSignal : Signal<SpriteVO> { }
 
     // Banks
     public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }

@@ -16,6 +16,8 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
+            slSprites.OnActivate();
+
             SignalManager.Get<AddNewTileSetLinkSignal>().Listener += OnAddNewTileSetLink;
             SignalManager.Get<CleanupTileSetLinksSignal>().Listener += OnCleanupTileSetLinks;
         }
@@ -55,6 +57,8 @@ namespace GBATool.Views
         {
             SignalManager.Get<AddNewTileSetLinkSignal>().Listener -= OnAddNewTileSetLink;
             SignalManager.Get<CleanupTileSetLinksSignal>().Listener -= OnCleanupTileSetLinks;
+
+            slSprites.OnDeactivate();
         }
     }
 }

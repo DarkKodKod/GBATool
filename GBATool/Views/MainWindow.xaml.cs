@@ -50,7 +50,7 @@ namespace GBATool
 
         private ProjectItemType _currentViewType = ProjectItemType.None;
 
-        private readonly LoadingDialog _loadingDialog = new LoadingDialog();
+        private readonly LoadingDialog _loadingDialog = new();
         private readonly FieldInfo? _menuDropAlignmentField;
 
         public MainWindow()
@@ -72,6 +72,7 @@ namespace GBATool
             SignalManager.Get<CloseProjectSuccessSignal>().Listener += OnCloseProjectSuccess;
             SignalManager.Get<ShowLoadingDialogSignal>().Listener += OnShowLoadingDialog;
             SignalManager.Get<FinishedLoadingProjectSignal>().Listener += OnFinishedLoadingProject;
+            SignalManager.Get<GotoProjectItemSignal>().Listener += OnGotoProjectItem;
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -233,6 +234,50 @@ namespace GBATool
             dpItemPanel.UpdateLayout();
         }
 
+        private void OnGotoProjectItem(string elementID)
+        {
+            ProjectItem? FindTviFromObjectRecursive(ItemsControl ic)
+            {
+                ProjectItem? projectItem = null;
+
+                foreach (ProjectItem pi in ic.Items)
+                {
+                    if (pi.IsRoot || pi.IsFolder)
+                    {
+                        TreeViewItem? tvi = (TreeViewItem?)tvProjectItems.ItemContainerGenerator.ContainerFromItem(pi);
+                        tvi ??= (TreeViewItem?)ic.ItemContainerGenerator.ContainerFromItem(pi);
+
+                        if (tvi != null)
+                        {
+                            if (tvi.IsExpanded == false)
+                            {
+                                tvi.IsExpanded = true;
+                                tvi.BringIntoView();
+                            }
+
+                            projectItem = FindTviFromObjectRecursive(tvi);
+                        }
+                    }
+                    else
+                    {
+                        projectItem = pi;
+                    }
+
+                    if (projectItem?.FileHandler?.FileModel?.GUID == elementID)
+                    {
+                        return projectItem;
+                    }
+                }
+
+                return null;
+            }
+
+            if (FindTviFromObjectRecursive(tvProjectItems) is ProjectItem projectItem)
+            {
+                projectItem.IsSelected = true;
+            }
+        }
+
         static TreeViewItem? VisualUpwardSearch(DependencyObject source)
         {
             while (source != null && source is not TreeViewItem)
@@ -280,7 +325,7 @@ namespace GBATool
 
         private void OnUpdateFolder(ProjectItem item)
         {
-            TreeViewItem treeItem = (TreeViewItem)(tvProjectItems.ItemContainerGenerator.ContainerFromItem(item));
+            TreeViewItem? treeItem = (TreeViewItem)(tvProjectItems.ItemContainerGenerator.ContainerFromItem(item));
 
             if (treeItem != null)
             {
@@ -297,7 +342,7 @@ namespace GBATool
 
         private void OnCreateNewElement(ProjectItem item)
         {
-            TreeViewItem parentItem = (TreeViewItem)(tvProjectItems.ItemContainerGenerator.ContainerFromItem(item.Parent));
+            TreeViewItem? parentItem = (TreeViewItem)(tvProjectItems.ItemContainerGenerator.ContainerFromItem(item.Parent));
 
             if (parentItem != null)
             {
@@ -336,13 +381,16 @@ namespace GBATool
 
                 tvProjectItems.UpdateLayout();
 
-                TreeViewItem treeViewItem = (TreeViewItem)generator.ContainerFromItem(dequeue);
+                TreeViewItem? treeViewItem = (TreeViewItem)generator.ContainerFromItem(dequeue);
 
-                bool areThereMoreElement = queue.Count > 0 || item.Items.Count > 0;
+                if (treeViewItem != null)
+                {
+                    bool areThereMoreElement = queue.Count > 0 || item.Items.Count > 0;
 
-                treeViewItem.IsExpanded = areThereMoreElement;
+                    treeViewItem.IsExpanded = areThereMoreElement;
 
-                generator = treeViewItem.ItemContainerGenerator;
+                    generator = treeViewItem.ItemContainerGenerator;
+                }
             }
         }
 

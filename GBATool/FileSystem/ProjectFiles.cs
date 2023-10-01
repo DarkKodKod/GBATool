@@ -1,12 +1,13 @@
 ﻿using GBATool.Models;
 using GBATool.VOs;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace GBATool.FileSystem
 {
     public static class ProjectFiles
     {
-        public static Dictionary<string, FileHandler> Handlers { get; private set; } = new();
+        public static ConcurrentDictionary<string, FileHandler> Handlers { get; private set; } = new();
         public static int ObjectsLoading { get; set; } = 0;
 
         public static List<FileModelVO> GetModels<T>() where T : AFileModel
@@ -23,6 +24,7 @@ namespace GBATool.FileSystem
                     {
                         Index = index++,
                         Name = pair.Value.Name,
+                        Path = pair.Value.Path,
                         Model = model
                     });
                 }
@@ -65,6 +67,7 @@ namespace GBATool.FileSystem
                     {
                         Index = 0,
                         Name = pair.Value.Name,
+                        Path = pair.Value.Path,
                         Model = pair.Value.FileModel
                     };
                 }

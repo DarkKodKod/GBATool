@@ -109,7 +109,7 @@ namespace GBATool.FileSystem
                 return;
             }
 
-            ProjectFiles.Handlers.Add(fileHandler.FileModel.GUID, fileHandler);
+            _ = ProjectFiles.Handlers.TryAdd(fileHandler.FileModel.GUID, fileHandler);
 
             SignalManager.Get<ProjectItemLoadedSignal>().Dispatch(fileHandler.FileModel.GUID);
 
@@ -206,7 +206,7 @@ namespace GBATool.FileSystem
 
                     item.FileHandler.FileModel = model;
 
-                    ProjectFiles.Handlers.Add(item.FileHandler.FileModel.GUID, item.FileHandler);
+                    _ = ProjectFiles.Handlers.TryAdd(item.FileHandler.FileModel.GUID, item.FileHandler);
                 }
             }
             else
@@ -310,7 +310,7 @@ namespace GBATool.FileSystem
                     File.Delete(itemPath);
                 }
 
-                _ = ProjectFiles.Handlers.Remove(fileHandler.FileModel.GUID);
+                _ = ProjectFiles.Handlers.TryRemove(fileHandler.FileModel.GUID, out _);
             }
             else
             {

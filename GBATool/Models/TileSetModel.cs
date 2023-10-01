@@ -89,7 +89,7 @@ namespace GBATool.Models
 
             if (bitmap != null && !BitmapCache.ContainsKey(GUID))
             {
-                BitmapCache.TryAdd(GUID, bitmap);
+                _ = BitmapCache.TryAdd(GUID, bitmap);
             }
         }
 
