@@ -81,4 +81,5 @@ namespace GBATool.Signals
     public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
     public class CleanupTileSetLinksSignal : Signal { }
     public class SelectTileSetSignal : Signal<string> { }
+    public class BankImageUpdatedSignal : Signal { }
 }

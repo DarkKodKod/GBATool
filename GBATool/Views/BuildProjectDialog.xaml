@@ -15,9 +15,6 @@
     <Window.DataContext>
         <vm:BuildProjectDialogViewModel />
     </Window.DataContext>
-    <Window.Resources>
-        <cv:ParametersConverter x:Key="parametersConverter"/>
-    </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding CloseDialogCommand}"/>

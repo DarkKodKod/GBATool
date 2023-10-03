@@ -12,7 +12,7 @@
              xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
              xmlns:cv="clr-namespace:GBATool.Utils.Converters"
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="450" d:DesignWidth="900">
+             d:DesignHeight="900" d:DesignWidth="1000">
     <UserControl.Resources>
         <cv:ParametersConverter x:Key="parametersConverter"/>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
@@ -49,7 +49,9 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
-                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedSpritePatternFormat}" />
+                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedSpritePatternFormat}" FontWeight="Bold" />
+                    <Label Margin="20,0,0,0">256 colors:</Label>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Width="100" Content="Remove Sprite">
@@ -97,6 +99,13 @@
                         VerticalAlignment="Center">
                 <Button Height="32" Width="32"
                         Command="{Binding MoveSpriteToBankCommand}">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource parametersConverter}">
+                            <Binding Path="Model" />
+                            <Binding Path="TileSetId"/>
+                            <Binding Path="SelectedSprite"/>
+                        </MultiBinding>
+                    </Button.CommandParameter>
                     <Image Width="32" Height="32" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"

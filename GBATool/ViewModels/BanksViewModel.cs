@@ -21,6 +21,10 @@ namespace GBATool.ViewModels
         private int _selectedTileSet;
         private FileModelVO[]? _tileSets;
         private ImageSource? _pTImage;
+        private bool _use256Colors = false;
+        private bool _doNotSave = false;
+        private BankModel? _model = null;
+        private SpriteModel? _selectedSprite = null;
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -63,6 +67,17 @@ namespace GBATool.ViewModels
             }
         }
 
+        public SpriteModel? SelectedSprite
+        {
+            get => _selectedSprite;
+            set
+            {
+                _selectedSprite = value;
+
+                OnPropertyChanged("SelectedSprite");
+            }
+        }
+
         public string SelectedSpritePatternFormat
         {
             get => _selectedSpritePatternFormat;
@@ -95,6 +110,33 @@ namespace GBATool.ViewModels
                 OnPropertyChanged("TileSets");
             }
         }
+
+        public bool Use256Colors
+        {
+            get => _use256Colors;
+            set
+            {
+                if (_use256Colors != value)
+                {
+                    _use256Colors = value;
+
+                    UpdateAndSaveUse256Colors();
+                }
+
+                OnPropertyChanged("Use256Colors");
+            }
+        }
+
+        public BankModel? Model
+        {
+            get => _model;
+            set
+            {
+                _model = value;
+
+                OnPropertyChanged("Model");
+            }
+        }
         #endregion
 
         public BanksViewModel()
@@ -109,14 +151,29 @@ namespace GBATool.ViewModels
             #region Signals
             SignalManager.Get<SelectTileSetSignal>().Listener += OnSelectTileSet;
             SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
+            SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
+            SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
             #endregion
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
             SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
 
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            _doNotSave = true;
+
+            Use256Colors = model.Use256Colors;
+
+            _doNotSave = false;
+
             LoadTileSetSprites();
-            LoadImage();
+            LoadImage(model);
         }
 
         public override void OnDeactivate()
@@ -126,6 +183,8 @@ namespace GBATool.ViewModels
             #region Signals
             SignalManager.Get<SelectTileSetSignal>().Listener -= OnSelectTileSet;
             SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
+            SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
+            SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
             #endregion
         }
 
@@ -167,6 +226,21 @@ namespace GBATool.ViewModels
             }
         }
 
+        private void UpdateAndSaveUse256Colors()
+        {
+            if (_doNotSave)
+                return;
+
+            BankModel? model = GetModel();
+
+            if (model == null)
+                return;
+
+            model.Use256Colors = Use256Colors;
+
+            ProjectItem?.FileHandler?.Save();
+        }
+
         private void LoadTileSetSprites()
         {
             if (TileSets == null || TileSets.Length == 0)
@@ -198,6 +272,7 @@ namespace GBATool.ViewModels
             }
 
             TileSetId = model.GUID;
+            SelectedSprite = null;
 
             WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image);
 
@@ -235,21 +310,40 @@ namespace GBATool.ViewModels
 
         public BankModel? GetModel()
         {
-            return ProjectItem?.FileHandler?.FileModel is BankModel model ? model : null;
+            Model ??= ProjectItem?.FileHandler?.FileModel as BankModel;
+
+            return Model;
         }
 
-        private void LoadImage()
+        private void LoadImage(BankModel model)
         {
-            BankModel? model = GetModel();
+            //WriteableBitmap bitmap = BanksUtils.CreateImage(model, ref _bitmapCache);
+
+            //PTImage = bitmap;
+        }
+
+        private void OnSelectSprite(SpriteVO sprite)
+        {
+            TileSetModel? model = ProjectFiles.GetModel<TileSetModel>(TileSetId);
 
             if (model == null)
             {
                 return;
             }
 
-            //WriteableBitmap bitmap = BanksUtils.CreateImage(model, ref _bitmapCache);
+            foreach (SpriteModel item in model.Sprites)
+            {
+                if (item.ID == sprite.SpriteID)
+                {
+                    SelectedSprite = item;
+                    break;
+                }
+            }
+        }
 
-            //PTImage = bitmap;
+        private void OnBankImageUpdated()
+        {
+            //
         }
     }
 }
