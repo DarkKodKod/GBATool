@@ -1,4 +1,6 @@
-﻿namespace GBATool.Enums
+﻿using System.ComponentModel;
+
+namespace GBATool.Enums
 {
     public enum ProjectItemType
     {
@@ -29,7 +31,9 @@
 
     public enum SpritePattern
     {
+        [Description("1D")]
         Format1D = 0,
+        [Description("2D")]
         Format2D = 1
     }
 }

@@ -36,7 +36,7 @@ namespace GBATool.Commands
 
             string extension = Util.GetExtensionByType(ItemSelected.Type);
             string newItemPath = ItemSelected.FileHandler.Path;
-            string name = ProjectItemFileSystem.GetValidFileName(newItemPath, newItem.DisplayName, extension);
+            string name = ProjectItemFileSystem.GetValidFileName(newItemPath, ItemSelected.DisplayName, extension);
 
             if (newItem.FileHandler != null)
             {

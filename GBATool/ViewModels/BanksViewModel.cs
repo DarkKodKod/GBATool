@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using GBATool.Commands;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
@@ -109,6 +110,10 @@ namespace GBATool.ViewModels
             SignalManager.Get<SelectTileSetSignal>().Listener += OnSelectTileSet;
             SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
             #endregion
+
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            SelectedSpritePatternFormat = projectModel.SpritePatternFormat == SpritePattern.Format1D ? "1D" : "2D";
 
             LoadTileSetSprites();
             LoadImage();

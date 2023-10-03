@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace ArchitectureLibrary.Managers
 {
@@ -13,7 +13,7 @@ namespace ArchitectureLibrary.Managers
             {
                 T m = new T();
 
-                Interfaces.Add(className.Name, m);
+                Interfaces.TryAdd(className.Name, m);
 
                 return m;
             }
@@ -21,6 +21,6 @@ namespace ArchitectureLibrary.Managers
             return (T)interfaceObject;
         }
 
-        private static readonly Dictionary<string, object> Interfaces = new Dictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> Interfaces = new ConcurrentDictionary<string, object>();
     }
 }

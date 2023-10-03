@@ -1,5 +1,6 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
+using GBATool.Enums;
 using GBATool.Signals;
 using Nett;
 
@@ -27,6 +28,7 @@ namespace GBATool.Models
         [TomlIgnore] public string ProjectFilePath { get; set; } = "";
         [TomlIgnore] public string ProjectPath { get; set; } = "";
         public BuildConfig Build { get; set; } = new();
+        public SpritePattern SpritePatternFormat { get; set; } = SpritePattern.Format1D;
 
         public ProjectModel()
         {
@@ -37,6 +39,7 @@ namespace GBATool.Models
             ProjectFilePath = "";
             ProjectPath = "";
             Name = "";
+            SpritePatternFormat = SpritePattern.Format1D;
             Build.Reset();
         }
 
@@ -49,6 +52,7 @@ namespace GBATool.Models
         {
             Name = copy.Name;
             Version = copy.Version;
+            SpritePatternFormat = copy.SpritePatternFormat;
 
             Build.OutputFilePath = copy.Build.OutputFilePath;
         }

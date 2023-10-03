@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows.Markup;
 
 namespace GBATool.Utils.Extensions
@@ -6,24 +8,25 @@ namespace GBATool.Utils.Extensions
     public class EnumBindingSourceExtension : MarkupExtension
     {
         private Type? _enumType;
+
         public Type? EnumType
         {
             get { return _enumType; }
             set
             {
-                if (value != _enumType)
-                {
-                    if (null != value)
-                    {
-                        Type enumType = Nullable.GetUnderlyingType(value) ?? value;
-                        if (!enumType.IsEnum)
-                        {
-                            throw new ArgumentException("Type must be for an Enum.");
-                        }
-                    }
+                if (_enumType == value)
+                    return;
 
-                    _enumType = value;
+                if (value == null)
+                    return;
+
+                Type enumType = Nullable.GetUnderlyingType(value) ?? value;
+                if (!enumType.IsEnum)
+                {
+                    throw new ArgumentException("Type must be for an Enum.");
                 }
+
+                _enumType = value;
             }
         }
 
@@ -45,15 +48,34 @@ namespace GBATool.Utils.Extensions
 
             Array enumValues = Enum.GetValues(actualEnumType);
 
-            if (actualEnumType == _enumType)
-            {
-                return enumValues;
-            }
+            return (
+                from object enumValue in enumValues
+                select new EnumerationMember
+                {
+                    Value = enumValue,
+                    Description = GetDescription(enumValue)
+                }).ToArray();
+        }
 
-            Array tempArray = Array.CreateInstance(actualEnumType, enumValues.Length + 1);
-            enumValues.CopyTo(tempArray, 1);
+        public string GetDescription(object enumValue)
+        {
+            Type? type = EnumType;
 
-            return tempArray;
+            if (type == null)
+                return string.Empty;
+
+            string? enumValueString = enumValue.ToString();
+
+            if (enumValueString == null)
+                return string.Empty;
+
+            return type?.GetField(enumValueString)?.GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault() is DescriptionAttribute descriptionAttribute ? descriptionAttribute.Description : enumValueString;
+        }
+
+        public class EnumerationMember
+        {
+            public string? Description { get; set; }
+            public object? Value { get; set; }
         }
     }
 }

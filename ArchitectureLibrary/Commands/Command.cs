@@ -6,6 +6,18 @@ namespace ArchitectureLibrary.Commands
 {
     public class Command : ICommand, IDisposable
     {
+        private bool _isExecuting = false;
+
+        public bool IsExecuting
+        {
+            get => _isExecuting;
+            set
+            {
+                _isExecuting = value;
+                RaiseCanExecuteChanged();
+            }
+        }
+
         private EventHandler _internalCanExecuteChanged;
 
         public virtual event EventHandler CanExecuteChanged
@@ -24,7 +36,7 @@ namespace ArchitectureLibrary.Commands
 
         public virtual bool CanExecute(object parameter)
         {
-            return true;
+            return !IsExecuting;
         }
 
         public virtual Task ExecuteAsync(object parameter)
@@ -34,7 +46,9 @@ namespace ArchitectureLibrary.Commands
 
         public virtual async void Execute(object parameter)
         {
+            IsExecuting = true;
             await ExecuteAsync(parameter).ConfigureAwait(false);
+            IsExecuting = false;
         }
 
         public void RaiseCanExecuteChanged()
