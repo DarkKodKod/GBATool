@@ -113,7 +113,7 @@ namespace GBATool.ViewModels
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-            SelectedSpritePatternFormat = projectModel.SpritePatternFormat == SpritePattern.Format1D ? "1D" : "2D";
+            SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
 
             LoadTileSetSprites();
             LoadImage();
