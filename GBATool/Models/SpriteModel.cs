@@ -9,6 +9,7 @@ namespace GBATool.Models
         public SpriteSize Size { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
+        public string TileSetID { get; set; }
 
         public override readonly bool Equals(object? obj)
         {
@@ -20,12 +21,13 @@ namespace GBATool.Models
             return PosX.Equals(((SpriteModel)obj).PosX)
                 && PosY.Equals(((SpriteModel)obj).PosY)
                 && Shape.Equals(((SpriteModel)obj).Shape)
-                && Size.Equals(((SpriteModel)obj).Size);
+                && Size.Equals(((SpriteModel)obj).Size)
+                && TileSetID.Equals(((SpriteModel)obj).TileSetID);
         }
 
         public override readonly int GetHashCode()
         {
-            return System.HashCode.Combine(PosX, PosY, Shape, Size);
+            return System.HashCode.Combine(PosX, PosY, Shape, Size, TileSetID);
         }
 
         public static bool operator ==(SpriteModel left, SpriteModel right)

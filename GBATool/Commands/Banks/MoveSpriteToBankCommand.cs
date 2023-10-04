@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
 using GBATool.Models;
+using GBATool.Signals;
 
 namespace GBATool.Commands
 {

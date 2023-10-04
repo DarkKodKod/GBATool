@@ -54,8 +54,8 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Button Width="100" Content="Remove Sprite">
-                    </Button>
+                    <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" />
+
                 </StackPanel>
                 <Border Grid.Row="4" Width="510" Height="510"
                         VerticalAlignment="Top">

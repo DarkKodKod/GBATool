@@ -82,4 +82,5 @@ namespace GBATool.Signals
     public class CleanupTileSetLinksSignal : Signal { }
     public class SelectTileSetSignal : Signal<string> { }
     public class BankImageUpdatedSignal : Signal { }
+    public class BankSpriteDeletedSignal : Signal { }
 }

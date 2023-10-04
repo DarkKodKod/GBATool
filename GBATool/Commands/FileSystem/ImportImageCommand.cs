@@ -84,23 +84,16 @@ namespace GBATool.Commands
 
             string outputImagePath = Path.Combine(imageFolderFullPath, item.DisplayName + ".bmp");
 
-            if (filePath == outputImagePath)
-            {
-                return;
-            }
+            using Image image = Image.FromFile(filePath);
 
-            Image image = Image.FromFile(filePath);
-
-            if (File.Exists(outputImagePath))
+            if (filePath != outputImagePath)
             {
-                File.Delete(outputImagePath);
+                image.Save(outputImagePath, ImageFormat.Bmp);
             }
 
             tileSet.ImagePath = outputImagePath;
             tileSet.ImageWidth = image.Width;
             tileSet.ImageHeight = image.Height;
-
-            image.Save(outputImagePath, ImageFormat.Bmp);
 
             item.FileHandler?.Save();
 

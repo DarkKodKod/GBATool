@@ -7,6 +7,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.VOs;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -25,12 +26,14 @@ namespace GBATool.ViewModels
         private bool _doNotSave = false;
         private BankModel? _model = null;
         private SpriteModel? _selectedSprite = null;
+        private Dictionary<string, WriteableBitmap> _bitmapCache = new();
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
         public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
         public MoveSpriteToBankCommand MoveSpriteToBankCommand { get; } = new();
         public GoToProjectItemCommand GoToProjectItemCommand { get; } = new();
+        public DeleteBankSpriteCommand DeleteBankSpriteCommand { get; } = new();
         #endregion
 
         #region get/set
@@ -153,6 +156,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
             SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
             SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
+            SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
             #endregion
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -185,6 +189,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
             SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
             SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
+            SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
             #endregion
         }
 
@@ -317,9 +322,9 @@ namespace GBATool.ViewModels
 
         private void LoadImage(BankModel model)
         {
-            //WriteableBitmap bitmap = BanksUtils.CreateImage(model, ref _bitmapCache);
+            WriteableBitmap bitmap = BankUtils.CreateImage(model, ref _bitmapCache);
 
-            //PTImage = bitmap;
+            PTImage = bitmap;
         }
 
         private void OnSelectSprite(SpriteVO sprite)
@@ -344,6 +349,15 @@ namespace GBATool.ViewModels
         private void OnBankImageUpdated()
         {
             //
+        }
+
+        private void OnBankSpriteDeleted()
+        {
+            _bitmapCache.Clear();
+
+            SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
+
+            OnBankImageUpdated();
         }
     }
 }

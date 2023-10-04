@@ -432,7 +432,7 @@ namespace GBATool.ViewModels
 
             SpriteUtils.ConvertToShapeSize(width, height, ref shape, ref size);
 
-            bool ret = model.StoreNewSprite(spriteID, posX, posY, shape, size);
+            bool ret = model.StoreNewSprite(spriteID, posX, posY, shape, size, model.GUID);
 
             if (ret == true)
             {
@@ -557,6 +557,7 @@ namespace GBATool.ViewModels
 
             ActualWidth = model.ImageWidth;
             ActualHeight = model.ImageHeight;
+            _originalWidth = model.ImageWidth;
 
             UpdateImage(true);
         }

@@ -88,7 +88,7 @@ namespace GBATool.Models
             return false;
         }
 
-        public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size)
+        public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size, string tileSetID)
         {
             for (int i = 0; i < MaxSpriteSize; i++)
             {
@@ -99,6 +99,7 @@ namespace GBATool.Models
                     Sprites[i].Size = size;
                     Sprites[i].PosX = posX;
                     Sprites[i].PosY = posY;
+                    Sprites[i].TileSetID = tileSetID;
 
                     return true;
                 }
