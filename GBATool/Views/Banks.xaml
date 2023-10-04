@@ -102,7 +102,6 @@
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource parametersConverter}">
                             <Binding Path="Model" />
-                            <Binding Path="TileSetId"/>
                             <Binding Path="SelectedSprite"/>
                         </MultiBinding>
                     </Button.CommandParameter>

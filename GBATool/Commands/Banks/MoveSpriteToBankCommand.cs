@@ -17,12 +17,12 @@ namespace GBATool.Commands
             object[] values = (object[])parameter;
             BankModel? model = (BankModel?)values[0];
 
-            if (values[2] == null)
+            if (values[1] == null)
             {
                 return false;
             }
 
-            return model != null && !model.IsFull();
+            return model != null && !model.IsFull;
         }
 
         public override void Execute(object parameter)
@@ -30,10 +30,9 @@ namespace GBATool.Commands
             object[] values = (object[])parameter;
 
             BankModel model = (BankModel)values[0];
-            string tileSetId = (string)values[1];
-            SpriteModel sprite = (SpriteModel)values[2];
+            SpriteModel sprite = (SpriteModel)values[1];
 
-            model.RegisterSprite(tileSetId, sprite);
+            model.RegisterSprite(sprite);
 
             SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
         }
