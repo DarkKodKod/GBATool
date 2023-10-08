@@ -348,7 +348,16 @@ namespace GBATool.ViewModels
 
         private void OnBankImageUpdated()
         {
-            //
+            ProjectItem?.FileHandler?.Save();
+
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            LoadImage(model);
         }
 
         private void OnBankSpriteDeleted()

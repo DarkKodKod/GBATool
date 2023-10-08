@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
+using System.Windows;
 
 namespace GBATool.Commands
 {
@@ -32,9 +33,16 @@ namespace GBATool.Commands
             BankModel model = (BankModel)values[0];
             SpriteModel sprite = (SpriteModel)values[1];
 
-            model.RegisterSprite(sprite);
+            (bool, string) ret = model.RegisterSprite(sprite);
 
-            SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
+            if (ret.Item1 == true)
+            {
+                SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
+            }
+            else
+            {
+                MessageBox.Show(ret.Item2, "Error", MessageBoxButton.OK);
+            }
         }
     }
 }

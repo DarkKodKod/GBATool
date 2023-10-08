@@ -29,26 +29,40 @@ namespace GBATool.Models
         [TomlIgnore]
         public bool IsFull { get; private set; }
 
-        public bool RegisterSprite(SpriteModel sprite)
+        public (bool, string) RegisterSprite(SpriteModel sprite)
         {
+            int selectedIndex = -1;
+
+            // first check if the sprite already exists
             for (int i = 0; i < Sprites.Length; ++i)
             {
-                if (string.IsNullOrEmpty(Sprites[i].ID))
+                if (string.IsNullOrEmpty(Sprites[i].ID) && selectedIndex == -1)
                 {
-                    Sprites[i].ID = sprite.ID;
-                    Sprites[i].Shape = sprite.Shape;
-                    Sprites[i].Size = sprite.Size;
-                    Sprites[i].PosX = sprite.PosX;
-                    Sprites[i].PosY = sprite.PosY;
-                    Sprites[i].TileSetID = sprite.TileSetID;
+                    selectedIndex = i;
+                }
 
-                    return true;
+                if (Sprites[i] == sprite)
+                {
+                    return (false, "This sprite is already in the bank");
                 }
             }
 
-            IsFull = true;
+            if (selectedIndex == -1)
+            {
+                IsFull = true;
+                return (false, "This bank has all its cell ocupied");
+            }
+            else
+            {
+                Sprites[selectedIndex].ID = sprite.ID;
+                Sprites[selectedIndex].Shape = sprite.Shape;
+                Sprites[selectedIndex].Size = sprite.Size;
+                Sprites[selectedIndex].PosX = sprite.PosX;
+                Sprites[selectedIndex].PosY = sprite.PosY;
+                Sprites[selectedIndex].TileSetID = sprite.TileSetID;
+            }
 
-            return false;
+            return (true, "");
         }
     }
 }

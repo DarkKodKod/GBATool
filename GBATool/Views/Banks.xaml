@@ -6,13 +6,11 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:GBATool.Views"
              mc:Ignorable="d" 
-             xmlns:ex="clr-namespace:GBATool.Utils.Extensions"
-             xmlns:enum="clr-namespace:GBATool.Enums"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
              xmlns:cv="clr-namespace:GBATool.Utils.Converters"
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="900" d:DesignWidth="1000">
+             d:DesignHeight="900" d:DesignWidth="1200">
     <UserControl.Resources>
         <cv:ParametersConverter x:Key="parametersConverter"/>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
@@ -29,7 +27,7 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="690"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>
@@ -39,7 +37,8 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="10"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Column="1" Grid.Row="1">
+            <Grid Grid.Column="1" Grid.Row="1"
+                  HorizontalAlignment="Left">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="3"/>
@@ -55,17 +54,16 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" />
-
                 </StackPanel>
-                <Border Grid.Row="4" Width="510" Height="510"
+                <Border Grid.Row="4" Width="256" Height="256"
                         VerticalAlignment="Top">
+                    <Border.RenderTransform>
+                        <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
+                    </Border.RenderTransform>
                     <Canvas Width="256" Height="256" 
 		                    Background="DarkGray"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top">
-                        <Canvas.RenderTransform>
-                            <ScaleTransform ScaleX="2" ScaleY="2"/>
-                        </Canvas.RenderTransform>
                         <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
                                Source="{Binding PTImage}"
 	                           Width="256"
@@ -96,6 +94,7 @@
                 </Border>
             </Grid>
             <StackPanel Grid.Column="2" Grid.Row="1"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Center">
                 <Button Height="32" Width="32"
                         Command="{Binding MoveSpriteToBankCommand}">
