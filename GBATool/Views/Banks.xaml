@@ -27,7 +27,7 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="690"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="10"/>
@@ -49,6 +49,8 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
                     <TextBlock VerticalAlignment="Center" Text="{Binding SelectedSpritePatternFormat}" FontWeight="Bold" />
+                    <Label Margin="20,0,0,0">Is Background:</Label>
+                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
                     <Label Margin="20,0,0,0">256 colors:</Label>
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
                 </StackPanel>
@@ -56,10 +58,11 @@
                     <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" />
                 </StackPanel>
                 <Border Grid.Row="4" Width="256" Height="256"
-                        VerticalAlignment="Top">
-                    <Border.RenderTransform>
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left">
+                    <Border.LayoutTransform>
                         <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
-                    </Border.RenderTransform>
+                    </Border.LayoutTransform>
                     <Canvas Width="256" Height="256" 
 		                    Background="DarkGray"
                             HorizontalAlignment="Left"

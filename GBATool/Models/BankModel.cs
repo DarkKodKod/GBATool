@@ -24,6 +24,7 @@ namespace GBATool.Models
         }
 
         public bool Use256Colors { get; set; }
+        public bool IsBackground { get; set; }
         public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
 
         [TomlIgnore]

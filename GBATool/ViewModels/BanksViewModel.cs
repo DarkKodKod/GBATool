@@ -7,8 +7,10 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.VOs;
+using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -23,10 +25,12 @@ namespace GBATool.ViewModels
         private FileModelVO[]? _tileSets;
         private ImageSource? _pTImage;
         private bool _use256Colors = false;
+        private bool _isBackground = false;
         private bool _doNotSave = false;
         private BankModel? _model = null;
         private SpriteModel? _selectedSprite = null;
         private Dictionary<string, WriteableBitmap> _bitmapCache = new();
+        private BankImageMetaData? _metaData = null;
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -130,6 +134,24 @@ namespace GBATool.ViewModels
             }
         }
 
+        public bool IsBackground
+        {
+            get => _isBackground;
+            set
+            {
+                if (_isBackground != value)
+                {
+                    _isBackground = value;
+
+                    UpdateAndSaveIsBackground();
+
+                    ReloadImage();
+                }
+
+                OnPropertyChanged("IsBackground");
+            }
+        }
+
         public BankModel? Model
         {
             get => _model;
@@ -157,6 +179,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
             SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
             SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
+            SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
             #endregion
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -173,6 +196,7 @@ namespace GBATool.ViewModels
             _doNotSave = true;
 
             Use256Colors = model.Use256Colors;
+            IsBackground = model.IsBackground;
 
             _doNotSave = false;
 
@@ -190,6 +214,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
             SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
             SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
+            SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
             #endregion
         }
 
@@ -246,6 +271,21 @@ namespace GBATool.ViewModels
             ProjectItem?.FileHandler?.Save();
         }
 
+        private void UpdateAndSaveIsBackground()
+        {
+            if (_doNotSave)
+                return;
+
+            BankModel? model = GetModel();
+
+            if (model == null)
+                return;
+
+            model.IsBackground = IsBackground;
+
+            ProjectItem?.FileHandler?.Save();
+        }
+
         private void LoadTileSetSprites()
         {
             if (TileSets == null || TileSets.Length == 0)
@@ -271,7 +311,7 @@ namespace GBATool.ViewModels
             {
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-                string itemPath = Path.Combine(fileModelVO.Path, fileModelVO.Name);
+                string itemPath = System.IO.Path.Combine(fileModelVO.Path, fileModelVO.Name);
 
                 TileSetPath = itemPath.Remove(0, projectModel.ProjectPath.Length);
             }
@@ -320,11 +360,46 @@ namespace GBATool.ViewModels
             return Model;
         }
 
+        private void ReloadImage()
+        {
+            if (_doNotSave)
+                return;
+
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            if (projectModel.SpritePatternFormat == SpritePattern.Format1D)
+            {
+                // Dont do anything because we are already in the 1D format acording to project configuration
+                return;
+            }
+
+            _bitmapCache.Clear();
+
+            SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
+
+            OnBankImageUpdated();
+        }
+
         private void LoadImage(BankModel model)
         {
-            WriteableBitmap bitmap = BankUtils.CreateImage(model, ref _bitmapCache);
+            _metaData = BankUtils.CreateImage(model, ref _bitmapCache);
 
-            PTImage = bitmap;
+            PTImage = _metaData.image;
+
+            FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
+
+            foreach (string tileSetId in _metaData.UniqueTileSet)
+            {
+                // Add the link object
+                foreach (FileModelVO tileset in tileSets)
+                {
+                    if (tileset.Model?.GUID == tileSetId)
+                    {
+                        SignalManager.Get<AddNewTileSetLinkSignal>().Dispatch(new BankLinkVO() { Caption = tileset.Name, Id = tileSetId });
+                        break;
+                    }
+                }
+            }
         }
 
         private void OnSelectSprite(SpriteVO sprite)
@@ -362,11 +437,31 @@ namespace GBATool.ViewModels
 
         private void OnBankSpriteDeleted()
         {
-            _bitmapCache.Clear();
+            ReloadImage();
+        }
 
-            SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
+        private void OnMouseImageSelected(Image image, Point point)
+        {
+            if (_metaData == null)
+            {
+                return;
+            }
 
-            OnBankImageUpdated();
+            int x = (int)Math.Floor(point.X / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
+            int y = (int)Math.Floor(point.Y / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
+
+            int lengthWidth = (int)(image.Width / BankUtils.SizeOfCellInPixels);
+            int yPos = (y / BankUtils.SizeOfCellInPixels);
+            int xPos = (x / BankUtils.SizeOfCellInPixels);
+
+            int index = (lengthWidth * yPos) + xPos;
+
+            string? selectedSpriteID = _metaData.SpriteIndices.Find(item => item.Item1 == index).Item2;
+
+            if (selectedSpriteID == null)
+            {
+                return;
+            }
         }
     }
 }

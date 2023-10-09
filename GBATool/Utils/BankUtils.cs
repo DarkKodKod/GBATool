@@ -1,10 +1,7 @@
 ﻿using ArchitectureLibrary.Model;
-using ArchitectureLibrary.Signals;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
-using GBATool.Signals;
-using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,19 +9,30 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils
 {
+    public class BankImageMetaData
+    {
+        public WriteableBitmap? image;
+        public List<(int, string)> SpriteIndices = new();
+        public List<string> UniqueTileSet = new();
+    }
+
     public static class BankUtils
     {
         private static readonly int MaxTextureCellsWidth = 32;
         private static readonly int MaxTextureCellsHeight = 32;
-        private static readonly int SizeOfCellInPixels = 8;
+        public static readonly int SizeOfCellInPixels = 8;
 
-        public static WriteableBitmap CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache, bool sendSignals = true)
+        public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache)
         {
+            BankImageMetaData metaData = new();
+
             WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth * SizeOfCellInPixels, MaxTextureCellsHeight * SizeOfCellInPixels);
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
             int index = 0;
+
+            bool is1DImage = bankModel.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
 
             foreach (SpriteModel sprite in bankModel.Sprites)
             {
@@ -33,23 +41,23 @@ namespace GBATool.Utils
                     continue;
                 }
 
-                WriteableBitmap? sourceBitmap = GetSourceBitmapFromCache(ref bitmapCache, sprite.TileSetID, sendSignals);
+                WriteableBitmap? sourceBitmap = GetSourceBitmapFromCache(ref bitmapCache, sprite.TileSetID, ref metaData);
 
                 if (sourceBitmap == null)
                 {
                     continue;
                 }
 
-                int width = 0;
-                int height = 0;
-
-                SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
-
-                int posX = sprite.PosX;
-                int posY = sprite.PosY;
-
-                if (projectModel.SpritePatternFormat == SpritePattern.Format1D)
+                if (is1DImage)
                 {
+                    int width = 0;
+                    int height = 0;
+
+                    SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+                    int posX = sprite.PosX;
+                    int posY = sprite.PosY;
+
                     for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
                     {
                         for (int i = 0; i < (width / SizeOfCellInPixels); ++i)
@@ -60,6 +68,8 @@ namespace GBATool.Utils
                             int destY = index / MaxTextureCellsHeight * SizeOfCellInPixels;
 
                             Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
+
+                            metaData.SpriteIndices.Add((index, sprite.ID));
 
                             posX += SizeOfCellInPixels;
 
@@ -76,10 +86,12 @@ namespace GBATool.Utils
                 }
             }
 
-            return bankBitmap;
+            metaData.image = bankBitmap;
+
+            return metaData;
         }
 
-        private static WriteableBitmap? GetSourceBitmapFromCache(ref Dictionary<string, WriteableBitmap> bitmapCache, string tileSetId, bool sendSignals)
+        private static WriteableBitmap? GetSourceBitmapFromCache(ref Dictionary<string, WriteableBitmap> bitmapCache, string tileSetId, ref BankImageMetaData metaData)
         {
             if (!bitmapCache.TryGetValue(tileSetId, out WriteableBitmap? sourceBitmap))
             {
@@ -104,20 +116,7 @@ namespace GBATool.Utils
 
                 bitmapCache.Add(tileSetId, sourceBitmap);
 
-                if (sendSignals)
-                {
-                    FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
-
-                    // Add the link object
-                    foreach (FileModelVO tileset in tileSets)
-                    {
-                        if (tileset.Model?.GUID == tileSetId)
-                        {
-                            SignalManager.Get<AddNewTileSetLinkSignal>().Dispatch(new BankLinkVO() { Caption = tileset.Name, Id = tileSetId });
-                            break;
-                        }
-                    }
-                }
+                metaData.UniqueTileSet.Add(tileSetId);
             }
 
             return sourceBitmap;
