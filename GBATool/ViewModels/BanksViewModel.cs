@@ -31,6 +31,21 @@ namespace GBATool.ViewModels
         private SpriteModel? _selectedSprite = null;
         private Dictionary<string, WriteableBitmap> _bitmapCache = new();
         private BankImageMetaData? _metaData = null;
+        private Visibility _spriteRectVisibility = Visibility.Hidden;
+        private double _spriteRectLeft;
+        private double _spriteRectWidth;
+        private double _spriteRectHeight;
+        private double _spriteRectTop;
+        private Visibility _spriteRectVisibility2 = Visibility.Hidden;
+        private double _spriteRectLeft2;
+        private double _spriteRectWidth2;
+        private double _spriteRectHeight2;
+        private double _spriteRectTop2;
+        private Visibility _spriteRectVisibility3 = Visibility.Hidden;
+        private double _spriteRectLeft3;
+        private double _spriteRectWidth3;
+        private double _spriteRectHeight3;
+        private double _spriteRectTop3;
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -162,6 +177,171 @@ namespace GBATool.ViewModels
                 OnPropertyChanged("Model");
             }
         }
+
+        public Visibility SpriteRectVisibility
+        {
+            get { return _spriteRectVisibility; }
+            set
+            {
+                _spriteRectVisibility = value;
+
+                OnPropertyChanged("SpriteRectVisibility");
+            }
+        }
+
+        public double SpriteRectLeft
+        {
+            get { return _spriteRectLeft; }
+            set
+            {
+                _spriteRectLeft = value;
+
+                OnPropertyChanged("SpriteRectLeft");
+            }
+        }
+
+        public double SpriteRectWidth
+        {
+            get { return _spriteRectWidth; }
+            set
+            {
+                _spriteRectWidth = value;
+
+                OnPropertyChanged("SpriteRectWidth");
+            }
+        }
+
+        public double SpriteRectHeight
+        {
+            get { return _spriteRectHeight; }
+            set
+            {
+                _spriteRectHeight = value;
+
+                OnPropertyChanged("SpriteRectHeight");
+            }
+        }
+
+        public double SpriteRectTop
+        {
+            get { return _spriteRectTop; }
+            set
+            {
+                _spriteRectTop = value;
+
+                OnPropertyChanged("SpriteRectTop");
+            }
+        }
+
+        public Visibility SpriteRectVisibility2
+        {
+            get { return _spriteRectVisibility2; }
+            set
+            {
+                _spriteRectVisibility2 = value;
+
+                OnPropertyChanged("SpriteRectVisibility2");
+            }
+        }
+
+        public double SpriteRectLeft2
+        {
+            get { return _spriteRectLeft2; }
+            set
+            {
+                _spriteRectLeft2 = value;
+
+                OnPropertyChanged("SpriteRectLeft2");
+            }
+        }
+
+        public double SpriteRectWidth2
+        {
+            get { return _spriteRectWidth2; }
+            set
+            {
+                _spriteRectWidth2 = value;
+
+                OnPropertyChanged("SpriteRectWidth2");
+            }
+        }
+
+        public double SpriteRectHeight2
+        {
+            get { return _spriteRectHeight2; }
+            set
+            {
+                _spriteRectHeight2 = value;
+
+                OnPropertyChanged("SpriteRectHeight2");
+            }
+        }
+
+        public double SpriteRectTop2
+        {
+            get { return _spriteRectTop2; }
+            set
+            {
+                _spriteRectTop2 = value;
+
+                OnPropertyChanged("SpriteRectTop2");
+            }
+        }
+
+        public Visibility SpriteRectVisibility3
+        {
+            get { return _spriteRectVisibility3; }
+            set
+            {
+                _spriteRectVisibility3 = value;
+
+                OnPropertyChanged("SpriteRectVisibility3");
+            }
+        }
+
+        public double SpriteRectLeft3
+        {
+            get { return _spriteRectLeft3; }
+            set
+            {
+                _spriteRectLeft3 = value;
+
+                OnPropertyChanged("SpriteRectLeft3");
+            }
+        }
+
+        public double SpriteRectWidth3
+        {
+            get { return _spriteRectWidth3; }
+            set
+            {
+                _spriteRectWidth3 = value;
+
+                OnPropertyChanged("SpriteRectWidth3");
+            }
+        }
+
+        public double SpriteRectHeight3
+        {
+            get { return _spriteRectHeight3; }
+            set
+            {
+                _spriteRectHeight3 = value;
+
+                OnPropertyChanged("SpriteRectHeight3");
+            }
+        }
+
+        public double SpriteRectTop3
+        {
+            get { return _spriteRectTop3; }
+            set
+            {
+                _spriteRectTop3 = value;
+
+                OnPropertyChanged("SpriteRectTop3");
+            }
+        }
         #endregion
 
         public BanksViewModel()
@@ -271,6 +451,8 @@ namespace GBATool.ViewModels
             model.Use256Colors = Use256Colors;
 
             ProjectItem?.FileHandler?.Save();
+
+            UnselectSpriteFromBankImage();
         }
 
         private void UpdateAndSaveIsBackground()
@@ -435,6 +617,8 @@ namespace GBATool.ViewModels
             }
 
             LoadImage(model);
+
+            UnselectSpriteFromBankImage();
         }
 
         private void OnBankSpriteDeleted()
@@ -447,9 +631,25 @@ namespace GBATool.ViewModels
             SelectSpriteFromBankImage(image, point);
         }
 
+        private void UnselectSpriteFromBankImage()
+        {
+            SpriteRectVisibility = Visibility.Hidden;
+            SpriteRectVisibility2 = Visibility.Hidden;
+            SpriteRectVisibility3 = Visibility.Hidden;
+        }
+
         private void SelectSpriteFromBankImage(Image image, Point point)
         {
+            UnselectSpriteFromBankImage();
+
             if (_metaData == null)
+            {
+                return;
+            }
+
+            BankModel? model = GetModel();
+
+            if (model == null)
             {
                 return;
             }
@@ -463,11 +663,55 @@ namespace GBATool.ViewModels
 
             int index = (lengthWidth * yPos) + xPos;
 
-            string? selectedSpriteID = _metaData.SpriteIndices.Find(item => item.Item1 == index).Item2;
+            (int _, string spriteID, string tileSetId) = _metaData.SpriteIndices.Find(item => item.Item1 == index);
 
-            if (selectedSpriteID == null)
+            if (string.IsNullOrEmpty(spriteID))
             {
                 return;
+            }
+
+            (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteID);
+
+            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(tileSetId);
+
+            if (tileSetModel == null)
+            {
+                return;
+            }
+
+            SpriteModel sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteID);
+
+            if (string.IsNullOrEmpty(sprite.ID))
+            {
+                return;
+            }
+
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            bool is1DImage = model.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
+
+            if (is1DImage)
+            {
+                SpriteRectVisibility = Visibility.Visible;
+
+                int tilesNumber = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+
+                int left = (firstIndex % lengthWidth) * BankUtils.SizeOfCellInPixels;
+                int width = tilesNumber * BankUtils.SizeOfCellInPixels;
+
+                if (left + width > BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels)
+                {
+                    width = (BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels) - left;
+                }
+
+                SpriteRectLeft = left;
+                SpriteRectWidth = width;
+                SpriteRectHeight = BankUtils.SizeOfCellInPixels;
+                SpriteRectTop = y;
+            }
+            else
+            {
+                //
             }
         }
     }

@@ -12,21 +12,29 @@ namespace GBATool.Utils
     public class BankImageMetaData
     {
         public WriteableBitmap? image;
-        public List<(int, string)> SpriteIndices = new();
+        public List<(int, string, string)> SpriteIndices = new();
         public List<string> UniqueTileSet = new();
     }
 
     public static class BankUtils
     {
-        private static readonly int MaxTextureCellsWidth = 32;
-        private static readonly int MaxTextureCellsHeight = 32;
         public static readonly int SizeOfCellInPixels = 8;
+
+        public static int MaxTextureCellsWidth()
+        {
+            return 32;
+        }
+
+        public static int MaxTextureCellsHeight()
+        { 
+            return 32;
+        }
 
         public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache)
         {
             BankImageMetaData metaData = new();
 
-            WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth * SizeOfCellInPixels, MaxTextureCellsHeight * SizeOfCellInPixels);
+            WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth() * SizeOfCellInPixels, MaxTextureCellsHeight() * SizeOfCellInPixels);
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
@@ -78,12 +86,12 @@ namespace GBATool.Utils
                         {
                             WriteableBitmap cropped = sourceBitmap.Crop(posX, posY, SizeOfCellInPixels, SizeOfCellInPixels);
 
-                            int destX = index % MaxTextureCellsWidth * SizeOfCellInPixels;
-                            int destY = index / MaxTextureCellsHeight * SizeOfCellInPixels;
+                            int destX = index % MaxTextureCellsWidth() * SizeOfCellInPixels;
+                            int destY = index / MaxTextureCellsHeight() * SizeOfCellInPixels;
 
                             Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
 
-                            metaData.SpriteIndices.Add((index, sprite.ID));
+                            metaData.SpriteIndices.Add((index, sprite.ID, sprite.TileSetID));
 
                             posX += SizeOfCellInPixels;
 

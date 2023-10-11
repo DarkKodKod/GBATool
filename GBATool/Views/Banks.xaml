@@ -93,6 +93,27 @@
                                 </i:Interaction.Behaviors>
                             </Canvas>
                         </Border>
+                        <Rectangle Width="{Binding SpriteRectWidth}"
+                                   Height="{Binding SpriteRectHeight}" 
+                                   Stroke="Magenta" 
+                                   StrokeThickness="0.9"
+                                   Canvas.Top="{Binding SpriteRectTop}"
+                                   Canvas.Left="{Binding SpriteRectLeft}"
+                                   Visibility="{Binding SpriteRectVisibility}"/>
+                        <Rectangle Width="{Binding SpriteRectWidth2}"
+                                   Height="{Binding SpriteRectHeight2}" 
+                                   Stroke="Magenta" 
+                                   StrokeThickness="0.9"
+                                   Canvas.Top="{Binding SpriteRectTop2}"
+                                   Canvas.Left="{Binding SpriteRectLeft2}"
+                                   Visibility="{Binding SpriteRectVisibility2}"/>
+                        <Rectangle Width="{Binding SpriteRectWidth3}"
+                                   Height="{Binding SpriteRectHeight3}" 
+                                   Stroke="Magenta" 
+                                   StrokeThickness="0.9"
+                                   Canvas.Top="{Binding SpriteRectTop3}"
+                                   Canvas.Left="{Binding SpriteRectLeft3}"
+                                   Visibility="{Binding SpriteRectVisibility3}"/>
                     </Canvas>
                 </Border>
             </Grid>

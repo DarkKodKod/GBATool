@@ -93,5 +93,59 @@ namespace GBATool.Utils
                 }
             }
         }
+
+        public static int Count8x8Tiles(SpriteShape shape, SpriteSize size)
+        {
+            //shape\size  00	01	    10	    11
+            //   00	      8x8	16x16	32x32	64x64
+            //   01	      16x8	32x8	32x16	64x32
+            //   10	      8x16	8x32	16x32	32x64
+
+            if (size == SpriteSize.Size00)
+            {
+                switch (shape)
+                {
+                    case SpriteShape.Shape00:
+                        return 1;
+                    case SpriteShape.Shape01:
+                    case SpriteShape.Shape10:
+                        return 2;
+                }
+            }
+            else if (size == SpriteSize.Size01)
+            {
+                switch (shape)
+                {
+                    case SpriteShape.Shape00:
+                    case SpriteShape.Shape01:
+                    case SpriteShape.Shape10:
+                        return 4;
+                }
+            }
+            else if (size == SpriteSize.Size10)
+            {
+                switch (shape)
+                {
+                    case SpriteShape.Shape01:
+                    case SpriteShape.Shape10:
+                        return 8;
+                    case SpriteShape.Shape00:
+                        return 16;
+                }
+            }
+            else if (size == SpriteSize.Size11)
+            {
+                switch (shape)
+                {
+                    case SpriteShape.Shape01:
+                    case SpriteShape.Shape10:
+                        return 32;
+                    case SpriteShape.Shape00:
+                        return 64;
+                }
+            }
+
+            return 0;
+        }
     }
 }
