@@ -493,9 +493,9 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            for (int i = 0; i < model.Sprites.Length; i++)
+            foreach (SpriteModel sprite in model.Sprites)
             {
-                if (string.IsNullOrEmpty(model.Sprites[i].ID))
+                if (string.IsNullOrEmpty(sprite.ID))
                 {
                     continue;
                 }
@@ -503,13 +503,13 @@ namespace GBATool.ViewModels
                 int width = 0;
                 int height = 0;
 
-                SpriteUtils.ConvertToWidthHeight(model.Sprites[i].Shape, model.Sprites[i].Size, ref width, ref height);
+                SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
 
                 WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(ImgSource as BitmapSource);
 
-                WriteableBitmap cropped = writeableBmp.Crop(model.Sprites[i].PosX, model.Sprites[i].PosY, width, height);
+                WriteableBitmap cropped = writeableBmp.Crop(sprite.PosX, sprite.PosY, width, height);
 
-                AddSpriteToTheList(width, height, model.Sprites[i].ID, cropped);
+                AddSpriteToTheList(width, height, sprite.ID, cropped);
             }
         }
 

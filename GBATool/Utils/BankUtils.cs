@@ -34,16 +34,30 @@ namespace GBATool.Utils
 
             bool is1DImage = bankModel.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
 
-            foreach (SpriteModel sprite in bankModel.Sprites)
+            foreach (SpriteRef spriteRef in bankModel.Sprites)
             {
-                if (string.IsNullOrEmpty(sprite.ID) || string.IsNullOrEmpty(sprite.TileSetID))
+                if (string.IsNullOrEmpty(spriteRef.SpriteID) || string.IsNullOrEmpty(spriteRef.TileSetID))
                 {
                     continue;
                 }
 
-                WriteableBitmap? sourceBitmap = GetSourceBitmapFromCache(ref bitmapCache, sprite.TileSetID, ref metaData);
+                TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteRef.TileSetID);
+
+                if (tileSetModel == null)
+                {
+                    continue;
+                }
+
+                WriteableBitmap? sourceBitmap = GetSourceBitmapFromCache(ref bitmapCache, tileSetModel, ref metaData);
 
                 if (sourceBitmap == null)
+                {
+                    continue;
+                }
+
+                SpriteModel sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
+
+                if (string.IsNullOrEmpty(sprite.ID))
                 {
                     continue;
                 }
@@ -91,17 +105,10 @@ namespace GBATool.Utils
             return metaData;
         }
 
-        private static WriteableBitmap? GetSourceBitmapFromCache(ref Dictionary<string, WriteableBitmap> bitmapCache, string tileSetId, ref BankImageMetaData metaData)
+        private static WriteableBitmap? GetSourceBitmapFromCache(ref Dictionary<string, WriteableBitmap> bitmapCache, TileSetModel model, ref BankImageMetaData metaData)
         {
-            if (!bitmapCache.TryGetValue(tileSetId, out WriteableBitmap? sourceBitmap))
+            if (!bitmapCache.TryGetValue(model.GUID, out WriteableBitmap? sourceBitmap))
             {
-                TileSetModel? model = ProjectFiles.GetModel<TileSetModel>(tileSetId);
-
-                if (model == null)
-                {
-                    return null;
-                }
-
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
                 string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
@@ -114,9 +121,9 @@ namespace GBATool.Utils
                 bmImage.Freeze();
                 sourceBitmap = BitmapFactory.ConvertToPbgra32Format(bmImage);
 
-                bitmapCache.Add(tileSetId, sourceBitmap);
+                bitmapCache.Add(model.GUID, sourceBitmap);
 
-                metaData.UniqueTileSet.Add(tileSetId);
+                metaData.UniqueTileSet.Add(model.GUID);
             }
 
             return sourceBitmap;

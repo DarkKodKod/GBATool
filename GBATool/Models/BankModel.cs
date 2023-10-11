@@ -1,12 +1,19 @@
-﻿using Nett;
+﻿using GBATool.FileSystem;
+using Nett;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace GBATool.Models
 {
+    public class SpriteRef
+    {
+        public string? SpriteID { get; set; }
+        public string? TileSetID { get; set; }
+    }
+
+
     public class BankModel : AFileModel
     {
-        public static readonly int MaxSpriteSize = 256;
-
         private const string _extensionKey = "extensionBanks";
 
         [TomlIgnore]
@@ -25,45 +32,56 @@ namespace GBATool.Models
 
         public bool Use256Colors { get; set; }
         public bool IsBackground { get; set; }
-        public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
+        public List<SpriteRef> Sprites { get; set; } = new();
 
         [TomlIgnore]
         public bool IsFull { get; private set; }
 
         public (bool, string) RegisterSprite(SpriteModel sprite)
         {
-            int selectedIndex = -1;
+            SpriteRef? find = Sprites.Find((spriteRef) => spriteRef.SpriteID == sprite.ID);
 
-            // first check if the sprite already exists
-            for (int i = 0; i < Sprites.Length; ++i)
+            if (!string.IsNullOrEmpty(find?.SpriteID))
             {
-                if (string.IsNullOrEmpty(Sprites[i].ID) && selectedIndex == -1)
-                {
-                    selectedIndex = i;
-                }
-
-                if (Sprites[i] == sprite)
-                {
-                    return (false, "This sprite is already in the bank");
-                }
+                return (false, "This sprite is already in the bank");
             }
 
-            if (selectedIndex == -1)
-            {
-                IsFull = true;
-                return (false, "This bank has all its cell ocupied");
-            }
-            else
-            {
-                Sprites[selectedIndex].ID = sprite.ID;
-                Sprites[selectedIndex].Shape = sprite.Shape;
-                Sprites[selectedIndex].Size = sprite.Size;
-                Sprites[selectedIndex].PosX = sprite.PosX;
-                Sprites[selectedIndex].PosY = sprite.PosY;
-                Sprites[selectedIndex].TileSetID = sprite.TileSetID;
-            }
+            Sprites.Add(new SpriteRef() { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
 
             return (true, "");
+        }
+
+        public void CleanUpDeletedSprites()
+        {
+            List<SpriteRef> idsToRemove = new();
+
+            foreach (SpriteRef spriteRef in Sprites)
+            {
+                if (spriteRef == null ||
+                    string.IsNullOrEmpty(spriteRef.SpriteID) ||
+                    string.IsNullOrEmpty(spriteRef.TileSetID))
+                    continue;
+
+                TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteRef.TileSetID);
+
+                if (tileSetModel == null)
+                {
+                    idsToRemove.Add(spriteRef);
+                    continue;
+                }
+
+                SpriteModel sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
+
+                if (string.IsNullOrEmpty(sprite.ID))
+                {
+                    idsToRemove.Add(spriteRef);
+                }
+            }
+
+            foreach (SpriteRef spriteToRemove in idsToRemove)
+            {
+                Sprites.Remove(spriteToRemove);
+            }
         }
     }
 }

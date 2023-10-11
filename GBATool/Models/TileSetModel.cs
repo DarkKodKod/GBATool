@@ -4,6 +4,7 @@ using GBATool.Signals;
 using GBATool.Utils;
 using Nett;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -11,8 +12,6 @@ namespace GBATool.Models
 {
     public class TileSetModel : AFileModel
     {
-        public static readonly int MaxSpriteSize = 100;
-
         private const string _extensionKey = "extensionTileSets";
 
         [TomlIgnore]
@@ -32,7 +31,7 @@ namespace GBATool.Models
         public string ImagePath { get; set; } = string.Empty;
         public int ImageWidth { get; set; } = 0;
         public int ImageHeight { get; set; } = 0;
-        public SpriteModel[] Sprites { get; set; } = new SpriteModel[MaxSpriteSize];
+        public List<SpriteModel> Sprites { get; set; } = new();
 
         private static readonly ConcurrentDictionary<string, BitmapImage> BitmapCache = new();
 
@@ -75,12 +74,10 @@ namespace GBATool.Models
 
         public bool RemoveSprite(string spriteID)
         {
-            for (int i = 0; i < MaxSpriteSize; i++)
+            if (spriteID != null)
             {
-                if (Sprites[i].ID == spriteID)
+                if (Sprites.RemoveAll((item) => item.ID == spriteID) > 0)
                 {
-                    Sprites[i].ID = string.Empty;
-
                     return true;
                 }
             }
@@ -90,22 +87,24 @@ namespace GBATool.Models
 
         public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size, string tileSetID)
         {
-            for (int i = 0; i < MaxSpriteSize; i++)
+            SpriteModel newSprite = new()
             {
-                if (string.IsNullOrEmpty(Sprites[i].ID))
-                {
-                    Sprites[i].ID = spriteID;
-                    Sprites[i].Shape = shape;
-                    Sprites[i].Size = size;
-                    Sprites[i].PosX = posX;
-                    Sprites[i].PosY = posY;
-                    Sprites[i].TileSetID = tileSetID;
+                ID = spriteID,
+                Shape = shape,
+                Size = size,
+                PosX = posX,
+                PosY = posY,
+                TileSetID = tileSetID
+            };
 
-                    return true;
-                }
+            SpriteModel find = Sprites.Find((item) => item == newSprite);
+
+            if (string.IsNullOrEmpty(find.ID))
+            {
+                Sprites.Add(newSprite);
+
+                return true;
             }
-
-            MessageBox.Show($"Cannot save more sprites under this TileSet, max of {MaxSpriteSize} limit is reached", "Error", MessageBoxButton.OK);
 
             return false;
         }

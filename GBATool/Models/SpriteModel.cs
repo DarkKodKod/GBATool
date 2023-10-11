@@ -4,7 +4,7 @@ namespace GBATool.Models
 {
     public struct SpriteModel
     {
-        public string ID { get; set; }
+        public string? ID { get; set; }
         public SpriteShape Shape { get; set; }
         public SpriteSize Size { get; set; }
         public int PosX { get; set; }

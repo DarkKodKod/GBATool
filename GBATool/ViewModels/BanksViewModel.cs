@@ -202,6 +202,8 @@ namespace GBATool.ViewModels
 
             LoadTileSetSprites();
             LoadImage(model);
+
+            model.CleanUpDeletedSprites();
         }
 
         public override void OnDeactivate()
@@ -321,9 +323,9 @@ namespace GBATool.ViewModels
 
             WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image);
 
-            for (int i = 0; i < model.Sprites.Length; i++)
+            foreach (SpriteModel tileSetSprite in model.Sprites)
             {
-                if (string.IsNullOrEmpty(model.Sprites[i].ID))
+                if (string.IsNullOrEmpty(tileSetSprite.ID))
                 {
                     continue;
                 }
@@ -331,9 +333,9 @@ namespace GBATool.ViewModels
                 int width = 0;
                 int height = 0;
 
-                SpriteUtils.ConvertToWidthHeight(model.Sprites[i].Shape, model.Sprites[i].Size, ref width, ref height);
+                SpriteUtils.ConvertToWidthHeight(tileSetSprite.Shape, tileSetSprite.Size, ref width, ref height);
 
-                WriteableBitmap cropped = writeableBmp.Crop(model.Sprites[i].PosX, model.Sprites[i].PosY, width, height);
+                WriteableBitmap cropped = writeableBmp.Crop(tileSetSprite.PosX, tileSetSprite.PosY, width, height);
 
                 // Scaling here otherwise is too small for display
                 width *= 4;
@@ -341,7 +343,7 @@ namespace GBATool.ViewModels
 
                 SpriteVO sprite = new()
                 {
-                    SpriteID = model.Sprites[i].ID,
+                    SpriteID = tileSetSprite.ID,
                     Bitmap = cropped,
                     Width = width,
                     Height = height
@@ -441,6 +443,11 @@ namespace GBATool.ViewModels
         }
 
         private void OnMouseImageSelected(Image image, Point point)
+        {
+            SelectSpriteFromBankImage(image, point);
+        }
+
+        private void SelectSpriteFromBankImage(Image image, Point point)
         {
             if (_metaData == null)
             {
