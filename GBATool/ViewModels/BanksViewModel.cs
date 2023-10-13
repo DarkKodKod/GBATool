@@ -149,6 +149,8 @@ namespace GBATool.ViewModels
             }
         }
 
+        public bool IsNotBackground { get => !IsBackground; }
+
         public bool IsBackground
         {
             get => _isBackground;
@@ -164,6 +166,7 @@ namespace GBATool.ViewModels
                 }
 
                 OnPropertyChanged("IsBackground");
+                OnPropertyChanged("IsNotBackground");
             }
         }
 
@@ -658,6 +661,7 @@ namespace GBATool.ViewModels
             int y = (int)Math.Floor(point.Y / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
 
             int lengthWidth = (int)(image.Width / BankUtils.SizeOfCellInPixels);
+            int lengthHeight = (int)(image.Height / BankUtils.SizeOfCellInPixels);
             int yPos = (y / BankUtils.SizeOfCellInPixels);
             int xPos = (x / BankUtils.SizeOfCellInPixels);
 
@@ -670,6 +674,7 @@ namespace GBATool.ViewModels
                 return;
             }
 
+            // Going through the list again to find the first occurrence of this item
             (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteID);
 
             TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(tileSetId);
@@ -692,26 +697,73 @@ namespace GBATool.ViewModels
 
             if (is1DImage)
             {
-                SpriteRectVisibility = Visibility.Visible;
-
-                int tilesNumber = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
-
-                int left = (firstIndex % lengthWidth) * BankUtils.SizeOfCellInPixels;
-                int width = tilesNumber * BankUtils.SizeOfCellInPixels;
-
-                if (left + width > BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels)
-                {
-                    width = (BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels) - left;
-                }
-
-                SpriteRectLeft = left;
-                SpriteRectWidth = width;
-                SpriteRectHeight = BankUtils.SizeOfCellInPixels;
-                SpriteRectTop = y;
+                ShowRectOverSprite1D(sprite, firstIndex, lengthWidth);
             }
             else
             {
                 //
+            }
+        }
+
+        private void ShowRectOverSprite1D(SpriteModel sprite, int firstIndex, int lengthWidth) 
+        {
+            SpriteRectVisibility = Visibility.Visible;
+            int tilesNumber = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+            bool useNextRect = false;
+
+            int left = (firstIndex % lengthWidth) * BankUtils.SizeOfCellInPixels;
+            int width = tilesNumber * BankUtils.SizeOfCellInPixels;
+            int top = (firstIndex / BankUtils.MaxTextureCellsWidth()) * BankUtils.SizeOfCellInPixels;
+
+            int whatIsLeft = 0;
+
+            int maxCellsInPixels = BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels;
+
+            if (left + width > maxCellsInPixels)
+            {
+                int sub = maxCellsInPixels - left;
+
+                whatIsLeft = width - sub;
+                width = sub;
+
+                useNextRect = true;
+            }
+
+            SpriteRectLeft = left;
+            SpriteRectWidth = width;
+            SpriteRectHeight = BankUtils.SizeOfCellInPixels;
+            SpriteRectTop = top;
+
+            if (useNextRect)
+            {
+                useNextRect = false;
+
+                SpriteRectVisibility2 = Visibility.Visible;
+
+                width = whatIsLeft;
+
+                if (width > maxCellsInPixels)
+                {
+                    whatIsLeft = width - maxCellsInPixels;
+                    width = maxCellsInPixels;
+
+                    useNextRect = true;
+                }
+
+                SpriteRectLeft2 = 0;
+                SpriteRectWidth2 = width;
+                SpriteRectHeight2 = BankUtils.SizeOfCellInPixels;
+                SpriteRectTop2 = top + BankUtils.SizeOfCellInPixels;
+
+                if (useNextRect)
+                {
+                    SpriteRectVisibility3 = Visibility.Visible;
+
+                    SpriteRectLeft3 = 0;
+                    SpriteRectWidth3 = whatIsLeft;
+                    SpriteRectHeight3 = BankUtils.SizeOfCellInPixels;
+                    SpriteRectTop3 = top + (BankUtils.SizeOfCellInPixels * 2);
+                }
             }
         }
     }

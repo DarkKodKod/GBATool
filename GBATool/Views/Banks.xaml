@@ -15,6 +15,7 @@
         <cv:ParametersConverter x:Key="parametersConverter"/>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
         <Style x:Key="linkStyle" TargetType="TextBlock"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </UserControl.Resources>
     <UserControl.DataContext>
         <vm:BanksViewModel />
@@ -48,7 +49,14 @@
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
                     <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
-                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedSpritePatternFormat}" FontWeight="Bold" />
+                    <TextBlock VerticalAlignment="Center" 
+                               Text="{Binding SelectedSpritePatternFormat}" 
+                               FontWeight="Bold"
+                               Visibility="{Binding IsNotBackground, Converter={StaticResource BoolToVis}}"/>
+                    <TextBlock VerticalAlignment="Center" 
+                               Text="1D" 
+                               FontWeight="Bold"
+                               Visibility="{Binding IsBackground, Converter={StaticResource BoolToVis}}"/>
                     <Label Margin="20,0,0,0">Is Background:</Label>
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
                     <Label Margin="20,0,0,0">256 colors:</Label>
@@ -96,21 +104,21 @@
                         <Rectangle Width="{Binding SpriteRectWidth}"
                                    Height="{Binding SpriteRectHeight}" 
                                    Stroke="Magenta" 
-                                   StrokeThickness="0.9"
+                                   StrokeThickness="0.7"
                                    Canvas.Top="{Binding SpriteRectTop}"
                                    Canvas.Left="{Binding SpriteRectLeft}"
                                    Visibility="{Binding SpriteRectVisibility}"/>
                         <Rectangle Width="{Binding SpriteRectWidth2}"
                                    Height="{Binding SpriteRectHeight2}" 
                                    Stroke="Magenta" 
-                                   StrokeThickness="0.9"
+                                   StrokeThickness="0.7"
                                    Canvas.Top="{Binding SpriteRectTop2}"
                                    Canvas.Left="{Binding SpriteRectLeft2}"
                                    Visibility="{Binding SpriteRectVisibility2}"/>
                         <Rectangle Width="{Binding SpriteRectWidth3}"
                                    Height="{Binding SpriteRectHeight3}" 
                                    Stroke="Magenta" 
-                                   StrokeThickness="0.9"
+                                   StrokeThickness="0.7"
                                    Canvas.Top="{Binding SpriteRectTop3}"
                                    Canvas.Left="{Binding SpriteRectLeft3}"
                                    Visibility="{Binding SpriteRectVisibility3}"/>

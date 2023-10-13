@@ -388,6 +388,13 @@ namespace GBATool.ViewModels
                 return;
             }
 
+            TileSetModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
             int width = 0;
             int height = 0;
 
@@ -406,6 +413,14 @@ namespace GBATool.ViewModels
                 return;
             }
 
+            SpriteModel? find = model.Sprites.Find((sprite) => (new SpriteModel() { PosX = x, PosY = y, Shape = this.Shape, Size = this.Size, TileSetID = model.GUID}) == sprite);;
+
+            if (!string.IsNullOrEmpty(find?.ID))
+            {
+                MessageBox.Show("The exact same sprite already exists", "Error", MessageBoxButton.OK);
+                return;
+            }
+
             SpriteVO sprite = AddSpriteToTheList(width, height, Guid.NewGuid().ToString(), cropped);
 
             if (sprite.SpriteID == null)
@@ -415,18 +430,11 @@ namespace GBATool.ViewModels
 
             SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
 
-            SaveNewSprite(sprite.SpriteID, x, y, width, height);
+            SaveNewSprite(sprite.SpriteID, x, y, width, height, model);
         }
 
-        private void SaveNewSprite(string spriteID, int posX, int posY, int width, int height)
+        private void SaveNewSprite(string spriteID, int posX, int posY, int width, int height, TileSetModel model)
         {
-            TileSetModel? model = GetModel();
-
-            if (model == null)
-            {
-                return;
-            }
-
             SpriteShape shape = SpriteShape.Shape00;
             SpriteSize size = SpriteSize.Size00;
 
