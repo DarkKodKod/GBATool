@@ -5,8 +5,8 @@ namespace ArchitectureLibrary.History
 {
     public static class HistoryManager
     {
-        static readonly Caretaker _caretaker = new Caretaker();
-        static readonly Originator _mementoOriginator = new Originator();
+        static readonly Caretaker _caretaker = new();
+        static readonly Originator _mementoOriginator = new();
 
         public static void Initialize()
         {

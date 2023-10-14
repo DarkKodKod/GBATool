@@ -11,7 +11,7 @@ namespace ArchitectureLibrary.Managers
 
             if (!Interfaces.TryGetValue(className.Name, out object interfaceObject))
             {
-                T m = new T();
+                T m = new();
 
                 Interfaces.TryAdd(className.Name, m);
 

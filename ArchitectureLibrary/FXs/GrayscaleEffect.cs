@@ -7,7 +7,7 @@ namespace ArchitectureLibrary.FXs
 {
     public class GrayscaleEffect : ShaderEffect
     {
-        private static readonly PixelShader _pixelShader = new PixelShader() { UriSource = Global.MakePackUri("FXs/Shaders/GrayscaleEffect.ps") };
+        private static readonly PixelShader _pixelShader = new() { UriSource = Global.MakePackUri("FXs/Shaders/GrayscaleEffect.ps") };
 
         public GrayscaleEffect()
         {

@@ -4,8 +4,8 @@ namespace ArchitectureLibrary.History
 {
     public class Caretaker
     {
-        private readonly Stack<Memento> _undoStack = new Stack<Memento>();
-        private readonly Stack<Memento> _redoStack = new Stack<Memento>();
+        private readonly Stack<Memento> _undoStack = new();
+        private readonly Stack<Memento> _redoStack = new();
 
         public Memento GetUndoMemento()
         {
