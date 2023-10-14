@@ -63,7 +63,7 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" />
+                    <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" />
                 </StackPanel>
                 <Border Grid.Row="4" Width="256" Height="256"
                         VerticalAlignment="Top"

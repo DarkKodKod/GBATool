@@ -5,12 +5,11 @@ using System.Windows;
 
 namespace GBATool.Models
 {
-    public class SpriteRef
+    public record SpriteRef
     {
         public string? SpriteID { get; set; }
         public string? TileSetID { get; set; }
     }
-
 
     public class BankModel : AFileModel
     {
@@ -49,6 +48,18 @@ namespace GBATool.Models
             Sprites.Add(new SpriteRef() { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
 
             return (true, "");
+        }
+
+        public bool RemoveSprite(SpriteModel sprite)
+        {
+            SpriteRef? find = Sprites.Find((spriteRef) => spriteRef.SpriteID == sprite.ID);
+
+            if (string.IsNullOrEmpty(find?.SpriteID))
+            {
+                return false;
+            }
+
+            return Sprites.Remove(new SpriteRef() { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
         }
 
         public void CleanUpDeletedSprites()

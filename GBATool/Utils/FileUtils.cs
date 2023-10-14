@@ -29,29 +29,37 @@ namespace GBATool.Utils
 
             AFileModel? model = null;
 
-            switch (type)
+            try
             {
-                case ProjectItemType.Bank:
-                    model = Toml.ReadStream<BankModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Character:
-                    model = Toml.ReadStream<CharacterModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Map:
-                    model = Toml.ReadStream<MapModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.TileSet:
-                    model = Toml.ReadStream<TileSetModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Palette:
-                    model = Toml.ReadStream<PaletteModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.World:
-                    model = Toml.ReadStream<WorldModel>(new MemoryStream(content));
-                    break;
-                case ProjectItemType.Entity:
-                    model = Toml.ReadStream<EntityModel>(new MemoryStream(content));
-                    break;
+                switch (type)
+                {
+                    case ProjectItemType.Bank:
+                        model = Toml.ReadStream<BankModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.Character:
+                        model = Toml.ReadStream<CharacterModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.Map:
+                        model = Toml.ReadStream<MapModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.TileSet:
+                        model = Toml.ReadStream<TileSetModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.Palette:
+                        model = Toml.ReadStream<PaletteModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.World:
+                        model = Toml.ReadStream<WorldModel>(new MemoryStream(content));
+                        break;
+                    case ProjectItemType.Entity:
+                        model = Toml.ReadStream<EntityModel>(new MemoryStream(content));
+                        break;
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
             }
 
             return model;

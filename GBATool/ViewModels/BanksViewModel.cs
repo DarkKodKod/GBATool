@@ -29,6 +29,7 @@ namespace GBATool.ViewModels
         private bool _doNotSave = false;
         private BankModel? _model = null;
         private SpriteModel? _selectedSprite = null;
+        private SpriteModel? _selectedSpriteFromBank = null;
         private Dictionary<string, WriteableBitmap> _bitmapCache = new();
         private BankImageMetaData? _metaData = null;
         private Visibility _spriteRectVisibility = Visibility.Hidden;
@@ -86,6 +87,17 @@ namespace GBATool.ViewModels
                 _tileSetId = value;
 
                 OnPropertyChanged("TileSetId");
+            }
+        }
+
+        public SpriteModel? SelectedSpriteFromBank
+        {
+            get => _selectedSpriteFromBank;
+            set
+            {
+                _selectedSpriteFromBank = value;
+
+                OnPropertyChanged("SelectedSpriteFromBank");
             }
         }
 
@@ -162,7 +174,10 @@ namespace GBATool.ViewModels
 
                     UpdateAndSaveIsBackground();
 
-                    ReloadImage();
+                    if (ModelManager.Get<ProjectModel>().SpritePatternFormat != SpritePattern.Format1D)
+                    {
+                        ReloadImage();
+                    }
                 }
 
                 OnPropertyChanged("IsBackground");
@@ -552,14 +567,6 @@ namespace GBATool.ViewModels
             if (_doNotSave)
                 return;
 
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-            if (projectModel.SpritePatternFormat == SpritePattern.Format1D)
-            {
-                // Dont do anything because we are already in the 1D format acording to project configuration
-                return;
-            }
-
             _bitmapCache.Clear();
 
             SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
@@ -624,9 +631,21 @@ namespace GBATool.ViewModels
             UnselectSpriteFromBankImage();
         }
 
-        private void OnBankSpriteDeleted()
+        private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
         {
-            ReloadImage();
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            bool ret = model.RemoveSprite(spriteToDelete);
+
+            if (ret)
+            {
+                ReloadImage();
+            }
         }
 
         private void OnMouseImageSelected(Image image, Point point)
@@ -639,6 +658,8 @@ namespace GBATool.ViewModels
             SpriteRectVisibility = Visibility.Hidden;
             SpriteRectVisibility2 = Visibility.Hidden;
             SpriteRectVisibility3 = Visibility.Hidden;
+
+            SelectedSpriteFromBank = null;
         }
 
         private void SelectSpriteFromBankImage(Image image, Point point)
@@ -691,6 +712,8 @@ namespace GBATool.ViewModels
                 return;
             }
 
+            SelectedSpriteFromBank = sprite;
+
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
             bool is1DImage = model.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
@@ -705,7 +728,7 @@ namespace GBATool.ViewModels
             }
         }
 
-        private void ShowRectOverSprite1D(SpriteModel sprite, int firstIndex, int lengthWidth) 
+        private void ShowRectOverSprite1D(SpriteModel sprite, int firstIndex, int lengthWidth)
         {
             SpriteRectVisibility = Visibility.Visible;
             int tilesNumber = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);

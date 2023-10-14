@@ -26,7 +26,7 @@ namespace GBATool.Utils
         }
 
         public static int MaxTextureCellsHeight()
-        { 
+        {
             return 32;
         }
 

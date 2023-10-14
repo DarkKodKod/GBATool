@@ -1,5 +1,6 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Enums;
+using GBATool.Models;
 using GBATool.ViewModels;
 using GBATool.VOs;
 using System.Windows;
@@ -82,5 +83,5 @@ namespace GBATool.Signals
     public class CleanupTileSetLinksSignal : Signal { }
     public class SelectTileSetSignal : Signal<string> { }
     public class BankImageUpdatedSignal : Signal { }
-    public class BankSpriteDeletedSignal : Signal { }
+    public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 }
