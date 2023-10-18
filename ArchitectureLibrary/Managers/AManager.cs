@@ -21,6 +21,6 @@ namespace ArchitectureLibrary.Managers
             return (T)interfaceObject;
         }
 
-        private static readonly ConcurrentDictionary<string, object> Interfaces = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> Interfaces = new();
     }
 }

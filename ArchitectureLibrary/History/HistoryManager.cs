@@ -6,7 +6,6 @@ namespace ArchitectureLibrary.History
     public static class HistoryManager
     {
         static readonly Caretaker _caretaker = new();
-        static readonly Originator _mementoOriginator = new();
 
         public static void Initialize()
         {
@@ -19,7 +18,7 @@ namespace ArchitectureLibrary.History
 
             if (memento != null)
             {
-                _mementoOriginator.ExecuteUndo(memento);
+                Originator.ExecuteUndo(memento);
             }
         }
 
@@ -29,7 +28,7 @@ namespace ArchitectureLibrary.History
 
             if (memento != null)
             {
-                _mementoOriginator.ExecuteRedo(memento);
+                Originator.ExecuteRedo(memento);
             }
         }
 
@@ -45,7 +44,7 @@ namespace ArchitectureLibrary.History
 
         private static void OnRegisterHistoryAction(IHistoryAction action)
         {
-            Memento memento = _mementoOriginator.CreateMemento(action);
+            Memento memento = Originator.CreateMemento(action);
 
             _caretaker.InsertMementoForUndoRedo(memento);
         }

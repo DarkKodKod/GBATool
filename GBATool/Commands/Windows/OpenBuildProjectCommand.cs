@@ -20,9 +20,8 @@ namespace GBATool.Commands
             }
 
             object[] values = (object[])parameter;
-            Window window = (Window)values[0];
 
-            if (window == null)
+            if (values[0] is not Window _)
             {
                 return false;
             }

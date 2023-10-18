@@ -4,8 +4,4 @@
 /GBATool/GBATool.csproj.user
 /ArchitectureLibrary/bin/*
 /ArchitectureLibrary/obj/*
-/PaletteQuantizerLibrary/obj/*
-/PaletteQuantizerLibrary/bin/*
-/ColorPalette/obj/*
-/ColorPalette/bin/*
 /GBATool/Properties/PublishProfiles/FolderProfile.pubxml.user
