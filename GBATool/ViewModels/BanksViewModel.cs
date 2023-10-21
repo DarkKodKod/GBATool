@@ -47,6 +47,7 @@ namespace GBATool.ViewModels
         private double _spriteRectWidth3;
         private double _spriteRectHeight3;
         private double _spriteRectTop3;
+        private int _canvasHeght = 256;
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -57,6 +58,17 @@ namespace GBATool.ViewModels
         #endregion
 
         #region get/set
+        public int CanvasHeight
+        {
+            get => _canvasHeght;
+            set
+            {
+                _canvasHeght = value;
+
+                OnPropertyChanged("CanvasHeight");
+            }
+        }
+
         public ImageSource? PTImage
         {
             get => _pTImage;
@@ -153,6 +165,8 @@ namespace GBATool.ViewModels
                 if (_use256Colors != value)
                 {
                     _use256Colors = value;
+
+                    AdjustCanvasHeight();
 
                     UpdateAndSaveUse256Colors();
                 }
@@ -378,6 +392,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
             SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
             SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
+            SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
             #endregion
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -415,6 +430,7 @@ namespace GBATool.ViewModels
             SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
             SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
             SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
+            SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
             #endregion
         }
 
@@ -553,6 +569,18 @@ namespace GBATool.ViewModels
             }
 
             SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
+        }
+
+        private void AdjustCanvasHeight()
+        {
+            if (Use256Colors)
+            {
+                CanvasHeight = 128;
+            }
+            else
+            {
+                CanvasHeight = 256;
+            }
         }
 
         public BankModel? GetModel()
@@ -728,6 +756,15 @@ namespace GBATool.ViewModels
             }
         }
 
+        private void OnReloadBankImage()
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
+
+            ReloadImage();
+        }
+
         private void ShowRectOverSprite1D(SpriteModel sprite, int firstIndex, int lengthWidth)
         {
             SpriteRectVisibility = Visibility.Visible;
@@ -736,11 +773,11 @@ namespace GBATool.ViewModels
 
             int left = (firstIndex % lengthWidth) * BankUtils.SizeOfCellInPixels;
             int width = tilesNumber * BankUtils.SizeOfCellInPixels;
-            int top = (firstIndex / BankUtils.MaxTextureCellsWidth()) * BankUtils.SizeOfCellInPixels;
+            int top = (firstIndex / BankUtils.MaxTextureCellsWidth) * BankUtils.SizeOfCellInPixels;
 
             int whatIsLeft = 0;
 
-            int maxCellsInPixels = BankUtils.MaxTextureCellsWidth() * BankUtils.SizeOfCellInPixels;
+            int maxCellsInPixels = BankUtils.MaxTextureCellsWidth * BankUtils.SizeOfCellInPixels;
 
             if (left + width > maxCellsInPixels)
             {

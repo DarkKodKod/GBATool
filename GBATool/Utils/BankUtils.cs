@@ -19,22 +19,18 @@ namespace GBATool.Utils
     public static class BankUtils
     {
         public static readonly int SizeOfCellInPixels = 8;
+        public static readonly int MaxTextureCellsWidth = 32;
 
-        public static int MaxTextureCellsWidth()
+        public static int MaxTextureCellsHeight(bool is256color)
         {
-            return 32;
-        }
-
-        public static int MaxTextureCellsHeight()
-        {
-            return 32;
+            return is256color ? 16 : 32;
         }
 
         public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache)
         {
             BankImageMetaData metaData = new();
 
-            WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth() * SizeOfCellInPixels, MaxTextureCellsHeight() * SizeOfCellInPixels);
+            WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth * SizeOfCellInPixels, MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels);
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
@@ -70,24 +66,24 @@ namespace GBATool.Utils
                     continue;
                 }
 
+                int width = 0;
+                int height = 0;
+
+                SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+                int posX = sprite.PosX;
+                int posY = sprite.PosY;
+
                 if (is1DImage)
                 {
-                    int width = 0;
-                    int height = 0;
-
-                    SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
-
-                    int posX = sprite.PosX;
-                    int posY = sprite.PosY;
-
                     for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
                     {
                         for (int i = 0; i < (width / SizeOfCellInPixels); ++i)
                         {
                             WriteableBitmap cropped = sourceBitmap.Crop(posX, posY, SizeOfCellInPixels, SizeOfCellInPixels);
 
-                            int destX = index % MaxTextureCellsWidth() * SizeOfCellInPixels;
-                            int destY = index / MaxTextureCellsHeight() * SizeOfCellInPixels;
+                            int destX = index % MaxTextureCellsWidth * SizeOfCellInPixels;
+                            int destY = index / MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels;
 
                             Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
 
@@ -104,7 +100,27 @@ namespace GBATool.Utils
                 }
                 else
                 {
-                    //
+                    for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
+                    {
+                        for (int i = 0; i < (width / SizeOfCellInPixels); ++i)
+                        {
+                            WriteableBitmap cropped = sourceBitmap.Crop(posX, posY, SizeOfCellInPixels, SizeOfCellInPixels);
+
+                            //int destX = index % MaxTextureCellsWidth() * SizeOfCellInPixels;
+                            //int destY = index / MaxTextureCellsHeight() * SizeOfCellInPixels;
+
+                            //Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
+
+                            //metaData.SpriteIndices.Add((index, sprite.ID, sprite.TileSetID));
+
+                            posX += SizeOfCellInPixels;
+
+                            //index++;
+                        }
+
+                        posX = sprite.PosX;
+                        posY += SizeOfCellInPixels;
+                    }
                 }
             }
 

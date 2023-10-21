@@ -45,7 +45,12 @@ namespace GBATool.ViewModels
                 // Save all changes
                 ProjectModel project = ModelManager.Get<ProjectModel>();
 
-                project.SpritePatternFormat = SelectedSpriteFormat;
+                if (project.SpritePatternFormat != SelectedSpriteFormat)
+                {
+                    project.SpritePatternFormat = SelectedSpriteFormat;
+
+                    SignalManager.Get<ReloadBankImageSignal>().Dispatch();
+                }
 
                 project.Save();
             }
