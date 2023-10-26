@@ -20,7 +20,7 @@ namespace GBATool.Commands
             _newFolderName = (string)Application.Current.FindResource(_folderNameKey);
         }
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (ItemSelected != null)
             {
@@ -33,7 +33,7 @@ namespace GBATool.Commands
             return false;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (ItemSelected == null || ItemSelected.FileHandler == null)
             {

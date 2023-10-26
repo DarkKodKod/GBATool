@@ -4,7 +4,7 @@ namespace GBATool.Commands
 {
     public class EnableRenameElementCommand : ItemSelectedCommand
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (ItemSelected == null)
             {
@@ -19,7 +19,7 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is ProjectItem)
             {

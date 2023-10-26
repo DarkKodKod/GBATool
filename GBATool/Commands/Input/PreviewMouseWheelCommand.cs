@@ -8,8 +8,13 @@ namespace GBATool.Commands
 {
     public class PreviewMouseWheelCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             if (parameter is MouseWheelEventArgs wheelEvent)
             {
                 MouseWheelVO vo = new()

@@ -12,12 +12,12 @@ namespace GBATool.Commands
     {
         private bool _building = false;
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             return !_building;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (_building)
             {

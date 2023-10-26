@@ -6,7 +6,7 @@ namespace GBATool.Commands
 {
     public class OpenProjectPropertiesCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (parameter == null)
             {
@@ -24,8 +24,13 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             object[] values = (object[])parameter;
             Window window = (Window)values[0];
             _ = (string)values[1];

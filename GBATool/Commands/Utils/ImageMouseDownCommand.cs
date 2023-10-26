@@ -9,7 +9,7 @@ namespace GBATool.Commands
 {
     public class ImageMouseDownCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             MouseButtonEventArgs? mouseEvent = parameter as MouseButtonEventArgs;
 

@@ -65,65 +65,77 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" />
                 </StackPanel>
-                <Border Grid.Row="4" Width="256" Height="256"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Left">
-                    <Border.LayoutTransform>
-                        <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
-                    </Border.LayoutTransform>
-                    <Canvas Width="256" Height="{Binding CanvasHeight}" 
-		                    Background="DarkGray"
-                            HorizontalAlignment="Left"
-                            VerticalAlignment="Top">
-                        <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-                               Source="{Binding PTImage}"
-	                           Width="256"
-	                           Height="{Binding CanvasHeight}"
-                               Name="imgBank"
-	                           Stretch="UniformToFill">
-                            <i:Interaction.Behaviors>
-                                <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
-                            </i:Interaction.Behaviors>
-                        </Image>
-                        <Border>
-                            <Border.Background>
-                                <VisualBrush TileMode="Tile"
-					                         Viewport="0,0,8,8" ViewportUnits="Absolute" 
-					                         Viewbox="0,0,8,8" ViewboxUnits="Absolute">
-                                    <VisualBrush.Visual>
-                                        <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
-                                    </VisualBrush.Visual>
-                                </VisualBrush>
-                            </Border.Background>
-                            <Canvas Width="256" Height="{Binding CanvasHeight}" Background="Transparent">
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ListView Grid.Column="0" 
+                              MinWidth="150"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    </ListView>
+                    <Border Width="256" Height="256"
+                            Grid.Column="2"
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Left">
+                        <Border.LayoutTransform>
+                            <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
+                        </Border.LayoutTransform>
+                        <Canvas Width="256" Height="{Binding CanvasHeight}" 
+                                Background="DarkGray"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Top">
+                            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                   Source="{Binding PTImage}"
+                                   Width="256"
+                                   Height="{Binding CanvasHeight}"
+                                   Name="imgBank"
+                                   Stretch="UniformToFill">
                                 <i:Interaction.Behaviors>
-                                    <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
+                                    <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
                                 </i:Interaction.Behaviors>
-                            </Canvas>
-                        </Border>
-                        <Rectangle Width="{Binding SpriteRectWidth}"
-                                   Height="{Binding SpriteRectHeight}" 
-                                   Stroke="Magenta" 
-                                   StrokeThickness="0.7"
-                                   Canvas.Top="{Binding SpriteRectTop}"
-                                   Canvas.Left="{Binding SpriteRectLeft}"
-                                   Visibility="{Binding SpriteRectVisibility}"/>
-                        <Rectangle Width="{Binding SpriteRectWidth2}"
-                                   Height="{Binding SpriteRectHeight2}" 
-                                   Stroke="Magenta" 
-                                   StrokeThickness="0.7"
-                                   Canvas.Top="{Binding SpriteRectTop2}"
-                                   Canvas.Left="{Binding SpriteRectLeft2}"
-                                   Visibility="{Binding SpriteRectVisibility2}"/>
-                        <Rectangle Width="{Binding SpriteRectWidth3}"
-                                   Height="{Binding SpriteRectHeight3}" 
-                                   Stroke="Magenta" 
-                                   StrokeThickness="0.7"
-                                   Canvas.Top="{Binding SpriteRectTop3}"
-                                   Canvas.Left="{Binding SpriteRectLeft3}"
-                                   Visibility="{Binding SpriteRectVisibility3}"/>
-                    </Canvas>
-                </Border>
+                            </Image>
+                            <Border>
+                                <Border.Background>
+                                    <VisualBrush TileMode="Tile"
+				                         Viewport="0,0,8,8" ViewportUnits="Absolute" 
+				                         Viewbox="0,0,8,8" ViewboxUnits="Absolute">
+                                        <VisualBrush.Visual>
+                                            <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Border.Background>
+                                <Canvas Width="256" Height="{Binding CanvasHeight}" Background="Transparent">
+                                    <i:Interaction.Behaviors>
+                                        <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
+                                    </i:Interaction.Behaviors>
+                                </Canvas>
+                            </Border>
+                            <Rectangle Width="{Binding SpriteRectWidth}"
+                                       Height="{Binding SpriteRectHeight}" 
+                                       Stroke="Magenta" 
+                                       StrokeThickness="0.7"
+                                       Canvas.Top="{Binding SpriteRectTop}"
+                                       Canvas.Left="{Binding SpriteRectLeft}"
+                                       Visibility="{Binding SpriteRectVisibility}"/>
+                            <Rectangle Width="{Binding SpriteRectWidth2}"
+                                       Height="{Binding SpriteRectHeight2}" 
+                                       Stroke="Magenta" 
+                                       StrokeThickness="0.7"
+                                       Canvas.Top="{Binding SpriteRectTop2}"
+                                       Canvas.Left="{Binding SpriteRectLeft2}"
+                                       Visibility="{Binding SpriteRectVisibility2}"/>
+                            <Rectangle Width="{Binding SpriteRectWidth3}"
+                                       Height="{Binding SpriteRectHeight3}" 
+                                       Stroke="Magenta" 
+                                       StrokeThickness="0.7"
+                                       Canvas.Top="{Binding SpriteRectTop3}"
+                                       Canvas.Left="{Binding SpriteRectLeft3}"
+                                       Visibility="{Binding SpriteRectVisibility3}"/>
+                        </Canvas>
+                    </Border>
+                </Grid>
             </Grid>
             <StackPanel Grid.Column="2" Grid.Row="1"
                         HorizontalAlignment="Center"

@@ -22,8 +22,13 @@ namespace GBATool.Commands
             _newFileName = (string)Application.Current.FindResource(_fileNameKey);
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             if (parameter is not ElementTypeModel element)
             {
                 return;

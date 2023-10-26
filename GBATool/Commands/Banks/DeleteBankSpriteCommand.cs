@@ -7,7 +7,7 @@ namespace GBATool.Commands
 {
     public class DeleteBankSpriteCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (parameter == null)
             {
@@ -17,8 +17,13 @@ namespace GBATool.Commands
             return parameter is SpriteModel;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             SpriteModel sprite = (SpriteModel)parameter;
 
             SignalManager.Get<BankSpriteDeletedSignal>().Dispatch(sprite);

@@ -18,9 +18,9 @@ namespace ArchitectureLibrary.Commands
             }
         }
 
-        private EventHandler _internalCanExecuteChanged;
+        private EventHandler? _internalCanExecuteChanged;
 
-        public virtual event EventHandler CanExecuteChanged
+        public virtual event EventHandler? CanExecuteChanged
         {
             add
             {
@@ -34,17 +34,17 @@ namespace ArchitectureLibrary.Commands
             }
         }
 
-        public virtual bool CanExecute(object parameter)
+        public virtual bool CanExecute(object? parameter)
         {
             return !IsExecuting;
         }
 
-        public virtual Task ExecuteAsync(object parameter)
+        public virtual Task ExecuteAsync(object? parameter)
         {
-            return Task.FromResult<object>(null);
+            return Task.FromResult<object?>(null);
         }
 
-        public virtual async void Execute(object parameter)
+        public virtual async void Execute(object? parameter)
         {
             IsExecuting = true;
             await ExecuteAsync(parameter).ConfigureAwait(false);

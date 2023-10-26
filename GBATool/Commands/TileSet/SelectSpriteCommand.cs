@@ -7,7 +7,7 @@ namespace GBATool.Commands
 {
     public class SelectSpriteCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             SpriteVO? spriteVO = parameter as SpriteVO;
 

@@ -7,7 +7,7 @@ namespace ArchitectureLibrary.History
         private readonly Stack<Memento> _undoStack = new();
         private readonly Stack<Memento> _redoStack = new();
 
-        public Memento GetUndoMemento()
+        public Memento? GetUndoMemento()
         {
             if (_undoStack.Count > 0)
             {
@@ -23,7 +23,7 @@ namespace ArchitectureLibrary.History
             }
         }
 
-        public Memento GetRedoMemento()
+        public Memento? GetRedoMemento()
         {
             if (_redoStack.Count > 0)
             {

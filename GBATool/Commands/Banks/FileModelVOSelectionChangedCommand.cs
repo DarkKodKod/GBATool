@@ -8,8 +8,13 @@ namespace GBATool.Commands
 {
     public class FileModelVOSelectionChangedCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             SelectionChangedEventArgs? changedEvent = parameter as SelectionChangedEventArgs;
 
             if (changedEvent?.AddedItems.Count > 0)

@@ -6,7 +6,7 @@ namespace GBATool.Commands
 {
     public class GoToProjectItemCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is string id)
             {

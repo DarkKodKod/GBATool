@@ -4,6 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
+	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <UseWPF>true</UseWPF>
     <StartupObject>GBATool.App</StartupObject>
     <PublishSingleFile>true</PublishSingleFile>
@@ -15,6 +16,10 @@
     <RepositoryType>git</RepositoryType>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+	<SupportedPlatform Include="browser" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="icon.ico" />

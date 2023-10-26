@@ -11,7 +11,7 @@ namespace GBATool.Commands
 {
     public class PreviewMouseMoveCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             MouseEventArgs? mouseEvent = parameter as MouseEventArgs;
 

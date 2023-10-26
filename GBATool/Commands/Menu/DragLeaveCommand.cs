@@ -7,7 +7,7 @@ namespace GBATool.Commands
 {
     public class DragLeaveCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is DragEventArgs dragEvent)
             {

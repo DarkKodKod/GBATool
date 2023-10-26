@@ -31,6 +31,6 @@ namespace ArchitectureLibrary.Utils
             }
         }
 
-        private static string _assemblyShortName;
+        private static string? _assemblyShortName;
     }
 }

@@ -8,7 +8,7 @@ namespace GBATool.Commands
 {
     public class OpenImportImageDialogCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             ProjectModel model = ModelManager.Get<ProjectModel>();
 
@@ -20,7 +20,7 @@ namespace GBATool.Commands
             return false;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             Window? window = parameter as Window;
 

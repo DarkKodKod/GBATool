@@ -23,9 +23,11 @@ namespace GBATool.Models
             {
                 Toml.WriteFile(this, Path.Combine(path, name + FileExtension));
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 // Sometimes the IO is overlapped with another one, I dont want to save if this happens
+                Console.WriteLine(ex.Message);
+                throw;
             }
         }
     }

@@ -43,7 +43,7 @@ namespace GBATool.Commands
             //_folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
         }
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             string? path = parameter as string;
 
@@ -67,7 +67,7 @@ namespace GBATool.Commands
             return false;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             string? path = parameter as string;
 

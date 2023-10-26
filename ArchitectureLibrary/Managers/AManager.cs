@@ -9,7 +9,7 @@ namespace ArchitectureLibrary.Managers
         {
             Type className = typeof(T);
 
-            if (!Interfaces.TryGetValue(className.Name, out object interfaceObject))
+            if (!Interfaces.TryGetValue(className.Name, out object? interfaceObject))
             {
                 T m = new();
 

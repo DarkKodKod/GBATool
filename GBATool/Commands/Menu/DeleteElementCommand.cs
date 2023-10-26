@@ -9,7 +9,7 @@ namespace GBATool.Commands
 {
     public class DeleteElementCommand : ItemSelectedCommand
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (ItemSelected == null)
             {
@@ -24,7 +24,7 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (ItemSelected == null)
             {

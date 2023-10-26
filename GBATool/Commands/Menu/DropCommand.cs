@@ -14,7 +14,7 @@ namespace GBATool.Commands
 {
     public class DropCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             SignalManager.Get<DetachAdornersSignal>().Dispatch();
 
@@ -28,7 +28,7 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is not DragEventArgs dragEvent)
             {

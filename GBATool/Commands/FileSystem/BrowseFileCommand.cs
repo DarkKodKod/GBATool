@@ -8,8 +8,13 @@ namespace GBATool.Commands
 {
     public class BrowseFileCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             object[] values = (object[])parameter;
             string? path = (string)values[0];
             string[]? filters = null;

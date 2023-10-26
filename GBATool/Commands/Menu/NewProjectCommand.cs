@@ -6,7 +6,7 @@ namespace GBATool.Commands
 {
     public class NewProjectCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             Window? window = parameter as Window;
 

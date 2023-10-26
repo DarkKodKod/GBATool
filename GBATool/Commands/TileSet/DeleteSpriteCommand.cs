@@ -9,7 +9,7 @@ namespace GBATool.Commands
 {
     public class DeleteSpriteCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the sprite?", "Delete", MessageBoxButton.YesNo);
 

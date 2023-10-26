@@ -4,8 +4,13 @@ namespace GBATool.Commands
 {
     public class CopyElementCommand : ItemSelectedCommand
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return false;
+            }
+
             if (ItemSelected == null)
             {
                 return false;
@@ -19,8 +24,18 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
+            if (ItemSelected == null)
+            {
+                return;
+            }
+
             ClipboardManager.SetData(ItemSelected);
         }
     }

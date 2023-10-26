@@ -9,7 +9,7 @@ namespace GBATool.Utils
 {
     public static class FileUtils
     {
-        public static async Task<byte[]> ReadTextAsync(string filePath)
+        public static async ValueTask<byte[]> ReadTextAsync(string filePath)
         {
             byte[] result;
 
@@ -23,9 +23,11 @@ namespace GBATool.Utils
             return result;
         }
 
-        public static async Task<AFileModel?> ReadFileAndLoadModelAsync(string filePath, ProjectItemType type)
+        public static async ValueTask<AFileModel?> ReadFileAndLoadModelAsync(string filePath, ProjectItemType type)
         {
             byte[] content = await ReadTextAsync(filePath).ConfigureAwait(false);
+
+            MemoryStream stream = new(content);
 
             AFileModel? model = null;
 
@@ -34,25 +36,25 @@ namespace GBATool.Utils
                 switch (type)
                 {
                     case ProjectItemType.Bank:
-                        model = Toml.ReadStream<BankModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<BankModel>(stream);
                         break;
                     case ProjectItemType.Character:
-                        model = Toml.ReadStream<CharacterModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<CharacterModel>(stream);
                         break;
                     case ProjectItemType.Map:
-                        model = Toml.ReadStream<MapModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<MapModel>(stream);
                         break;
                     case ProjectItemType.TileSet:
-                        model = Toml.ReadStream<TileSetModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<TileSetModel>(stream);
                         break;
                     case ProjectItemType.Palette:
-                        model = Toml.ReadStream<PaletteModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<PaletteModel>(stream);
                         break;
                     case ProjectItemType.World:
-                        model = Toml.ReadStream<WorldModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<WorldModel>(stream);
                         break;
                     case ProjectItemType.Entity:
-                        model = Toml.ReadStream<EntityModel>(new MemoryStream(content));
+                        model = Toml.ReadStream<EntityModel>(stream);
                         break;
                 }
             }

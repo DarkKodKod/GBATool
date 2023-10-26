@@ -7,8 +7,13 @@ namespace GBATool.Commands
 {
     public class BrowseFolderCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             CommonOpenFileDialog dialog = new()
             {
                 Title = "Select folder",

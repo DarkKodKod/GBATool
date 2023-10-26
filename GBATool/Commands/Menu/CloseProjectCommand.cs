@@ -8,8 +8,13 @@ namespace GBATool.Commands
 {
     public class CloseProjectCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return false;
+            }
+
             string? projectName = parameter as string;
 
             if (string.IsNullOrEmpty(projectName))
@@ -20,8 +25,13 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             ProjectModel model = ModelManager.Get<ProjectModel>();
 
             if (model != null && !string.IsNullOrEmpty(model.Name))

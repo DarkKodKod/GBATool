@@ -8,7 +8,7 @@ namespace GBATool.Commands
 {
     public class MoveSpriteToBankCommand : Command
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (parameter == null)
             {
@@ -26,8 +26,13 @@ namespace GBATool.Commands
             return model != null && !model.IsFull;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             object[] values = (object[])parameter;
 
             BankModel model = (BankModel)values[0];

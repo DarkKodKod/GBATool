@@ -2,10 +2,15 @@
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
+	<Nullable>enable</Nullable>
+	<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
+  <ItemGroup>
+	<SupportedPlatform Include="browser" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="FXs\Shaders\GrayscaleEffect.ps" />
   </ItemGroup>

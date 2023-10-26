@@ -12,7 +12,7 @@ namespace GBATool.Commands
 {
     public class PasteElementCommand : ItemSelectedCommand
     {
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (ClipboardManager.IsEmpty() || ItemSelected == null)
             {
@@ -28,7 +28,7 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (ItemSelected?.FileHandler == null)
             {

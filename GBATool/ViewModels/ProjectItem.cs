@@ -40,7 +40,7 @@ namespace GBATool.ViewModels
         }
         public async Task ParseContentAsync(string content)
         {
-            Task<ProjectItem?> task = ParseAndCreateObject(content);
+            ValueTask<ProjectItem?> task = ParseAndCreateObject(content);
 
             ProjectItem? item = await task.ConfigureAwait(false);
 
@@ -183,7 +183,7 @@ namespace GBATool.ViewModels
             }
         }
 
-        private async Task<ProjectItem?> ParseAndCreateObject(string content)
+        private async ValueTask<ProjectItem?> ParseAndCreateObject(string content)
         {
             ProjectItem item = new()
             {

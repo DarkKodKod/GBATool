@@ -6,8 +6,13 @@ namespace GBATool.Commands
 {
     public class SelectTileSetCommand : Command
     {
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
+            if (parameter == null)
+            {
+                return;
+            }
+
             if (parameter is string id)
             {
                 SignalManager.Get<SelectTileSetSignal>().Dispatch(id);

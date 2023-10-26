@@ -14,7 +14,7 @@ namespace ArchitectureLibrary.History
 
         public static void Undo()
         {
-            Memento memento = _caretaker.GetUndoMemento();
+            Memento? memento = _caretaker.GetUndoMemento();
 
             if (memento != null)
             {
@@ -24,7 +24,7 @@ namespace ArchitectureLibrary.History
 
         public static void Redo()
         {
-            Memento memento = _caretaker.GetRedoMemento();
+            Memento? memento = _caretaker.GetRedoMemento();
 
             if (memento != null)
             {

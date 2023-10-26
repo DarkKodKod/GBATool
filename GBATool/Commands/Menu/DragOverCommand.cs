@@ -14,7 +14,7 @@ namespace GBATool.Commands
         private DateTime _startTime;
         private string _folderId = string.Empty;
 
-        public override bool CanExecute(object parameter)
+        public override bool CanExecute(object? parameter)
         {
             if (parameter is not DragEventArgs dragEvent)
             {
@@ -44,7 +44,7 @@ namespace GBATool.Commands
             return true;
         }
 
-        public override void Execute(object parameter)
+        public override void Execute(object? parameter)
         {
             if (parameter is not DragEventArgs dragEvent)
             {
