@@ -14,6 +14,7 @@ namespace GBATool.Utils
         public WriteableBitmap? image;
         public List<(int, string, string)> SpriteIndices = new();
         public List<string> UniqueTileSet = new();
+        public List<SpriteModel> bankSprites = new();
     }
 
     public static class BankUtils
@@ -30,7 +31,10 @@ namespace GBATool.Utils
         {
             BankImageMetaData metaData = new();
 
-            WriteableBitmap bankBitmap = BitmapFactory.New(MaxTextureCellsWidth * SizeOfCellInPixels, MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels);
+            int canvasWidth = MaxTextureCellsWidth * SizeOfCellInPixels;
+            int canvasHeight = MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels;
+
+            WriteableBitmap bankBitmap = BitmapFactory.New(canvasWidth, canvasHeight);
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
@@ -66,6 +70,8 @@ namespace GBATool.Utils
                     continue;
                 }
 
+                metaData.bankSprites.Add(sprite);
+
                 int width = 0;
                 int height = 0;
 
@@ -83,7 +89,7 @@ namespace GBATool.Utils
                             WriteableBitmap cropped = sourceBitmap.Crop(posX, posY, SizeOfCellInPixels, SizeOfCellInPixels);
 
                             int destX = index % MaxTextureCellsWidth * SizeOfCellInPixels;
-                            int destY = index / MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels;
+                            int destY = index / MaxTextureCellsWidth * SizeOfCellInPixels;
 
                             Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
 

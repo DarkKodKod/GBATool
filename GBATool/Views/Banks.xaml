@@ -71,24 +71,87 @@
                         <ColumnDefinition Width="10" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <ListView Grid.Column="0" 
-                              MinWidth="150"
-                              ScrollViewer.HorizontalScrollBarVisibility="Auto">
-                    </ListView>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Column="0" 
+                                Grid.Row="0" 
+                                Orientation="Horizontal" 
+                                HorizontalAlignment="Center">
+                        <Button Width="100"
+                                ToolTip="Move Up"
+                                Command="{Binding MoveUpSelectedSpriteElement}"
+                                CommandParameter="{Binding SelectedSpriteFromBank}">
+                            <Image Width="16" Height="16" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Source="/resources/up.png">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <fx:GrayscaleEffect />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button Width="100"
+                                ToolTip="Move Down"
+                                Command="{Binding MoveDownSelectedSpriteElement}"
+                                CommandParameter="{Binding SelectedSpriteFromBank}">
+                            <Image Width="16" Height="16" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Source="/resources/down.png">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <fx:GrayscaleEffect />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                    </StackPanel>
+                    <ListBox Grid.Column="0" 
+                             MinWidth="200"
+                             Grid.Row="1"
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ItemsSource="{Binding BankSprites}"
+                             DisplayMemberPath="ID"
+                             SelectedValue="{Binding Path=SelectedSpriteFromBank, Mode=TwoWay}">
+                    </ListBox>
                     <Border Width="256" Height="256"
                             Grid.Column="2"
+                            Grid.RowSpan="2"
                             VerticalAlignment="Top"
                             HorizontalAlignment="Left">
                         <Border.LayoutTransform>
                             <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
                         </Border.LayoutTransform>
-                        <Canvas Width="256" Height="{Binding CanvasHeight}" 
+                        <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" 
                                 Background="DarkGray"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Top">
                             <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
                                    Source="{Binding PTImage}"
-                                   Width="256"
+                                   Width="{Binding CanvasWidth}"
                                    Height="{Binding CanvasHeight}"
                                    Name="imgBank"
                                    Stretch="UniformToFill">
@@ -106,7 +169,7 @@
                                         </VisualBrush.Visual>
                                     </VisualBrush>
                                 </Border.Background>
-                                <Canvas Width="256" Height="{Binding CanvasHeight}" Background="Transparent">
+                                <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" Background="Transparent">
                                     <i:Interaction.Behaviors>
                                         <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
                                     </i:Interaction.Behaviors>

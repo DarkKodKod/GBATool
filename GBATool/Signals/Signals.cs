@@ -85,4 +85,6 @@ namespace GBATool.Signals
     public class BankImageUpdatedSignal : Signal { }
     public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
     public class ReloadBankImageSignal : Signal { }
+    public class MoveDownSelectedSpriteElementSignal : Signal<SpriteModel> { }
+    public class MoveUpSelectedSpriteElementSignal : Signal<SpriteModel> { }
 }

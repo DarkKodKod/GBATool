@@ -9,6 +9,7 @@ using GBATool.Utils;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -48,6 +49,8 @@ namespace GBATool.ViewModels
         private double _spriteRectHeight3;
         private double _spriteRectTop3;
         private int _canvasHeght = 256;
+        private int _canvasWidth = 256;
+        private ObservableCollection<SpriteModel> _bankSprites = new();
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -55,6 +58,8 @@ namespace GBATool.ViewModels
         public MoveSpriteToBankCommand MoveSpriteToBankCommand { get; } = new();
         public GoToProjectItemCommand GoToProjectItemCommand { get; } = new();
         public DeleteBankSpriteCommand DeleteBankSpriteCommand { get; } = new();
+        public MoveUpSelectedSpriteElement MoveUpSelectedSpriteElement { get; } = new();
+        public MoveDownSelectedSpriteElement MoveDownSelectedSpriteElement { get; } = new();
         #endregion
 
         #region get/set
@@ -66,6 +71,17 @@ namespace GBATool.ViewModels
                 _canvasHeght = value;
 
                 OnPropertyChanged("CanvasHeight");
+            }
+        }
+
+        public int CanvasWidth
+        {
+            get => _canvasWidth;
+            set
+            {
+                _canvasWidth = value;
+
+                OnPropertyChanged("CanvasWidth");
             }
         }
 
@@ -102,14 +118,32 @@ namespace GBATool.ViewModels
             }
         }
 
+        public ObservableCollection<SpriteModel> BankSprites
+        {
+            get => _bankSprites;
+            set
+            {
+                _bankSprites = value;
+
+                OnPropertyChanged("BankSprites");
+            }
+        }
+
         public SpriteModel? SelectedSpriteFromBank
         {
             get => _selectedSpriteFromBank;
             set
             {
-                _selectedSpriteFromBank = value;
+                if (_selectedSpriteFromBank != value)
+                {
+                    HideRectangleSelection();
 
-                OnPropertyChanged("SelectedSpriteFromBank");
+                    _selectedSpriteFromBank = value;
+
+                    SelectSpriteFromBankImage(_selectedSpriteFromBank);
+
+                    OnPropertyChanged("SelectedSpriteFromBank");
+                }
             }
         }
 
@@ -169,6 +203,8 @@ namespace GBATool.ViewModels
                     AdjustCanvasHeight();
 
                     UpdateAndSaveUse256Colors();
+
+                    ReloadImage();
                 }
 
                 OnPropertyChanged("Use256Colors");
@@ -393,6 +429,8 @@ namespace GBATool.ViewModels
             SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
             SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
             SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
+            SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
+            SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener += OnMoveUpSelectedSpriteElement;
             #endregion
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -413,6 +451,9 @@ namespace GBATool.ViewModels
 
             _doNotSave = false;
 
+            CanvasWidth = 256;
+            AdjustCanvasHeight();
+
             LoadTileSetSprites();
             LoadImage(model);
 
@@ -431,7 +472,19 @@ namespace GBATool.ViewModels
             SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
             SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
             SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
+            SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener -= OnMoveDownSelectedSpriteElement;
+            SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener -= OnMoveUpSelectedSpriteElement;
             #endregion
+        }
+
+        private void OnMoveUpSelectedSpriteElement(SpriteModel model)
+        {
+            //
+        }
+
+        private void OnMoveDownSelectedSpriteElement(SpriteModel model)
+        {
+            //
         }
 
         private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
@@ -485,8 +538,6 @@ namespace GBATool.ViewModels
             model.Use256Colors = Use256Colors;
 
             ProjectItem?.FileHandler?.Save();
-
-            UnselectSpriteFromBankImage();
         }
 
         private void UpdateAndSaveIsBackground()
@@ -597,6 +648,8 @@ namespace GBATool.ViewModels
 
             _bitmapCache.Clear();
 
+            BankSprites.Clear();
+
             SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
 
             OnBankImageUpdated();
@@ -607,6 +660,7 @@ namespace GBATool.ViewModels
             _metaData = BankUtils.CreateImage(model, ref _bitmapCache);
 
             PTImage = _metaData.image;
+            BankSprites = new ObservableCollection<SpriteModel>(_metaData.bankSprites);
 
             FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
 
@@ -676,32 +730,86 @@ namespace GBATool.ViewModels
             }
         }
 
-        private void OnMouseImageSelected(Image image, Point point)
+        private bool Is1DImage()
         {
-            SelectSpriteFromBankImage(image, point);
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return false;
+            }
+
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            bool is1DImage = model.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
+
+            return is1DImage;
+        }
+
+        private void OnMouseImageSelected(Image _, Point point)
+        {
+            UnselectSpriteFromBankImage();
+
+            if (Is1DImage())
+            {
+                SelectSpriteFromBankImage(point);
+            }
+            else
+            {
+                // 2d
+            }
         }
 
         private void UnselectSpriteFromBankImage()
         {
-            SpriteRectVisibility = Visibility.Hidden;
-            SpriteRectVisibility2 = Visibility.Hidden;
-            SpriteRectVisibility3 = Visibility.Hidden;
+            HideRectangleSelection();
 
             SelectedSpriteFromBank = null;
         }
 
-        private void SelectSpriteFromBankImage(Image image, Point point)
+        private void HideRectangleSelection()
         {
-            UnselectSpriteFromBankImage();
+            SpriteRectVisibility = Visibility.Hidden;
+            SpriteRectVisibility2 = Visibility.Hidden;
+            SpriteRectVisibility3 = Visibility.Hidden;
+        }
 
-            if (_metaData == null)
+        private void SelectSpriteFromBankImage(SpriteModel? spriteModel)
+        {
+            if (_metaData == null || string.IsNullOrEmpty(spriteModel?.ID))
             {
                 return;
             }
 
-            BankModel? model = GetModel();
+            if (Is1DImage())
+            {
+                int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
+                int firstIndex = 0;
+                int spriteTilesTotal = 0;
 
-            if (model == null)
+                foreach (SpriteModel sprite in _metaData.bankSprites)
+                {
+                    spriteTilesTotal = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+
+                    if (sprite.ID == spriteModel?.ID)
+                    {
+                        break;
+                    }
+
+                    firstIndex += spriteTilesTotal;
+                }
+
+                ShowRectOverSprite1D(spriteTilesTotal, firstIndex, canvasWidthInCells);
+            }
+            else
+            {
+                // 2d
+            }
+        }
+
+        private void SelectSpriteFromBankImage(Point point)
+        {
+            if (_metaData == null)
             {
                 return;
             }
@@ -709,14 +817,14 @@ namespace GBATool.ViewModels
             int x = (int)Math.Floor(point.X / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
             int y = (int)Math.Floor(point.Y / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
 
-            int lengthWidth = (int)(image.Width / BankUtils.SizeOfCellInPixels);
-            int lengthHeight = (int)(image.Height / BankUtils.SizeOfCellInPixels);
+            int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
+            int lengthHeight = CanvasHeight / BankUtils.SizeOfCellInPixels;
             int yPos = (y / BankUtils.SizeOfCellInPixels);
             int xPos = (x / BankUtils.SizeOfCellInPixels);
 
-            int index = (lengthWidth * yPos) + xPos;
+            int cellIndex = (canvasWidthInCells * yPos) + xPos;
 
-            (int _, string spriteID, string tileSetId) = _metaData.SpriteIndices.Find(item => item.Item1 == index);
+            (int _, string spriteID, string tileSetId) = _metaData.SpriteIndices.Find(item => item.Item1 == cellIndex);
 
             if (string.IsNullOrEmpty(spriteID))
             {
@@ -741,19 +849,6 @@ namespace GBATool.ViewModels
             }
 
             SelectedSpriteFromBank = sprite;
-
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-            bool is1DImage = model.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
-
-            if (is1DImage)
-            {
-                ShowRectOverSprite1D(sprite, firstIndex, lengthWidth);
-            }
-            else
-            {
-                //
-            }
         }
 
         private void OnReloadBankImage()
@@ -765,14 +860,14 @@ namespace GBATool.ViewModels
             ReloadImage();
         }
 
-        private void ShowRectOverSprite1D(SpriteModel sprite, int firstIndex, int lengthWidth)
+        private void ShowRectOverSprite1D(int spriteTilesTotal, int firstIndex, int canvasWidthInCells)
         {
             SpriteRectVisibility = Visibility.Visible;
-            int tilesNumber = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+
             bool useNextRect = false;
 
-            int left = (firstIndex % lengthWidth) * BankUtils.SizeOfCellInPixels;
-            int width = tilesNumber * BankUtils.SizeOfCellInPixels;
+            int left = (firstIndex % canvasWidthInCells) * BankUtils.SizeOfCellInPixels;
+            int width = spriteTilesTotal * BankUtils.SizeOfCellInPixels;
             int top = (firstIndex / BankUtils.MaxTextureCellsWidth) * BankUtils.SizeOfCellInPixels;
 
             int whatIsLeft = 0;
