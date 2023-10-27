@@ -30,6 +30,8 @@ namespace GBATool.ViewModels
         private double _spriteRectWidth;
         private double _spriteRectHeight;
         private double _spriteRectTop;
+        private string _alias = string.Empty;
+        private SpriteModel? _selectedSprite;
 
         #region Commands
         public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
@@ -81,6 +83,22 @@ namespace GBATool.ViewModels
                 OnPropertyChanged("ImagePath");
 
                 UpdateImage();
+            }
+        }
+
+        public string Alias
+        {
+            get => _alias;
+            set
+            {
+                if (_alias != value)
+                {
+                    _alias = value;
+
+                    OnPropertyChanged("Alias");
+
+                    UpdateAndSaveAlias(value);
+                }
             }
         }
 
@@ -345,6 +363,23 @@ namespace GBATool.ViewModels
             LoadSprites();
         }
 
+        private void UpdateAndSaveAlias(string spriteAlias)
+        {
+            TileSetModel? model = GetModel();
+
+            if (model == null || _selectedSprite?.ID == null)
+            {
+                return;
+            }
+
+            bool ret = model.RenameAliasSprite(_selectedSprite?.ID, spriteAlias);
+
+            if (ret == true)
+            {
+                ProjectItem?.FileHandler?.Save();
+            }
+        }
+
         private void OnSelectSprite(SpriteVO sprite)
         {
             TileSetModel? model = GetModel();
@@ -353,6 +388,9 @@ namespace GBATool.ViewModels
             {
                 return;
             }
+
+            _selectedSprite = null;
+            Alias = "";
 
             foreach (SpriteModel item in model.Sprites)
             {
@@ -368,6 +406,17 @@ namespace GBATool.ViewModels
                     SpriteRectWidth = width;
                     SpriteRectHeight = height;
                     SpriteRectTop = item.PosY;
+
+                    _selectedSprite = item;
+
+                    if (string.IsNullOrEmpty(item.Alias))
+                    {
+                        Alias = item.ID;
+                    }
+                    else
+                    {
+                        Alias = item.Alias;
+                    }
 
                     return;
                 }
@@ -413,7 +462,15 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            SpriteModel? find = model.Sprites.Find((sprite) => (new SpriteModel() { PosX = x, PosY = y, Shape = this.Shape, Size = this.Size, TileSetID = model.GUID }) == sprite); ;
+            SpriteModel? find = model.Sprites.Find((sprite) => 
+                (new SpriteModel() 
+                 { 
+                    PosX = x, 
+                    PosY = y, 
+                    Shape = this.Shape, 
+                    Size = this.Size, 
+                    TileSetID = model.GUID
+                 }) == sprite);
 
             if (!string.IsNullOrEmpty(find?.ID))
             {
@@ -461,6 +518,9 @@ namespace GBATool.ViewModels
 
             if (ret == true)
             {
+                _selectedSprite = null;
+                Alias = "";
+
                 ProjectItem?.FileHandler?.Save();
             }
         }

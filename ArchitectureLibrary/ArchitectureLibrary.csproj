@@ -9,9 +9,6 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-	<SupportedPlatform Include="browser" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="FXs\Shaders\GrayscaleEffect.ps" />
   </ItemGroup>
   <ItemGroup>

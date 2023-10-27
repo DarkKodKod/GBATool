@@ -18,10 +18,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<SupportedPlatform Include="browser" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="icon.ico" />
     <None Remove="Resources\build.png" />
     <None Remove="Resources\character.png" />

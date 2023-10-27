@@ -134,7 +134,7 @@
                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              ItemsSource="{Binding BankSprites}"
-                             DisplayMemberPath="ID"
+                             DisplayMemberPath="Alias"
                              SelectedValue="{Binding Path=SelectedSpriteFromBank, Mode=TwoWay}">
                     </ListBox>
                     <Border Width="256" Height="256"

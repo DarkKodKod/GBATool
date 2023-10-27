@@ -28,11 +28,11 @@ namespace GBATool.ViewModels
         private bool _use256Colors = false;
         private bool _isBackground = false;
         private bool _doNotSave = false;
-        private BankModel? _model = null;
-        private SpriteModel? _selectedSprite = null;
-        private SpriteModel? _selectedSpriteFromBank = null;
+        private BankModel? _model;
+        private SpriteModel? _selectedSprite;
+        private SpriteModel? _selectedSpriteFromBank;
         private Dictionary<string, WriteableBitmap> _bitmapCache = new();
-        private BankImageMetaData? _metaData = null;
+        private BankImageMetaData? _metaData;
         private Visibility _spriteRectVisibility = Visibility.Hidden;
         private double _spriteRectLeft;
         private double _spriteRectWidth;
@@ -134,16 +134,16 @@ namespace GBATool.ViewModels
             get => _selectedSpriteFromBank;
             set
             {
-                if (_selectedSpriteFromBank != value)
+                HideRectangleSelection();
+
+                _selectedSpriteFromBank = value;
+
+                if (_selectedSpriteFromBank is not null)
                 {
-                    HideRectangleSelection();
-
-                    _selectedSpriteFromBank = value;
-
                     SelectSpriteFromBankImage(_selectedSpriteFromBank);
-
-                    OnPropertyChanged("SelectedSpriteFromBank");
                 }
+
+                OnPropertyChanged("SelectedSpriteFromBank");
             }
         }
 
@@ -841,9 +841,9 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            SpriteModel sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteID);
+            SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteID);
 
-            if (string.IsNullOrEmpty(sprite.ID))
+            if (string.IsNullOrEmpty(sprite?.ID))
             {
                 return;
             }

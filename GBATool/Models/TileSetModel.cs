@@ -85,6 +85,23 @@ namespace GBATool.Models
             return false;
         }
 
+        public bool RenameAliasSprite(string? spriteID, string newName)
+        {
+            if (string.IsNullOrEmpty(spriteID))
+                return false;
+
+            SpriteModel? find = Sprites.Find((item) => item.ID == spriteID);
+
+            if (string.IsNullOrEmpty(find?.ID))
+            {
+                return false;
+            }
+
+            find.Alias = newName;
+
+            return true;
+        }
+
         public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size, string tileSetID)
         {
             SpriteModel newSprite = new()
@@ -94,12 +111,13 @@ namespace GBATool.Models
                 Size = size,
                 PosX = posX,
                 PosY = posY,
-                TileSetID = tileSetID
+                TileSetID = tileSetID,
+                Alias = spriteID
             };
 
-            SpriteModel find = Sprites.Find((item) => item == newSprite);
+            SpriteModel? find = Sprites.Find((item) => item == newSprite);
 
-            if (string.IsNullOrEmpty(find.ID))
+            if (string.IsNullOrEmpty(find?.ID))
             {
                 Sprites.Add(newSprite);
 

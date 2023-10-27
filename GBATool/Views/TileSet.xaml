@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:GBATool.Utils"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              xmlns:cv="clr-namespace:GBATool.Utils.Converters"
              xmlns:local="clr-namespace:GBATool.Views"
@@ -19,7 +20,8 @@
     <Grid Background="LightGray">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="350"/>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="350" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
@@ -181,12 +183,38 @@
                                Visibility="{Binding SpriteRectVisibility}"/>
                 </Canvas>
             </ScrollViewer>
-            <Label Content="{Binding ImageScale}" Grid.Row="2" 
+            <Label Grid.Row="2" 
+                   Margin="15"
+                   Content="{Binding ImageScale}" 
                    Foreground="Black"
                    FontSize="15 "
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"/>
         </Grid>
-        <local:SpriteList x:Name="slSprites" Grid.Column="1" DeleteButton="Visible" />
+        <GridSplitter Grid.Column="1" 
+                      Width="3" 
+                      VerticalAlignment="Stretch" 
+                      HorizontalAlignment="Center" />
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <local:SpriteList Grid.Row="0" x:Name="slSprites" DeleteButton="Visible" />
+            <Grid Grid.Row="1" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Alias:</Label>
+                <TextBox Margin="0,0,15,0"
+                         Name="tbAlias"
+                         Grid.Column="1"
+                         TextWrapping="NoWrap"
+                         Height="22"
+                         Text="{Binding Alias}"
+                         b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

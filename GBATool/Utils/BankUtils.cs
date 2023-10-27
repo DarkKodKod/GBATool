@@ -63,9 +63,9 @@ namespace GBATool.Utils
                     continue;
                 }
 
-                SpriteModel sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
+                SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
 
-                if (string.IsNullOrEmpty(sprite.ID))
+                if (string.IsNullOrEmpty(sprite?.ID))
                 {
                     continue;
                 }

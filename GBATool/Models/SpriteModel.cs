@@ -2,16 +2,17 @@
 
 namespace GBATool.Models
 {
-    public struct SpriteModel
+    public class SpriteModel
     {
-        public string? ID { get; set; }
+        public string ID { get; set; } = string.Empty;
         public SpriteShape Shape { get; set; }
         public SpriteSize Size { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
-        public string TileSetID { get; set; }
+        public string TileSetID { get; set; } = string.Empty;
+        public string Alias { get; set; } = string.Empty;
 
-        public override readonly bool Equals(object? obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || obj is not SpriteModel)
             {
@@ -25,7 +26,7 @@ namespace GBATool.Models
                 && TileSetID.Equals(((SpriteModel)obj).TileSetID);
         }
 
-        public override readonly int GetHashCode()
+        public override int GetHashCode()
         {
             return System.HashCode.Combine(PosX, PosY, Shape, Size, TileSetID);
         }
