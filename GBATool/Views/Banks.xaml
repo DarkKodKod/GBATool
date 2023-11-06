@@ -81,8 +81,13 @@
                                 HorizontalAlignment="Center">
                         <Button Width="100"
                                 ToolTip="Move Up"
-                                Command="{Binding MoveUpSelectedSpriteElement}"
-                                CommandParameter="{Binding SelectedSpriteFromBank}">
+                                Command="{Binding MoveUpSelectedSpriteElement}">
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource parametersConverter}">
+                                    <Binding Path="SelectedSpriteFromBank"/>
+                                    <Binding Path="BankSprites"/>
+                                </MultiBinding>
+                            </Button.CommandParameter>
                             <Image Width="16" Height="16" 
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
@@ -105,8 +110,13 @@
                         </Button>
                         <Button Width="100"
                                 ToolTip="Move Down"
-                                Command="{Binding MoveDownSelectedSpriteElement}"
-                                CommandParameter="{Binding SelectedSpriteFromBank}">
+                                Command="{Binding MoveDownSelectedSpriteElement}">
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource parametersConverter}">
+                                    <Binding Path="SelectedSpriteFromBank"/>
+                                    <Binding Path="BankSprites"/>
+                                </MultiBinding>
+                            </Button.CommandParameter>
                             <Image Width="16" Height="16" 
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"

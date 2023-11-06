@@ -62,6 +62,11 @@ namespace GBATool.Models
             return Sprites.Remove(new SpriteRef() { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
         }
 
+        public void ReplaceSpriteList(List<SpriteRef> list)
+        {
+            Sprites = list;
+        }
+
         public void CleanUpDeletedSprites()
         {
             List<SpriteRef> idsToRemove = new();

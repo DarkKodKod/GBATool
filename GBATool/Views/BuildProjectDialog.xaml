@@ -41,10 +41,10 @@
                 <Label Grid.Row="0" Grid.Column="1" Content="Output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
                     <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
-					VerticalAlignment="Center" Width="30" Content="..." 
-					Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
+					        VerticalAlignment="Center" Width="30" Content="..." 
+					        Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
                     <TextBox Name="tbPath" Height="23" Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}" 
-					 TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+					         TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
                 </DockPanel>
             </Grid>
         </GroupBox>

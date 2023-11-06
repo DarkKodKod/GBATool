@@ -462,15 +462,15 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            SpriteModel? find = model.Sprites.Find((sprite) => 
-                (new SpriteModel() 
-                 { 
-                    PosX = x, 
-                    PosY = y, 
-                    Shape = this.Shape, 
-                    Size = this.Size, 
+            SpriteModel? find = model.Sprites.Find((sprite) =>
+                (new SpriteModel()
+                {
+                    PosX = x,
+                    PosY = y,
+                    Shape = this.Shape,
+                    Size = this.Size,
                     TileSetID = model.GUID
-                 }) == sprite);
+                }) == sprite);
 
             if (!string.IsNullOrEmpty(find?.ID))
             {

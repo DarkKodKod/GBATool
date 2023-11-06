@@ -477,14 +477,50 @@ namespace GBATool.ViewModels
             #endregion
         }
 
-        private void OnMoveUpSelectedSpriteElement(SpriteModel model)
+        private void OnMoveUpSelectedSpriteElement(int itemAtIndex)
         {
-            //
+            BankSprites.Move(itemAtIndex, itemAtIndex - 1);
+
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            List<SpriteRef> spriteReflist = new();
+
+            foreach (SpriteModel sprite in BankSprites)
+            {
+                spriteReflist.Add(new SpriteRef { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
+            }
+
+            model.ReplaceSpriteList(spriteReflist);
+
+            ReloadImage();
         }
 
-        private void OnMoveDownSelectedSpriteElement(SpriteModel model)
+        private void OnMoveDownSelectedSpriteElement(int itemAtIndex)
         {
-            //
+            BankSprites.Move(itemAtIndex, itemAtIndex + 1);
+
+            BankModel? model = GetModel();
+
+            if (model == null)
+            {
+                return;
+            }
+
+            List<SpriteRef> spriteReflist = new();
+
+            foreach (SpriteModel sprite in BankSprites)
+            {
+                spriteReflist.Add(new SpriteRef { SpriteID = sprite.ID, TileSetID = sprite.TileSetID });
+            }
+
+            model.ReplaceSpriteList(spriteReflist);
+
+            ReloadImage();
         }
 
         private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
