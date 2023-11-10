@@ -20,7 +20,7 @@ namespace GBATool.Commands
         //private const string _folderCharactersKey = "folderCharacters";
         //private const string _folderMapsKey = "folderMaps";
         private const string _folderTileSetsKey = "folderTileSets";
-        //private const string _folderPalettesKey = "folderPalettes";
+        private const string _folderPalettesKey = "folderPalettes";
         //private const string _folderWorldsKey = "folderWorlds";
         //private const string _folderEntitiesKey = "folderEntities";
 
@@ -28,7 +28,7 @@ namespace GBATool.Commands
         //private readonly string _folderCharacters;
         //private readonly string _folderMaps;
         private readonly string _folderTileSets;
-        //private readonly string _folderPalettes;
+        private readonly string _folderPalettes;
         //private readonly string _folderWorlds;
         //private readonly string _folderEntities;
 
@@ -38,7 +38,7 @@ namespace GBATool.Commands
             //_folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
             //_folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
             _folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
-            //_folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
+            _folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
             //_folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
             //_folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
         }
@@ -152,7 +152,7 @@ namespace GBATool.Commands
                     //directory.Name != _folderCharacters &&
                     //directory.Name != _folderMaps &&
                     directory.Name != _folderTileSets &&
-                    //directory.Name != _folderPalettes &&
+                    directory.Name != _folderPalettes &&
                     //directory.Name != _folderWorlds &&
                     //directory.Name != _folderEntities &&
                     parent == null)
