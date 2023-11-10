@@ -14,7 +14,7 @@ namespace GBATool.Models
 
         public override bool Equals(object? obj)
         {
-            if (obj == null || obj is not SpriteModel)
+            if (obj is null or not SpriteModel)
             {
                 return false;
             }
@@ -31,12 +31,23 @@ namespace GBATool.Models
             return System.HashCode.Combine(PosX, PosY, Shape, Size, TileSetID);
         }
 
-        public static bool operator ==(SpriteModel left, SpriteModel right)
+        //null == null     //true
+        //null != null     //false
+        //null == nonNull  //false
+        //null != nonNull  //true
+
+        public static bool operator ==(SpriteModel? left, SpriteModel? right)
         {
+            if (left is null && right is null)
+                return true;
+
+            if (left is null || right is null)
+                return false;
+
             return left.Equals(right);
         }
 
-        public static bool operator !=(SpriteModel left, SpriteModel right)
+        public static bool operator !=(SpriteModel? left, SpriteModel? right)
         {
             return !(left == right);
         }

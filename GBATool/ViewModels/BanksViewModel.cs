@@ -51,6 +51,7 @@ namespace GBATool.ViewModels
         private int _canvasHeght = 256;
         private int _canvasWidth = 256;
         private ObservableCollection<SpriteModel> _bankSprites = new();
+        private SpriteModel? _cacheSelectedSpriteFromBank = null;
 
         #region Commands
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -140,6 +141,8 @@ namespace GBATool.ViewModels
 
                 if (_selectedSpriteFromBank is not null)
                 {
+                    _cacheSelectedSpriteFromBank = value;
+
                     SelectSpriteFromBankImage(_selectedSpriteFromBank);
                 }
 
@@ -747,6 +750,11 @@ namespace GBATool.ViewModels
             LoadImage(model);
 
             UnselectSpriteFromBankImage();
+
+            if (_cacheSelectedSpriteFromBank != null)
+            {
+                SelectedSpriteFromBank = _cacheSelectedSpriteFromBank;
+            }
         }
 
         private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
@@ -762,6 +770,8 @@ namespace GBATool.ViewModels
 
             if (ret)
             {
+                _cacheSelectedSpriteFromBank = null;
+
                 ReloadImage();
             }
         }
@@ -786,14 +796,9 @@ namespace GBATool.ViewModels
         {
             UnselectSpriteFromBankImage();
 
-            if (Is1DImage())
-            {
-                SelectSpriteFromBankImage(point);
-            }
-            else
-            {
-                // 2d
-            }
+            _cacheSelectedSpriteFromBank = null;
+
+            SelectSpriteFromBankImage(point);
         }
 
         private void UnselectSpriteFromBankImage()
@@ -840,6 +845,23 @@ namespace GBATool.ViewModels
             else
             {
                 // 2d
+                SpriteRectVisibility = Visibility.Visible;
+
+                int width = 0;
+                int height = 0;
+                SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+
+                // Going through the list again to find the first occurrence of this item
+                (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteModel.ID);
+
+                int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
+                int left = (firstIndex % canvasWidthInCells) * BankUtils.SizeOfCellInPixels;
+                int top = (firstIndex / BankUtils.MaxTextureCellsWidth) * BankUtils.SizeOfCellInPixels;
+
+                SpriteRectLeft = left;
+                SpriteRectWidth = width;
+                SpriteRectHeight = height;
+                SpriteRectTop = top;
             }
         }
 

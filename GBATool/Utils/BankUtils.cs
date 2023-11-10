@@ -42,6 +42,10 @@ namespace GBATool.Utils
 
             bool is1DImage = bankModel.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
 
+            int widthNextPosition = 0;
+            int heightNextPosition = 0;
+            int keepHeightPosition = 0;
+
             foreach (SpriteRef spriteRef in bankModel.Sprites)
             {
                 if (string.IsNullOrEmpty(spriteRef.SpriteID) || string.IsNullOrEmpty(spriteRef.TileSetID))
@@ -77,6 +81,19 @@ namespace GBATool.Utils
 
                 SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
 
+                if (widthNextPosition + width > canvasWidth)
+                {
+                    widthNextPosition = 0;
+                    heightNextPosition += keepHeightPosition;
+                    keepHeightPosition = 0;
+
+                    // In case the next sprite is going to be place outside of the destinated bank size.
+                    if (heightNextPosition + height > canvasHeight)
+                    {
+                        break;
+                    }
+                }
+
                 int posX = sprite.PosX;
                 int posY = sprite.PosY;
 
@@ -106,26 +123,38 @@ namespace GBATool.Utils
                 }
                 else
                 {
+                    index = (MaxTextureCellsWidth * (heightNextPosition / SizeOfCellInPixels)) + (widthNextPosition / SizeOfCellInPixels);
+
+                    // 2D
                     for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
                     {
                         for (int i = 0; i < (width / SizeOfCellInPixels); ++i)
                         {
                             WriteableBitmap cropped = sourceBitmap.Crop(posX, posY, SizeOfCellInPixels, SizeOfCellInPixels);
 
-                            //int destX = index % MaxTextureCellsWidth() * SizeOfCellInPixels;
-                            //int destY = index / MaxTextureCellsHeight() * SizeOfCellInPixels;
+                            int destX = i * SizeOfCellInPixels;
+                            int destY = j * SizeOfCellInPixels;
 
-                            //Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
+                            Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX + widthNextPosition, destY + heightNextPosition, cropped);
 
-                            //metaData.SpriteIndices.Add((index, sprite.ID, sprite.TileSetID));
+                            metaData.SpriteIndices.Add((index, sprite.ID, sprite.TileSetID));
 
                             posX += SizeOfCellInPixels;
 
-                            //index++;
+                            index++;
                         }
+
+                        index += MaxTextureCellsWidth - (width / SizeOfCellInPixels);
 
                         posX = sprite.PosX;
                         posY += SizeOfCellInPixels;
+                    }
+
+                    widthNextPosition += width;
+
+                    if (height > keepHeightPosition)
+                    {
+                        keepHeightPosition = height;
                     }
                 }
             }
