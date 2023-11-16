@@ -6,7 +6,7 @@ namespace GBATool.Utils
 {
     public static class TextInputBindingManager
     {
-        public static readonly DependencyProperty UpdatePropertySourceWhenEnterPressedProperty = DependencyProperty.RegisterAttached("UpdatePropertySourceWhenEnterPressed", typeof(DependencyProperty), typeof(TextInputBindingManager), new PropertyMetadata(null, OnUpdatePropertySourceWhenEnterPressedPropertyChanged));
+        public static readonly DependencyProperty? UpdatePropertySourceWhenEnterPressedProperty = DependencyProperty.RegisterAttached("UpdatePropertySourceWhenEnterPressed", typeof(DependencyProperty), typeof(TextInputBindingManager), new PropertyMetadata(null, OnUpdatePropertySourceWhenEnterPressedPropertyChanged));
 
         public static void SetUpdatePropertySourceWhenEnterPressed(DependencyObject dp, DependencyProperty value)
         {
