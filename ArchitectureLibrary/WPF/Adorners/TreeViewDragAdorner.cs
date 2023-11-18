@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace GBATool.Utils.Adorners
+namespace ArchitectureLibrary.WPF.Adorners
 {
     public class TreeViewDragAdorner : Adorner
     {

@@ -6,7 +6,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:b="clr-namespace:GBATool.Utils"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
-             xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+             xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              xmlns:local="clr-namespace:GBATool.Views"
              mc:Ignorable="d"
              xmlns:vm="clr-namespace:GBATool.ViewModels"

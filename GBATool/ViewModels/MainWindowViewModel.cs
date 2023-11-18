@@ -1,12 +1,12 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
+using ArchitectureLibrary.WPF.Adorners;
 using GBATool.Commands;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
-using GBATool.Utils.Adorners;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;

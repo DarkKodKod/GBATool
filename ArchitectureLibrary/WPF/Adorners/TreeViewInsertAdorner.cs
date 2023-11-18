@@ -4,7 +4,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
-namespace GBATool.Utils.Adorners
+namespace ArchitectureLibrary.WPF.Adorners
 {
     public class TreeViewInsertAdorner : Adorner
     {

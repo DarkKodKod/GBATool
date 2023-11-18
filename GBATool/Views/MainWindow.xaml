@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:GBATool.ViewModels"
         xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
-        xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+        xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
         xmlns:enum="clr-namespace:GBATool.Enums"
         xmlns:local="clr-namespace:GBATool"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"

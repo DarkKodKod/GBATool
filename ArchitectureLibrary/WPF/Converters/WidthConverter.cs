@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace GBATool.Utils.Converters
+namespace ArchitectureLibrary.WPF.Converters
 {
     public class WidthConverter : IValueConverter
     {

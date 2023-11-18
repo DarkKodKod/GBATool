@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace GBATool.Utils.Selectors
+namespace ArchitectureLibrary.WPF.Selectors
 {
     public class TemplateSelector : DataTemplateSelector
     {

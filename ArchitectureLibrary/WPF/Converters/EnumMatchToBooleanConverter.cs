@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace GBATool.Utils.Converters
+namespace ArchitectureLibrary.WPF.Converters
 {
     public class EnumMatchToBooleanConverter : IValueConverter
     {

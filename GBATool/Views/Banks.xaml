@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
-             xmlns:cv="clr-namespace:GBATool.Utils.Converters"
+             xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              d:DesignHeight="900" d:DesignWidth="1200">
     <UserControl.Resources>

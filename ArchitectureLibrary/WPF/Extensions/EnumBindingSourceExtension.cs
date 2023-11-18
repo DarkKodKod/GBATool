@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
 
-namespace GBATool.Utils.Extensions
+namespace ArchitectureLibrary.WPF.Extensions
 {
     public class EnumBindingSourceExtension : MarkupExtension
     {
