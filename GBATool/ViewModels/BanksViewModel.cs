@@ -440,12 +440,14 @@ namespace GBATool.ViewModels
 
             SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {
                 return;
             }
+
+            Model = model;
 
             _doNotSave = true;
 
@@ -484,7 +486,7 @@ namespace GBATool.ViewModels
         {
             BankSprites.Move(itemAtIndex, itemAtIndex - 1);
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {
@@ -507,7 +509,7 @@ namespace GBATool.ViewModels
         {
             BankSprites.Move(itemAtIndex, itemAtIndex + 1);
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {
@@ -569,7 +571,7 @@ namespace GBATool.ViewModels
             if (_doNotSave)
                 return;
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
                 return;
@@ -584,7 +586,7 @@ namespace GBATool.ViewModels
             if (_doNotSave)
                 return;
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
                 return;
@@ -673,13 +675,6 @@ namespace GBATool.ViewModels
             }
         }
 
-        public BankModel? GetModel()
-        {
-            Model ??= ProjectItem?.FileHandler?.FileModel as BankModel;
-
-            return Model;
-        }
-
         private void ReloadImage()
         {
             if (_doNotSave)
@@ -740,7 +735,7 @@ namespace GBATool.ViewModels
         {
             ProjectItem?.FileHandler?.Save();
 
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {
@@ -759,7 +754,7 @@ namespace GBATool.ViewModels
 
         private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
         {
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {
@@ -778,7 +773,7 @@ namespace GBATool.ViewModels
 
         private bool Is1DImage()
         {
-            BankModel? model = GetModel();
+            BankModel? model = GetModel<BankModel>();
 
             if (model == null)
             {

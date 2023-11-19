@@ -5,6 +5,7 @@ using GBATool.ViewModels;
 using GBATool.VOs;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GBATool.Signals
 {
@@ -87,4 +88,7 @@ namespace GBATool.Signals
     public class ReloadBankImageSignal : Signal { }
     public class MoveDownSelectedSpriteElementSignal : Signal<int> { }
     public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
+
+    // Palettes
+    public class ColorPaletteSelectedSignal : Signal<Color, int> { }
 }

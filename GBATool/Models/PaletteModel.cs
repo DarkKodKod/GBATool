@@ -1,4 +1,5 @@
 ﻿using Nett;
+using System.Linq;
 using System.Windows;
 
 namespace GBATool.Models
@@ -20,5 +21,7 @@ namespace GBATool.Models
                 return _fileExtension;
             }
         }
+
+        public int[] Colors { get; set; } = Enumerable.Repeat(0, 16).ToArray();
     }
 }

@@ -35,7 +35,7 @@
     <UniformGrid Background="red" Rows="1" 
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch">
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[0], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -43,7 +43,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[1], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -51,7 +51,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[2], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -59,7 +59,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[3], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -67,7 +67,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[4], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -75,7 +75,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[5], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -83,7 +83,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[6], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -91,7 +91,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[7], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -99,7 +99,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[8], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -107,7 +107,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[9], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -115,7 +115,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[10], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -123,7 +123,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[11], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -131,7 +131,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[12], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -139,7 +139,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[13], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -147,7 +147,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[14], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
@@ -155,7 +155,7 @@
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
-        <Button Background="Black" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
+        <Button Background="{Binding Path=SolidColorBrushList[15], Mode=OneWay}" BorderThickness="1" Command="{Binding ShowColorPaletteCommand}">
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />

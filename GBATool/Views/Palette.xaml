@@ -22,7 +22,10 @@
                 <ColumnDefinition Width="800"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <local:PaletteViewer Grid.Row="1" Grid.Column="1" x:Name="palette" />
+            <local:PaletteViewer 
+                Grid.Row="1" 
+                Grid.Column="1" 
+                x:Name="palette" />
         </Grid>
     </Grid>
 </UserControl>

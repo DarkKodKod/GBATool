@@ -52,11 +52,6 @@ namespace GBATool.ViewModels
         public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
         #endregion
 
-        public TileSetModel? GetModel()
-        {
-            return ProjectItem?.FileHandler?.FileModel is TileSetModel model ? model : null;
-        }
-
         #region get/set
         public string[] Filters { get; } = new string[14];
 
@@ -316,7 +311,7 @@ namespace GBATool.ViewModels
         {
             base.OnActivate();
 
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
@@ -365,7 +360,7 @@ namespace GBATool.ViewModels
 
         private void UpdateAndSaveAlias(string spriteAlias)
         {
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null || _selectedSprite?.ID == null)
             {
@@ -382,7 +377,7 @@ namespace GBATool.ViewModels
 
         private void OnSelectSprite(SpriteVO sprite)
         {
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
@@ -437,7 +432,7 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
@@ -507,7 +502,7 @@ namespace GBATool.ViewModels
 
         private void DeleteSprite(SpriteVO sprite)
         {
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null || sprite.SpriteID == null)
             {
@@ -554,7 +549,7 @@ namespace GBATool.ViewModels
 
         private void LoadSprites()
         {
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
@@ -607,7 +602,7 @@ namespace GBATool.ViewModels
                 return;
             }
 
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
@@ -788,7 +783,7 @@ namespace GBATool.ViewModels
 
         private void UpdateImage(bool forceRedraw = false)
         {
-            TileSetModel? model = GetModel();
+            TileSetModel? model = GetModel<TileSetModel>();
 
             if (model == null)
             {
