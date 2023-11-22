@@ -28,7 +28,7 @@ namespace GBATool.ViewModels
             #endregion
         }
 
-        private void OnColorPaletteSelected(Color color, int colorIndex, int paletteIndex)
+        private void OnColorPaletteSelected(Color color, int colorIndex, int _)
         {
             PaletteModel? model = GetModel<PaletteModel>();
 

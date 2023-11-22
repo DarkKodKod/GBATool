@@ -1,5 +1,4 @@
 ﻿using GBATool.Utils;
-using GBATool.ViewModels;
 using System.Windows.Controls;
 
 namespace GBATool.Views
@@ -13,18 +12,12 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
-            if (palette.DataContext is PaletteViewerViewModel paletteViewerViewModel)
-            {
-                paletteViewerViewModel.OnActivate();
-            }
+            palette.OnActivate();
         }
 
         public void CleanUp()
         {
-            if (palette.DataContext is PaletteViewerViewModel paletteViewerViewModel)
-            {
-                paletteViewerViewModel.OnDeactivate();
-            }
+            palette.OnDeactivate();
         }
     }
 }
