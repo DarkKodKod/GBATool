@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Views
 {
@@ -7,6 +8,18 @@ namespace GBATool.Views
     /// </summary>
     public partial class PaletteViewer : UserControl
     {
+        public static readonly DependencyProperty PaletteIndexProperty =
+            DependencyProperty.Register("PaletteIndex",
+                typeof(int),
+                typeof(PaletteViewer),
+                new PropertyMetadata(0));
+
+        public int PaletteIndex
+        {
+            get => (int)GetValue(PaletteIndexProperty);
+            set => SetValue(PaletteIndexProperty, value);
+        }
+
         public PaletteViewer()
         {
             InitializeComponent();

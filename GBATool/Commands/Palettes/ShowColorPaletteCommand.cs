@@ -27,6 +27,11 @@ namespace GBATool.Commands
                 return;
             }
 
+            if (values[2] is not int paletteIndex)
+            {
+                return;
+            }
+
             ColorDialog colorDialog = new()
             {
                 AnyColor = true,
@@ -40,7 +45,7 @@ namespace GBATool.Commands
             {
                 Color colorBrush = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
 
-                SignalManager.Get<ColorPaletteSelectedSignal>().Dispatch(colorBrush, colorPosition);
+                SignalManager.Get<ColorPaletteSelectedSignal>().Dispatch(colorBrush, colorPosition, paletteIndex);
             }
         }
     }

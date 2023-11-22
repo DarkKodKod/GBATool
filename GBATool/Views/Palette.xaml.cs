@@ -13,17 +13,17 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
-            if (palette.DataContext is PaletteViewerViewModel viewerViewModel)
+            if (palette.DataContext is PaletteViewerViewModel paletteViewerViewModel)
             {
-                viewerViewModel.OnActivate();
+                paletteViewerViewModel.OnActivate();
             }
         }
 
         public void CleanUp()
         {
-            if (palette.DataContext is PaletteViewerViewModel viewerViewModel)
+            if (palette.DataContext is PaletteViewerViewModel paletteViewerViewModel)
             {
-                viewerViewModel.OnDeactivate();
+                paletteViewerViewModel.OnDeactivate();
             }
         }
     }

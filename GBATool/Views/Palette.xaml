@@ -25,7 +25,8 @@
             <local:PaletteViewer 
                 Grid.Row="1" 
                 Grid.Column="1" 
-                x:Name="palette" />
+                x:Name="palette"
+                PaletteIndex="0" />
         </Grid>
     </Grid>
 </UserControl>

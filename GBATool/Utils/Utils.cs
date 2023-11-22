@@ -232,5 +232,14 @@ namespace GBATool.Utils
                 dest.WritePixels(new Int32Rect(nXDest, nYDest, src.PixelWidth, src.PixelHeight), dest_buffer, dest_stride, 0);
             }
         }
+
+        public static Color GetColorFromInt(int colorInt)
+        {
+            byte R = (byte)(colorInt >> 16);
+            byte G = (byte)(colorInt >> 8);
+            byte B = (byte)colorInt;
+
+            return Color.FromRgb(R, G, B);
+        }
     }
 }

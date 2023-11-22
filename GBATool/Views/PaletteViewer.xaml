@@ -40,6 +40,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index0}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -48,6 +49,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index1}" />
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -56,6 +58,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index2}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -64,6 +67,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index3}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -72,6 +76,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index4}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -80,6 +85,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index5}" />
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -88,6 +94,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index6}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -96,6 +103,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index7}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -104,6 +112,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index8}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -112,6 +121,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index9}" />
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -120,6 +130,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index10}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -128,6 +139,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index11}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -136,6 +148,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index12}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -144,6 +157,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index13}" />
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -152,6 +166,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index14}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>
@@ -160,6 +175,7 @@
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding RelativeSource="{RelativeSource Self}" Path="Background" />
                     <Binding Source="{StaticResource index15}"/>
+                    <Binding RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}" Path="PaletteIndex"/>
                 </MultiBinding>
             </Button.CommandParameter>
         </Button>

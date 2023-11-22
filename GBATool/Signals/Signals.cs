@@ -90,5 +90,6 @@ namespace GBATool.Signals
     public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 
     // Palettes
-    public class ColorPaletteSelectedSignal : Signal<Color, int> { }
+    public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }
+    public class PaletteColorArrayChangeSignal : Signal<int[]> { }
 }

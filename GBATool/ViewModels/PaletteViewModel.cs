@@ -9,24 +9,26 @@ namespace GBATool.ViewModels
     {
         public override void OnActivate()
         {
+            #region Signals
             SignalManager.Get<ColorPaletteSelectedSignal>().Listener += OnColorPaletteSelected;
+            #endregion
 
             PaletteModel? model = GetModel<PaletteModel>();
 
-            if (model == null)
+            if (model != null)
             {
-                return;
+                SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(model.Colors);
             }
-
-            // load model.Colors into the paletteviewer
         }
 
         public override void OnDeactivate()
         {
+            #region Signals
             SignalManager.Get<ColorPaletteSelectedSignal>().Listener -= OnColorPaletteSelected;
+            #endregion
         }
 
-        private void OnColorPaletteSelected(Color color, int colorIndex)
+        private void OnColorPaletteSelected(Color color, int colorIndex, int paletteIndex)
         {
             PaletteModel? model = GetModel<PaletteModel>();
 

@@ -2,21 +2,17 @@
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands;
 using GBATool.Signals;
-using System.Collections.ObjectModel;
+using GBATool.Utils;
 using System.Windows.Media;
 
 namespace GBATool.ViewModels
 {
     public class PaletteViewerViewModel : ViewModel
     {
-        private ObservableCollection<SolidColorBrush> _solidColorBrushList = new();
-
-        #region Commands
-        public ShowColorPaletteCommand ShowColorPaletteCommand { get; } = new();
-        #endregion
+        private SolidColorBrush[] _solidColorBrushList = new SolidColorBrush[16];
 
         #region get/set
-        public ObservableCollection<SolidColorBrush> SolidColorBrushList
+        public SolidColorBrush[] SolidColorBrushList
         {
             get => _solidColorBrushList;
             set
@@ -28,12 +24,20 @@ namespace GBATool.ViewModels
         }
         #endregion
 
+        #region Commands
+        public ShowColorPaletteCommand ShowColorPaletteCommand { get; } = new();
+        #endregion
+
         public PaletteViewerViewModel()
         {
+            SolidColorBrush[] tempList = new SolidColorBrush[16];
+
             for (int i = 0; i < 16; i++)
             {
-                SolidColorBrushList.Add(new SolidColorBrush(Color.FromRgb(0, 0, 0)));
+                tempList[i] = new SolidColorBrush(Color.FromRgb(0, 0, 0));
             }
+
+            SolidColorBrushList = tempList;
         }
 
         public override void OnActivate()
@@ -42,6 +46,7 @@ namespace GBATool.ViewModels
 
             #region Signals
             SignalManager.Get<ColorPaletteSelectedSignal>().Listener += OnColorPaletteSelected;
+            SignalManager.Get<PaletteColorArrayChangeSignal>().Listener += OnPaletteColorArrayChange;
             #endregion
         }
 
@@ -51,12 +56,27 @@ namespace GBATool.ViewModels
 
             #region Signals
             SignalManager.Get<ColorPaletteSelectedSignal>().Listener -= OnColorPaletteSelected;
+            SignalManager.Get<PaletteColorArrayChangeSignal>().Listener -= OnPaletteColorArrayChange;
             #endregion
         }
 
-        private void OnColorPaletteSelected(Color color, int colorIndex)
+        private void OnPaletteColorArrayChange(int[] colors)
+        {
+            SolidColorBrush[] tempList = new SolidColorBrush[16];
+
+            for (int i = 0; i < 16; i++)
+            {
+                tempList[i] = new SolidColorBrush(Util.GetColorFromInt(colors[i]));
+            }
+
+            SolidColorBrushList = tempList;
+        }
+
+        private void OnColorPaletteSelected(Color color, int colorIndex, int paletteIndex)
         {
             SolidColorBrushList[colorIndex] = new SolidColorBrush(color);
+
+            OnPropertyChanged("SolidColorBrushList");
         }
     }
 }
