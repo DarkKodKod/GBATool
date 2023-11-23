@@ -9,7 +9,7 @@ namespace GBATool.Commands
     {
         public override bool CanExecute(object? parameter)
         {
-            if (ProjectFiles.ObjectsLoading > 0)
+            if (ProjectItemFileSystem.IsLoading())
             {
                 return false;
             }

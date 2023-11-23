@@ -8,7 +8,6 @@ namespace GBATool.FileSystem
     public static class ProjectFiles
     {
         public static ConcurrentDictionary<string, FileHandler> Handlers { get; private set; } = new();
-        public static int ObjectsLoading { get; set; } = 0;
 
         public static List<FileModelVO> GetModels<T>() where T : AFileModel
         {

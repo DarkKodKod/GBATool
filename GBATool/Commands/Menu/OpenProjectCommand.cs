@@ -143,8 +143,6 @@ namespace GBATool.Commands
 
         private void ScanDirectories(DirectoryInfo[] directories, ref List<ProjectItem> projectItems, ProjectItem? parent = null, string extension = "")
         {
-            bool filesToLoad = false;
-
             foreach (DirectoryInfo directory in directories)
             {
                 // Discard any unknown folder in the root of the project
@@ -222,22 +220,13 @@ namespace GBATool.Commands
                     item.Items.Add(fileItem);
 
                     SignalManager.Get<RegisterFileHandlerSignal>().Dispatch(fileItem, file.DirectoryName);
-
-                    ProjectFiles.ObjectsLoading++;
-
-                    filesToLoad = true;
                 }
 
                 projectItems.Add(item);
             }
-
-            if (filesToLoad == false)
-            {
-                SignalManager.Get<FinishedLoadingProjectSignal>().Dispatch();
-            }
         }
 
-        private void UpdateConfigurations(string projectFullPath)
+        private static void UpdateConfigurations(string projectFullPath)
         {
             GBAToolConfigurationModel model = ModelManager.Get<GBAToolConfigurationModel>();
 

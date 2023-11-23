@@ -6,11 +6,14 @@ using GBATool.ViewModels;
 using Nett;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace GBATool.FileSystem
 {
     public static class ProjectItemFileSystem
     {
+        private static int _objectsLoading = 0;
+
         public static void Initialize()
         {
             SignalManager.Get<RegisterFileHandlerSignal>().Listener += OnRegisterFileHandler;
@@ -64,29 +67,46 @@ namespace GBATool.FileSystem
             fileHandler.Name = item.DisplayName;
         }
 
+        private static void IncrementCount()
+        {
+            Interlocked.Increment(ref _objectsLoading);
+        }
+
+        private static void DecrementCount()
+        {
+            Interlocked.Decrement(ref _objectsLoading);
+        }
+
+        public static bool IsLoading()
+        {
+            return _objectsLoading > 0;
+        }
+
         private static async void OnRegisterFileHandler(ProjectItem item, string? path)
         {
+            IncrementCount();
+
             FileHandler fileHandler = new() { Name = item.DisplayName, Path = path ?? string.Empty };
 
             item.FileHandler = fileHandler;
 
             if (item.IsFolder)
             {
-                return;
+                goto end_of_function;
             }
 
             AFileModel? model = Util.FileModelFactory(item.Type);
 
             if (model == null)
             {
-                return;
+                goto end_of_function;
             }
 
             string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + model.FileExtension);
 
             if (!File.Exists(itemPath))
             {
-                return;
+                goto end_of_function;
             }
 
             fileHandler.FileModel = await FileUtils.ReadFileAndLoadModelAsync(itemPath, item.Type).ConfigureAwait(false);
@@ -101,21 +121,23 @@ namespace GBATool.FileSystem
 
             if (fileHandler.FileModel == null)
             {
-                return;
+                goto end_of_function;
             }
 
             if (ProjectFiles.Handlers.ContainsKey(fileHandler.FileModel.GUID))
             {
-                return;
+                goto end_of_function;
             }
 
             _ = ProjectFiles.Handlers.TryAdd(fileHandler.FileModel.GUID, fileHandler);
 
             SignalManager.Get<ProjectItemLoadedSignal>().Dispatch(fileHandler.FileModel.GUID);
 
-            ProjectFiles.ObjectsLoading--;
+            end_of_function:
 
-            if (ProjectFiles.ObjectsLoading <= 0)
+            DecrementCount();
+
+            if (_objectsLoading == 0)
             {
                 SignalManager.Get<FinishedLoadingProjectSignal>().Dispatch();
             }
