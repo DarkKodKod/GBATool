@@ -10,7 +10,7 @@ using System.Windows.Media;
 namespace GBATool.Signals
 {
     // Generics
-    public class BrowseFolderSuccessSignal : Signal<string> { }
+    public class BrowseFolderSuccessSignal : Signal<Control, string> { }
     public class BrowseFileSuccessSignal : Signal<string, bool> { }
     public class SetUpWindowPropertiesSignal : Signal<WindowVO> { }
     public class FinishedLoadingProjectSignal : Signal { }

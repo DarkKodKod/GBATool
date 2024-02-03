@@ -13,7 +13,7 @@ namespace GBATool.Utils
 {
     public static class Util
     {
-        private static readonly Regex _regex = new Regex(@"^[A-Za-z_][a-zA-Z0-9_\-\x20]*$");
+        private static readonly Regex _regex = new(@"^[A-Za-z_][a-zA-Z0-9_\-\x20]*$");
 
         private const string _folderBanksKey = "folderBanks";
         private const string _folderCharactersKey = "folderCharacters";

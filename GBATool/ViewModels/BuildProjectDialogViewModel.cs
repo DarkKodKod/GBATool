@@ -4,27 +4,39 @@ using ArchitectureLibrary.ViewModel;
 using GBATool.Commands;
 using GBATool.Models;
 using GBATool.Signals;
+using System.Windows.Controls;
 
 namespace GBATool.ViewModels
 {
     public class BuildProjectDialogViewModel : ViewModel
     {
-        private string _folderPath = "";
+        private string _folderSourcePath = "";
+        private string _folderAssetsPath = "";
 
         #region Commands
-        public BuildProjectCommand BuildProjectCommand { get; } = new BuildProjectCommand();
-        public BrowseFolderCommand BrowseFolderCommand { get; } = new BrowseFolderCommand();
-        public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new DispatchSignalCommand<CloseDialogSignal>();
+        public BuildProjectCommand BuildProjectCommand { get; } = new();
+        public BrowseFolderCommand BrowseFolderCommand { get; } = new();
+        public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new();
         #endregion
 
         #region get/set
-        public string FolderPath
+        public string FolderSourcePath
         {
-            get => _folderPath;
+            get => _folderSourcePath;
             set
             {
-                _folderPath = value;
-                OnPropertyChanged("FolderPath");
+                _folderSourcePath = value;
+                OnPropertyChanged("FolderSourcePath");
+            }
+        }
+
+        public string FolderAssetsPath
+        {
+            get => _folderAssetsPath;
+            set
+            {
+                _folderAssetsPath = value;
+                OnPropertyChanged("FolderAssetsPath");
             }
         }
         #endregion
@@ -38,7 +50,8 @@ namespace GBATool.ViewModels
 
             ProjectModel project = ModelManager.Get<ProjectModel>();
 
-            FolderPath = project.Build.OutputFilePath;
+            FolderSourcePath = project.Build.GeneratedSourcePath;
+            FolderAssetsPath = project.Build.GeneratedAssetsPath;
         }
 
         private void OnCloseDialog()
@@ -49,18 +62,30 @@ namespace GBATool.ViewModels
             #endregion
         }
 
-        private void BrowseFolderSuccess(string folderPath)
+        private void BrowseFolderSuccess(Control owner, string folderPath)
         {
             ProjectModel project = ModelManager.Get<ProjectModel>();
 
-            if (project.Build.OutputFilePath != folderPath)
+            if (owner.Name == "btnSourcePath")
             {
-                FolderPath = folderPath;
+                if (project.Build.GeneratedSourcePath != folderPath)
+                {
+                    FolderSourcePath = folderPath;
 
-                project.Build.OutputFilePath = folderPath;
-
-                project.Save();
+                    project.Build.GeneratedSourcePath = folderPath;
+                }
             }
+            else if (owner.Name == "btnAssetsPath")
+            {
+                if (project.Build.GeneratedAssetsPath != folderPath)
+                {
+                    FolderAssetsPath = folderPath;
+
+                    project.Build.GeneratedAssetsPath = folderPath;
+                }
+            }
+
+            project.Save();
         }
     }
 }

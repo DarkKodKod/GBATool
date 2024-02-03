@@ -3,6 +3,7 @@ using ArchitectureLibrary.ViewModel;
 using GBATool.Commands;
 using GBATool.Signals;
 using GBATool.Utils;
+using System.Windows.Controls;
 
 namespace GBATool.ViewModels
 {
@@ -52,6 +53,6 @@ namespace GBATool.ViewModels
             SignalManager.Get<CloseDialogSignal>().Listener -= OnCloseDialog;
         }
 
-        private void BrowseFolderSuccess(string folderPath) => FolderPath = folderPath;
+        private void BrowseFolderSuccess(Control owner, string folderPath) => FolderPath = folderPath;
     }
 }

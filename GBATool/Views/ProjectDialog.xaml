@@ -47,7 +47,14 @@
         <DockPanel Grid.Row="4" Grid.Column="1" LastChildFill="True">
             <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
 					VerticalAlignment="Center" Width="30" Content="..." 
-					Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
+					Command="{Binding BrowseFolderCommand}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding RelativeSource="{RelativeSource Self}"/>
+                        <Binding Path="Text" ElementName="tbPath"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
             <TextBox Name="tbPath" Height="23" Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}" 
 					 TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
         </DockPanel>

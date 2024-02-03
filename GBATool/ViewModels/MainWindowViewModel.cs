@@ -369,7 +369,7 @@ namespace GBATool.ViewModels
 
                 object data = eventArgs.Data.GetData(typeof(ProjectItem));
 
-                _dragAdorner = new TreeViewDragAdorner(data, ProjectItem.GetHeaderTemplate(), control, adornerLayer);
+                _dragAdorner = new(data, ProjectItem.GetHeaderTemplate(), control, adornerLayer);
 
                 _dragAdorner.UpdatePosition(startPosition.X, startPosition.Y);
             }
@@ -383,7 +383,7 @@ namespace GBATool.ViewModels
                     AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(control);
                     bool isTopHalf = Util.IsPointInTopHalf(control, eventArgs);
 
-                    _insertAdorner = new TreeViewInsertAdorner(isTopHalf, itemContainer, adornerLayer);
+                    _insertAdorner = new(isTopHalf, itemContainer, adornerLayer);
                 }
             }
         }

@@ -10,7 +10,8 @@ namespace GBATool.Models
     {
         public class BuildConfig
         {
-            public string OutputFilePath { get; set; } = "";
+            public string GeneratedSourcePath { get; set; } = "";
+            public string GeneratedAssetsPath { get; set; } = "";
 
             public BuildConfig()
             {
@@ -19,7 +20,8 @@ namespace GBATool.Models
 
             public void Reset()
             {
-                OutputFilePath = "";
+                GeneratedSourcePath = string.Empty;
+                GeneratedAssetsPath = string.Empty;
             }
         }
 
@@ -54,7 +56,8 @@ namespace GBATool.Models
             Version = copy.Version;
             SpritePatternFormat = copy.SpritePatternFormat;
 
-            Build.OutputFilePath = copy.Build.OutputFilePath;
+            Build.GeneratedSourcePath = copy.Build.GeneratedSourcePath;
+            Build.GeneratedAssetsPath = copy.Build.GeneratedAssetsPath;
         }
 
         public void Load(string path, string filePath)

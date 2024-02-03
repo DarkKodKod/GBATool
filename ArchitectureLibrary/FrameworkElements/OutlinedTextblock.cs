@@ -25,7 +25,7 @@ namespace ArchitectureLibrary.FrameworkElements
 
         private void UpdatePen()
         {
-            _Pen = new Pen(Stroke, StrokeThickness)
+            _Pen = new(Stroke, StrokeThickness)
             {
                 DashCap = PenLineCap.Round,
                 EndLineCap = PenLineCap.Round,
@@ -298,7 +298,7 @@ namespace ArchitectureLibrary.FrameworkElements
                 return;
             }
 
-            _FormattedText = new FormattedText(
+            _FormattedText = new(
               Text ?? "",
               CultureInfo.CurrentUICulture,
               FlowDirection,

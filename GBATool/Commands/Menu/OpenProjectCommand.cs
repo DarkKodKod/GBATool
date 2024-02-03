@@ -10,6 +10,7 @@ using GBATool.VOs;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.Commands
 {
@@ -95,14 +96,14 @@ namespace GBATool.Commands
 
                 using (BrowseFolderCommand browseFolder = new())
                 {
-                    browseFolder.Execute(string.Empty);
+                    browseFolder.Execute(new object[2] { new Control(), string.Empty });
                 }
 
                 SignalManager.Get<BrowseFolderSuccessSignal>().Listener += BrowseFolderSuccess;
             }
         }
 
-        private void BrowseFolderSuccess(string path)
+        private void BrowseFolderSuccess(Control owner, string path)
         {
             if (CanExecute(path))
             {

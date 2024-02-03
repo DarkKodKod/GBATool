@@ -9,9 +9,12 @@
         mc:Ignorable="d"
         xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
         ShowInTaskbar="False"
-        Title="Build" Height="400" Width="700"
+        Title="Build" Height="500" Width="700"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
         Closing="Window_Closing">
+    <Window.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+    </Window.Resources>
     <Window.DataContext>
         <vm:BuildProjectDialogViewModel />
     </Window.DataContext>
@@ -37,14 +40,38 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="1" Content="Output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label Grid.Row="0" Grid.Column="1" Content="Source directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
                     <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
 					        VerticalAlignment="Center" Width="30" Content="..." 
-					        Command="{Binding BrowseFolderCommand}" CommandParameter="{Binding ElementName=tbPath, Path=Text}"/>
-                    <TextBox Name="tbPath" Height="23" Text="{Binding FolderPath, UpdateSourceTrigger=PropertyChanged}" 
+					        Command="{Binding BrowseFolderCommand}" x:Name="btnSourcePath">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource parametersConverter}">
+                                <Binding RelativeSource="{RelativeSource Self}"/>
+                                <Binding Path="Text" ElementName="tbSourcePath"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <TextBox Name="tbSourcePath" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
 					         TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+                </DockPanel>
+                <Label Grid.Row="2" Grid.Column="1" Content="Assets directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
+                    <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+				            VerticalAlignment="Center" Width="30" Content="..." 
+				            Command="{Binding BrowseFolderCommand}" x:Name="btnAssetsPath">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource parametersConverter}">
+                                <Binding RelativeSource="{RelativeSource Self}"/>
+                                <Binding Path="Text" ElementName="tbAssetsPath"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <TextBox Name="tbAssetsPath" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
+				             TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
                 </DockPanel>
             </Grid>
         </GroupBox>

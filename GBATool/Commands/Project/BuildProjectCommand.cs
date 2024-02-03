@@ -1,10 +1,12 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
+using GBATool.Building;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace GBATool.Commands
 {
@@ -17,7 +19,7 @@ namespace GBATool.Commands
             return !_building;
         }
 
-        public override void Execute(object? parameter)
+        public override async Task ExecuteAsync(object? parameter)
         {
             if (_building)
             {
@@ -26,15 +28,34 @@ namespace GBATool.Commands
 
             _building = true;
 
-            if (!CheckValidOutputFolder())
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            if (!CheckValidFolder(projectModel.Build.GeneratedSourcePath))
             {
-                OutputError("Invalid output folder");
+                OutputError("Invalid source folder");
+
+                _building = false;
+                return;
+            }
+
+            if (!CheckValidFolder(projectModel.Build.GeneratedAssetsPath))
+            {
+                OutputError("Invalid assets folder");
 
                 _building = false;
                 return;
             }
 
             OutputInfo("Build started");
+
+            OutputInfo("Generate header...");
+            bool ok = await Header.Generate(projectModel.Build.GeneratedSourcePath);
+            if (ok == false)
+            {
+                OutputError("Problems generating header");
+                _building = false;
+                return;
+            }
 
             OutputInfo("Building banks...");
             OutputInfo("Building tiles definitions...");
@@ -48,13 +69,11 @@ namespace GBATool.Commands
             RaiseCanExecuteChanged();
         }
 
-        private static bool CheckValidOutputFolder()
+        private static bool CheckValidFolder(string path)
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
             try
             {
-                string result = Path.GetFullPath(projectModel.Build.OutputFilePath);
+                string result = Path.GetFullPath(path);
 
                 return Directory.Exists(result);
             }

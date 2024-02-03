@@ -462,8 +462,8 @@ namespace GBATool.ViewModels
                 {
                     PosX = x,
                     PosY = y,
-                    Shape = this.Shape,
-                    Size = this.Size,
+                    Shape = Shape,
+                    Size = Size,
                     TileSetID = model.GUID
                 }) == sprite);
 

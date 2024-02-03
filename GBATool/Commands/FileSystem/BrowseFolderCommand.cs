@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Windows.Controls;
 
 namespace GBATool.Commands
 {
@@ -14,14 +15,19 @@ namespace GBATool.Commands
                 return;
             }
 
+            object[] values = (object[])parameter;
+
+            Control owner = (Control)values[0];
+            string path = (string)values[1];
+
             CommonOpenFileDialog dialog = new()
             {
                 Title = "Select folder",
                 IsFolderPicker = true,
-                InitialDirectory = parameter as string,
+                InitialDirectory = path,
                 AddToMostRecentlyUsedList = false,
                 AllowNonFileSystemItems = false,
-                DefaultDirectory = parameter as string,
+                DefaultDirectory = path,
                 EnsureFileExists = true,
                 EnsurePathExists = true,
                 EnsureReadOnly = false,
@@ -32,7 +38,7 @@ namespace GBATool.Commands
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                SignalManager.Get<BrowseFolderSuccessSignal>().Dispatch(dialog.FileName);
+                SignalManager.Get<BrowseFolderSuccessSignal>().Dispatch(owner, dialog.FileName);
             }
         }
     }
