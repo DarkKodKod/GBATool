@@ -53,6 +53,7 @@ namespace GBATool.Commands
             if (ok == false)
             {
                 OutputError("Problems generating header");
+                OutputError(Header.GetErrors());
                 _building = false;
                 return;
             }

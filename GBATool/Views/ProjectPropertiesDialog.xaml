@@ -4,13 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GBATool.Views"
+        xmlns:b="clr-namespace:GBATool.Utils"
         xmlns:vm="clr-namespace:GBATool.ViewModels"
         xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
         xmlns:ex="clr-namespace:ArchitectureLibrary.WPF.Extensions;assembly=ArchitectureLibrary"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:enum="clr-namespace:GBATool.Enums"
         mc:Ignorable="d"
-        Title="Project properties" Height="271" Width="357"
+        Title="Project properties" Height="271" Width="500"
         ShowInTaskbar="False"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Window.DataContext>
@@ -42,14 +43,52 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Content="Sprite Pattern Format:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Label Content="Project Title:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <TextBox Grid.Column="1" 
+                     Name="tbProjectTitle"
+                     Grid.Row="0" 
+                     MaxLength="12"
+                     Width="100"
+                     HorizontalAlignment="Left"
+                     TextWrapping="NoWrap"
+                     CharacterCasing="Upper"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding ProjectTitle}"
+                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            <Label Content="Project Initials:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <TextBox Grid.Column="1" 
+                     Name="tbProjectInitials"
+                     Grid.Row="1" 
+                     Width="40"
+                     MaxLength="2"
+                     VerticalContentAlignment="Center"
+                     HorizontalAlignment="Left"
+                     TextWrapping="NoWrap"
+                     CharacterCasing="Upper"
+                     Text="{Binding ProjectInitials}"
+                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            <Label Content="Software Version:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <TextBox Grid.Column="1" 
+                     Name="tbSoftwareVersion"
+                     Grid.Row="2" 
+                     Width="40"
+                     VerticalContentAlignment="Center"
+                     PreviewTextInput="NumberValidationTextBox"
+                     MaxLength="3"
+                     HorizontalAlignment="Left"
+                     TextWrapping="NoWrap"
+                     Text="{Binding SoftwareVersion}"
+                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            <Label Content="Sprite Pattern Format:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <ComboBox Grid.Column="1" 
-                      Grid.Row="1" 
-                      HorizontalAlignment="Left" VerticalAlignment="Top" 
+                      Grid.Row="3" 
+                      HorizontalAlignment="Left" VerticalAlignment="Center" 
                       Width="120" 
                       DisplayMemberPath="Description"
                       ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:SpritePattern}}}"

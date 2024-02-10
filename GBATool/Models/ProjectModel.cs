@@ -10,8 +10,8 @@ namespace GBATool.Models
     {
         public class BuildConfig
         {
-            public string GeneratedSourcePath { get; set; } = "";
-            public string GeneratedAssetsPath { get; set; } = "";
+            public string GeneratedSourcePath { get; set; } = string.Empty;
+            public string GeneratedAssetsPath { get; set; } = string.Empty;
 
             public BuildConfig()
             {
@@ -26,9 +26,13 @@ namespace GBATool.Models
         }
 
         public int Version { get; set; } = 0;
-        public string Name { get; set; } = "";
-        [TomlIgnore] public string ProjectFilePath { get; set; } = "";
-        [TomlIgnore] public string ProjectPath { get; set; } = "";
+        public string Name { get; set; } = string.Empty;
+        public string ProjectTitle { get; set; } = string.Empty;
+        public byte SoftwareVersion { get; set; } = 0;
+        public string ProjectInitials { get; set; } = string.Empty;
+
+        [TomlIgnore] public string ProjectFilePath { get; set; } = string.Empty;
+        [TomlIgnore] public string ProjectPath { get; set; } = string.Empty;
         public BuildConfig Build { get; set; } = new();
         public SpritePattern SpritePatternFormat { get; set; } = SpritePattern.Format1D;
 
@@ -41,6 +45,9 @@ namespace GBATool.Models
             ProjectFilePath = "";
             ProjectPath = "";
             Name = "";
+            ProjectTitle = "";
+            ProjectInitials = "";
+            SoftwareVersion = 0;
             SpritePatternFormat = SpritePattern.Format1D;
             Build.Reset();
         }
@@ -55,6 +62,9 @@ namespace GBATool.Models
             Name = copy.Name;
             Version = copy.Version;
             SpritePatternFormat = copy.SpritePatternFormat;
+            ProjectTitle = copy.ProjectTitle;
+            ProjectInitials = copy.ProjectInitials;
+            SoftwareVersion = copy.SoftwareVersion;
 
             Build.GeneratedSourcePath = copy.Build.GeneratedSourcePath;
             Build.GeneratedAssetsPath = copy.Build.GeneratedAssetsPath;

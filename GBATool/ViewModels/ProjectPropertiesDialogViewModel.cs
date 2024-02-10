@@ -14,6 +14,9 @@ namespace GBATool.ViewModels
 
         private bool _changed = false;
         private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
+        private string _projectTitle = string.Empty;
+        private int _softwareVersion = 0;
+        private string _projectInitials = string.Empty;
 
         #region get/set
         public SpritePattern SelectedSpriteFormat
@@ -23,6 +26,42 @@ namespace GBATool.ViewModels
             {
                 _selectedSpriteFormat = value;
                 OnPropertyChanged("SelectedSpriteFormat");
+
+                _changed = true;
+            }
+        }
+
+        public string ProjectTitle
+        {
+            get { return _projectTitle; }
+            set
+            {
+                _projectTitle = value;
+                OnPropertyChanged("ProjectTitle");
+
+                _changed = true;
+            }
+        }
+
+        public int SoftwareVersion
+        {
+            get { return _softwareVersion; }
+            set
+            {
+                _softwareVersion = value;
+                OnPropertyChanged("SoftwareVersion");
+
+                _changed = true;
+            }
+        }
+
+        public string ProjectInitials
+        {
+            get { return _projectInitials; }
+            set
+            {
+                _projectInitials = value;
+                OnPropertyChanged("ProjectInitials");
 
                 _changed = true;
             }
@@ -52,6 +91,10 @@ namespace GBATool.ViewModels
                     SignalManager.Get<ReloadBankImageSignal>().Dispatch();
                 }
 
+                project.ProjectTitle = ProjectTitle;
+                project.SoftwareVersion = (byte)SoftwareVersion;
+                project.ProjectInitials = ProjectInitials;
+
                 project.Save();
             }
 
@@ -63,6 +106,9 @@ namespace GBATool.ViewModels
             ProjectModel project = ModelManager.Get<ProjectModel>();
 
             SelectedSpriteFormat = project.SpritePatternFormat;
+            ProjectTitle = project.ProjectTitle;
+            SoftwareVersion = project.SoftwareVersion;
+            ProjectInitials = project.ProjectInitials;
         }
     }
 }
