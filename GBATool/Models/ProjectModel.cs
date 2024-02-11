@@ -30,6 +30,7 @@ namespace GBATool.Models
         public string ProjectTitle { get; set; } = string.Empty;
         public byte SoftwareVersion { get; set; } = 0;
         public string ProjectInitials { get; set; } = string.Empty;
+        public string DeveloperId { get; set; } = string.Empty;
 
         [TomlIgnore] public string ProjectFilePath { get; set; } = string.Empty;
         [TomlIgnore] public string ProjectPath { get; set; } = string.Empty;
@@ -42,11 +43,12 @@ namespace GBATool.Models
 
         public void Reset()
         {
-            ProjectFilePath = "";
-            ProjectPath = "";
-            Name = "";
-            ProjectTitle = "";
-            ProjectInitials = "";
+            ProjectFilePath = string.Empty;
+            ProjectPath = string.Empty;
+            Name = string.Empty;
+            ProjectTitle = string.Empty;
+            ProjectInitials = string.Empty;
+            DeveloperId = string.Empty;
             SoftwareVersion = 0;
             SpritePatternFormat = SpritePattern.Format1D;
             Build.Reset();
@@ -65,6 +67,7 @@ namespace GBATool.Models
             ProjectTitle = copy.ProjectTitle;
             ProjectInitials = copy.ProjectInitials;
             SoftwareVersion = copy.SoftwareVersion;
+            DeveloperId = copy.DeveloperId;
 
             Build.GeneratedSourcePath = copy.Build.GeneratedSourcePath;
             Build.GeneratedAssetsPath = copy.Build.GeneratedAssetsPath;

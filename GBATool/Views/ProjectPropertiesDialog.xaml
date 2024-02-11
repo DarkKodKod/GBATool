@@ -47,21 +47,22 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Label Content="Project Title:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <Label Content="Project Title:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Grid.Column="1" 
                      Name="tbProjectTitle"
                      Grid.Row="0" 
                      MaxLength="12"
-                     Width="100"
+                     Width="120"
                      HorizontalAlignment="Left"
                      TextWrapping="NoWrap"
                      CharacterCasing="Upper"
                      VerticalContentAlignment="Center"
                      Text="{Binding ProjectTitle}"
                      b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-            <Label Content="Project Initials:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <Label Content="Project Initials:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Grid.Column="1" 
                      Name="tbProjectInitials"
                      Grid.Row="1" 
@@ -73,7 +74,7 @@
                      CharacterCasing="Upper"
                      Text="{Binding ProjectInitials}"
                      b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-            <Label Content="Software Version:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"></Label>
+            <Label Content="Software Version:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Grid.Column="1" 
                      Name="tbSoftwareVersion"
                      Grid.Row="2" 
@@ -94,6 +95,18 @@
                       ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:SpritePattern}}}"
                       SelectedValue="{Binding Path=SelectedSpriteFormat}"
                       SelectedValuePath="Value"/>
+            <Label Content="Developer Id:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <TextBox Grid.Column="1" 
+                     Name="tbDeveloperId"
+                     Grid.Row="4" 
+                     Width="40"
+                     MaxLength="2"
+                     VerticalContentAlignment="Center"
+                     HorizontalAlignment="Left"
+                     TextWrapping="NoWrap"
+                     CharacterCasing="Upper"
+                     Text="{Binding DeveloperId}"
+                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
         </Grid>
         <Button Grid.Row="2" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
     </Grid>

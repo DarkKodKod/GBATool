@@ -10,7 +10,7 @@ namespace GBATool.Models
 
         public string GUID { get; set; }
 
-        protected string _fileExtension = "";
+        protected string _fileExtension = string.Empty;
 
         public AFileModel()
         {

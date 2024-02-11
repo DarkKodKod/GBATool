@@ -25,9 +25,12 @@ namespace GBATool.Views
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            Regex _regex = new("[^0-9.-]+"); //regex that matches disallowed text
+            Regex _regex = IsAllNumbersRegex(); //regex that matches disallowed text
 
             e.Handled = _regex.IsMatch(e.Text);
         }
+
+        [GeneratedRegex("[^0-9.-]+")]
+        private static partial Regex IsAllNumbersRegex();
     }
 }

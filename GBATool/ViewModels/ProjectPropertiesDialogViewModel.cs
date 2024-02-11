@@ -17,6 +17,7 @@ namespace GBATool.ViewModels
         private string _projectTitle = string.Empty;
         private int _softwareVersion = 0;
         private string _projectInitials = string.Empty;
+        private string _developerId = string.Empty;
 
         #region get/set
         public SpritePattern SelectedSpriteFormat
@@ -66,6 +67,18 @@ namespace GBATool.ViewModels
                 _changed = true;
             }
         }
+
+        public string DeveloperId
+        {
+            get { return _developerId; }
+            set
+            {
+                _developerId = value;
+                OnPropertyChanged("DeveloperId");
+
+                _changed = true;
+            }
+        }
         #endregion
 
         public ProjectPropertiesDialogViewModel()
@@ -94,6 +107,7 @@ namespace GBATool.ViewModels
                 project.ProjectTitle = ProjectTitle;
                 project.SoftwareVersion = (byte)SoftwareVersion;
                 project.ProjectInitials = ProjectInitials;
+                project.DeveloperId = DeveloperId;
 
                 project.Save();
             }
@@ -109,6 +123,7 @@ namespace GBATool.ViewModels
             ProjectTitle = project.ProjectTitle;
             SoftwareVersion = project.SoftwareVersion;
             ProjectInitials = project.ProjectInitials;
+            DeveloperId = project.DeveloperId;
         }
     }
 }

@@ -90,7 +90,7 @@ namespace GBATool.Building
                     byteCounter += WriteNintendoLogo(ref sb);
                     byteCounter += WriteGameTitle(ref sb, projectModel);
                     byteCounter += WriteGameCode(ref sb, projectModel);
-                    byteCounter += WriteMarkerCode(ref sb);
+                    byteCounter += WriteMarkerCode(ref sb, projectModel);
                     byteCounter += WriteFixedValue(ref sb);
                     byteCounter += WriteMainUnitCode(ref sb);
                     byteCounter += WriteDeviceType(ref sb);
@@ -255,11 +255,16 @@ namespace GBATool.Building
         }
 
         // Identifies the (commercial) developer
-        private static int WriteMarkerCode(ref StringBuilder sb)
+        private static int WriteMarkerCode(ref StringBuilder sb, ProjectModel projectModel)
         {
-            _ = sb.AppendLine("; Maker Code");
+            _ = sb.AppendLine("; Marker Code");
 
-            string markerCode = "26"; // Random code, 2 characters max.
+            string markerCode = projectModel.DeveloperId;
+
+            if (markerCode.Length > 2)
+                markerCode = markerCode[..2];
+            else if (markerCode.Length < 2)
+                markerCode = markerCode.PadRight(2, '\0');
 
             int ret = WriteStringAsBytes(ref sb, markerCode, 2);
 
