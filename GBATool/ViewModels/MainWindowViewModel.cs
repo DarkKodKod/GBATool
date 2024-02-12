@@ -137,7 +137,7 @@ namespace GBATool.ViewModels
         }
 
         #region Signal methods
-        private ProjectItem? FindInItemsAndDelete(ICollection<ProjectItem>? items, ProjectItem[] aPath, int index)
+        private static ProjectItem? FindInItemsAndDelete(ICollection<ProjectItem>? items, ProjectItem[] aPath, int index)
         {
             if (items == null)
             {
