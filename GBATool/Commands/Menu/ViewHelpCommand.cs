@@ -1,5 +1,4 @@
 ﻿using ArchitectureLibrary.Commands;
-using System.Diagnostics;
 
 namespace GBATool.Commands
 {
@@ -7,7 +6,8 @@ namespace GBATool.Commands
     {
         public override void Execute(object? parameter)
         {
-            Process.Start("https://github.com/DarkKodKod/GBATool");
+            using OpenLinkCommand openLink = new();
+            openLink.Execute("https://github.com/DarkKodKod/GBATool");
         }
     }
 }

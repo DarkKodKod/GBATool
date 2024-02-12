@@ -7,7 +7,7 @@ namespace GBATool.ViewModels
 {
     public class AboutDialogViewModel : ViewModel
     {
-        public OpenLinkCommand OpenLinkCommand { get; } = new OpenLinkCommand();
+        public OpenLinkCommand OpenLinkCommand { get; } = new();
 
         public string Version
         {
