@@ -7,9 +7,10 @@
         xmlns:local="clr-namespace:GBATool.Views"
         mc:Ignorable="d"
         ShowInTaskbar="False"
-        Title="About NESTool" Height="100" Width="300"
+        Title="Loading..." Height="100" Width="300"
 		ResizeMode="NoResize"
         WindowStyle="None"
+        Closing="Window_Closing"
 		WindowStartupLocation="CenterOwner">
     <Window.DataContext>
         <vm:LoadingDialogViewModel />

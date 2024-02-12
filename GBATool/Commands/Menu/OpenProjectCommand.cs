@@ -99,7 +99,7 @@ namespace GBATool.Commands
                     browseFolder.Execute(new object[2] { new Control(), string.Empty });
                 }
 
-                SignalManager.Get<BrowseFolderSuccessSignal>().Listener += BrowseFolderSuccess;
+                SignalManager.Get<BrowseFolderSuccessSignal>().Listener -= BrowseFolderSuccess;
             }
         }
 

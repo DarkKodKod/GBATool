@@ -12,7 +12,7 @@ namespace GBATool.FileSystem
 {
     public static class ProjectItemFileSystem
     {
-        private static int _objectsLoading = 0;
+        private static long _objectsLoading = 0;
 
         public static void Initialize()
         {
@@ -67,6 +67,11 @@ namespace GBATool.FileSystem
             fileHandler.Name = item.DisplayName;
         }
 
+        private static long ReadCount()
+        {
+            return Interlocked.Read(ref _objectsLoading);
+        }
+
         private static void IncrementCount()
         {
             Interlocked.Increment(ref _objectsLoading);
@@ -79,7 +84,7 @@ namespace GBATool.FileSystem
 
         public static bool IsLoading()
         {
-            return _objectsLoading > 0;
+            return ReadCount() > 0;
         }
 
         private static async void OnRegisterFileHandler(ProjectItem item, string? path)
@@ -137,7 +142,7 @@ namespace GBATool.FileSystem
 
             DecrementCount();
 
-            if (_objectsLoading == 0)
+            if (ReadCount() == 0)
             {
                 SignalManager.Get<FinishedLoadingProjectSignal>().Dispatch();
             }

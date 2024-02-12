@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GBATool.Commands
@@ -17,7 +18,7 @@ namespace GBATool.Commands
 
             object[] values = (object[])parameter;
 
-            Control owner = (Control)values[0];
+            Control ownerControl = (Control)values[0];
             string path = (string)values[1];
 
             CommonOpenFileDialog dialog = new()
@@ -36,9 +37,9 @@ namespace GBATool.Commands
                 ShowPlacesList = true
             };
 
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog(Application.Current.MainWindow) == CommonFileDialogResult.Ok)
             {
-                SignalManager.Get<BrowseFolderSuccessSignal>().Dispatch(owner, dialog.FileName);
+                SignalManager.Get<BrowseFolderSuccessSignal>().Dispatch(ownerControl, dialog.FileName);
             }
         }
     }

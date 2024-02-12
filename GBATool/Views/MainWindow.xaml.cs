@@ -46,11 +46,9 @@ namespace GBATool
         internal static extern bool GetMonitorInfoEx(IntPtr hMonitor, ref MonitorInfoEx lpmi);
         #endregion
 
-        public static EditFrameTools ToolBarMapTool = EditFrameTools.Select;
-
         private ProjectItemType _currentViewType = ProjectItemType.None;
 
-        private readonly LoadingDialog _loadingDialog = new();
+        private LoadingDialog? _loadingDialog = null;
         private readonly FieldInfo? _menuDropAlignmentField;
 
         public MainWindow()
@@ -213,7 +211,10 @@ namespace GBATool
 
         private void OnShowLoadingDialog()
         {
-            _loadingDialog.Owner = this;
+            _loadingDialog ??= new()
+            {
+                Owner = this
+            };
             _loadingDialog.Show();
         }
 
@@ -221,7 +222,7 @@ namespace GBATool
         {
             Application.Current.Dispatcher.Invoke(new Action(() =>
             {
-                _loadingDialog.Close();
+                _loadingDialog?.Close();
             }));
         }
 
