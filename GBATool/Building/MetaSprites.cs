@@ -1,16 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace GBATool.Building;
 
-namespace GBATool.Building;
-
-static class MetaSprites
+public sealed class MetaSprites : Building<MetaSprites>
 {
-    public static async Task<bool> Generate(string outputSourcePath)
-    {
-        return await Task.FromResult(true);
-    }
-
-    public static string GetErrors()
-    {
-        return string.Empty;
-    }
+    protected override string FileName { get; } = "metasprites.asm";
 }

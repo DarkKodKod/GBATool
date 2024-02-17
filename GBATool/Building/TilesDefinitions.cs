@@ -1,16 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace GBATool.Building;
 
-namespace GBATool.Building;
-
-static class TilesDefinitions
+public sealed class TilesDefinitions : Building<TilesDefinitions>
 {
-    public static async Task<bool> Generate(string outputSourcePath)
-    {
-        return await Task.FromResult(true);
-    }
-
-    public static string GetErrors()
-    {
-        return string.Empty;
-    }
+    protected override string FileName { get; } = "tilesdefinitions.asm";
 }

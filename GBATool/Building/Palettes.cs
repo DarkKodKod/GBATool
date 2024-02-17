@@ -1,16 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace GBATool.Building;
 
-namespace GBATool.Building;
-
-static class Palettes
+public sealed class Palettes : Building<Palettes>
 {
-    public static async Task<bool> Generate(string outputSourcePath)
-    {
-        return await Task.FromResult(true);
-    }
-
-    public static string GetErrors()
-    {
-        return string.Empty;
-    }
+    protected override string FileName { get; } = "palettes.asm";
 }

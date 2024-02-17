@@ -45,56 +45,56 @@ public class BuildProjectCommand : Command
         OutputInfo("Build started");
 
         OutputInfo("Generate header...");
-        bool ok = await Header.Generate(projectModel.Build.GeneratedSourcePath);
+        bool ok = await Header.Instance.Generate(projectModel.Build.GeneratedSourcePath);
         if (ok == false)
         {
             OutputError("Problems generating header");
-            OutputError(Header.GetErrors());
+            OutputError(Header.Instance.GetErrors());
             goto finish;
         }
 
         OutputInfo("Building banks...");
-        ok = await MemoryBanks.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await MemoryBanks.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating banks");
-            OutputError(MemoryBanks.GetErrors());
+            OutputError(MemoryBanks.Instance.GetErrors());
             goto finish;
         }
 
         OutputInfo("Building tiles definitions...");
-        ok = await TilesDefinitions.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await TilesDefinitions.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating tiles definitions");
-            OutputError(TilesDefinitions.GetErrors());
+            OutputError(TilesDefinitions.Instance.GetErrors());
             goto finish;
         }
 
         OutputInfo("Building backgrounds...");
-        ok = await Backgrounds.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await Backgrounds.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating backgrounds");
-            OutputError(Backgrounds.GetErrors());
+            OutputError(Backgrounds.Instance.GetErrors());
             goto finish;
         }
 
         OutputInfo("Building meta sprites...");
-        ok = await MetaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await MetaSprites.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating meta sprites");
-            OutputError(MetaSprites.GetErrors());
+            OutputError(MetaSprites.Instance.GetErrors());
             goto finish;
         }
 
         OutputInfo("Building palettes...");
-        ok = await Palettes.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await Palettes.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating palettes");
-            OutputError(Palettes.GetErrors());
+            OutputError(Palettes.Instance.GetErrors());
             goto finish;
         }
 
@@ -128,5 +128,13 @@ public class BuildProjectCommand : Command
     private static void OutputError(string message)
     {
         SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Error, "");
+    }
+
+    private static void OutputError(string[] messages)
+    {
+        for (int i = 0; i < messages.Length; i++)
+        {
+            SignalManager.Get<WriteBuildOutputSignal>().Dispatch(messages[i], OutputMessageType.Error, "");
+        }
     }
 }
