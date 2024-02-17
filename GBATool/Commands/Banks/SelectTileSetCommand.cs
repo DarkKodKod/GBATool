@@ -2,21 +2,20 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 
-namespace GBATool.Commands
-{
-    public class SelectTileSetCommand : Command
-    {
-        public override void Execute(object? parameter)
-        {
-            if (parameter == null)
-            {
-                return;
-            }
+namespace GBATool.Commands;
 
-            if (parameter is string id)
-            {
-                SignalManager.Get<SelectTileSetSignal>().Dispatch(id);
-            }
+public class SelectTileSetCommand : Command
+{
+    public override void Execute(object? parameter)
+    {
+        if (parameter == null)
+        {
+            return;
+        }
+
+        if (parameter is string id)
+        {
+            SignalManager.Get<SelectTileSetSignal>().Dispatch(id);
         }
     }
 }

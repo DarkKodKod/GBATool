@@ -1,8 +1,7 @@
-﻿namespace GBATool.VOs
+﻿namespace GBATool.VOs;
+
+public record BankLinkVO
 {
-    public record BankLinkVO
-    {
-        public string? Caption { get; init; }
-        public string? Id { get; init; }
-    }
+    public string? Caption { get; init; }
+    public string? Id { get; init; }
 }

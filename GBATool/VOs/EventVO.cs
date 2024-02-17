@@ -1,8 +1,7 @@
-﻿namespace GBATool.VOs
+﻿namespace GBATool.VOs;
+
+public record EventVO
 {
-    public record EventVO
-    {
-        public object? OriginalSource { get; init; }
-        public object? Sender { get; init; }
-    }
+    public object? OriginalSource { get; init; }
+    public object? Sender { get; init; }
 }

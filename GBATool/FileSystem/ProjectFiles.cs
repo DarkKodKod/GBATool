@@ -3,95 +3,94 @@ using GBATool.VOs;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace GBATool.FileSystem
+namespace GBATool.FileSystem;
+
+public static class ProjectFiles
 {
-    public static class ProjectFiles
+    public static ConcurrentDictionary<string, FileHandler> Handlers { get; private set; } = new();
+
+    public static List<FileModelVO> GetModels<T>() where T : AFileModel
     {
-        public static ConcurrentDictionary<string, FileHandler> Handlers { get; private set; } = new();
+        List<FileModelVO> models = new();
 
-        public static List<FileModelVO> GetModels<T>() where T : AFileModel
+        int index = 0;
+
+        foreach (KeyValuePair<string, FileHandler> pair in Handlers)
         {
-            List<FileModelVO> models = new();
-
-            int index = 0;
-
-            foreach (KeyValuePair<string, FileHandler> pair in Handlers)
+            if (pair.Value.FileModel is T model)
             {
-                if (pair.Value.FileModel is T model)
+                models.Add(new()
                 {
-                    models.Add(new()
-                    {
-                        Index = index++,
-                        Name = pair.Value.Name,
-                        Path = pair.Value.Path,
-                        Model = model
-                    });
-                }
-            }
-
-            return models;
-        }
-
-        public static void SaveModel<T>(string guid, T model) where T : AFileModel
-        {
-            if (string.IsNullOrEmpty(guid))
-            {
-                return;
-            }
-
-            foreach (KeyValuePair<string, FileHandler> pair in Handlers)
-            {
-                if (pair.Key == guid)
-                {
-                    pair.Value.FileModel = model;
-                    pair.Value.Save();
-
-                    break;
-                }
+                    Index = index++,
+                    Name = pair.Value.Name,
+                    Path = pair.Value.Path,
+                    Model = model
+                });
             }
         }
 
-        public static FileModelVO? GetFileModel(string guid)
+        return models;
+    }
+
+    public static void SaveModel<T>(string guid, T model) where T : AFileModel
+    {
+        if (string.IsNullOrEmpty(guid))
         {
-            if (string.IsNullOrEmpty(guid))
-            {
-                return null;
-            }
+            return;
+        }
 
-            foreach (KeyValuePair<string, FileHandler> pair in Handlers)
+        foreach (KeyValuePair<string, FileHandler> pair in Handlers)
+        {
+            if (pair.Key == guid)
             {
-                if (pair.Key == guid)
-                {
-                    return new FileModelVO()
-                    {
-                        Index = 0,
-                        Name = pair.Value.Name,
-                        Path = pair.Value.Path,
-                        Model = pair.Value.FileModel
-                    };
-                }
-            }
+                pair.Value.FileModel = model;
+                pair.Value.Save();
 
+                break;
+            }
+        }
+    }
+
+    public static FileModelVO? GetFileModel(string guid)
+    {
+        if (string.IsNullOrEmpty(guid))
+        {
             return null;
         }
 
-        public static T? GetModel<T>(string guid) where T : AFileModel
+        foreach (KeyValuePair<string, FileHandler> pair in Handlers)
         {
-            if (string.IsNullOrEmpty(guid))
+            if (pair.Key == guid)
             {
-                return null;
-            }
-
-            foreach (KeyValuePair<string, FileHandler> pair in Handlers)
-            {
-                if (pair.Key == guid &&
-                    pair.Value.FileModel is T model)
+                return new FileModelVO()
                 {
-                    return model;
-                }
+                    Index = 0,
+                    Name = pair.Value.Name,
+                    Path = pair.Value.Path,
+                    Model = pair.Value.FileModel
+                };
             }
+        }
 
+        return null;
+    }
+
+    public static T? GetModel<T>(string guid) where T : AFileModel
+    {
+        if (string.IsNullOrEmpty(guid))
+        {
             return null;
         }
+
+        foreach (KeyValuePair<string, FileHandler> pair in Handlers)
+        {
+            if (pair.Key == guid &&
+                pair.Value.FileModel is T model)
+            {
+                return model;
+            }
+        }
+
+        return null;
     }
 }

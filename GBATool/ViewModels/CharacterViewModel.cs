@@ -1,15 +1,14 @@
-﻿namespace GBATool.ViewModels
-{
-    public class CharacterViewModel : ItemViewModel
-    {
-        public override void OnActivate()
-        {
-            base.OnActivate();
-        }
+﻿namespace GBATool.ViewModels;
 
-        public override void OnDeactivate()
-        {
-            base.OnDeactivate();
-        }
+public class CharacterViewModel : ItemViewModel
+{
+    public override void OnActivate()
+    {
+        base.OnActivate();
+    }
+
+    public override void OnDeactivate()
+    {
+        base.OnDeactivate();
     }
 }

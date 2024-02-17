@@ -2,34 +2,33 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace ArchitectureLibrary.WPF.Converters
+namespace ArchitectureLibrary.WPF.Converters;
+
+public class EnumMatchToBooleanConverter : IValueConverter
 {
-    public class EnumMatchToBooleanConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        string? checkValue = value.ToString();
+        string? targetValue = parameter.ToString();
+
+        if (checkValue != null)
         {
-            string? checkValue = value.ToString();
-            string? targetValue = parameter.ToString();
-
-            if (checkValue != null)
-            {
-                return checkValue.Equals(targetValue, StringComparison.InvariantCultureIgnoreCase);
-            }
-
-            return false;
+            return checkValue.Equals(targetValue, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        return false;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        bool useValue = (bool)value;
+        string? targetValue = parameter.ToString();
+
+        if (useValue && targetValue != null)
         {
-            bool useValue = (bool)value;
-            string? targetValue = parameter.ToString();
-
-            if (useValue && targetValue != null)
-            {
-                return Enum.Parse(targetType, targetValue);
-            }
-
-            throw new NotImplementedException();
+            return Enum.Parse(targetType, targetValue);
         }
+
+        throw new NotImplementedException();
     }
 }

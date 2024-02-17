@@ -4,28 +4,27 @@ using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows.Input;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class PreviewMouseWheelCommand : Command
 {
-    public class PreviewMouseWheelCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return;
-            }
+            return;
+        }
 
-            if (parameter is MouseWheelEventArgs wheelEvent)
+        if (parameter is MouseWheelEventArgs wheelEvent)
+        {
+            MouseWheelVO vo = new()
             {
-                MouseWheelVO vo = new()
-                {
-                    Delta = wheelEvent.Delta,
-                    OriginalSource = wheelEvent.OriginalSource,
-                    Sender = wheelEvent.Source
-                };
+                Delta = wheelEvent.Delta,
+                OriginalSource = wheelEvent.OriginalSource,
+                Sender = wheelEvent.Source
+            };
 
-                SignalManager.Get<MouseWheelSignal>().Dispatch(vo);
-            }
+            SignalManager.Get<MouseWheelSignal>().Dispatch(vo);
         }
     }
 }

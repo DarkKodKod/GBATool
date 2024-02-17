@@ -1,8 +1,7 @@
 ﻿using ArchitectureLibrary.ViewModel;
 
-namespace GBATool.ViewModels
+namespace GBATool.ViewModels;
+
+public class LoadingDialogViewModel : ViewModel
 {
-    public class LoadingDialogViewModel : ViewModel
-    {
-    }
 }

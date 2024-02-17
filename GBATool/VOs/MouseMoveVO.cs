@@ -1,9 +1,8 @@
 ﻿using System.Windows;
 
-namespace GBATool.VOs
+namespace GBATool.VOs;
+
+public record MouseMoveVO : EventVO
 {
-    public record MouseMoveVO : EventVO
-    {
-        public Point Position { get; init; }
-    }
+    public Point Position { get; init; }
 }

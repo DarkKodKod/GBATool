@@ -2,70 +2,69 @@
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace GBATool.Utils
+namespace GBATool.Utils;
+
+public static class TextInputBindingManager
 {
-    public static class TextInputBindingManager
+    public static readonly DependencyProperty? UpdatePropertySourceWhenEnterPressedProperty = DependencyProperty.RegisterAttached("UpdatePropertySourceWhenEnterPressed", typeof(DependencyProperty), typeof(TextInputBindingManager), new PropertyMetadata(null, OnUpdatePropertySourceWhenEnterPressedPropertyChanged));
+
+    public static void SetUpdatePropertySourceWhenEnterPressed(DependencyObject dp, DependencyProperty value)
     {
-        public static readonly DependencyProperty? UpdatePropertySourceWhenEnterPressedProperty = DependencyProperty.RegisterAttached("UpdatePropertySourceWhenEnterPressed", typeof(DependencyProperty), typeof(TextInputBindingManager), new PropertyMetadata(null, OnUpdatePropertySourceWhenEnterPressedPropertyChanged));
+        dp.SetValue(UpdatePropertySourceWhenEnterPressedProperty, value);
+    }
 
-        public static void SetUpdatePropertySourceWhenEnterPressed(DependencyObject dp, DependencyProperty value)
+    public static DependencyProperty GetUpdatePropertySourceWhenEnterPressed(DependencyObject dp)
+    {
+        return (DependencyProperty)dp.GetValue(UpdatePropertySourceWhenEnterPressedProperty);
+    }
+
+    private static void OnUpdatePropertySourceWhenEnterPressedPropertyChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
+    {
+        if (dp is not UIElement element)
         {
-            dp.SetValue(UpdatePropertySourceWhenEnterPressedProperty, value);
+            return;
         }
 
-        public static DependencyProperty GetUpdatePropertySourceWhenEnterPressed(DependencyObject dp)
+        if (e.OldValue != null)
         {
-            return (DependencyProperty)dp.GetValue(UpdatePropertySourceWhenEnterPressedProperty);
+            element.PreviewKeyDown -= HandlePreviewKeyDown;
         }
 
-        private static void OnUpdatePropertySourceWhenEnterPressedPropertyChanged(DependencyObject dp, DependencyPropertyChangedEventArgs e)
+        if (e.NewValue != null)
         {
-            if (dp is not UIElement element)
-            {
-                return;
-            }
+            element.PreviewKeyDown += new KeyEventHandler(HandlePreviewKeyDown);
+        }
+    }
 
-            if (e.OldValue != null)
-            {
-                element.PreviewKeyDown -= HandlePreviewKeyDown;
-            }
+    static void HandlePreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+        {
+            DoUpdateSource(e.Source);
+        }
+    }
 
-            if (e.NewValue != null)
-            {
-                element.PreviewKeyDown += new KeyEventHandler(HandlePreviewKeyDown);
-            }
+    static void DoUpdateSource(object source)
+    {
+        if (source is not DependencyObject obj)
+        {
+            return;
         }
 
-        static void HandlePreviewKeyDown(object sender, KeyEventArgs e)
+        DependencyProperty property = GetUpdatePropertySourceWhenEnterPressed(obj);
+
+        if (property == null)
         {
-            if (e.Key == Key.Enter)
-            {
-                DoUpdateSource(e.Source);
-            }
+            return;
         }
 
-        static void DoUpdateSource(object source)
+        if (source is not UIElement elt)
         {
-            if (source is not DependencyObject obj)
-            {
-                return;
-            }
-
-            DependencyProperty property = GetUpdatePropertySourceWhenEnterPressed(obj);
-
-            if (property == null)
-            {
-                return;
-            }
-
-            if (source is not UIElement elt)
-            {
-                return;
-            }
-
-            BindingExpression? binding = BindingOperations.GetBindingExpression(elt, property);
-
-            binding?.UpdateSource();
+            return;
         }
+
+        BindingExpression? binding = BindingOperations.GetBindingExpression(elt, property);
+
+        binding?.UpdateSource();
     }
 }

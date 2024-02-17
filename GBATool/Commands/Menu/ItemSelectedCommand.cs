@@ -3,32 +3,31 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.ViewModels;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class ItemSelectedCommand : Command
 {
-    public class ItemSelectedCommand : Command
+    protected ProjectItem? ItemSelected = null;
+
+    public ItemSelectedCommand()
     {
-        protected ProjectItem? ItemSelected = null;
+        SignalManager.Get<ProjectItemSelectedSignal>().Listener += OnProjectItemSelected;
+        SignalManager.Get<ProjectItemUnselectedSignal>().Listener += OnProjectItemUnselected;
+    }
 
-        public ItemSelectedCommand()
-        {
-            SignalManager.Get<ProjectItemSelectedSignal>().Listener += OnProjectItemSelected;
-            SignalManager.Get<ProjectItemUnselectedSignal>().Listener += OnProjectItemUnselected;
-        }
+    public override void Deactivate()
+    {
+        SignalManager.Get<ProjectItemSelectedSignal>().Listener -= OnProjectItemSelected;
+        SignalManager.Get<ProjectItemUnselectedSignal>().Listener -= OnProjectItemUnselected;
+    }
 
-        public override void Deactivate()
-        {
-            SignalManager.Get<ProjectItemSelectedSignal>().Listener -= OnProjectItemSelected;
-            SignalManager.Get<ProjectItemUnselectedSignal>().Listener -= OnProjectItemUnselected;
-        }
+    private void OnProjectItemSelected(ProjectItem item)
+    {
+        ItemSelected = item;
+    }
 
-        private void OnProjectItemSelected(ProjectItem item)
-        {
-            ItemSelected = item;
-        }
-
-        private void OnProjectItemUnselected(ProjectItem item)
-        {
-            ItemSelected = null;
-        }
+    private void OnProjectItemUnselected(ProjectItem item)
+    {
+        ItemSelected = null;
     }
 }

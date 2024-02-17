@@ -2,13 +2,12 @@
 using ArchitectureLibrary.Model;
 using GBATool.Models;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class LoadConfigsCommand : Command
 {
-    public class LoadConfigsCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
-        {
-            ModelManager.Get<GBAToolConfigurationModel>().Load();
-        }
+        ModelManager.Get<GBAToolConfigurationModel>().Load();
     }
 }

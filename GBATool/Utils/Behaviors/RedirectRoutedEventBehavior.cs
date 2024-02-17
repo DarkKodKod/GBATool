@@ -2,93 +2,92 @@
 using System.Reflection;
 using System.Windows;
 
-namespace GBATool.Utils.Behaviors
+namespace GBATool.Utils.Behaviors;
+
+public class RedirectRoutedEventBehavior : Behavior<UIElement>
 {
-    public class RedirectRoutedEventBehavior : Behavior<UIElement>
+    public static readonly DependencyProperty RedirectTargetProperty =
+        DependencyProperty.Register("RedirectTarget", typeof(UIElement),
+            typeof(RedirectRoutedEventBehavior),
+            new PropertyMetadata(null));
+
+    public static readonly DependencyProperty RoutedEventProperty =
+        DependencyProperty.Register("RoutedEvent", typeof(RoutedEvent), typeof(RedirectRoutedEventBehavior),
+            new PropertyMetadata(null, OnRoutedEventChanged));
+
+    public UIElement RedirectTarget
     {
-        public static readonly DependencyProperty RedirectTargetProperty =
-            DependencyProperty.Register("RedirectTarget", typeof(UIElement),
-                typeof(RedirectRoutedEventBehavior),
-                new PropertyMetadata(null));
+        get => (UIElement)GetValue(RedirectTargetProperty);
+        set => SetValue(RedirectTargetProperty, value);
+    }
 
-        public static readonly DependencyProperty RoutedEventProperty =
-            DependencyProperty.Register("RoutedEvent", typeof(RoutedEvent), typeof(RedirectRoutedEventBehavior),
-                new PropertyMetadata(null, OnRoutedEventChanged));
+    public RoutedEvent RoutedEvent
+    {
+        get => (RoutedEvent)GetValue(RoutedEventProperty);
+        set => SetValue(RoutedEventProperty, value);
+    }
 
-        public UIElement RedirectTarget
+    private static MethodInfo? MemberwiseCloneMethod { get; }
+        = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
+
+    private static void OnRoutedEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        ((RedirectRoutedEventBehavior)d).OnRoutedEventChanged((RoutedEvent)e.OldValue, (RoutedEvent)e.NewValue);
+    }
+
+    private void OnRoutedEventChanged(RoutedEvent oldValue, RoutedEvent newValue)
+    {
+        if (AssociatedObject == null)
         {
-            get => (UIElement)GetValue(RedirectTargetProperty);
-            set => SetValue(RedirectTargetProperty, value);
+            return;
         }
 
-        public RoutedEvent RoutedEvent
+        if (oldValue != null)
         {
-            get => (RoutedEvent)GetValue(RoutedEventProperty);
-            set => SetValue(RoutedEventProperty, value);
+            AssociatedObject.RemoveHandler(oldValue, new RoutedEventHandler(EventHandler));
         }
 
-        private static MethodInfo? MemberwiseCloneMethod { get; }
-            = typeof(object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
-
-        private static void OnRoutedEventChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        if (newValue != null)
         {
-            ((RedirectRoutedEventBehavior)d).OnRoutedEventChanged((RoutedEvent)e.OldValue, (RoutedEvent)e.NewValue);
+            AssociatedObject.AddHandler(newValue, new RoutedEventHandler(EventHandler));
+        }
+    }
+
+    protected override void OnAttached()
+    {
+        base.OnAttached();
+        if (RoutedEvent != null)
+        {
+            AssociatedObject.AddHandler(RoutedEvent, new RoutedEventHandler(EventHandler));
+        }
+    }
+
+    protected override void OnDetaching()
+    {
+        if (RoutedEvent != null)
+        {
+            AssociatedObject.RemoveHandler(RoutedEvent, new RoutedEventHandler(EventHandler));
         }
 
-        private void OnRoutedEventChanged(RoutedEvent oldValue, RoutedEvent newValue)
+        base.OnDetaching();
+    }
+
+    private static RoutedEventArgs? CloneEvent(RoutedEventArgs e)
+    {
+        RoutedEventArgs? eventArg = (RoutedEventArgs?)MemberwiseCloneMethod?.Invoke(e, null);
+
+        return eventArg;
+    }
+
+    private void EventHandler(object sender, RoutedEventArgs e)
+    {
+        RoutedEventArgs? newEvent = CloneEvent(e);
+        e.Handled = true;
+
+        if (newEvent != null && RedirectTarget != null)
         {
-            if (AssociatedObject == null)
-            {
-                return;
-            }
-
-            if (oldValue != null)
-            {
-                AssociatedObject.RemoveHandler(oldValue, new RoutedEventHandler(EventHandler));
-            }
-
-            if (newValue != null)
-            {
-                AssociatedObject.AddHandler(newValue, new RoutedEventHandler(EventHandler));
-            }
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            if (RoutedEvent != null)
-            {
-                AssociatedObject.AddHandler(RoutedEvent, new RoutedEventHandler(EventHandler));
-            }
-        }
-
-        protected override void OnDetaching()
-        {
-            if (RoutedEvent != null)
-            {
-                AssociatedObject.RemoveHandler(RoutedEvent, new RoutedEventHandler(EventHandler));
-            }
-
-            base.OnDetaching();
-        }
-
-        private static RoutedEventArgs? CloneEvent(RoutedEventArgs e)
-        {
-            RoutedEventArgs? eventArg = (RoutedEventArgs?)MemberwiseCloneMethod?.Invoke(e, null);
-
-            return eventArg;
-        }
-
-        private void EventHandler(object sender, RoutedEventArgs e)
-        {
-            RoutedEventArgs? newEvent = CloneEvent(e);
-            e.Handled = true;
-
-            if (newEvent != null && RedirectTarget != null)
-            {
-                newEvent.Source = RedirectTarget;
-                RedirectTarget.RaiseEvent(newEvent);
-            }
+            newEvent.Source = RedirectTarget;
+            RedirectTarget.RaiseEvent(newEvent);
         }
     }
 }

@@ -2,33 +2,32 @@
 using System;
 using System.IO;
 
-namespace GBATool.Models
+namespace GBATool.Models;
+
+public abstract class AFileModel
 {
-    public abstract class AFileModel
+    public abstract string FileExtension { get; }
+
+    public string GUID { get; set; }
+
+    protected string _fileExtension = string.Empty;
+
+    public AFileModel()
     {
-        public abstract string FileExtension { get; }
+        GUID = Guid.NewGuid().ToString();
+    }
 
-        public string GUID { get; set; }
-
-        protected string _fileExtension = string.Empty;
-
-        public AFileModel()
+    public void Save(string path, string name)
+    {
+        try
         {
-            GUID = Guid.NewGuid().ToString();
+            Toml.WriteFile(this, Path.Combine(path, name + FileExtension));
         }
-
-        public void Save(string path, string name)
+        catch (IOException ex)
         {
-            try
-            {
-                Toml.WriteFile(this, Path.Combine(path, name + FileExtension));
-            }
-            catch (IOException ex)
-            {
-                // Sometimes the IO is overlapped with another one, I dont want to save if this happens
-                Console.WriteLine(ex.Message);
-                throw;
-            }
+            // Sometimes the IO is overlapped with another one, I dont want to save if this happens
+            Console.WriteLine(ex.Message);
+            throw;
         }
     }
 }

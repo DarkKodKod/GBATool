@@ -2,16 +2,15 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class GoToProjectItemCommand : Command
 {
-    public class GoToProjectItemCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        if (parameter is string id)
         {
-            if (parameter is string id)
-            {
-                SignalManager.Get<GotoProjectItemSignal>().Dispatch(id);
-            }
+            SignalManager.Get<GotoProjectItemSignal>().Dispatch(id);
         }
     }
 }

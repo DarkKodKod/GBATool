@@ -8,360 +8,359 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace GBATool.FileSystem
-{
-    public static class ProjectItemFileSystem
-    {
-        private static long _objectsLoading = 0;
+namespace GBATool.FileSystem;
 
-        public static void Initialize()
+public static class ProjectItemFileSystem
+{
+    private static long _objectsLoading = 0;
+
+    public static void Initialize()
+    {
+        SignalManager.Get<RegisterFileHandlerSignal>().Listener += OnRegisterFileHandler;
+        SignalManager.Get<RenameFileSignal>().Listener += OnRenameFile;
+        SignalManager.Get<MoveElementSignal>().Listener += OnMoveElement;
+    }
+
+    private static void OnRenameFile(ProjectItem item)
+    {
+        if (item.FileHandler == null)
         {
-            SignalManager.Get<RegisterFileHandlerSignal>().Listener += OnRegisterFileHandler;
-            SignalManager.Get<RenameFileSignal>().Listener += OnRenameFile;
-            SignalManager.Get<MoveElementSignal>().Listener += OnMoveElement;
+            return;
         }
 
-        private static void OnRenameFile(ProjectItem item)
+        FileHandler fileHandler = item.FileHandler;
+
+        if (fileHandler.FileModel != null)
         {
-            if (item.FileHandler == null)
+            string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + fileHandler.FileModel.FileExtension);
+            string itemNewPath = Path.Combine(fileHandler.Path, item.DisplayName + fileHandler.FileModel.FileExtension);
+
+            if (itemPath == itemNewPath)
             {
                 return;
             }
 
-            FileHandler fileHandler = item.FileHandler;
-
-            if (fileHandler.FileModel != null)
+            if (File.Exists(itemPath))
             {
-                string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + fileHandler.FileModel.FileExtension);
-                string itemNewPath = Path.Combine(fileHandler.Path, item.DisplayName + fileHandler.FileModel.FileExtension);
+                File.Move(itemPath, itemNewPath);
+            }
+        }
+        else
+        {
+            // Is a folder
+            string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name);
+            string itemNewPath = Path.Combine(fileHandler.Path, item.DisplayName);
 
+            if (Directory.Exists(itemPath))
+            {
                 if (itemPath == itemNewPath)
                 {
                     return;
                 }
 
-                if (File.Exists(itemPath))
-                {
-                    File.Move(itemPath, itemNewPath);
-                }
-            }
-            else
-            {
-                // Is a folder
-                string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name);
-                string itemNewPath = Path.Combine(fileHandler.Path, item.DisplayName);
+                Directory.Move(itemPath, itemNewPath);
 
-                if (Directory.Exists(itemPath))
-                {
-                    if (itemPath == itemNewPath)
-                    {
-                        return;
-                    }
-
-                    Directory.Move(itemPath, itemNewPath);
-
-                    UpdatePath(item, itemNewPath);
-                }
-            }
-
-            fileHandler.Name = item.DisplayName;
-        }
-
-        private static long ReadCount()
-        {
-            return Interlocked.Read(ref _objectsLoading);
-        }
-
-        private static void IncrementCount()
-        {
-            Interlocked.Increment(ref _objectsLoading);
-        }
-
-        private static void DecrementCount()
-        {
-            Interlocked.Decrement(ref _objectsLoading);
-        }
-
-        public static bool IsLoading()
-        {
-            return ReadCount() > 0;
-        }
-
-        private static async void OnRegisterFileHandler(ProjectItem item, string? path)
-        {
-            IncrementCount();
-
-            FileHandler fileHandler = new() { Name = item.DisplayName, Path = path ?? string.Empty };
-
-            item.FileHandler = fileHandler;
-
-            if (item.IsFolder)
-            {
-                goto end_of_function;
-            }
-
-            AFileModel? model = Util.FileModelFactory(item.Type);
-
-            if (model == null)
-            {
-                goto end_of_function;
-            }
-
-            string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + model.FileExtension);
-
-            if (!File.Exists(itemPath))
-            {
-                goto end_of_function;
-            }
-
-            fileHandler.FileModel = await FileUtils.ReadFileAndLoadModelAsync(itemPath, item.Type).ConfigureAwait(false);
-
-            if (string.IsNullOrEmpty(fileHandler.FileModel?.GUID))
-            {
-                if (fileHandler.FileModel != null)
-                {
-                    fileHandler.FileModel.GUID = Guid.NewGuid().ToString();
-                }
-            }
-
-            if (fileHandler.FileModel == null)
-            {
-                goto end_of_function;
-            }
-
-            if (ProjectFiles.Handlers.ContainsKey(fileHandler.FileModel.GUID))
-            {
-                goto end_of_function;
-            }
-
-            _ = ProjectFiles.Handlers.TryAdd(fileHandler.FileModel.GUID, fileHandler);
-
-            SignalManager.Get<ProjectItemLoadedSignal>().Dispatch(fileHandler.FileModel.GUID);
-
-            end_of_function:
-
-            DecrementCount();
-
-            if (ReadCount() == 0)
-            {
-                SignalManager.Get<FinishedLoadingProjectSignal>().Dispatch();
+                UpdatePath(item, itemNewPath);
             }
         }
 
-        public static string GetValidFolderName(string path, string name)
+        fileHandler.Name = item.DisplayName;
+    }
+
+    private static long ReadCount()
+    {
+        return Interlocked.Read(ref _objectsLoading);
+    }
+
+    private static void IncrementCount()
+    {
+        Interlocked.Increment(ref _objectsLoading);
+    }
+
+    private static void DecrementCount()
+    {
+        Interlocked.Decrement(ref _objectsLoading);
+    }
+
+    public static bool IsLoading()
+    {
+        return ReadCount() > 0;
+    }
+
+    private static async void OnRegisterFileHandler(ProjectItem item, string? path)
+    {
+        IncrementCount();
+
+        FileHandler fileHandler = new() { Name = item.DisplayName, Path = path ?? string.Empty };
+
+        item.FileHandler = fileHandler;
+
+        if (item.IsFolder)
         {
-            int counter = 1;
-            string outName = name;
-
-            string folderPath = Path.Combine(path, name);
-
-            while (Directory.Exists(folderPath))
-            {
-                outName = name + "_" + counter;
-
-                folderPath = Path.Combine(path, outName);
-
-                counter++;
-            }
-
-            return outName;
+            goto end_of_function;
         }
 
-        public static string GetValidFileName(string path, string name, string extension)
+        AFileModel? model = Util.FileModelFactory(item.Type);
+
+        if (model == null)
         {
-            int counter = 1;
-            string outName = name;
-
-            string filePath = Path.Combine(path, name + extension);
-
-            while (File.Exists(filePath))
-            {
-                outName = name + "_" + counter;
-
-                filePath = Path.Combine(path, outName + extension);
-
-                counter++;
-            }
-
-            return outName;
+            goto end_of_function;
         }
 
-        public static void CreateElement(ProjectItem item, string path, string name)
+        string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + model.FileExtension);
+
+        if (!File.Exists(itemPath))
         {
-            if (item.IsFolder)
-            {
-                CreateFolderElement(item, path, name);
-            }
-            else
-            {
-                CreateFileElement(item, path, name);
-            }
+            goto end_of_function;
         }
 
-        private static void CreateFolderElement(ProjectItem item, string path, string name)
+        fileHandler.FileModel = await FileUtils.ReadFileAndLoadModelAsync(itemPath, item.Type).ConfigureAwait(false);
+
+        if (string.IsNullOrEmpty(fileHandler.FileModel?.GUID))
         {
-            string folderPath = Path.Combine(path, name);
-
-            foreach (ProjectItem itm in item.Items)
-            {
-                if (itm.IsFolder)
-                {
-                    CreateFolderElement(itm, folderPath, itm.DisplayName);
-                }
-                else
-                {
-                    CreateFileElement(itm, folderPath, itm.DisplayName);
-                }
-            }
-
-            CreateFileElement(item, path, name);
-        }
-
-        public static void CreateFileElement(ProjectItem item, string path, string name)
-        {
-            item.FileHandler = new FileHandler() { Name = name, Path = path };
-
-            if (!item.IsFolder)
-            {
-                AFileModel? model = Util.FileModelFactory(item.Type);
-
-                if (model != null)
-                {
-                    string filePath = Path.Combine(path, name + model.FileExtension);
-
-                    Toml.WriteFile(model, filePath);
-
-                    item.FileHandler.FileModel = model;
-
-                    _ = ProjectFiles.Handlers.TryAdd(item.FileHandler.FileModel.GUID, item.FileHandler);
-                }
-            }
-            else
-            {
-                string folderPath = Path.Combine(path, name);
-
-                _ = Directory.CreateDirectory(folderPath);
-            }
-        }
-
-        private static void OnMoveElement(ProjectItem targetElement, ProjectItem draggedElement)
-        {
-            if (targetElement.FileHandler == null ||
-                draggedElement.FileHandler == null)
-            {
-                return;
-            }
-
-            string destFolder;
-
-            if (targetElement.IsFolder)
-            {
-                destFolder = Path.Combine(targetElement.FileHandler.Path, targetElement.FileHandler.Name);
-            }
-            else
-            {
-                destFolder = Path.Combine(targetElement.FileHandler.Path);
-            }
-
-            if (draggedElement.IsFolder)
-            {
-                string originalPath = Path.Combine(draggedElement.FileHandler.Path, draggedElement.FileHandler.Name);
-                string destinationPath = Path.Combine(destFolder, draggedElement.FileHandler.Name);
-
-                Directory.Move(originalPath, destinationPath);
-
-                UpdatePath(draggedElement, destinationPath);
-            }
-            else
-            {
-                string fileName = draggedElement.FileHandler.Name + draggedElement.FileHandler.FileModel?.FileExtension;
-
-                string originalFile = Path.Combine(draggedElement.FileHandler.Path, fileName);
-                string destinationFile = Path.Combine(destFolder, fileName);
-
-                File.Move(originalFile, destinationFile);
-            }
-
-            draggedElement.FileHandler.Path = destFolder;
-            draggedElement.FileHandler.Name = draggedElement.DisplayName;
-        }
-
-        private static void UpdatePath(ProjectItem rootElement, string destinationPath)
-        {
-            foreach (ProjectItem item in rootElement.Items)
-            {
-                if (item.FileHandler == null)
-                {
-                    continue;
-                }
-
-                item.FileHandler.Path = destinationPath;
-
-                if (item.IsFolder)
-                {
-                    UpdatePath(item, Path.Combine(destinationPath, item.DisplayName));
-                }
-            }
-        }
-
-        private static void DeleteFolders(ProjectItem item)
-        {
-            foreach (ProjectItem itm in item.Items)
-            {
-                if (itm.IsFolder)
-                {
-                    DeleteFolders(itm);
-                }
-                else
-                {
-                    DeleteElement(itm.FileHandler);
-                }
-            }
-
-            DeleteElement(item.FileHandler);
-        }
-
-        private static void DeleteElement(FileHandler? fileHandler)
-        {
-            if (fileHandler == null)
-            {
-                return;
-            }
-
             if (fileHandler.FileModel != null)
             {
-                string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + fileHandler.FileModel.FileExtension);
-
-                if (File.Exists(itemPath))
-                {
-                    File.Delete(itemPath);
-                }
-
-                _ = ProjectFiles.Handlers.TryRemove(fileHandler.FileModel.GUID, out _);
-            }
-            else
-            {
-                // Is a folder
-                string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name);
-
-                if (Directory.Exists(itemPath))
-                {
-                    Directory.Delete(itemPath, true);
-                }
+                fileHandler.FileModel.GUID = Guid.NewGuid().ToString();
             }
         }
 
-        // todo: when deleting a folder we have to iterate all the sub folders deleting everything!
-        public static void DeteElement(ProjectItem item)
+        if (fileHandler.FileModel == null)
         {
-            if (item.IsFolder)
+            goto end_of_function;
+        }
+
+        if (ProjectFiles.Handlers.ContainsKey(fileHandler.FileModel.GUID))
+        {
+            goto end_of_function;
+        }
+
+        _ = ProjectFiles.Handlers.TryAdd(fileHandler.FileModel.GUID, fileHandler);
+
+        SignalManager.Get<ProjectItemLoadedSignal>().Dispatch(fileHandler.FileModel.GUID);
+
+        end_of_function:
+
+        DecrementCount();
+
+        if (ReadCount() == 0)
+        {
+            SignalManager.Get<FinishedLoadingProjectSignal>().Dispatch();
+        }
+    }
+
+    public static string GetValidFolderName(string path, string name)
+    {
+        int counter = 1;
+        string outName = name;
+
+        string folderPath = Path.Combine(path, name);
+
+        while (Directory.Exists(folderPath))
+        {
+            outName = name + "_" + counter;
+
+            folderPath = Path.Combine(path, outName);
+
+            counter++;
+        }
+
+        return outName;
+    }
+
+    public static string GetValidFileName(string path, string name, string extension)
+    {
+        int counter = 1;
+        string outName = name;
+
+        string filePath = Path.Combine(path, name + extension);
+
+        while (File.Exists(filePath))
+        {
+            outName = name + "_" + counter;
+
+            filePath = Path.Combine(path, outName + extension);
+
+            counter++;
+        }
+
+        return outName;
+    }
+
+    public static void CreateElement(ProjectItem item, string path, string name)
+    {
+        if (item.IsFolder)
+        {
+            CreateFolderElement(item, path, name);
+        }
+        else
+        {
+            CreateFileElement(item, path, name);
+        }
+    }
+
+    private static void CreateFolderElement(ProjectItem item, string path, string name)
+    {
+        string folderPath = Path.Combine(path, name);
+
+        foreach (ProjectItem itm in item.Items)
+        {
+            if (itm.IsFolder)
             {
-                DeleteFolders(item);
+                CreateFolderElement(itm, folderPath, itm.DisplayName);
             }
             else
             {
-                DeleteElement(item.FileHandler);
+                CreateFileElement(itm, folderPath, itm.DisplayName);
             }
+        }
+
+        CreateFileElement(item, path, name);
+    }
+
+    public static void CreateFileElement(ProjectItem item, string path, string name)
+    {
+        item.FileHandler = new FileHandler() { Name = name, Path = path };
+
+        if (!item.IsFolder)
+        {
+            AFileModel? model = Util.FileModelFactory(item.Type);
+
+            if (model != null)
+            {
+                string filePath = Path.Combine(path, name + model.FileExtension);
+
+                Toml.WriteFile(model, filePath);
+
+                item.FileHandler.FileModel = model;
+
+                _ = ProjectFiles.Handlers.TryAdd(item.FileHandler.FileModel.GUID, item.FileHandler);
+            }
+        }
+        else
+        {
+            string folderPath = Path.Combine(path, name);
+
+            _ = Directory.CreateDirectory(folderPath);
+        }
+    }
+
+    private static void OnMoveElement(ProjectItem targetElement, ProjectItem draggedElement)
+    {
+        if (targetElement.FileHandler == null ||
+            draggedElement.FileHandler == null)
+        {
+            return;
+        }
+
+        string destFolder;
+
+        if (targetElement.IsFolder)
+        {
+            destFolder = Path.Combine(targetElement.FileHandler.Path, targetElement.FileHandler.Name);
+        }
+        else
+        {
+            destFolder = Path.Combine(targetElement.FileHandler.Path);
+        }
+
+        if (draggedElement.IsFolder)
+        {
+            string originalPath = Path.Combine(draggedElement.FileHandler.Path, draggedElement.FileHandler.Name);
+            string destinationPath = Path.Combine(destFolder, draggedElement.FileHandler.Name);
+
+            Directory.Move(originalPath, destinationPath);
+
+            UpdatePath(draggedElement, destinationPath);
+        }
+        else
+        {
+            string fileName = draggedElement.FileHandler.Name + draggedElement.FileHandler.FileModel?.FileExtension;
+
+            string originalFile = Path.Combine(draggedElement.FileHandler.Path, fileName);
+            string destinationFile = Path.Combine(destFolder, fileName);
+
+            File.Move(originalFile, destinationFile);
+        }
+
+        draggedElement.FileHandler.Path = destFolder;
+        draggedElement.FileHandler.Name = draggedElement.DisplayName;
+    }
+
+    private static void UpdatePath(ProjectItem rootElement, string destinationPath)
+    {
+        foreach (ProjectItem item in rootElement.Items)
+        {
+            if (item.FileHandler == null)
+            {
+                continue;
+            }
+
+            item.FileHandler.Path = destinationPath;
+
+            if (item.IsFolder)
+            {
+                UpdatePath(item, Path.Combine(destinationPath, item.DisplayName));
+            }
+        }
+    }
+
+    private static void DeleteFolders(ProjectItem item)
+    {
+        foreach (ProjectItem itm in item.Items)
+        {
+            if (itm.IsFolder)
+            {
+                DeleteFolders(itm);
+            }
+            else
+            {
+                DeleteElement(itm.FileHandler);
+            }
+        }
+
+        DeleteElement(item.FileHandler);
+    }
+
+    private static void DeleteElement(FileHandler? fileHandler)
+    {
+        if (fileHandler == null)
+        {
+            return;
+        }
+
+        if (fileHandler.FileModel != null)
+        {
+            string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + fileHandler.FileModel.FileExtension);
+
+            if (File.Exists(itemPath))
+            {
+                File.Delete(itemPath);
+            }
+
+            _ = ProjectFiles.Handlers.TryRemove(fileHandler.FileModel.GUID, out _);
+        }
+        else
+        {
+            // Is a folder
+            string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name);
+
+            if (Directory.Exists(itemPath))
+            {
+                Directory.Delete(itemPath, true);
+            }
+        }
+    }
+
+    // todo: when deleting a folder we have to iterate all the sub folders deleting everything!
+    public static void DeteElement(ProjectItem item)
+    {
+        if (item.IsFolder)
+        {
+            DeleteFolders(item);
+        }
+        else
+        {
+            DeleteElement(item.FileHandler);
         }
     }
 }

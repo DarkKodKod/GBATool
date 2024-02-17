@@ -4,30 +4,29 @@ using GBATool.FileSystem;
 using GBATool.Signals;
 using GBATool.ViewModels;
 
-namespace GBATool.HistoryActions
+namespace GBATool.HistoryActions;
+
+public class DuplicateProjectItemHistoryAction : IHistoryAction
 {
-    public class DuplicateProjectItemHistoryAction : IHistoryAction
+    private readonly ProjectItem _item;
+
+    public DuplicateProjectItemHistoryAction(ProjectItem item)
     {
-        private readonly ProjectItem _item;
+        _item = item;
+    }
 
-        public DuplicateProjectItemHistoryAction(ProjectItem item)
+    public void Redo()
+    {
+        if (_item.Parent != null)
         {
-            _item = item;
+            SignalManager.Get<PasteElementSignal>().Dispatch(_item.Parent, _item);
         }
+    }
 
-        public void Redo()
-        {
-            if (_item.Parent != null)
-            {
-                SignalManager.Get<PasteElementSignal>().Dispatch(_item.Parent, _item);
-            }
-        }
+    public void Undo()
+    {
+        ProjectItemFileSystem.DeteElement(_item);
 
-        public void Undo()
-        {
-            ProjectItemFileSystem.DeteElement(_item);
-
-            SignalManager.Get<DeleteElementSignal>().Dispatch(_item);
-        }
+        SignalManager.Get<DeleteElementSignal>().Dispatch(_item);
     }
 }

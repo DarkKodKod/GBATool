@@ -1,37 +1,36 @@
 ﻿using GBATool.ViewModels;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class EnableRenameElementCommand : ItemSelectedCommand
 {
-    public class EnableRenameElementCommand : ItemSelectedCommand
+    public override bool CanExecute(object? parameter)
     {
-        public override bool CanExecute(object? parameter)
+        if (ItemSelected == null)
         {
-            if (ItemSelected == null)
-            {
-                return false;
-            }
-
-            if (ItemSelected.IsRoot)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override void Execute(object? parameter)
+        if (ItemSelected.IsRoot)
         {
-            if (parameter is ProjectItem)
-            {
-                ItemSelected = parameter as ProjectItem;
-            }
-
-            if (ItemSelected == null)
-            {
-                return;
-            }
-
-            ItemSelected.IsInEditMode = true;
+            return false;
         }
+
+        return true;
+    }
+
+    public override void Execute(object? parameter)
+    {
+        if (parameter is ProjectItem)
+        {
+            ItemSelected = parameter as ProjectItem;
+        }
+
+        if (ItemSelected == null)
+        {
+            return;
+        }
+
+        ItemSelected.IsInEditMode = true;
     }
 }

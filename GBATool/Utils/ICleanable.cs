@@ -1,7 +1,6 @@
-﻿namespace GBATool.Utils
+﻿namespace GBATool.Utils;
+
+interface ICleanable
 {
-    interface ICleanable
-    {
-        void CleanUp();
-    }
+    void CleanUp();
 }

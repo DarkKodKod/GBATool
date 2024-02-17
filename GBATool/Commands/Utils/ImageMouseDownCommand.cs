@@ -5,25 +5,24 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class ImageMouseDownCommand : Command
 {
-    public class ImageMouseDownCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        MouseButtonEventArgs? mouseEvent = parameter as MouseButtonEventArgs;
+
+        if (mouseEvent?.Source is Image image)
         {
-            MouseButtonEventArgs? mouseEvent = parameter as MouseButtonEventArgs;
-
-            if (mouseEvent?.Source is Image image)
+            if (image.ActualWidth == 0 || image.ActualHeight == 0)
             {
-                if (image.ActualWidth == 0 || image.ActualHeight == 0)
-                {
-                    return;
-                }
-
-                Point p = mouseEvent.GetPosition(image);
-
-                SignalManager.Get<MouseImageSelectedSignal>().Dispatch(image, p);
+                return;
             }
+
+            Point p = mouseEvent.GetPosition(image);
+
+            SignalManager.Get<MouseImageSelectedSignal>().Dispatch(image, p);
         }
     }
 }

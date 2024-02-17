@@ -6,124 +6,123 @@ using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 
-namespace GBATool.ViewModels
+namespace GBATool.ViewModels;
+
+public class ProjectPropertiesDialogViewModel : ViewModel
 {
-    public class ProjectPropertiesDialogViewModel : ViewModel
+    public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new();
+
+    private bool _changed = false;
+    private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
+    private string _projectTitle = string.Empty;
+    private int _softwareVersion = 0;
+    private string _projectInitials = string.Empty;
+    private string _developerId = string.Empty;
+
+    #region get/set
+    public SpritePattern SelectedSpriteFormat
     {
-        public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new();
-
-        private bool _changed = false;
-        private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
-        private string _projectTitle = string.Empty;
-        private int _softwareVersion = 0;
-        private string _projectInitials = string.Empty;
-        private string _developerId = string.Empty;
-
-        #region get/set
-        public SpritePattern SelectedSpriteFormat
+        get { return _selectedSpriteFormat; }
+        set
         {
-            get { return _selectedSpriteFormat; }
-            set
-            {
-                _selectedSpriteFormat = value;
-                OnPropertyChanged("SelectedSpriteFormat");
+            _selectedSpriteFormat = value;
+            OnPropertyChanged("SelectedSpriteFormat");
 
-                _changed = true;
-            }
+            _changed = true;
         }
+    }
 
-        public string ProjectTitle
+    public string ProjectTitle
+    {
+        get { return _projectTitle; }
+        set
         {
-            get { return _projectTitle; }
-            set
-            {
-                _projectTitle = value;
-                OnPropertyChanged("ProjectTitle");
+            _projectTitle = value;
+            OnPropertyChanged("ProjectTitle");
 
-                _changed = true;
-            }
+            _changed = true;
         }
+    }
 
-        public int SoftwareVersion
+    public int SoftwareVersion
+    {
+        get { return _softwareVersion; }
+        set
         {
-            get { return _softwareVersion; }
-            set
-            {
-                _softwareVersion = value;
-                OnPropertyChanged("SoftwareVersion");
+            _softwareVersion = value;
+            OnPropertyChanged("SoftwareVersion");
 
-                _changed = true;
-            }
+            _changed = true;
         }
+    }
 
-        public string ProjectInitials
+    public string ProjectInitials
+    {
+        get { return _projectInitials; }
+        set
         {
-            get { return _projectInitials; }
-            set
-            {
-                _projectInitials = value;
-                OnPropertyChanged("ProjectInitials");
+            _projectInitials = value;
+            OnPropertyChanged("ProjectInitials");
 
-                _changed = true;
-            }
+            _changed = true;
         }
+    }
 
-        public string DeveloperId
+    public string DeveloperId
+    {
+        get { return _developerId; }
+        set
         {
-            get { return _developerId; }
-            set
-            {
-                _developerId = value;
-                OnPropertyChanged("DeveloperId");
+            _developerId = value;
+            OnPropertyChanged("DeveloperId");
 
-                _changed = true;
-            }
+            _changed = true;
         }
-        #endregion
+    }
+    #endregion
 
-        public ProjectPropertiesDialogViewModel()
+    public ProjectPropertiesDialogViewModel()
+    {
+        ReadProjectData();
+
+        SignalManager.Get<CloseDialogSignal>().Listener += OnCloseDialog;
+
+        _changed = false;
+    }
+
+    private void OnCloseDialog()
+    {
+        if (_changed)
         {
-            ReadProjectData();
-
-            SignalManager.Get<CloseDialogSignal>().Listener += OnCloseDialog;
-
-            _changed = false;
-        }
-
-        private void OnCloseDialog()
-        {
-            if (_changed)
-            {
-                // Save all changes
-                ProjectModel project = ModelManager.Get<ProjectModel>();
-
-                if (project.SpritePatternFormat != SelectedSpriteFormat)
-                {
-                    project.SpritePatternFormat = SelectedSpriteFormat;
-
-                    SignalManager.Get<ReloadBankImageSignal>().Dispatch();
-                }
-
-                project.ProjectTitle = ProjectTitle;
-                project.SoftwareVersion = (byte)SoftwareVersion;
-                project.ProjectInitials = ProjectInitials;
-                project.DeveloperId = DeveloperId;
-
-                project.Save();
-            }
-
-            SignalManager.Get<CloseDialogSignal>().Listener -= OnCloseDialog;
-        }
-
-        private void ReadProjectData()
-        {
+            // Save all changes
             ProjectModel project = ModelManager.Get<ProjectModel>();
 
-            SelectedSpriteFormat = project.SpritePatternFormat;
-            ProjectTitle = project.ProjectTitle;
-            SoftwareVersion = project.SoftwareVersion;
-            ProjectInitials = project.ProjectInitials;
-            DeveloperId = project.DeveloperId;
+            if (project.SpritePatternFormat != SelectedSpriteFormat)
+            {
+                project.SpritePatternFormat = SelectedSpriteFormat;
+
+                SignalManager.Get<ReloadBankImageSignal>().Dispatch();
+            }
+
+            project.ProjectTitle = ProjectTitle;
+            project.SoftwareVersion = (byte)SoftwareVersion;
+            project.ProjectInitials = ProjectInitials;
+            project.DeveloperId = DeveloperId;
+
+            project.Save();
         }
+
+        SignalManager.Get<CloseDialogSignal>().Listener -= OnCloseDialog;
+    }
+
+    private void ReadProjectData()
+    {
+        ProjectModel project = ModelManager.Get<ProjectModel>();
+
+        SelectedSpriteFormat = project.SpritePatternFormat;
+        ProjectTitle = project.ProjectTitle;
+        SoftwareVersion = project.SoftwareVersion;
+        ProjectInitials = project.ProjectInitials;
+        DeveloperId = project.DeveloperId;
     }
 }

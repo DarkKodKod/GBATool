@@ -3,30 +3,29 @@ using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class DeleteBankSpriteCommand : Command
 {
-    public class DeleteBankSpriteCommand : Command
+    public override bool CanExecute(object? parameter)
     {
-        public override bool CanExecute(object? parameter)
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return false;
-            }
-
-            return parameter is SpriteModel;
+            return false;
         }
 
-        public override void Execute(object? parameter)
+        return parameter is SpriteModel;
+    }
+
+    public override void Execute(object? parameter)
+    {
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return;
-            }
-
-            SpriteModel sprite = (SpriteModel)parameter;
-
-            SignalManager.Get<BankSpriteDeletedSignal>().Dispatch(sprite);
+            return;
         }
+
+        SpriteModel sprite = (SpriteModel)parameter;
+
+        SignalManager.Get<BankSpriteDeletedSignal>().Dispatch(sprite);
     }
 }

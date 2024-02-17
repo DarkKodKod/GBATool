@@ -8,90 +8,89 @@ using GBATool.Signals;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace GBATool.Commands
-{
-    public class BuildProjectCommand : Command
-    {
-        private bool _building = false;
+namespace GBATool.Commands;
 
-        public override bool CanExecute(object? parameter)
+public class BuildProjectCommand : Command
+{
+    private bool _building = false;
+
+    public override bool CanExecute(object? parameter)
+    {
+        return !_building;
+    }
+
+    public override async Task ExecuteAsync(object? parameter)
+    {
+        if (_building)
         {
-            return !_building;
+            return;
         }
 
-        public override async Task ExecuteAsync(object? parameter)
+        _building = true;
+
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        if (!CheckValidFolder(projectModel.Build.GeneratedSourcePath))
         {
-            if (_building)
-            {
-                return;
-            }
-
-            _building = true;
-
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-            if (!CheckValidFolder(projectModel.Build.GeneratedSourcePath))
-            {
-                OutputError("Invalid source folder");
-
-                _building = false;
-                return;
-            }
-
-            if (!CheckValidFolder(projectModel.Build.GeneratedAssetsPath))
-            {
-                OutputError("Invalid assets folder");
-
-                _building = false;
-                return;
-            }
-
-            OutputInfo("Build started");
-
-            OutputInfo("Generate header...");
-            bool ok = await Header.Generate(projectModel.Build.GeneratedSourcePath);
-            if (ok == false)
-            {
-                OutputError("Problems generating header");
-                OutputError(Header.GetErrors());
-                _building = false;
-                return;
-            }
-
-            OutputInfo("Building banks...");
-            OutputInfo("Building tiles definitions...");
-            OutputInfo("Building backgrounds...");
-            OutputInfo("Building meta sprites...");
-            OutputInfo("Building palettes...");
-            OutputInfo("Build completed", "Green");
+            OutputError("Invalid source folder");
 
             _building = false;
-
-            RaiseCanExecuteChanged();
+            return;
         }
 
-        private static bool CheckValidFolder(string path)
+        if (!CheckValidFolder(projectModel.Build.GeneratedAssetsPath))
         {
-            try
-            {
-                string result = Path.GetFullPath(path);
+            OutputError("Invalid assets folder");
 
-                return Directory.Exists(result);
-            }
-            catch
-            {
-                return false;
-            }
+            _building = false;
+            return;
         }
 
-        private static void OutputInfo(string message, string color = "")
+        OutputInfo("Build started");
+
+        OutputInfo("Generate header...");
+        bool ok = await Header.Generate(projectModel.Build.GeneratedSourcePath);
+        if (ok == false)
         {
-            SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Information, color);
+            OutputError("Problems generating header");
+            OutputError(Header.GetErrors());
+            _building = false;
+            return;
         }
 
-        private static void OutputError(string message)
+        OutputInfo("Building banks...");
+        OutputInfo("Building tiles definitions...");
+        OutputInfo("Building backgrounds...");
+        OutputInfo("Building meta sprites...");
+        OutputInfo("Building palettes...");
+        OutputInfo("Build completed", "Green");
+
+        _building = false;
+
+        RaiseCanExecuteChanged();
+    }
+
+    private static bool CheckValidFolder(string path)
+    {
+        try
         {
-            SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Error, "");
+            string result = Path.GetFullPath(path);
+
+            return Directory.Exists(result);
         }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private static void OutputInfo(string message, string color = "")
+    {
+        SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Information, color);
+    }
+
+    private static void OutputError(string message)
+    {
+        SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Error, "");
     }
 }

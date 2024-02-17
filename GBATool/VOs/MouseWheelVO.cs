@@ -1,7 +1,6 @@
-﻿namespace GBATool.VOs
+﻿namespace GBATool.VOs;
+
+public record MouseWheelVO : EventVO
 {
-    public record MouseWheelVO : EventVO
-    {
-        public int Delta { get; init; }
-    }
+    public int Delta { get; init; }
 }

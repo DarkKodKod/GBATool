@@ -4,50 +4,49 @@ using GBATool.Models;
 using GBATool.Signals;
 using System.Windows;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class MoveSpriteToBankCommand : Command
 {
-    public class MoveSpriteToBankCommand : Command
+    public override bool CanExecute(object? parameter)
     {
-        public override bool CanExecute(object? parameter)
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return false;
-            }
-
-            object[] values = (object[])parameter;
-            BankModel? model = (BankModel?)values[0];
-
-            if (values[1] == null)
-            {
-                return false;
-            }
-
-            return model != null && !model.IsFull;
+            return false;
         }
 
-        public override void Execute(object? parameter)
+        object[] values = (object[])parameter;
+        BankModel? model = (BankModel?)values[0];
+
+        if (values[1] == null)
         {
-            if (parameter == null)
-            {
-                return;
-            }
+            return false;
+        }
 
-            object[] values = (object[])parameter;
+        return model != null && !model.IsFull;
+    }
 
-            BankModel model = (BankModel)values[0];
-            SpriteModel sprite = (SpriteModel)values[1];
+    public override void Execute(object? parameter)
+    {
+        if (parameter == null)
+        {
+            return;
+        }
 
-            (bool, string) ret = model.RegisterSprite(sprite);
+        object[] values = (object[])parameter;
 
-            if (ret.Item1 == true)
-            {
-                SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
-            }
-            else
-            {
-                MessageBox.Show(ret.Item2, "Error", MessageBoxButton.OK);
-            }
+        BankModel model = (BankModel)values[0];
+        SpriteModel sprite = (SpriteModel)values[1];
+
+        (bool, string) ret = model.RegisterSprite(sprite);
+
+        if (ret.Item1 == true)
+        {
+            SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
+        }
+        else
+        {
+            MessageBox.Show(ret.Item2, "Error", MessageBoxButton.OK);
         }
     }
 }

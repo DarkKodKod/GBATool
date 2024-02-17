@@ -3,49 +3,48 @@ using GBATool.Models;
 using GBATool.Signals;
 using System.Windows.Media;
 
-namespace GBATool.ViewModels
+namespace GBATool.ViewModels;
+
+public class PaletteViewModel : ItemViewModel
 {
-    public class PaletteViewModel : ItemViewModel
+    public override void OnActivate()
     {
-        public override void OnActivate()
+        #region Signals
+        SignalManager.Get<ColorPaletteSelectedSignal>().Listener += OnColorPaletteSelected;
+        #endregion
+
+        PaletteModel? model = GetModel<PaletteModel>();
+
+        if (model != null)
         {
-            #region Signals
-            SignalManager.Get<ColorPaletteSelectedSignal>().Listener += OnColorPaletteSelected;
-            #endregion
+            SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(model.Colors);
+        }
+    }
 
-            PaletteModel? model = GetModel<PaletteModel>();
+    public override void OnDeactivate()
+    {
+        #region Signals
+        SignalManager.Get<ColorPaletteSelectedSignal>().Listener -= OnColorPaletteSelected;
+        #endregion
+    }
 
-            if (model != null)
-            {
-                SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(model.Colors);
-            }
+    private void OnColorPaletteSelected(Color color, int colorIndex, int _)
+    {
+        PaletteModel? model = GetModel<PaletteModel>();
+
+        if (model == null)
+        {
+            return;
         }
 
-        public override void OnDeactivate()
-        {
-            #region Signals
-            SignalManager.Get<ColorPaletteSelectedSignal>().Listener -= OnColorPaletteSelected;
-            #endregion
-        }
+        int colorInt = ((color.R & 0xff) << 16) | ((color.G & 0xff) << 8) | (color.B & 0xff);
 
-        private void OnColorPaletteSelected(Color color, int colorIndex, int _)
-        {
-            PaletteModel? model = GetModel<PaletteModel>();
+        int[] colorList = model.Colors;
 
-            if (model == null)
-            {
-                return;
-            }
+        colorList[colorIndex] = colorInt;
 
-            int colorInt = ((color.R & 0xff) << 16) | ((color.G & 0xff) << 8) | (color.B & 0xff);
+        model.Colors = colorList;
 
-            int[] colorList = model.Colors;
-
-            colorList[colorIndex] = colorInt;
-
-            model.Colors = colorList;
-
-            ProjectItem?.FileHandler?.Save();
-        }
+        ProjectItem?.FileHandler?.Save();
     }
 }

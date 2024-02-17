@@ -7,84 +7,83 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class DragOverCommand : Command
 {
-    public class DragOverCommand : Command
+    private DateTime _startTime;
+    private string _folderId = string.Empty;
+
+    public override bool CanExecute(object? parameter)
     {
-        private DateTime _startTime;
-        private string _folderId = string.Empty;
-
-        public override bool CanExecute(object? parameter)
+        if (parameter is not DragEventArgs dragEvent)
         {
-            if (parameter is not DragEventArgs dragEvent)
-            {
-                return false;
-            }
-
-            ProjectItem? draggingItem = dragEvent.Data.GetData(typeof(ProjectItem)) as ProjectItem;
-
-            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)dragEvent.OriginalSource);
-
-            if (treeViewItem == null)
-            {
-                return false;
-            }
-
-            if (treeViewItem.DataContext is ProjectItem item && item.Type != draggingItem?.Type)
-            {
-                dragEvent.Handled = true;
-
-                SignalManager.Get<DetachAdornersSignal>().Dispatch();
-
-                dragEvent.Effects = DragDropEffects.None;
-
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override void Execute(object? parameter)
+        ProjectItem? draggingItem = dragEvent.Data.GetData(typeof(ProjectItem)) as ProjectItem;
+
+        TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)dragEvent.OriginalSource);
+
+        if (treeViewItem == null)
         {
-            if (parameter is not DragEventArgs dragEvent)
-            {
-                return;
-            }
+            return false;
+        }
 
-            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)dragEvent.OriginalSource);
+        if (treeViewItem.DataContext is ProjectItem item && item.Type != draggingItem?.Type)
+        {
+            dragEvent.Handled = true;
 
-            if (treeViewItem != null)
+            SignalManager.Get<DetachAdornersSignal>().Dispatch();
+
+            dragEvent.Effects = DragDropEffects.None;
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public override void Execute(object? parameter)
+    {
+        if (parameter is not DragEventArgs dragEvent)
+        {
+            return;
+        }
+
+        TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)dragEvent.OriginalSource);
+
+        if (treeViewItem != null)
+        {
+            if (treeViewItem.DataContext is ProjectItem element)
             {
-                if (treeViewItem.DataContext is ProjectItem element)
+                if (element.IsFolder && element.Items.Count > 0 && !treeViewItem.IsExpanded)
                 {
-                    if (element.IsFolder && element.Items.Count > 0 && !treeViewItem.IsExpanded)
+                    if (element.FileHandler?.FileModel == null)
                     {
-                        if (element.FileHandler?.FileModel == null)
-                        {
-                            return;
-                        }
+                        return;
+                    }
 
-                        if (_folderId != element.FileHandler.FileModel.GUID)
-                        {
-                            _folderId = element.FileHandler.FileModel.GUID;
-                            _startTime = DateTime.UtcNow;
-                        }
-                        else
-                        {
-                            int milliseconds = Convert.ToInt32((DateTime.UtcNow - _startTime).TotalMilliseconds);
+                    if (_folderId != element.FileHandler.FileModel.GUID)
+                    {
+                        _folderId = element.FileHandler.FileModel.GUID;
+                        _startTime = DateTime.UtcNow;
+                    }
+                    else
+                    {
+                        int milliseconds = Convert.ToInt32((DateTime.UtcNow - _startTime).TotalMilliseconds);
 
-                            if (milliseconds >= 1000)
-                            {
-                                treeViewItem.IsExpanded = true;
-                            }
+                        if (milliseconds >= 1000)
+                        {
+                            treeViewItem.IsExpanded = true;
                         }
                     }
                 }
-
-                SignalManager.Get<UpdateAdornersSignal>().Dispatch(treeViewItem, dragEvent);
             }
 
-            dragEvent.Handled = true;
+            SignalManager.Get<UpdateAdornersSignal>().Dispatch(treeViewItem, dragEvent);
         }
+
+        dragEvent.Handled = true;
     }
 }

@@ -3,67 +3,66 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace ArchitectureLibrary.WPF.Adorners
+namespace ArchitectureLibrary.WPF.Adorners;
+
+public class TreeViewDragAdorner : Adorner
 {
-    public class TreeViewDragAdorner : Adorner
+    private readonly ContentPresenter _contentPresenter;
+    private readonly AdornerLayer _adornerLayer;
+    private double _leftOffset;
+    private double _topOffset;
+
+    public TreeViewDragAdorner(object data, DataTemplate dataTemplate, UIElement adornedElement, AdornerLayer adornerLayer) : base(adornedElement)
     {
-        private readonly ContentPresenter _contentPresenter;
-        private readonly AdornerLayer _adornerLayer;
-        private double _leftOffset;
-        private double _topOffset;
+        IsHitTestVisible = false;
 
-        public TreeViewDragAdorner(object data, DataTemplate dataTemplate, UIElement adornedElement, AdornerLayer adornerLayer) : base(adornedElement)
-        {
-            IsHitTestVisible = false;
+        _adornerLayer = adornerLayer;
 
-            _adornerLayer = adornerLayer;
+        _contentPresenter = new() { Content = data, ContentTemplate = dataTemplate, Opacity = 0.75 };
 
-            _contentPresenter = new() { Content = data, ContentTemplate = dataTemplate, Opacity = 0.75 };
+        _adornerLayer.Add(this);
+    }
 
-            _adornerLayer.Add(this);
-        }
+    protected override Size MeasureOverride(Size constraint)
+    {
+        _contentPresenter.Measure(constraint);
 
-        protected override Size MeasureOverride(Size constraint)
-        {
-            _contentPresenter.Measure(constraint);
+        return _contentPresenter.DesiredSize;
+    }
 
-            return _contentPresenter.DesiredSize;
-        }
+    protected override Size ArrangeOverride(Size finalSize)
+    {
+        _contentPresenter.Arrange(new Rect(finalSize));
 
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            _contentPresenter.Arrange(new Rect(finalSize));
+        return finalSize;
+    }
 
-            return finalSize;
-        }
+    protected override Visual GetVisualChild(int index)
+    {
+        return _contentPresenter;
+    }
 
-        protected override Visual GetVisualChild(int index)
-        {
-            return _contentPresenter;
-        }
+    protected override int VisualChildrenCount => 1;
 
-        protected override int VisualChildrenCount => 1;
+    public void UpdatePosition(double left, double top)
+    {
+        _leftOffset = left;
+        _topOffset = top;
 
-        public void UpdatePosition(double left, double top)
-        {
-            _leftOffset = left;
-            _topOffset = top;
+        _adornerLayer?.Update(AdornedElement);
+    }
 
-            _adornerLayer?.Update(AdornedElement);
-        }
+    public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
+    {
+        GeneralTransformGroup result = new();
+        result.Children.Add(base.GetDesiredTransform(transform));
+        result.Children.Add(new TranslateTransform(_leftOffset, _topOffset));
 
-        public override GeneralTransform GetDesiredTransform(GeneralTransform transform)
-        {
-            GeneralTransformGroup result = new();
-            result.Children.Add(base.GetDesiredTransform(transform));
-            result.Children.Add(new TranslateTransform(_leftOffset, _topOffset));
+        return result;
+    }
 
-            return result;
-        }
-
-        public void Destroy()
-        {
-            _adornerLayer.Remove(this);
-        }
+    public void Destroy()
+    {
+        _adornerLayer.Remove(this);
     }
 }

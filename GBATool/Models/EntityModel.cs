@@ -1,24 +1,23 @@
 ﻿using Nett;
 using System.Windows;
 
-namespace GBATool.Models
+namespace GBATool.Models;
+
+public class EntityModel : AFileModel
 {
-    public class EntityModel : AFileModel
+    private const string _extensionKey = "extensionEntities";
+
+    [TomlIgnore]
+    public override string FileExtension
     {
-        private const string _extensionKey = "extensionEntities";
-
-        [TomlIgnore]
-        public override string FileExtension
+        get
         {
-            get
+            if (string.IsNullOrEmpty(_fileExtension))
             {
-                if (string.IsNullOrEmpty(_fileExtension))
-                {
-                    _fileExtension = (string)Application.Current.FindResource(_extensionKey);
-                }
-
-                return _fileExtension;
+                _fileExtension = (string)Application.Current.FindResource(_extensionKey);
             }
+
+            return _fileExtension;
         }
     }
 }

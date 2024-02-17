@@ -4,31 +4,30 @@ using GBATool.Models;
 using GBATool.Views;
 using System.Windows;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class NewElementCommand : Command
 {
-    public class NewElementCommand : Command
+    public override bool CanExecute(object? parameter)
     {
-        public override bool CanExecute(object? parameter)
+        ProjectModel model = ModelManager.Get<ProjectModel>();
+
+        if (model != null && !string.IsNullOrEmpty(model.Name))
         {
-            ProjectModel model = ModelManager.Get<ProjectModel>();
-
-            if (model != null && !string.IsNullOrEmpty(model.Name))
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        public override void Execute(object? parameter)
-        {
-            Window? window = parameter as Window;
+        return false;
+    }
 
-            ElementDialog dialog = new()
-            {
-                Owner = window
-            };
-            dialog.ShowDialog();
-        }
+    public override void Execute(object? parameter)
+    {
+        Window? window = parameter as Window;
+
+        ElementDialog dialog = new()
+        {
+            Owner = window
+        };
+        dialog.ShowDialog();
     }
 }

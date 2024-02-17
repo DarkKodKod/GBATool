@@ -3,20 +3,19 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using System.Windows;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class QueryContinueDragCommand : Command
 {
-    public class QueryContinueDragCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        if (parameter is QueryContinueDragEventArgs dragEvent && dragEvent.EscapePressed)
         {
-            if (parameter is QueryContinueDragEventArgs dragEvent && dragEvent.EscapePressed)
-            {
-                dragEvent.Action = DragAction.Cancel;
+            dragEvent.Action = DragAction.Cancel;
 
-                SignalManager.Get<DetachAdornersSignal>().Dispatch();
+            SignalManager.Get<DetachAdornersSignal>().Dispatch();
 
-                dragEvent.Handled = true;
-            }
+            dragEvent.Handled = true;
         }
     }
 }

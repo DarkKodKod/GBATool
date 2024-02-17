@@ -9,49 +9,48 @@ using GBATool.Utils;
 using GBATool.ViewModels;
 using System.Windows;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class CreateElementCommand : Command
 {
-    public class CreateElementCommand : Command
+    private const string _fileNameKey = "NewElementName";
+
+    private readonly string _newFileName;
+
+    public CreateElementCommand()
     {
-        private const string _fileNameKey = "NewElementName";
+        _newFileName = (string)Application.Current.FindResource(_fileNameKey);
+    }
 
-        private readonly string _newFileName;
-
-        public CreateElementCommand()
+    public override void Execute(object? parameter)
+    {
+        if (parameter == null)
         {
-            _newFileName = (string)Application.Current.FindResource(_fileNameKey);
+            return;
         }
 
-        public override void Execute(object? parameter)
+        if (parameter is not ElementTypeModel element)
         {
-            if (parameter == null)
-            {
-                return;
-            }
-
-            if (parameter is not ElementTypeModel element)
-            {
-                return;
-            }
-
-            string name = ProjectItemFileSystem.GetValidFileName(
-                element.Path,
-                _newFileName,
-                Util.GetExtensionByType(element.Type));
-
-            ProjectItem newElement = new()
-            {
-                DisplayName = name,
-                IsFolder = false,
-                IsRoot = false,
-                Type = element.Type
-            };
-
-            SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new CreateNewElementHistoryAction(newElement));
-
-            SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
-
-            ProjectItemFileSystem.CreateFileElement(newElement, element.Path, name);
+            return;
         }
+
+        string name = ProjectItemFileSystem.GetValidFileName(
+            element.Path,
+            _newFileName,
+            Util.GetExtensionByType(element.Type));
+
+        ProjectItem newElement = new()
+        {
+            DisplayName = name,
+            IsFolder = false,
+            IsRoot = false,
+            Type = element.Type
+        };
+
+        SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new CreateNewElementHistoryAction(newElement));
+
+        SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
+
+        ProjectItemFileSystem.CreateFileElement(newElement, element.Path, name);
     }
 }

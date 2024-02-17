@@ -6,20 +6,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class PreviewMouseLeftButtonDownCommand : Command
 {
-    public class PreviewMouseLeftButtonDownCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        if (parameter is MouseButtonEventArgs mouseEvent)
         {
-            if (parameter is MouseButtonEventArgs mouseEvent)
-            {
-                TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)mouseEvent.OriginalSource);
+            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)mouseEvent.OriginalSource);
 
-                Point position = mouseEvent.GetPosition(treeViewItem);
+            Point position = mouseEvent.GetPosition(treeViewItem);
 
-                SignalManager.Get<MouseLeftButtonDownSignal>().Dispatch(position);
-            }
+            SignalManager.Get<MouseLeftButtonDownSignal>().Dispatch(position);
         }
     }
 }

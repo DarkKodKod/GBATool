@@ -4,42 +4,41 @@ using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class CloseProjectCommand : Command
 {
-    public class CloseProjectCommand : Command
+    public override bool CanExecute(object? parameter)
     {
-        public override bool CanExecute(object? parameter)
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return false;
-            }
-
-            string? projectName = parameter as string;
-
-            if (string.IsNullOrEmpty(projectName))
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
 
-        public override void Execute(object? parameter)
+        string? projectName = parameter as string;
+
+        if (string.IsNullOrEmpty(projectName))
         {
-            if (parameter == null)
-            {
-                return;
-            }
+            return false;
+        }
 
-            ProjectModel model = ModelManager.Get<ProjectModel>();
+        return true;
+    }
 
-            if (model != null && !string.IsNullOrEmpty(model.Name))
-            {
-                model.Reset();
+    public override void Execute(object? parameter)
+    {
+        if (parameter == null)
+        {
+            return;
+        }
 
-                SignalManager.Get<CloseProjectSuccessSignal>().Dispatch();
-            }
+        ProjectModel model = ModelManager.Get<ProjectModel>();
+
+        if (model != null && !string.IsNullOrEmpty(model.Name))
+        {
+            model.Reset();
+
+            SignalManager.Get<CloseProjectSuccessSignal>().Dispatch();
         }
     }
 }

@@ -1,46 +1,45 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace ArchitectureLibrary.Clipboard
+namespace ArchitectureLibrary.Clipboard;
+
+public static class ClipboardManager
 {
-    public static class ClipboardManager
+    private static readonly ClipboardData _data = new();
+
+    public static object? GetData()
     {
-        private static readonly ClipboardData _data = new();
-
-        public static object? GetData()
+        if (IsEmpty())
         {
-            if (IsEmpty())
-            {
-                return null;
-            }
-
-            Type? type = Type.GetType(_data.Type + ", " + _data.Assembly);
-
-            if (type == null)
-                return null;
-
-            TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
-            return typeConverter.ConvertFromString(_data.Content);
+            return null;
         }
 
-        public static void SetData(IClipboardable obj)
-        {
-            Type type = obj.GetType();
+        Type? type = Type.GetType(_data.Type + ", " + _data.Assembly);
 
-            TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
-            _data.Assembly = type.Assembly.FullName ?? "";
-            _data.Type = typeConverter.ConvertToString(obj) ?? "";
-            _data.Content = obj.GetContent();
-        }
+        if (type == null)
+            return null;
 
-        public static void Clear()
-        {
-            _data.Clear();
-        }
+        TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
+        return typeConverter.ConvertFromString(_data.Content);
+    }
 
-        public static bool IsEmpty()
-        {
-            return _data.IsEmpty();
-        }
+    public static void SetData(IClipboardable obj)
+    {
+        Type type = obj.GetType();
+
+        TypeConverter typeConverter = TypeDescriptor.GetConverter(type);
+        _data.Assembly = type.Assembly.FullName ?? "";
+        _data.Type = typeConverter.ConvertToString(obj) ?? "";
+        _data.Content = obj.GetContent();
+    }
+
+    public static void Clear()
+    {
+        _data.Clear();
+    }
+
+    public static bool IsEmpty()
+    {
+        return _data.IsEmpty();
     }
 }

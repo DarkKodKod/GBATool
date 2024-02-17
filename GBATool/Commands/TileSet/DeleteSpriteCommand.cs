@@ -5,26 +5,25 @@ using GBATool.VOs;
 using System.Windows;
 using System.Windows.Input;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class DeleteSpriteCommand : Command
 {
-    public class DeleteSpriteCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the sprite?", "Delete", MessageBoxButton.YesNo);
+
+        if (result == MessageBoxResult.Yes)
         {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the sprite?", "Delete", MessageBoxButton.YesNo);
+            MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
 
-            if (result == MessageBoxResult.Yes)
+            FrameworkElement? source = args?.OriginalSource as FrameworkElement;
+
+            SpriteVO? sprite = source?.DataContext as SpriteVO;
+
+            if (sprite != null)
             {
-                MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
-
-                FrameworkElement? source = args?.OriginalSource as FrameworkElement;
-
-                SpriteVO? sprite = source?.DataContext as SpriteVO;
-
-                if (sprite != null)
-                {
-                    SignalManager.Get<DeletingSpriteSignal>().Dispatch(sprite);
-                }
+                SignalManager.Get<DeletingSpriteSignal>().Dispatch(sprite);
             }
         }
     }

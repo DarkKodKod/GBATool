@@ -4,25 +4,24 @@ using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows.Controls;
 
-namespace GBATool.Commands
+namespace GBATool.Commands;
+
+public class FileModelVOSelectionChangedCommand : Command
 {
-    public class FileModelVOSelectionChangedCommand : Command
+    public override void Execute(object? parameter)
     {
-        public override void Execute(object? parameter)
+        if (parameter == null)
         {
-            if (parameter == null)
-            {
-                return;
-            }
+            return;
+        }
 
-            SelectionChangedEventArgs? changedEvent = parameter as SelectionChangedEventArgs;
+        SelectionChangedEventArgs? changedEvent = parameter as SelectionChangedEventArgs;
 
-            if (changedEvent?.AddedItems.Count > 0)
+        if (changedEvent?.AddedItems.Count > 0)
+        {
+            if (changedEvent.AddedItems[0] is FileModelVO fileModel)
             {
-                if (changedEvent.AddedItems[0] is FileModelVO fileModel)
-                {
-                    SignalManager.Get<FileModelVOSelectionChangedSignal>().Dispatch(fileModel);
-                }
+                SignalManager.Get<FileModelVOSelectionChangedSignal>().Dispatch(fileModel);
             }
         }
     }

@@ -1,52 +1,51 @@
 ﻿using ArchitectureLibrary.History.Signals;
 using ArchitectureLibrary.Signals;
 
-namespace ArchitectureLibrary.History
+namespace ArchitectureLibrary.History;
+
+public static class HistoryManager
 {
-    public static class HistoryManager
+    static readonly Caretaker _caretaker = new();
+
+    public static void Initialize()
     {
-        static readonly Caretaker _caretaker = new();
+        SignalManager.Get<RegisterHistoryActionSignal>().Listener += OnRegisterHistoryAction;
+    }
 
-        public static void Initialize()
+    public static void Undo()
+    {
+        Memento? memento = _caretaker.GetUndoMemento();
+
+        if (memento != null)
         {
-            SignalManager.Get<RegisterHistoryActionSignal>().Listener += OnRegisterHistoryAction;
+            Originator.ExecuteUndo(memento);
         }
+    }
 
-        public static void Undo()
+    public static void Redo()
+    {
+        Memento? memento = _caretaker.GetRedoMemento();
+
+        if (memento != null)
         {
-            Memento? memento = _caretaker.GetUndoMemento();
-
-            if (memento != null)
-            {
-                Originator.ExecuteUndo(memento);
-            }
+            Originator.ExecuteRedo(memento);
         }
+    }
 
-        public static void Redo()
-        {
-            Memento? memento = _caretaker.GetRedoMemento();
+    public static bool IsUndoPossible()
+    {
+        return _caretaker.IsUndoPossible();
+    }
 
-            if (memento != null)
-            {
-                Originator.ExecuteRedo(memento);
-            }
-        }
+    public static bool IsRedoPossible()
+    {
+        return _caretaker.IsRedoPossible();
+    }
 
-        public static bool IsUndoPossible()
-        {
-            return _caretaker.IsUndoPossible();
-        }
+    private static void OnRegisterHistoryAction(IHistoryAction action)
+    {
+        Memento memento = Originator.CreateMemento(action);
 
-        public static bool IsRedoPossible()
-        {
-            return _caretaker.IsRedoPossible();
-        }
-
-        private static void OnRegisterHistoryAction(IHistoryAction action)
-        {
-            Memento memento = Originator.CreateMemento(action);
-
-            _caretaker.InsertMementoForUndoRedo(memento);
-        }
+        _caretaker.InsertMementoForUndoRedo(memento);
     }
 }

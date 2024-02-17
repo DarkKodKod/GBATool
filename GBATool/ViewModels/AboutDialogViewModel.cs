@@ -3,33 +3,32 @@ using GBATool.Commands;
 using System;
 using System.Reflection;
 
-namespace GBATool.ViewModels
+namespace GBATool.ViewModels;
+
+public class AboutDialogViewModel : ViewModel
 {
-    public class AboutDialogViewModel : ViewModel
+    public OpenLinkCommand OpenLinkCommand { get; } = new();
+
+    public string Version
     {
-        public OpenLinkCommand OpenLinkCommand { get; } = new();
-
-        public string Version
+        get => _version;
+        set
         {
-            get => _version;
-            set
-            {
-                _version = value;
-                OnPropertyChanged("Version");
-            }
+            _version = value;
+            OnPropertyChanged("Version");
         }
+    }
 
-        private string _version = "";
+    private string _version = "";
 
-        public AboutDialogViewModel()
+    public AboutDialogViewModel()
+    {
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        Version? version = assembly.GetName().Version;
+
+        if (version != null)
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Version? version = assembly.GetName().Version;
-
-            if (version != null)
-            {
-                Version = version.ToString();
-            }
+            Version = version.ToString();
         }
     }
 }
