@@ -33,17 +33,13 @@ public class BuildProjectCommand : Command
         if (!CheckValidFolder(projectModel.Build.GeneratedSourcePath))
         {
             OutputError("Invalid source folder");
-
-            _building = false;
-            return;
+            goto finish;
         }
 
         if (!CheckValidFolder(projectModel.Build.GeneratedAssetsPath))
         {
             OutputError("Invalid assets folder");
-
-            _building = false;
-            return;
+            goto finish;
         }
 
         OutputInfo("Build started");
@@ -54,17 +50,57 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating header");
             OutputError(Header.GetErrors());
-            _building = false;
-            return;
+            goto finish;
         }
 
         OutputInfo("Building banks...");
+        ok = await MemoryBanks.Generate(projectModel.Build.GeneratedAssetsPath);
+        if (ok == false)
+        {
+            OutputError("Problems generating banks");
+            OutputError(MemoryBanks.GetErrors());
+            goto finish;
+        }
+
         OutputInfo("Building tiles definitions...");
+        ok = await TilesDefinitions.Generate(projectModel.Build.GeneratedAssetsPath);
+        if (ok == false)
+        {
+            OutputError("Problems generating tiles definitions");
+            OutputError(TilesDefinitions.GetErrors());
+            goto finish;
+        }
+
         OutputInfo("Building backgrounds...");
+        ok = await Backgrounds.Generate(projectModel.Build.GeneratedAssetsPath);
+        if (ok == false)
+        {
+            OutputError("Problems generating backgrounds");
+            OutputError(Backgrounds.GetErrors());
+            goto finish;
+        }
+
         OutputInfo("Building meta sprites...");
+        ok = await MetaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
+        if (ok == false)
+        {
+            OutputError("Problems generating meta sprites");
+            OutputError(MetaSprites.GetErrors());
+            goto finish;
+        }
+
         OutputInfo("Building palettes...");
+        ok = await Palettes.Generate(projectModel.Build.GeneratedAssetsPath);
+        if (ok == false)
+        {
+            OutputError("Problems generating palettes");
+            OutputError(Palettes.GetErrors());
+            goto finish;
+        }
+
         OutputInfo("Build completed", "Green");
 
+        finish:
         _building = false;
 
         RaiseCanExecuteChanged();
