@@ -13,10 +13,6 @@ public abstract class Building<T> where T : class, new()
 
     protected abstract string FileName { get; }
 
-    protected Building()
-    {
-    }
-
     public static T Instance => instance.Value;
 
     public async Task<bool> Generate(string outputPath)
