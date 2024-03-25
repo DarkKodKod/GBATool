@@ -177,9 +177,9 @@ public sealed class Header : Building<Header>
 
     private static void AddToChecksumArray(char[] charArray, int initIndex)
     {
-        for (int i = initIndex; i < charArray.Length; i++)
+        for (int i = 0; i < charArray.Length; i++)
         {
-            _arrayOfBytesForCheckSum[i] = (byte)charArray[i];
+            _arrayOfBytesForCheckSum[initIndex + i] = (byte)charArray[i];
         }
     }
 
@@ -359,9 +359,9 @@ public sealed class Header : Building<Header>
 
         int checksum = 0;
 
-        foreach (byte b in _arrayOfBytesForCheckSum)
+        for (int i = 0; i < HeaderSizeForChecksum; i++)
         {
-            checksum = (checksum - b) & 0xff;
+            checksum = (checksum - _arrayOfBytesForCheckSum[i]) & 0xff;
         }
 
         checksum = (checksum - 0x19) & 0xff;

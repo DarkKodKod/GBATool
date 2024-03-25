@@ -21,7 +21,7 @@ public static class FileUtils
         {
             _ = await sourceStream.ReadAsync(buffer.AsMemory(0, (int)sourceStream.Length)).ConfigureAwait(false);
 
-            MemoryStream stream = new(buffer, 0, (int)sourceStream.Length);
+            using MemoryStream stream = new(buffer, 0, (int)sourceStream.Length);
 
             switch (type)
             {
