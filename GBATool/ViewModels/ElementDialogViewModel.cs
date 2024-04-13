@@ -18,7 +18,7 @@ public class ElementDialogViewModel : ViewModel
 {
     public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new();
     public CreateElementCommand CreateElementCommand { get; } = new();
-    public List<ElementTypeModel> ElementTypes { get; set; } = new();
+    public List<ElementTypeModel> ElementTypes { get; set; } = [];
 
     public ElementTypeModel SelectedType
     {
