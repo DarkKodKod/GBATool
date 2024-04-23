@@ -111,7 +111,7 @@ public sealed class Header : Building<Header>
     private static int WriteFixedValue(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Fixed value");
-        _ = sb.AppendLine(".byte 0x96");
+        _ = sb.AppendLine("db 0x96");
         _ = sb.AppendLine();
 
         _arrayOfBytesForCheckSum[18] = 0x96;
@@ -131,7 +131,7 @@ public sealed class Header : Building<Header>
                 if (countHexValues > 0)
                     _ = sb.AppendLine();
 
-                sb.Append($".byte 0x{hex:X2},");
+                sb.Append($"db 0x{hex:X2},");
             }
             else
             {
@@ -156,7 +156,7 @@ public sealed class Header : Building<Header>
     {
         int numberOfBytes = 0;
 
-        sb.Append(".byte ");
+        sb.Append("db ");
 
         input = input.PadRight(maxByteSize, '\0');
 
@@ -278,7 +278,7 @@ public sealed class Header : Building<Header>
     private static int WriteMainUnitCode(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Main unit code");
-        _ = sb.AppendLine(".byte 0x00");
+        _ = sb.AppendLine("db 0x00");
         _ = sb.AppendLine();
 
         _arrayOfBytesForCheckSum[19] = 0x00;
@@ -289,7 +289,7 @@ public sealed class Header : Building<Header>
     private static int WriteDeviceType(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Device type");
-        _ = sb.AppendLine(".byte 0x00");
+        _ = sb.AppendLine("db 0x00");
         _ = sb.AppendLine();
 
         _arrayOfBytesForCheckSum[20] = 0x00;
@@ -300,7 +300,7 @@ public sealed class Header : Building<Header>
     private static int WriteSoftwareVersion(ref StringBuilder sb, ProjectModel projectModel)
     {
         _ = sb.AppendLine("; Software version");
-        _ = sb.AppendLine($".byte 0x{projectModel.SoftwareVersion:X2}");
+        _ = sb.AppendLine($"db 0x{projectModel.SoftwareVersion:X2}");
         _ = sb.AppendLine();
 
         _arrayOfBytesForCheckSum[28] = 0x00;
@@ -311,7 +311,7 @@ public sealed class Header : Building<Header>
     private static int WriteBootMode(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Boot mode");
-        _ = sb.AppendLine(".byte 0x00");
+        _ = sb.AppendLine("db 0x00");
         _ = sb.AppendLine();
 
         return 1;
@@ -320,7 +320,7 @@ public sealed class Header : Building<Header>
     private static int WriteSlaveIDNumber(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Slave ID number");
-        _ = sb.AppendLine(".byte 0x00");
+        _ = sb.AppendLine("db 0x00");
         _ = sb.AppendLine();
 
         return 1;
@@ -329,7 +329,7 @@ public sealed class Header : Building<Header>
     private static int WriteJoybusEntryPoint(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; Joy bus entry point");
-        _ = sb.AppendLine(".byte 0x00,0x00,0x00,0x00");
+        _ = sb.AppendLine("db 0x00,0x00,0x00,0x00");
         _ = sb.AppendLine();
 
         return 4;
@@ -338,7 +338,7 @@ public sealed class Header : Building<Header>
     private static int WriteRAMEntryPoint(ref StringBuilder sb)
     {
         _ = sb.AppendLine("; RAM entry point");
-        _ = sb.AppendLine(".byte 0x00,0x00,0x00,0x00");
+        _ = sb.AppendLine("db 0x00,0x00,0x00,0x00");
         _ = sb.AppendLine();
 
         return 4;
@@ -366,7 +366,7 @@ public sealed class Header : Building<Header>
 
         checksum = (checksum - 0x19) & 0xff;
 
-        _ = sb.AppendLine($".byte 0x{checksum:X2}");
+        _ = sb.AppendLine($"db 0x{checksum:X2}");
         _ = sb.AppendLine();
 
         return 1;
