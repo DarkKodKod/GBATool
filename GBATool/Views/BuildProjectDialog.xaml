@@ -95,7 +95,7 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="10" Content="Cancel" 
+            <Button Grid.Column="1" Margin="10" Content="Close" 
 					HorizontalAlignment="center" VerticalAlignment="center" Width="75" 
 					IsCancel="True"/>
             <Button Grid.Column="2" Content="Build" 
