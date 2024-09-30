@@ -31,7 +31,7 @@ public class BanksViewModel : ItemViewModel
     private BankModel? _model;
     private SpriteModel? _selectedSprite;
     private SpriteModel? _selectedSpriteFromBank;
-    private Dictionary<string, WriteableBitmap> _bitmapCache = new();
+    private Dictionary<string, WriteableBitmap> _bitmapCache = [];
     private BankImageMetaData? _metaData;
     private Visibility _spriteRectVisibility = Visibility.Hidden;
     private double _spriteRectLeft;
@@ -50,7 +50,7 @@ public class BanksViewModel : ItemViewModel
     private double _spriteRectTop3;
     private int _canvasHeght = 256;
     private int _canvasWidth = 256;
-    private ObservableCollection<SpriteModel> _bankSprites = new();
+    private ObservableCollection<SpriteModel> _bankSprites = [];
     private SpriteModel? _cacheSelectedSpriteFromBank = null;
 
     #region Commands
@@ -493,7 +493,7 @@ public class BanksViewModel : ItemViewModel
             return;
         }
 
-        List<SpriteRef> spriteReflist = new();
+        List<SpriteRef> spriteReflist = [];
 
         foreach (SpriteModel sprite in BankSprites)
         {
@@ -516,7 +516,7 @@ public class BanksViewModel : ItemViewModel
             return;
         }
 
-        List<SpriteRef> spriteReflist = new();
+        List<SpriteRef> spriteReflist = [];
 
         foreach (SpriteModel sprite in BankSprites)
         {

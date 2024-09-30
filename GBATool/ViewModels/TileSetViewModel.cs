@@ -273,7 +273,7 @@ public class TileSetViewModel : ItemViewModel
         ImagePath = filePath;
 
         using ImportImageCommand command = new();
-        object?[] parameters = new object[2];
+        object?[] parameters = [2];
         parameters[0] = filePath;
         parameters[1] = ProjectItem;
 

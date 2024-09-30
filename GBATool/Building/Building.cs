@@ -19,24 +19,34 @@ public abstract class Building<T> where T : class, new()
     {
         PrepareGenerate();
 
-        string filePath = Path.Combine(outputPath, FileName);
-
-        try
+        if (!string.IsNullOrEmpty(FileName))
         {
-            if (File.Exists(filePath))
+            string filePath = Path.Combine(outputPath, FileName);
+
+            try
             {
-                File.Delete(filePath);
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
             }
-        }
-        catch
-        {
-            return false;
+            catch
+            {
+                return false;
+            }
+
+            return await DoGenerate(filePath).ConfigureAwait(false);
         }
 
-        return await DoGenerate(filePath);
+        return await DoGenerate().ConfigureAwait(false);
     }
 
     protected virtual async Task<bool> DoGenerate(string filePath)
+    {
+        return await Task.FromResult(true);
+    }
+
+    protected virtual async Task<bool> DoGenerate()
     {
         return await Task.FromResult(true);
     }

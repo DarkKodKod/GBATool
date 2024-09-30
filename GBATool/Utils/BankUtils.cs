@@ -12,9 +12,9 @@ namespace GBATool.Utils;
 public class BankImageMetaData
 {
     public WriteableBitmap? image;
-    public List<(int, string, string)> SpriteIndices = new();
-    public List<string> UniqueTileSet = new();
-    public List<SpriteModel> bankSprites = new();
+    public List<(int, string, string)> SpriteIndices = [];
+    public List<string> UniqueTileSet = [];
+    public List<SpriteModel> bankSprites = [];
 }
 
 public static class BankUtils
@@ -22,17 +22,19 @@ public static class BankUtils
     public static readonly int SizeOfCellInPixels = 8;
     public static readonly int MaxTextureCellsWidth = 32;
 
-    public static int MaxTextureCellsHeight(bool is256color)
-    {
-        return is256color ? 16 : 32;
-    }
-
-    public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache)
+    public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache, int canvasWidth = 0, int canvasHeight = 0)
     {
         BankImageMetaData metaData = new();
 
-        int canvasWidth = MaxTextureCellsWidth * SizeOfCellInPixels;
-        int canvasHeight = MaxTextureCellsHeight(bankModel.Use256Colors) * SizeOfCellInPixels;
+        if (canvasWidth == 0)
+        {
+            canvasWidth = MaxTextureCellsWidth * SizeOfCellInPixels;
+        }
+
+        if (canvasHeight == 0)
+        {
+            canvasHeight = (bankModel.Use256Colors ? 16 : 32) * SizeOfCellInPixels;
+        }
 
         WriteableBitmap bankBitmap = BitmapFactory.New(canvasWidth, canvasHeight);
 

@@ -54,7 +54,7 @@ public class ProjectItem : ViewModel, IClipboardable
     public bool IsRoot { get; set; } = false;
     public bool IsFolder { get; set; } = false;
     public ProjectItem? Parent = null;
-    public ObservableCollection<ProjectItem> Items { get; set; } = new();
+    public ObservableCollection<ProjectItem> Items { get; set; } = [];
     public string OldCaptionValue { get; set; } = "";
     public FileHandler? FileHandler { get; set; }
     public bool RenamedFromAction { private get; set; } = false;

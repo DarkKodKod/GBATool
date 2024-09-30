@@ -5,6 +5,6 @@ namespace GBATool.VOs;
 
 public record ProjectOpenVO
 {
-    public List<ProjectItem> Items { get; init; } = new();
+    public List<ProjectItem> Items { get; init; } = [];
     public string ProjectName { get; init; } = string.Empty;
 }

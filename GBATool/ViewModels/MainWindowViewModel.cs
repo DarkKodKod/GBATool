@@ -55,8 +55,8 @@ public class MainWindowViewModel : ViewModel
 
     private string _title = "";
     private string _projectName = "";
-    private List<ProjectItem>? _projectItems = new();
-    private List<RecentProjectModel> _recentProjects = new();
+    private List<ProjectItem>? _projectItems = [];
+    private List<RecentProjectModel> _recentProjects = [];
     private bool? _isFullscreen = null;
     private readonly string _appName = "";
 
@@ -191,7 +191,7 @@ public class MainWindowViewModel : ViewModel
     private void DeleteItemFromTheList(ProjectItem item)
     {
         // Collect the chain of parents for later use
-        List<ProjectItem> path = new() { item };
+        List<ProjectItem> path = [item];
 
         ProjectItem? originalParent = item.Parent;
 
@@ -254,7 +254,7 @@ public class MainWindowViewModel : ViewModel
 
     private void OnUpdateRecentProjects(string[] recentProjects)
     {
-        List<RecentProjectModel> list = new();
+        List<RecentProjectModel> list = [];
 
         int index = 1;
 

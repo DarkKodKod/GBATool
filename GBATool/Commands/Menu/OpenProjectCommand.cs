@@ -133,7 +133,7 @@ public class OpenProjectCommand : Command
 
         DirectoryInfo[] directories = d.GetDirectories();
 
-        List<ProjectItem> projectItems = new();
+        List<ProjectItem> projectItems = [];
 
         ScanDirectories(directories, ref projectItems);
 
@@ -193,7 +193,7 @@ public class OpenProjectCommand : Command
             DirectoryInfo[] subFolders = directory.GetDirectories();
             if (subFolders.Length > 0)
             {
-                List<ProjectItem> subItems = new();
+                List<ProjectItem> subItems = [];
 
                 ScanDirectories(subFolders, ref subItems, item, ext);
 

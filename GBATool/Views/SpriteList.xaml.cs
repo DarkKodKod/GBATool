@@ -15,7 +15,7 @@ namespace GBATool.Views
     public partial class SpriteList : UserControl, INotifyPropertyChanged
     {
         private SpriteVO _selectedSprite = new();
-        private List<SpriteVO> _spriteModels = new();
+        private List<SpriteVO> _spriteModels = [];
         private Visibility _deleteButton = Visibility.Visible;
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,9 +1,14 @@
-﻿using GBATool.FileSystem;
+﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
+using GBATool.FileSystem;
+using GBATool.Utils;
 using Nett;
 using System.Collections.Generic;
 using System.Windows;
 
 namespace GBATool.Models;
+
+using TileBlocks = (int width, int height);
 
 public record SpriteRef
 {
@@ -31,7 +36,8 @@ public class BankModel : AFileModel
 
     public bool Use256Colors { get; set; }
     public bool IsBackground { get; set; }
-    public List<SpriteRef> Sprites { get; set; } = new();
+    public int TransparentColor { get; set; } = 0;
+    public List<SpriteRef> Sprites { get; set; } = [];
 
     [TomlIgnore]
     public bool IsFull { get; private set; }
@@ -69,7 +75,7 @@ public class BankModel : AFileModel
 
     public void CleanUpDeletedSprites()
     {
-        List<SpriteRef> idsToRemove = new();
+        List<SpriteRef> idsToRemove = [];
 
         foreach (SpriteRef spriteRef in Sprites)
         {
@@ -98,5 +104,88 @@ public class BankModel : AFileModel
         {
             Sprites.Remove(spriteToRemove);
         }
+    }
+
+    public TileBlocks GetBoundingBoxSize()
+    {
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        bool is1DImage = IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
+
+        int tilesWidth = 0;
+        int tilesHeight = 0;
+        int countTiles = 0;
+        int acuWidth = 0;
+        int acuHeight = 0;
+
+        foreach (SpriteRef spriteRef in Sprites)
+        {
+            if (spriteRef == null ||
+                string.IsNullOrEmpty(spriteRef.SpriteID) ||
+                string.IsNullOrEmpty(spriteRef.TileSetID))
+                continue;
+
+            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteRef.TileSetID);
+
+            if (tileSetModel == null)
+                continue;
+
+            SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
+
+            if (string.IsNullOrEmpty(sprite?.ID))
+                continue;
+
+            if (is1DImage)
+            {
+                countTiles += SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+            }
+            else
+            {
+                int width = 0;
+                int height = 0;
+                SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+                width /= BankUtils.SizeOfCellInPixels;
+                height /= BankUtils.SizeOfCellInPixels;
+
+                calculate:
+                if (acuWidth + width <= BankUtils.MaxTextureCellsWidth)
+                {
+                    acuWidth += width;
+
+                    if (acuHeight < height)
+                    {
+                        acuHeight = height;
+                    }
+                    if (acuWidth > tilesWidth)
+                    {
+                        tilesWidth = acuWidth;
+                    }
+                }
+                else
+                {
+                    tilesHeight += acuHeight;
+                    acuWidth = 0;
+                    acuHeight = 0;
+
+                    goto calculate;
+                }
+            }
+        }
+
+        if (acuHeight > 0)
+        {
+            tilesHeight += acuHeight;
+        }
+
+        if (countTiles > 0)
+        {
+            tilesWidth = countTiles < BankUtils.MaxTextureCellsWidth ? countTiles : BankUtils.MaxTextureCellsWidth;
+
+            float div = countTiles / BankUtils.MaxTextureCellsWidth;
+            tilesHeight = (int)float.Ceiling(div + 0.5f);
+        }
+
+        return (tilesWidth, tilesHeight);
     }
 }

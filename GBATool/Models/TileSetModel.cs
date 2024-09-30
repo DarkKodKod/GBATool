@@ -31,9 +31,9 @@ public class TileSetModel : AFileModel
     public string ImagePath { get; set; } = string.Empty;
     public int ImageWidth { get; set; } = 0;
     public int ImageHeight { get; set; } = 0;
-    public List<SpriteModel> Sprites { get; set; } = new();
+    public List<SpriteModel> Sprites { get; set; } = [];
 
-    private static readonly ConcurrentDictionary<string, BitmapImage> BitmapCache = new();
+    private static readonly ConcurrentDictionary<string, BitmapImage> BitmapCache = [];
 
     public TileSetModel()
     {

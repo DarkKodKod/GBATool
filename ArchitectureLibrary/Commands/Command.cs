@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace ArchitectureLibrary.Commands;
@@ -53,7 +54,10 @@ public class Command : ICommand, IDisposable
 
     public void RaiseCanExecuteChanged()
     {
-        _internalCanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            _internalCanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     public virtual void Deactivate()
