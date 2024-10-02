@@ -52,6 +52,7 @@ public class BanksViewModel : ItemViewModel
     private int _canvasWidth = 256;
     private ObservableCollection<SpriteModel> _bankSprites = [];
     private SpriteModel? _cacheSelectedSpriteFromBank = null;
+    private Color _transparentColor = Color.FromRgb(0, 0, 0);
 
     #region Commands
     public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -60,7 +61,8 @@ public class BanksViewModel : ItemViewModel
     public GoToProjectItemCommand GoToProjectItemCommand { get; } = new();
     public DeleteBankSpriteCommand DeleteBankSpriteCommand { get; } = new();
     public MoveUpSelectedSpriteElement MoveUpSelectedSpriteElement { get; } = new();
-    public MoveDownSelectedSpriteElement MoveDownSelectedSpriteElement { get; } = new();
+    public MoveDownSelectedSpriteElementCommand MoveDownSelectedSpriteElement { get; } = new();
+    public OpenColorPickerCommand ActivatePickColorCommand { get; } = new();
     #endregion
 
     #region get/set
@@ -83,6 +85,22 @@ public class BanksViewModel : ItemViewModel
             _canvasWidth = value;
 
             OnPropertyChanged("CanvasWidth");
+        }
+    }
+
+    public Color TransparentColor
+    {
+        get => _transparentColor;
+        set
+        {
+            if (_transparentColor != value)
+            {
+                _transparentColor = value;
+
+                UpdateAndSaveTransparentColor();
+            }
+
+            OnPropertyChanged("TransparentColor");
         }
     }
 
@@ -434,6 +452,7 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener += OnMoveUpSelectedSpriteElement;
+        SignalManager.Get<SetColorFromColorPickerSignal>().Listener += OnSetColorFromColorPicker;
         #endregion
 
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -453,6 +472,7 @@ public class BanksViewModel : ItemViewModel
 
         Use256Colors = model.Use256Colors;
         IsBackground = model.IsBackground;
+        TransparentColor = Util.GetColorFromInt(model.TransparentColor);
 
         _doNotSave = false;
 
@@ -479,7 +499,13 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener -= OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener -= OnMoveUpSelectedSpriteElement;
+        SignalManager.Get<SetColorFromColorPickerSignal>().Listener -= OnSetColorFromColorPicker;
         #endregion
+    }
+
+    private void OnSetColorFromColorPicker(Control _, Color color)
+    {
+        TransparentColor = color;
     }
 
     private void OnMoveUpSelectedSpriteElement(int itemAtIndex)
@@ -577,6 +603,21 @@ public class BanksViewModel : ItemViewModel
             return;
 
         model.Use256Colors = Use256Colors;
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void UpdateAndSaveTransparentColor()
+    {
+        if (_doNotSave)
+            return;
+
+        BankModel? model = GetModel<BankModel>();
+
+        if (model == null)
+            return;
+
+        model.TransparentColor = Util.GetIntFromColor(TransparentColor);
 
         ProjectItem?.FileHandler?.Save();
     }

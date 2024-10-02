@@ -88,6 +88,7 @@ public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 public class ReloadBankImageSignal : Signal { }
 public class MoveDownSelectedSpriteElementSignal : Signal<int> { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
+public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
 
 // Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }

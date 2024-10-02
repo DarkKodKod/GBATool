@@ -241,4 +241,9 @@ public static class Util
 
         return Color.FromRgb(R, G, B);
     }
+
+    public static int GetIntFromColor(Color color)
+    {
+        return (color.R << 16) | (color.G << 8) | (color.B);
+    }
 }

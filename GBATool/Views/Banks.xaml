@@ -61,6 +61,22 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
                     <Label Margin="20,0,0,0">256 colors:</Label>
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
+                    <Label Margin="20,0,0,0">Transparent Color</Label>
+                    <Button Command="{Binding ActivatePickColorCommand}" BorderThickness="0">
+                        <Button.Content>
+                            <Rectangle Width="20" Height="20">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush x:Name="scColor" Color="{Binding TransparentColor, Mode=TwoWay}" />
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Button.Content>
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource parametersConverter}">
+                                <Binding RelativeSource="{RelativeSource Self}"/>
+                                <Binding Path="Color" ElementName="scColor"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Grid.Row="2">
                     <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" />

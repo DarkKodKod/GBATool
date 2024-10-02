@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace GBATool.Commands;
 
-public class MoveDownSelectedSpriteElement : Command
+public class MoveDownSelectedSpriteElementCommand : Command
 {
     public override bool CanExecute(object? parameter)
     {
