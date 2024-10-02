@@ -4,7 +4,6 @@ using GBATool.Models;
 using GBATool.Utils;
 using GBATool.Utils.Image;
 using GBATool.VOs;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -39,8 +38,8 @@ public sealed class MemoryBanks : Building<MemoryBanks>
 
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
-            int imageWidth = cellsCount.width * ImageProcessing.TileRowSizeInPixels;
-            int imageHeight = cellsCount.height * ImageProcessing.TileRowSizeInPixels;
+            int imageWidth = cellsCount.width * 8;
+            int imageHeight = cellsCount.height * 8;
 
             BankImageMetaData metaData = BankUtils.CreateImage(bank, ref bitmapCache, imageWidth, imageHeight);
 
@@ -49,8 +48,7 @@ public sealed class MemoryBanks : Building<MemoryBanks>
 
             byte[]? imageData = null;
 
-            int numberOfColors = (int)Math.Pow((int)bpp, 2);
-            List<System.Windows.Media.Color> palette = ImageProcessing.GetNewPalette(numberOfColors, bank.TransparentColor);
+            List<System.Windows.Media.Color> palette = ImageProcessing.GetNewPalette(bpp, bank.TransparentColor);
 
             using (metaData.image.GetBitmapContext())
             {

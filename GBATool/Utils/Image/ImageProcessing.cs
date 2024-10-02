@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
@@ -9,9 +8,6 @@ namespace GBATool.Utils.Image;
 
 public enum BitsPerPixel
 {
-    f1bpp = 1,
-    f2bpp = 2,
-    f3bpp = 3,
     f4bpp = 4,
     f8bpp = 8
 }
@@ -19,12 +15,11 @@ public enum BitsPerPixel
 // Information taken from: https://sneslab.net/wiki/Graphics_Format
 public static class ImageProcessing
 {
-    public const int TileRowSizeInPixels = 8;
-    public const int BitPlaneSize = TileRowSizeInPixels * TileRowSizeInPixels;
-
-    public static List<Color> GetNewPalette(int numberOfColors, int transparentColor)
+    public static List<Color> GetNewPalette(BitsPerPixel bpp, int transparentColor)
     {
         List<Color> palette = [];
+
+        int numberOfColors = (int)Math.Pow((int)bpp, 2);
 
         for (int i = 0; i < numberOfColors; i++)
         {
@@ -36,16 +31,15 @@ public static class ImageProcessing
 
     public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, int width, int height, ref List<Color> palette)
     {
-        if (bpp != BitsPerPixel.f4bpp && bpp != BitsPerPixel.f8bpp)
-        {
-            return null;
-        }
-
         int bitsPerPixel = (int)bpp;
+        const int bitPlaneSizeInBytes = 8; // 8x8 bits in a tile
 
-        BitArray bits = new(BitPlaneSize * bitsPerPixel * width * height, false);
+        int bufferSize = (bitsPerPixel * bitPlaneSizeInBytes) * width * height;
 
-        int currentIndex = 0;
+        byte[] bytes = new byte[bufferSize];
+        Array.Fill<byte>(bytes, 0);
+
+        int pixelIndex = 0;
         int currentX = 0;
         int currentY = 0;
 
@@ -53,11 +47,20 @@ public static class ImageProcessing
 
         Color transparentColor = palette.First();
 
+        Dictionary<int, Dictionary<Color, int>> groupedPalettes = [];
+
         for (int j = 0; j < height; ++j)
         {
             for (int i = 0; i < width; ++i)
             {
-                Dictionary<Color, int> colors = new() { { transparentColor, 0 } };
+                int group = 0;
+
+                if (!groupedPalettes.TryGetValue(group, out Dictionary<Color, int>? colors))
+                {
+                    colors = new Dictionary<Color, int> { { transparentColor, 0 } };
+
+                    groupedPalettes.Add(group, colors);
+                }
 
                 // read pixels in the 8x8 quadrant
                 for (int y = currentY; y < currentY + 8; ++y)
@@ -86,109 +89,57 @@ public static class ImageProcessing
                                 }
                             }
 
-                            MarkBitsAccordingToIndex(colorIndex, bitsPerPixel, ref bits, currentIndex);
+                            if (bpp == BitsPerPixel.f4bpp)
+                                Set4BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                            else
+                                Set8BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
                         }
 
-                        currentIndex++;
+                        pixelIndex++;
                     }
                 }
 
                 currentX += 8;
-                currentIndex += (BitPlaneSize * (bitsPerPixel - 1));
             }
 
             currentX = 0;
             currentY += 8;
         }
 
-        for (int i = 0; i < BitPlaneSize * bitsPerPixel * width * height;)
-        {
-            Reverse(ref bits, i, 8);
-            i += 8;
-        }
-
-        byte[] bytes = new byte[bits.Length / 8];
-
-        bits.CopyTo(bytes, 0);
         return bytes;
     }
 
-    private static void Reverse(ref BitArray array, int start, int length)
+    private static void Set4BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
-        int mid = length / 2;
+        int colIndex = 8 - (pixelIndex % 8);
+        int byteIndex = (pixelIndex / 8) * 2;
 
-        for (int i = start; i < start + mid; i++)
+        bool colorIndexBit1 = 0 != (colorIndex & (1 << 0));
+        bool colorIndexBit2 = 0 != (colorIndex & (1 << 1));
+        bool colorIndexBit3 = 0 != (colorIndex & (1 << 2));
+        bool colorIndexBit4 = 0 != (colorIndex & (1 << 3));
+
+        byte mask = (byte)(1 << (colIndex - 1));
+
+        if (colorIndexBit1)
         {
-            (array[start + start + length - i - 1], array[i]) = (array[i], array[start + start + length - i - 1]);
+            output[byteIndex + 1] = (byte)(output[byteIndex + 1] | mask);
+        }
+        if (colorIndexBit2)
+        {
+            output[byteIndex] = (byte)(output[byteIndex] | mask);
+        }
+        if (colorIndexBit3)
+        {
+            output[byteIndex + 16] = (byte)(output[byteIndex + 16] | mask);
+        }
+        if (colorIndexBit4)
+        {
+            output[byteIndex + 17] = (byte)(output[byteIndex + 17] | mask);
         }
     }
 
-    private static void MarkBitsAccordingToIndex(int colorIndex, int bitsPerPixel, ref BitArray bits, int currentIndex)
+    private static void Set8BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
-        switch (colorIndex)
-        {
-            case 1:
-                bits[currentIndex + BitPlaneSize] = true;
-                break;
-            case 2:
-                bits[currentIndex] = true;
-                break;
-            case 3:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize] = true;
-                break;
-            case 4:
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 5:
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 6:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 7:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 8:
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 9:
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 10:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 11:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 12:
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 13:
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 14:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-            case 15:
-                bits[currentIndex] = true;
-                bits[currentIndex + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize] = true;
-                bits[currentIndex + BitPlaneSize + BitPlaneSize + BitPlaneSize] = true;
-                break;
-        }
     }
 }
