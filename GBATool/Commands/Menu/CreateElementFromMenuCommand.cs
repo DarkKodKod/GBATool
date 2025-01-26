@@ -48,7 +48,7 @@ public class CreateElementFromMenuCommand : ItemSelectedCommand
             _newFileName,
             Util.GetExtensionByType(ItemSelected.Type));
 
-        ProjectItem newElement = new ProjectItem()
+        ProjectItem newElement = new()
         {
             DisplayName = name,
             IsFolder = false,
