@@ -98,7 +98,8 @@ public sealed class Header : Building<Header>
                 byte[] encodedText = utf8.GetBytes(sb.ToString());
 
                 await sourceStream.WriteAsync(encodedText).ConfigureAwait(false);
-            };
+            }
+            ;
 
             return GetErrors().Length == 0;
         }
