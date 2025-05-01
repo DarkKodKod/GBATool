@@ -12,6 +12,8 @@ namespace GBATool.Models;
 
 public class TileSetModel : AFileModel
 {
+    public static readonly int ImageScale = 4;
+
     private const string _extensionKey = "extensionTileSets";
 
     [TomlIgnore]

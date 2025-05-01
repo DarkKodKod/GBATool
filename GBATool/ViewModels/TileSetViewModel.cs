@@ -25,11 +25,6 @@ public class TileSetViewModel : ItemViewModel
     private string _imageScale = "100%";
     private int _originalWidth;
     private Visibility _gridVisibility = Visibility.Hidden;
-    private Visibility _spriteRectVisibility = Visibility.Hidden;
-    private double _spriteRectLeft;
-    private double _spriteRectWidth;
-    private double _spriteRectHeight;
-    private double _spriteRectTop;
     private string _alias = string.Empty;
     private SpriteModel? _selectedSprite;
 
@@ -94,61 +89,6 @@ public class TileSetViewModel : ItemViewModel
 
                 UpdateAndSaveAlias(value);
             }
-        }
-    }
-
-    public Visibility SpriteRectVisibility
-    {
-        get { return _spriteRectVisibility; }
-        set
-        {
-            _spriteRectVisibility = value;
-
-            OnPropertyChanged("SpriteRectVisibility");
-        }
-    }
-
-    public double SpriteRectLeft
-    {
-        get { return _spriteRectLeft; }
-        set
-        {
-            _spriteRectLeft = value;
-
-            OnPropertyChanged("SpriteRectLeft");
-        }
-    }
-
-    public double SpriteRectWidth
-    {
-        get { return _spriteRectWidth; }
-        set
-        {
-            _spriteRectWidth = value;
-
-            OnPropertyChanged("SpriteRectWidth");
-        }
-    }
-
-    public double SpriteRectHeight
-    {
-        get { return _spriteRectHeight; }
-        set
-        {
-            _spriteRectHeight = value;
-
-            OnPropertyChanged("SpriteRectHeight");
-        }
-    }
-
-    public double SpriteRectTop
-    {
-        get { return _spriteRectTop; }
-        set
-        {
-            _spriteRectTop = value;
-
-            OnPropertyChanged("SpriteRectTop");
         }
     }
 
@@ -391,16 +331,9 @@ public class TileSetViewModel : ItemViewModel
         {
             if (item.ID == sprite.SpriteID)
             {
-                SpriteRectVisibility = Visibility.Visible;
-
                 int width = 0;
                 int height = 0;
                 SpriteUtils.ConvertToWidthHeight(item.Shape, item.Size, ref width, ref height);
-
-                SpriteRectLeft = item.PosX;
-                SpriteRectWidth = width;
-                SpriteRectHeight = height;
-                SpriteRectTop = item.PosY;
 
                 _selectedSprite = item;
 
@@ -420,8 +353,6 @@ public class TileSetViewModel : ItemViewModel
 
     private void ConfirmSpriteDeletion(SpriteVO sprite)
     {
-        SpriteRectVisibility = Visibility.Hidden;
-
         DeleteSprite(sprite);
     }
 
@@ -473,20 +404,13 @@ public class TileSetViewModel : ItemViewModel
             return;
         }
 
-        SpriteVO sprite = AddSpriteToTheList(width, height, Guid.NewGuid().ToString(), cropped);
-
-        if (sprite.SpriteID == null)
-        {
-            return;
-        }
-
-        SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
-
-        SaveNewSprite(sprite.SpriteID, x, y, width, height, model);
+        SaveNewSprite(cropped, x, y, width, height, model);
     }
 
-    private void SaveNewSprite(string spriteID, int posX, int posY, int width, int height, TileSetModel model)
+    private void SaveNewSprite(WriteableBitmap cropped, int posX, int posY, int width, int height, TileSetModel model)
     {
+        string spriteID = Guid.NewGuid().ToString();
+
         SpriteShape shape = SpriteShape.Shape00;
         SpriteSize size = SpriteSize.Size00;
 
@@ -498,6 +422,10 @@ public class TileSetViewModel : ItemViewModel
         {
             ProjectItem?.FileHandler?.Save();
         }
+
+        AddSpriteToTheList(width, height, spriteID, cropped);
+
+        SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
     }
 
     private void DeleteSprite(SpriteVO sprite)
@@ -576,23 +504,31 @@ public class TileSetViewModel : ItemViewModel
         }
     }
 
-    private static SpriteVO AddSpriteToTheList(int width, int height, string id, BitmapSource bitmap)
+    private void AddSpriteToTheList(int width, int height, string id, BitmapSource bitmap)
     {
         // Scaling here otherwise is too small for display
-        width *= 4;
-        height *= 4;
+        width *= TileSetModel.ImageScale;
+        height *= TileSetModel.ImageScale;
+
+        string tileSetId = string.Empty;
+
+        TileSetModel? tileSetModel = GetModel<TileSetModel>();
+
+        if (tileSetModel != null)
+        {
+            tileSetId = tileSetModel.GUID;
+        }
 
         SpriteVO sprite = new()
         {
             SpriteID = id,
+            TileSetID = tileSetId,
             Bitmap = bitmap,
             Width = width,
             Height = height
         };
 
         SignalManager.Get<AddSpriteSignal>().Dispatch(sprite);
-
-        return sprite;
     }
 
     private void OnUpdateTileSetImage()

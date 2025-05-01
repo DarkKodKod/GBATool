@@ -174,13 +174,6 @@
                             </i:Interaction.Behaviors>
                         </Canvas>
                     </Border>
-                    <Rectangle Width="{Binding SpriteRectWidth}"
-                               Height="{Binding SpriteRectHeight}" 
-                               Stroke="Magenta" 
-                               StrokeThickness="0.2"
-                               Canvas.Top="{Binding SpriteRectTop}"
-                               Canvas.Left="{Binding SpriteRectLeft}"
-                               Visibility="{Binding SpriteRectVisibility}"/>
                 </Canvas>
             </ScrollViewer>
             <Label Grid.Row="2" 

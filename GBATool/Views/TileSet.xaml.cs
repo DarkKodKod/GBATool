@@ -1,9 +1,15 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.FileSystem;
+using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.VOs;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace GBATool.Views
 {
@@ -12,6 +18,8 @@ namespace GBATool.Views
     /// </summary>
     public partial class TileSet : UserControl, ICleanable
     {
+        private readonly static Color StrokeColor = Color.FromArgb(255, 255, 0, 255);
+
         public TileSet()
         {
             InitializeComponent();
@@ -33,6 +41,9 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener += OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
+            SignalManager.Get<AddSpriteSignal>().Listener += OnAddSprite;
+            SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
+            SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
             #endregion
 
             OnSpriteSelectCursor();
@@ -79,9 +90,64 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener -= OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
+            SignalManager.Get<AddSpriteSignal>().Listener -= OnAddSprite;
+            SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
+            SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
             #endregion
 
             slSprites.OnDeactivate();
+        }
+
+        private void OnSelectSprite(SpriteVO vo)
+        {
+            IEnumerable<Rectangle> rectangles = cvsImage.Children.OfType<Rectangle>();
+
+            foreach (Rectangle rect in rectangles)
+            {
+                rect.Stroke = rect.Uid == vo.SpriteID ? new SolidColorBrush(Colors.Yellow) : new SolidColorBrush(StrokeColor);
+            }
+        }
+
+        private void OnDeletingSprite(SpriteVO vo)
+        {
+            IEnumerable<Rectangle> rectangles = cvsImage.Children.OfType<Rectangle>();
+
+            Rectangle? rect = rectangles.FirstOrDefault(rect => rect.Uid == vo.SpriteID);
+
+            if (rect == null)
+                return;
+
+            cvsImage.Children.Remove(rect);
+        }
+
+        private void OnAddSprite(SpriteVO vo)
+        {
+            Rectangle rectangle = new()
+            {
+                Width = vo.Width / TileSetModel.ImageScale,
+                Height = vo.Height / TileSetModel.ImageScale,
+                Stroke = new SolidColorBrush(StrokeColor),
+                StrokeThickness = 0.3,
+                Uid = vo.SpriteID
+            };
+
+            if (string.IsNullOrEmpty(vo.TileSetID))
+                return;
+
+            TileSetModel? model = ProjectFiles.GetModel<TileSetModel>(vo.TileSetID);
+
+            if (model == null)
+                return;
+
+            SpriteModel? spriteModel = model.Sprites.Find(x => x.ID == vo.SpriteID);
+
+            if (spriteModel == null)
+                return;
+
+            Canvas.SetTop(rectangle, spriteModel.PosY);
+            Canvas.SetLeft(rectangle, spriteModel.PosX);
+
+            cvsImage.Children.Add(rectangle);
         }
 
         private void OnSpriteSelectCursor()

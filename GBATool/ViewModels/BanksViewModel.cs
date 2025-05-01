@@ -664,7 +664,7 @@ public class BanksViewModel : ItemViewModel
 
             string itemPath = System.IO.Path.Combine(fileModelVO.Path, fileModelVO.Name);
 
-            TileSetPath = itemPath.Remove(0, projectModel.ProjectPath.Length);
+            TileSetPath = itemPath[projectModel.ProjectPath.Length..];
         }
 
         TileSetId = model.GUID;
