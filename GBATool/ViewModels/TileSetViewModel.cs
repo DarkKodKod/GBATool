@@ -30,6 +30,7 @@ public class TileSetViewModel : ItemViewModel
 
     #region Commands
     public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
+    public PreviewMouseMoveCommand PreviewMouseMoveCommand { get; } = new();
     public BrowseFileCommand BrowseFileCommand { get; } = new();
     public DispatchSignalCommand<SpriteSelectCursorSignal> SpriteSelectCursorCommand { get; } = new();
     public DispatchSignalCommand<SpriteSize16x16Signal> SpriteSize16x16Command { get; } = new();

@@ -56,6 +56,7 @@ public class RedirectRoutedEventBehavior : Behavior<UIElement>
     protected override void OnAttached()
     {
         base.OnAttached();
+
         if (RoutedEvent != null)
         {
             AssociatedObject.AddHandler(RoutedEvent, new RoutedEventHandler(EventHandler));

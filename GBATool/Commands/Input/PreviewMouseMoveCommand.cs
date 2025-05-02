@@ -1,10 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
-using GBATool.Utils;
 using GBATool.VOs;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace GBATool.Commands;
@@ -17,11 +14,9 @@ public class PreviewMouseMoveCommand : Command
 
         if (mouseEvent?.LeftButton == MouseButtonState.Pressed)
         {
-            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)mouseEvent.OriginalSource);
-
             MouseMoveVO vo = new()
             {
-                Position = mouseEvent.GetPosition(treeViewItem),
+                Position = mouseEvent.GetPosition(null),
                 OriginalSource = mouseEvent.OriginalSource,
                 Sender = mouseEvent.Source
             };

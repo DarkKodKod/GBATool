@@ -127,11 +127,17 @@
                 </Button>
             </DockPanel>
             <ScrollViewer Grid.Row="2"
-                      Background="DarkGray"
-                      VerticalScrollBarVisibility="Auto" 
-                      HorizontalScrollBarVisibility="Auto">
+                          Name="scrollViewer"
+                          PanningMode="Both"
+                          Background="DarkGray"
+                          VerticalScrollBarVisibility="Auto" 
+                          PreviewMouseUp="scrollViewer_PreviewMouseUp"
+                          MouseLeave="scrollViewer_MouseLeave"
+                          MouseEnter="scrollViewer_MouseEnter"
+                          HorizontalScrollBarVisibility="Auto">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseWheelCommand}" Event="PreviewMouseWheel" PassArguments="True" />
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand}" Event="PreviewMouseMove" PassArguments="True" />
                 </i:Interaction.Behaviors>
                 <Canvas Name="cvsImage"
                         HorizontalAlignment="Left"

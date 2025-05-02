@@ -8,6 +8,7 @@ using GBATool.VOs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -20,6 +21,9 @@ namespace GBATool.Views
     {
         private readonly static Color StrokeColor = Color.FromArgb(255, 255, 0, 255);
 
+        private System.Windows.Point _previousMousePosition = new(0, 0);
+        private bool _validPanningMovement = false;
+
         public TileSet()
         {
             InitializeComponent();
@@ -28,6 +32,7 @@ namespace GBATool.Views
 
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
+            SignalManager.Get<MouseMoveSignal>().Listener += OnMouseMove;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener += OnSpriteSize16x16;
             SignalManager.Get<SpriteSize16x32Signal>().Listener += OnSpriteSize16x32;
@@ -47,6 +52,41 @@ namespace GBATool.Views
             #endregion
 
             OnSpriteSelectCursor();
+        }
+
+        private void OnMouseMove(MouseMoveVO vo)
+        {
+            if (tbSelect.IsChecked == false || !_validPanningMovement)
+            {
+                return;
+            }
+
+            if (DataContext is TileSetViewModel viewModel)
+            {
+                if (!viewModel.IsActive)
+                {
+                    return;
+                }
+            }
+
+            if (_previousMousePosition.X != 0 && _previousMousePosition.Y != 0)
+            {
+                double dXInTargetPixels = vo.Position.X - _previousMousePosition.X;
+                double dYInTargetPixels = vo.Position.Y - _previousMousePosition.Y;
+
+                double newOffsetX = scrollViewer.HorizontalOffset - dXInTargetPixels;
+                double newOffsetY = scrollViewer.VerticalOffset - dYInTargetPixels;
+
+                if (double.IsNaN(newOffsetX) || double.IsNaN(newOffsetY))
+                {
+                    return;
+                }
+
+                scrollViewer.ScrollToHorizontalOffset(newOffsetX);
+                scrollViewer.ScrollToVerticalOffset(newOffsetY);
+            }
+
+            _previousMousePosition = vo.Position;
         }
 
         private void OnMouseWheel(MouseWheelVO vo)
@@ -77,6 +117,7 @@ namespace GBATool.Views
         {
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
+            SignalManager.Get<MouseMoveSignal>().Listener -= OnMouseMove;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener -= OnSpriteSize16x16;
             SignalManager.Get<SpriteSize16x32Signal>().Listener -= OnSpriteSize16x32;
@@ -370,6 +411,22 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+        }
+
+        private void scrollViewer_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _previousMousePosition = new(0, 0);
+        }
+
+        private void scrollViewer_MouseLeave(object sender, MouseEventArgs e)
+        {
+            _previousMousePosition = new(0, 0);
+            _validPanningMovement = false;
+        }
+
+        private void scrollViewer_MouseEnter(object sender, MouseEventArgs e)
+        {
+            _validPanningMovement = true;
         }
     }
 }
