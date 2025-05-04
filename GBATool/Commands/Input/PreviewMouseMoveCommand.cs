@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.VOs;
+using System.Windows;
 using System.Windows.Input;
 
 namespace GBATool.Commands;
@@ -10,15 +11,15 @@ public class PreviewMouseMoveCommand : Command
 {
     public override void Execute(object? parameter)
     {
-        MouseEventArgs? mouseEvent = parameter as MouseEventArgs;
-
-        if (mouseEvent?.LeftButton == MouseButtonState.Pressed)
+        if (parameter is MouseEventArgs mouseEvent)
         {
             MouseMoveVO vo = new()
             {
-                Position = mouseEvent.GetPosition(null),
+                AbsolutePosition = mouseEvent.GetPosition(null),
+                RelativePosition = Mouse.GetPosition((IInputElement)mouseEvent.Source),
                 OriginalSource = mouseEvent.OriginalSource,
-                Sender = mouseEvent.Source
+                Sender = mouseEvent.Source,
+                LeftButton = mouseEvent.LeftButton
             };
 
             SignalManager.Get<MouseMoveSignal>().Dispatch(vo);

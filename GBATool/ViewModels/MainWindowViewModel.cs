@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 
 namespace GBATool.ViewModels;
 
@@ -332,7 +333,12 @@ public class MainWindowViewModel : ViewModel
             return;
         }
 
-        Vector diff = (Vector)(_startPoint - vo.Position);
+        if (vo.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        Vector diff = (Vector)(_startPoint - vo.AbsolutePosition);
 
         if ((_isDragging == false) && Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
         {

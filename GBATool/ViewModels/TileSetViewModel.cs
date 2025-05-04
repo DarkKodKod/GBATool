@@ -8,6 +8,8 @@ using GBATool.Utils;
 using GBATool.VOs;
 using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -25,12 +27,18 @@ public class TileSetViewModel : ItemViewModel
     private string _imageScale = "100%";
     private int _originalWidth;
     private Visibility _gridVisibility = Visibility.Hidden;
+    private Visibility _selectionRectVisibility = Visibility.Hidden;
+    private double _selectionRectLeft;
+    private double _selectionRectWidth;
+    private double _selectionRectHeight;
+    private double _selectionRectTop;
     private string _alias = string.Empty;
     private SpriteModel? _selectedSprite;
 
     #region Commands
     public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
     public PreviewMouseMoveCommand PreviewMouseMoveCommand { get; } = new();
+    public MouseLeaveCommand MouseLeaveCommand { get; } = new();
     public BrowseFileCommand BrowseFileCommand { get; } = new();
     public DispatchSignalCommand<SpriteSelectCursorSignal> SpriteSelectCursorCommand { get; } = new();
     public DispatchSignalCommand<SpriteSize16x16Signal> SpriteSize16x16Command { get; } = new();
@@ -169,6 +177,61 @@ public class TileSetViewModel : ItemViewModel
             OnPropertyChanged("GridVisibility");
         }
     }
+
+    public Visibility SelectionRectVisibility
+    {
+        get { return _selectionRectVisibility; }
+        set
+        {
+            _selectionRectVisibility = value;
+
+            OnPropertyChanged("SelectionRectVisibility");
+        }
+    }
+
+    public double SelectionRectLeft
+    {
+        get { return _selectionRectLeft; }
+        set
+        {
+            _selectionRectLeft = value;
+
+            OnPropertyChanged("SelectionRectLeft");
+        }
+    }
+
+    public double SelectionRectWidth
+    {
+        get { return _selectionRectWidth; }
+        set
+        {
+            _selectionRectWidth = value;
+
+            OnPropertyChanged("SelectionRectWidth");
+        }
+    }
+
+    public double SelectionRectHeight
+    {
+        get { return _selectionRectHeight; }
+        set
+        {
+            _selectionRectHeight = value;
+
+            OnPropertyChanged("SelectionRectHeight");
+        }
+    }
+
+    public double SelectionRectTop
+    {
+        get { return _selectionRectTop; }
+        set
+        {
+            _selectionRectTop = value;
+
+            OnPropertyChanged("SelectionRectTop");
+        }
+    }
     #endregion
 
     public TileSetViewModel()
@@ -221,6 +284,44 @@ public class TileSetViewModel : ItemViewModel
         command.Execute(parameters);
     }
 
+    private void OnMouseLeave(MouseLeaveVO vo)
+    {
+        SelectionRectVisibility = Visibility.Hidden;
+    }
+
+    private void OnMouseMove(MouseMoveVO vo)
+    {
+        if (!IsActive || IsSelecting)
+        {
+            return;
+        }
+
+        if (vo.Sender == null)
+        {
+            return;
+        }
+
+        Canvas? canvas = Util.FindAncestor<Canvas>((DependencyObject)vo.Sender);
+
+        if (canvas == null)
+        {
+            return;
+        }
+
+        int width = 0;
+        int height = 0;
+
+        var pos = Mouse.GetPosition(canvas);
+
+        SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
+
+        SelectionRectVisibility = Visibility.Visible;
+        SelectionRectLeft = pos.X;
+        SelectionRectWidth = width;
+        SelectionRectHeight = height;
+        SelectionRectTop = pos.Y;
+    }
+
     private void OnMouseWheel(MouseWheelVO vo)
     {
         if (!IsActive)
@@ -262,6 +363,8 @@ public class TileSetViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<BrowseFileSuccessSignal>().Listener += OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
+        SignalManager.Get<MouseMoveSignal>().Listener += OnMouseMove;
+        SignalManager.Get<MouseLeaveSignal>().Listener += OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener += OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
         SignalManager.Get<SpriteSize16x16Signal>().Listener += OnSpriteSize16x16;
@@ -357,7 +460,7 @@ public class TileSetViewModel : ItemViewModel
         DeleteSprite(sprite);
     }
 
-    private void OnMouseImageSelected(System.Windows.Controls.Image image, Point point)
+    private void OnMouseImageSelected(System.Windows.Controls.Image image, System.Windows.Point point)
     {
         if (IsSelecting)
         {
@@ -456,6 +559,8 @@ public class TileSetViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<BrowseFileSuccessSignal>().Listener -= OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
+        SignalManager.Get<MouseMoveSignal>().Listener -= OnMouseMove;
+        SignalManager.Get<MouseLeaveSignal>().Listener -= OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener -= OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;
         SignalManager.Get<SpriteSize16x16Signal>().Listener -= OnSpriteSize16x16;
@@ -572,6 +677,8 @@ public class TileSetViewModel : ItemViewModel
         IsSelecting = true;
         Shape = SpriteShape.Shape00;
         Size = SpriteSize.Size00;
+
+        SelectionRectVisibility = Visibility.Hidden;
     }
 
     private void OnSpriteSize16x16()

@@ -30,6 +30,7 @@ public class UpdateAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
 public class MouseLeftButtonDownSignal : Signal<Point> { }
 public class MouseLeftButtonUpSignal : Signal { }
 public class MouseMoveSignal : Signal<MouseMoveVO> { }
+public class MouseLeaveSignal : Signal<MouseLeaveVO> { }
 public class ProjectItemSelectedSignal : Signal<ProjectItem> { }
 public class ProjectItemUnselectedSignal : Signal<ProjectItem> { }
 public class CloseProjectSuccessSignal : Signal { }
