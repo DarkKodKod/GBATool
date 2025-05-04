@@ -167,6 +167,27 @@ public static class Util
         return null;
     }
 
+    public static T? FindChild<T>(DependencyObject? current) where T : DependencyObject
+    {
+        if (current == null)
+        {
+            return null;
+        }
+
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(current); i++)
+        {
+            DependencyObject child = VisualTreeHelper.GetChild(current, i);
+
+            T? result = (child as T) ?? FindChild<T>(child);
+
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        return null;
+    }
+
     public static T? FindAncestor<T>(DependencyObject? current) where T : DependencyObject
     {
         do

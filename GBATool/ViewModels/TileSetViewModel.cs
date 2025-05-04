@@ -460,7 +460,7 @@ public class TileSetViewModel : ItemViewModel
         DeleteSprite(sprite);
     }
 
-    private void OnMouseImageSelected(System.Windows.Controls.Image image, System.Windows.Point point)
+    private void OnMouseImageSelected(Image image, Point point)
     {
         if (IsSelecting)
         {
@@ -481,8 +481,8 @@ public class TileSetViewModel : ItemViewModel
 
         WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image.Source as BitmapSource);
 
-        int x = (int)Math.Floor(point.X);
-        int y = (int)Math.Floor(point.Y);
+        int x = (int)Math.Round(point.X);
+        int y = (int)Math.Round(point.Y);
 
         WriteableBitmap cropped = writeableBmp.Crop(x, y, width, height);
 

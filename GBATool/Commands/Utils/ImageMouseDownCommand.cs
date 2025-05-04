@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
+using GBATool.Utils;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,16 +14,32 @@ public class ImageMouseDownCommand : Command
     {
         MouseButtonEventArgs? mouseEvent = parameter as MouseButtonEventArgs;
 
-        if (mouseEvent?.Source is Image image)
+        if (mouseEvent?.Source == null)
         {
-            if (image.ActualWidth == 0 || image.ActualHeight == 0)
-            {
-                return;
-            }
-
-            Point p = mouseEvent.GetPosition(image);
-
-            SignalManager.Get<MouseImageSelectedSignal>().Dispatch(image, p);
+            return;
         }
+
+        Canvas? canvas = Util.FindAncestor<Canvas>((DependencyObject)mouseEvent.Source);
+
+        if (canvas == null)
+        {
+            return;
+        }
+
+        if (canvas.ActualWidth == 0 || canvas.ActualHeight == 0)
+        {
+            return;
+        }
+
+        Image? image = Util.FindChild<Image>(canvas);
+
+        if (image == null)
+        {
+            return;
+        }
+
+        Point p = mouseEvent.GetPosition(canvas);
+
+        SignalManager.Get<MouseImageSelectedSignal>().Dispatch(image, p);
     }
 }
