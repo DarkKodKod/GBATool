@@ -35,6 +35,8 @@ public class TileSetViewModel : ItemViewModel
     private string _alias = string.Empty;
     private SpriteModel? _selectedSprite;
 
+    private readonly int GridVisibilityThreshold = 800;
+
     #region Commands
     public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
     public PreviewMouseMoveCommand PreviewMouseMoveCommand { get; } = new();
@@ -346,7 +348,7 @@ public class TileSetViewModel : ItemViewModel
 
         ImageScale = scale.ToString() + "%";
 
-        GridVisibility = scale >= 1000 ? Visibility.Visible : Visibility.Hidden;
+        GridVisibility = scale >= GridVisibilityThreshold ? Visibility.Visible : Visibility.Hidden;
     }
 
     public override void OnActivate()
