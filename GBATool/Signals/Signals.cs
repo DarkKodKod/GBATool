@@ -86,6 +86,7 @@ public class CleanupTileSetLinksSignal : Signal { }
 public class SelectTileSetSignal : Signal<string> { }
 public class BankImageUpdatedSignal : Signal { }
 public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
+public class ObtainTransparentColorSignal : Signal<SpriteModel> { }
 public class ReloadBankImageSignal : Signal { }
 public class MoveDownSelectedSpriteElementSignal : Signal<int> { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }

@@ -43,7 +43,7 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="1" Content="Source directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label Grid.Row="0" Grid.Column="1" Content="Source code output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
                     <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
 					        VerticalAlignment="Center" Width="30" Content="..." 
@@ -58,7 +58,7 @@
                     <TextBox Name="tbSourcePath" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
 					         TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
                 </DockPanel>
-                <Label Grid.Row="2" Grid.Column="1" Content="Assets directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
                     <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
 				            VerticalAlignment="Center" Width="30" Content="..." 

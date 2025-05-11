@@ -84,8 +84,7 @@ public static class ImageProcessing
                                 }
                                 else
                                 {
-                                    // This color does not fit in the color count
-                                    colorIndex = -1;
+                                    throw new InvalidOperationException("This color does not fit in the color count");
                                 }
                             }
 
@@ -111,32 +110,15 @@ public static class ImageProcessing
 
     private static void Set4BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
-        int colIndex = 8 - (pixelIndex % 8);
-        int byteIndex = (pixelIndex / 8) * 2;
+        int outputIndex = (pixelIndex * 4) / 8;
 
-        bool colorIndexBit1 = 0 != (colorIndex & (1 << 0));
-        bool colorIndexBit2 = 0 != (colorIndex & (1 << 1));
-        bool colorIndexBit3 = 0 != (colorIndex & (1 << 2));
-        bool colorIndexBit4 = 0 != (colorIndex & (1 << 3));
+        byte b = (byte)colorIndex;
 
-        byte mask = (byte)(1 << (colIndex - 1));
+        Math.DivRem(pixelIndex, 2, out int reminder);
 
-        if (colorIndexBit1)
-        {
-            output[byteIndex + 1] = (byte)(output[byteIndex + 1] | mask);
-        }
-        if (colorIndexBit2)
-        {
-            output[byteIndex] = (byte)(output[byteIndex] | mask);
-        }
-        if (colorIndexBit3)
-        {
-            output[byteIndex + 16] = (byte)(output[byteIndex + 16] | mask);
-        }
-        if (colorIndexBit4)
-        {
-            output[byteIndex + 17] = (byte)(output[byteIndex + 17] | mask);
-        }
+        byte store = (byte)(reminder == 0 ? b : b << 4);
+
+        output[outputIndex] |= store;
     }
 
     private static void Set8BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)

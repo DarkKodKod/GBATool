@@ -4,6 +4,7 @@ using GBATool.Models;
 using GBATool.Utils;
 using GBATool.Utils.Image;
 using GBATool.VOs;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -52,7 +53,15 @@ public sealed class MemoryBanks : Building<MemoryBanks>
 
             using (metaData.image.GetBitmapContext())
             {
-                imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount.width, cellsCount.height, ref palette);
+                try
+                {
+                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount.width, cellsCount.height, ref palette);
+                }
+                catch (Exception e)
+                {
+                    AddError(e.ToString());
+                    continue;
+                }
 
                 if (imageData == null)
                 {

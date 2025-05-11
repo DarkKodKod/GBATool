@@ -60,6 +60,7 @@ public class BanksViewModel : ItemViewModel
     public MoveSpriteToBankCommand MoveSpriteToBankCommand { get; } = new();
     public GoToProjectItemCommand GoToProjectItemCommand { get; } = new();
     public DeleteBankSpriteCommand DeleteBankSpriteCommand { get; } = new();
+    public ObtainTransparentColorCommand ObtainTransparentColorCommand { get; } = new();
     public MoveUpSelectedSpriteElement MoveUpSelectedSpriteElement { get; } = new();
     public MoveDownSelectedSpriteElementCommand MoveDownSelectedSpriteElement { get; } = new();
     public OpenColorPickerCommand ActivatePickColorCommand { get; } = new();
@@ -448,6 +449,7 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
         SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
         SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
+        SignalManager.Get<ObtainTransparentColorSignal>().Listener += OnObtainTransparentColor;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
@@ -494,6 +496,7 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
         SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
+        SignalManager.Get<ObtainTransparentColorSignal>().Listener -= OnObtainTransparentColor;
         SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
@@ -600,7 +603,9 @@ public class BanksViewModel : ItemViewModel
         BankModel? model = GetModel<BankModel>();
 
         if (model == null)
+        {
             return;
+        }
 
         model.Use256Colors = Use256Colors;
 
@@ -735,7 +740,7 @@ public class BanksViewModel : ItemViewModel
         _metaData = BankUtils.CreateImage(model, ref _bitmapCache);
 
         PTImage = _metaData.image;
-        BankSprites = new ObservableCollection<SpriteModel>(_metaData.bankSprites);
+        BankSprites = [.. _metaData.bankSprites];
 
         FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
 
@@ -791,6 +796,39 @@ public class BanksViewModel : ItemViewModel
         {
             SelectedSpriteFromBank = _cacheSelectedSpriteFromBank;
         }
+    }
+
+    private void OnObtainTransparentColor(SpriteModel spriteModel)
+    {
+        TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteModel.TileSetID);
+
+        if (tileSetModel == null)
+        {
+            return;
+        }
+
+        SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == spriteModel.ID);
+
+        if (sm == null)
+        {
+            return;
+        }
+
+        int width = 0;
+        int height = 0;
+
+        SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+
+        _bitmapCache.TryGetValue(tileSetModel.GUID, out WriteableBitmap? sourceBitmap);
+
+        if (sourceBitmap == null)
+        {
+            return;
+        }
+
+        WriteableBitmap cropped = sourceBitmap.Crop(sm.PosX, sm.PosY, width, height);
+
+        TransparentColor = cropped.GetPixel(0, 0);
     }
 
     private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
