@@ -884,17 +884,39 @@ public class BanksViewModel : ItemViewModel
 
             WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
 
-            for (int y = 0; y < cropped.PixelHeight; y++)
+            int yOffset = 0;
+            int xOffset = 0;
+            
+            loop:
+            for (int y = 0; y < 8; y++)
             {
-                for (int x = 0; x < cropped.PixelWidth; x++)
+                for (int x = 0; x < 8; x++)
                 {
-                    Color color = cropped.GetPixel(x, y);
+                    Color color = cropped.GetPixel(x + xOffset, y + yOffset);
 
                     if (!colorArray.Contains(color))
                     {
-                        colorArray.Add(color);
+                        if (colorArray.Count < 16)
+                        {
+                            colorArray.Add(color);
+                        }
                     }
                 }
+            }
+
+            xOffset += 8;
+            if (xOffset > cropped.PixelWidth)
+            {
+                yOffset += 8;
+                if (yOffset <= cropped.PixelHeight)
+                {
+                    xOffset = 0;
+                    goto loop;
+                }
+            }
+            else
+            {
+                goto loop;
             }
         }
 
