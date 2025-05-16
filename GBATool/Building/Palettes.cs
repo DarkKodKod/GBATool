@@ -84,12 +84,12 @@ public sealed class Palettes : Building<Palettes>
 
                 byte[] bytes = BitConverter.GetBytes(rgb555);
 
-                outputFile.Write($"0x{bytes[0]:X2}, 0x{bytes[1]:X2}");
+                outputFile.Write($"0x{bytes[0]:X2},0x{bytes[1]:X2}");
 
                 cont++;
 
                 if (cont % 16 > 0)
-                    outputFile.Write(", ");
+                    outputFile.Write(",");
                 else
                     outputFile.Write(Environment.NewLine);
             }
