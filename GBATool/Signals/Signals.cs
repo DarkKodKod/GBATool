@@ -3,6 +3,7 @@ using GBATool.Enums;
 using GBATool.Models;
 using GBATool.ViewModels;
 using GBATool.VOs;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -87,10 +88,13 @@ public class SelectTileSetSignal : Signal<string> { }
 public class BankImageUpdatedSignal : Signal { }
 public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 public class ObtainTransparentColorSignal : Signal<SpriteModel> { }
+public class GeneratePaletteFromBankSignal : Signal { }
 public class ReloadBankImageSignal : Signal { }
 public class MoveDownSelectedSpriteElementSignal : Signal<int> { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
+public class TryCreatePaletteElementSignal : Signal<string, List<Color>, bool> { }
+public class PaletteCreatedSuccessfullySignal : Signal<PaletteModel> { }
 
 // Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }

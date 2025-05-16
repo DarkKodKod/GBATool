@@ -22,5 +22,5 @@ public class PaletteModel : AFileModel
         }
     }
 
-    public int[] Colors { get; set; } = Enumerable.Repeat(0, 16).ToArray();
+    public int[] Colors { get; set; } = [.. Enumerable.Repeat(0, 16)];
 }

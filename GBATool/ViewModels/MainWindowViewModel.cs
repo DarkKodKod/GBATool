@@ -1,19 +1,24 @@
-﻿using ArchitectureLibrary.Model;
+﻿using ArchitectureLibrary.History.Signals;
+using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using ArchitectureLibrary.WPF.Adorners;
 using GBATool.Commands;
+using GBATool.Enums;
 using GBATool.FileSystem;
+using GBATool.HistoryActions;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GBATool.ViewModels;
 
@@ -53,6 +58,7 @@ public class MainWindowViewModel : ViewModel
     #endregion
 
     private const string _projectNameKey = "applicationTitle";
+    private const string _folderPalettesKey = "folderPalettes";
 
     private string _title = "";
     private string _projectName = "";
@@ -134,6 +140,7 @@ public class MainWindowViewModel : ViewModel
         SignalManager.Get<PasteElementSignal>().Listener += OnPasteElement;
         SignalManager.Get<FindAndCreateElementSignal>().Listener += OnFindAndCreateElement;
         SignalManager.Get<DropElementSignal>().Listener += OnDropElement;
+        SignalManager.Get<TryCreatePaletteElementSignal>().Listener += OnTryCreatePaletteElement;
         #endregion
     }
 
@@ -479,6 +486,49 @@ public class MainWindowViewModel : ViewModel
 
                 break;
             }
+        }
+    }
+
+    private void OnTryCreatePaletteElement(string name, List<Color> colorArray, bool use256Colors)
+    {
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        string palette = (string)Application.Current.FindResource(_folderPalettesKey);
+
+        string path = Path.Combine(projectModel.ProjectPath, palette);
+
+        name = ProjectItemFileSystem.GetValidFileName(path, name, Util.GetExtensionByType(ProjectItemType.Palette));
+
+        ProjectItem newElement = new()
+        {
+            DisplayName = name,
+            IsFolder = false,
+            IsRoot = false,
+            Type = ProjectItemType.Palette
+        };
+
+        SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new CreateNewElementHistoryAction(newElement));
+
+        SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
+
+        ProjectItemFileSystem.CreateFileElement(newElement, path, name);
+
+        if (newElement.FileHandler?.FileModel is PaletteModel paletteModel)
+        {
+            int[] colorList = paletteModel.Colors;
+
+            int colorIndex = 0;
+            foreach (Color color in colorArray)
+            {
+                colorList[colorIndex] = PaletteUtils.ConvertColorToInt(color);
+                colorIndex++;
+            }
+
+            paletteModel.Colors = colorList;
+
+            newElement.FileHandler?.Save();
+
+            SignalManager.Get<PaletteCreatedSuccessfullySignal>().Dispatch(paletteModel);
         }
     }
 

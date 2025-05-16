@@ -22,6 +22,8 @@ public class BanksViewModel : ItemViewModel
     private string _selectedSpritePatternFormat = string.Empty;
     private string _tileSetPath = string.Empty;
     private string _tileSetId = string.Empty;
+    private string _palettePath = string.Empty;
+    private string _paletteId = string.Empty;
     private int _selectedTileSet;
     private FileModelVO[]? _tileSets;
     private ImageSource? _pTImage;
@@ -61,6 +63,7 @@ public class BanksViewModel : ItemViewModel
     public GoToProjectItemCommand GoToProjectItemCommand { get; } = new();
     public DeleteBankSpriteCommand DeleteBankSpriteCommand { get; } = new();
     public ObtainTransparentColorCommand ObtainTransparentColorCommand { get; } = new();
+    public GeneratePaletteFromBankCommand GeneratePaletteFromBankCommand { get; } = new();
     public MoveUpSelectedSpriteElement MoveUpSelectedSpriteElement { get; } = new();
     public MoveDownSelectedSpriteElementCommand MoveDownSelectedSpriteElement { get; } = new();
     public OpenColorPickerCommand ActivatePickColorCommand { get; } = new();
@@ -135,6 +138,28 @@ public class BanksViewModel : ItemViewModel
             _tileSetId = value;
 
             OnPropertyChanged("TileSetId");
+        }
+    }
+
+    public string PalettePath
+    {
+        get => _palettePath;
+        set
+        {
+            _palettePath = value;
+
+            OnPropertyChanged("PalettePath");
+        }
+    }
+
+    public string PaletteId
+    {
+        get => _paletteId;
+        set
+        {
+            _paletteId = value;
+
+            OnPropertyChanged("PaletteId");
         }
     }
 
@@ -450,11 +475,13 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
         SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
         SignalManager.Get<ObtainTransparentColorSignal>().Listener += OnObtainTransparentColor;
+        SignalManager.Get<GeneratePaletteFromBankSignal>().Listener += OnGeneratePaletteFromBank;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener += OnMoveUpSelectedSpriteElement;
         SignalManager.Get<SetColorFromColorPickerSignal>().Listener += OnSetColorFromColorPicker;
+        SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener += OnPaletteCreatedSuccessfully;
         #endregion
 
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -475,6 +502,8 @@ public class BanksViewModel : ItemViewModel
         Use256Colors = model.Use256Colors;
         IsBackground = model.IsBackground;
         TransparentColor = Util.GetColorFromInt(model.TransparentColor);
+
+        SetPaletteId(model.PaletteId);
 
         _doNotSave = false;
 
@@ -497,18 +526,55 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
         SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
         SignalManager.Get<ObtainTransparentColorSignal>().Listener -= OnObtainTransparentColor;
+        SignalManager.Get<GeneratePaletteFromBankSignal>().Listener -= OnGeneratePaletteFromBank;
         SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener -= OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener -= OnMoveUpSelectedSpriteElement;
         SignalManager.Get<SetColorFromColorPickerSignal>().Listener -= OnSetColorFromColorPicker;
+        SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener -= OnPaletteCreatedSuccessfully;
         #endregion
     }
 
     private void OnSetColorFromColorPicker(Control _, Color color)
     {
         TransparentColor = color;
+    }
+
+    private void OnPaletteCreatedSuccessfully(PaletteModel paletteModel)
+    {
+        SetPaletteId(paletteModel.GUID);
+
+        BankModel? model = GetModel<BankModel>();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        model.PaletteId = paletteModel.GUID;
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void SetPaletteId(string id)
+    {
+        PaletteId = id;
+
+        if (!string.IsNullOrEmpty(PaletteId))
+        {
+            FileModelVO? fileModelVO = ProjectFiles.GetFileModel(PaletteId);
+
+            if (fileModelVO != null && fileModelVO.Path != null && fileModelVO.Name != null)
+            {
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+                string itemPath = System.IO.Path.Combine(fileModelVO.Path, fileModelVO.Name);
+
+                PalettePath = itemPath[projectModel.ProjectPath.Length..];
+            }
+        }
     }
 
     private void OnMoveUpSelectedSpriteElement(int itemAtIndex)
@@ -795,6 +861,51 @@ public class BanksViewModel : ItemViewModel
         if (_cacheSelectedSpriteFromBank != null)
         {
             SelectedSpriteFromBank = _cacheSelectedSpriteFromBank;
+        }
+    }
+
+    private void OnGeneratePaletteFromBank()
+    {
+        List<Color> colorArray = new([TransparentColor]);
+
+        foreach (SpriteModel spriteModel in BankSprites)
+        {
+            _bitmapCache.TryGetValue(spriteModel.TileSetID, out WriteableBitmap? sourceBitmap);
+
+            if (sourceBitmap == null)
+            {
+                continue;
+            }
+
+            int width = 0;
+            int height = 0;
+
+            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+
+            WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
+
+            for (int y = 0; y < cropped.PixelHeight; y++)
+            {
+                for (int x = 0; x < cropped.PixelWidth; x++)
+                {
+                    Color color = cropped.GetPixel(x, y);
+
+                    if (!colorArray.Contains(color))
+                    {
+                        colorArray.Add(color);
+                    }
+                }
+            }
+        }
+
+        if (colorArray.Count > 1)
+        {
+            string? name = ProjectItem?.FileHandler?.Name;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray, Use256Colors);
+            }
         }
     }
 

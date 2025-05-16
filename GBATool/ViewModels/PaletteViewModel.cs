@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.Utils;
 using System.Windows.Media;
 
 namespace GBATool.ViewModels;
@@ -37,7 +38,7 @@ public class PaletteViewModel : ItemViewModel
             return;
         }
 
-        int colorInt = ((color.R & 0xff) << 16) | ((color.G & 0xff) << 8) | (color.B & 0xff);
+        int colorInt = PaletteUtils.ConvertColorToInt(color);
 
         int[] colorList = model.Colors;
 

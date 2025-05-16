@@ -23,7 +23,7 @@
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
@@ -61,7 +61,9 @@
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
                     <Label Margin="20,0,0,0">256 colors:</Label>
                     <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
-                    <Label Margin="20,0,0,0">Transparent Color</Label>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Label Margin="10,0,0,0">Transparent Color</Label>
                     <Button Command="{Binding ActivatePickColorCommand}" BorderThickness="0">
                         <Button.Content>
                             <Rectangle Width="20" Height="20">
@@ -77,10 +79,16 @@
                             </MultiBinding>
                         </Button.CommandParameter>
                     </Button>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Button Width="100" Content="Remove Sprite" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" />
-                    <Button Width="150" Content="Obtain Transparent Color" Command="{Binding ObtainTransparentColorCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" Margin="300,0,0,0"/>
+                    <Button Width="150" Content="Obtain Transparent Color" Command="{Binding ObtainTransparentColorCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" Margin="10,0,0,0"/>
+                    <Label Margin="20,0,0,0">Palette:</Label>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                    <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding PaletteId}">
+                        <TextBlock Name="hlPalette" 
+                                   Text="{Binding PalettePath}" 
+                                   Style="{StaticResource linkStyle}" />
+                        </Hyperlink>
+                    </TextBlock>
+                    <Button Width="100" Content="Generate palette" Command="{Binding GeneratePaletteFromBankCommand}" Margin="10,0,0,0"/>
                 </StackPanel>
                 <Grid Grid.Row="4">
                     <Grid.ColumnDefinitions>
@@ -138,6 +146,27 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    Source="/resources/down.png">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Effect">
+                                                    <Setter.Value>
+                                                        <fx:GrayscaleEffect />
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="Opacity" Value="0.5"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Button>
+                        <Button Width="40" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}">
+                            <Image Width="16" Height="16" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Source="/resources/delete.png">
                                 <Image.Style>
                                     <Style TargetType="Image">
                                         <Style.Triggers>
