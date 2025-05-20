@@ -35,7 +35,7 @@ public class TileSetViewModel : ItemViewModel
     private string _alias = string.Empty;
     private SpriteModel? _selectedSprite;
 
-    private readonly int GridVisibilityThreshold = 800;
+    private readonly int GridVisibilityThreshold = 750;
 
     #region Commands
     public PreviewMouseWheelCommand PreviewMouseWheelCommand { get; } = new();
@@ -276,13 +276,8 @@ public class TileSetViewModel : ItemViewModel
 
         ImgSource = null;
 
-        ImagePath = filePath;
-
         using ImportImageCommand command = new();
-        object?[] parameters = [2];
-        parameters[0] = filePath;
-        parameters[1] = ProjectItem;
-
+        object?[] parameters = [filePath, ProjectItem];
         command.Execute(parameters);
     }
 
@@ -592,6 +587,13 @@ public class TileSetViewModel : ItemViewModel
             return;
         }
 
+        if (ImgSource == null)
+        {
+            return;
+        }
+
+        WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(ImgSource as BitmapSource);
+
         foreach (SpriteModel sprite in model.Sprites)
         {
             if (string.IsNullOrEmpty(sprite.ID))
@@ -603,8 +605,6 @@ public class TileSetViewModel : ItemViewModel
             int height = 0;
 
             SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
-
-            WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(ImgSource as BitmapSource);
 
             WriteableBitmap cropped = writeableBmp.Crop(sprite.PosX, sprite.PosY, width, height);
 

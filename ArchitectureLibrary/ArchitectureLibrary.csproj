@@ -31,8 +31,10 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(SolutionDir)Tools\fxc.exe /T ps_2_0 /E main /Fo &quot;$(MSBuildProjectDirectory)\FXs\Shaders\GrayscaleEffect.ps&quot; &quot;$(MSBuildProjectDirectory)\FXs\Shaders\GrayscaleEffect.fx&quot;" />
+  </Target>
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)Tools\fxc.exe" /T ps_2_0 /E main /Fo"$(MSBuildProjectDirectory)\FXs\Shaders\GrayscaleEffect.ps" "$(MSBuildProjectDirectory)\FXs\Shaders\GrayscaleEffect.fx"</PreBuildEvent>
     <AssemblyTitle>ArchitectureLibrary</AssemblyTitle>
     <Product>ArchitectureLibrary</Product>
     <Copyright>Copyright ©  2018</Copyright>

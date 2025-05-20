@@ -96,7 +96,11 @@ public class ImportImageCommand : Command
             image.Save(outputImagePath, ImageFormat.Bmp);
         }
 
-        tileSet.ImagePath = outputImagePath;
+        ProjectModel project = ModelManager.Get<ProjectModel>();
+
+        string relativePath = Path.GetRelativePath(project.ProjectPath, outputImagePath);
+
+        tileSet.ImagePath = relativePath;
         tileSet.ImageWidth = image.Width;
         tileSet.ImageHeight = image.Height;
 
