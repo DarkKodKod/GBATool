@@ -1,6 +1,6 @@
 ﻿using ArchitectureLibrary.Clipboard;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class CopyElementCommand : ItemSelectedCommand
 {

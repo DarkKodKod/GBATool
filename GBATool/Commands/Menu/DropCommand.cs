@@ -10,7 +10,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class DropCommand : Command
 {

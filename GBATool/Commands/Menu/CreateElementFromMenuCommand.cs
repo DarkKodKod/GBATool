@@ -8,7 +8,7 @@ using GBATool.ViewModels;
 using System.IO;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class CreateElementFromMenuCommand : ItemSelectedCommand
 {

@@ -4,7 +4,7 @@ using GBATool.Signals;
 using System.Windows.Forms;
 using System.Windows.Media;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Palettes;
 
 public class ShowColorPaletteCommand : Command
 {

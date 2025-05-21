@@ -1,7 +1,7 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
-using GBATool.Commands;
+using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;

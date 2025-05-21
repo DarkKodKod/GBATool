@@ -6,7 +6,7 @@ using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class DuplicateElementCommand : ItemSelectedCommand
 {

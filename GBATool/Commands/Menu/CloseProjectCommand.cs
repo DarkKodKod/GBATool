@@ -4,7 +4,7 @@ using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class CloseProjectCommand : Command
 {

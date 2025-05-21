@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Utils;
 
 public class OpenLinkCommand : Command
 {

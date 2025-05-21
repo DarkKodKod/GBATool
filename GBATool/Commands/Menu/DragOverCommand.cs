@@ -7,7 +7,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class DragOverCommand : Command
 {

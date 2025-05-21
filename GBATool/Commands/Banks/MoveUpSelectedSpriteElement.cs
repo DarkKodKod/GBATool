@@ -5,7 +5,7 @@ using GBATool.Signals;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Banks;
 
 public class MoveUpSelectedSpriteElement : Command
 {

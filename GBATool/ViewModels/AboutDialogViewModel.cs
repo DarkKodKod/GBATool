@@ -1,5 +1,5 @@
 ﻿using ArchitectureLibrary.ViewModel;
-using GBATool.Commands;
+using GBATool.Commands.Utils;
 using System;
 using System.Reflection;
 

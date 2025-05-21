@@ -2,7 +2,7 @@
 using GBATool.Views;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Windows;
 
 public class ShowAboutDialogCommand : Command
 {

@@ -8,7 +8,7 @@ using GBATool.Utils;
 using GBATool.ViewModels;
 using System.IO;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class PasteElementCommand : ItemSelectedCommand
 {

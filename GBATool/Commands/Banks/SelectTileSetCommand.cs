@@ -2,7 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Banks;
 
 public class SelectTileSetCommand : Command
 {

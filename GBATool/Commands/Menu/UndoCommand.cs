@@ -1,7 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.History;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class UndoCommand : Command
 {

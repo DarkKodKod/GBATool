@@ -14,7 +14,7 @@ namespace GBATool.Building;
 
 using TileBlocks = (int width, int height);
 
-public sealed class MemoryBanks : Building<MemoryBanks>
+public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 {
     protected override string FileName { get; } = string.Empty;
 

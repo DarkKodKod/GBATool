@@ -3,7 +3,7 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class QueryContinueDragCommand : Command
 {

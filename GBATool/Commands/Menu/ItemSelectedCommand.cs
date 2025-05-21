@@ -3,7 +3,7 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.ViewModels;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class ItemSelectedCommand : Command
 {

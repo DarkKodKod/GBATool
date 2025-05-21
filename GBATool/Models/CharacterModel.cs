@@ -20,4 +20,7 @@ public class CharacterModel : AFileModel
             return _fileExtension;
         }
     }
+
+    public string PaletteID { get; set; } = string.Empty;
+    public int PaletteIndex { get; set; } = 0;
 }

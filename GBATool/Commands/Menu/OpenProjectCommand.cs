@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
+using GBATool.Commands.FileSystem;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
@@ -12,7 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class OpenProjectCommand : Command
 {

@@ -14,7 +14,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.FileSystem;
 
 public class ImportImageCommand : Command
 {

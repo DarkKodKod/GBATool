@@ -4,7 +4,7 @@ using GBATool.Signals;
 using GBATool.ViewModels;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Windows;
 
 public class TreeviewSelectedItemChangedCommand : Command
 {

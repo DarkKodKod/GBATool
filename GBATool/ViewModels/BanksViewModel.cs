@@ -1,6 +1,8 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
-using GBATool.Commands;
+using GBATool.Commands.Banks;
+using GBATool.Commands.Utils;
+using GBATool.Commands.Windows;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
@@ -886,7 +888,7 @@ public class BanksViewModel : ItemViewModel
 
             int yOffset = 0;
             int xOffset = 0;
-            
+
             loop:
             for (int y = 0; y < 8; y++)
             {

@@ -5,7 +5,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.FileSystem;
 
 public class BrowseFolderCommand : Command
 {

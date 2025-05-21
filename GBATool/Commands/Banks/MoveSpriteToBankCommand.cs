@@ -4,7 +4,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Banks;
 
 public class MoveSpriteToBankCommand : Command
 {

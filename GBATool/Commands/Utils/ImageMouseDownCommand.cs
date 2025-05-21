@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Utils;
 
 public class ImageMouseDownCommand : Command
 {

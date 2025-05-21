@@ -1,6 +1,6 @@
 ﻿namespace GBATool.Building;
 
-public sealed class TilesDefinitions : Building<TilesDefinitions>
+public sealed class BuildTilesDefinitions : Building<BuildTilesDefinitions>
 {
     protected override string FileName { get; } = "tilesdefinitions.asm";
 }

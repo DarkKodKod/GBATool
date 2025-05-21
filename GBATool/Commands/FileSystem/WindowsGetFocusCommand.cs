@@ -1,6 +1,6 @@
 ﻿using ArchitectureLibrary.Commands;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.FileSystem;
 
 public class WindowsGetFocusCommand : Command
 {

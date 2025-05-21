@@ -4,7 +4,7 @@ using GBATool.Signals;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.FileSystem;
 
 public class BrowseFileCommand : Command
 {

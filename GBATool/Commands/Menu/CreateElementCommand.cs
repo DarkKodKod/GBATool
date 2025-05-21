@@ -9,7 +9,7 @@ using GBATool.Utils;
 using GBATool.ViewModels;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class CreateElementCommand : Command
 {

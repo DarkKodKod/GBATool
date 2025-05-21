@@ -1,6 +1,8 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
-using GBATool.Commands;
+using GBATool.Commands.FileSystem;
+using GBATool.Commands.Input;
+using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;

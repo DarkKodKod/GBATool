@@ -1,7 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Utils;
 
 public class DispatchSignalCommand<T> : Command where T : ISignal, new()
 {

@@ -4,7 +4,7 @@ using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows.Controls;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Banks;
 
 public class FileModelVOSelectionChangedCommand : Command
 {

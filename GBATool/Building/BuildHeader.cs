@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GBATool.Building;
 
-public sealed class Header : Building<Header>
+public sealed class BuildHeader : Building<BuildHeader>
 {
     /*
         Header Overview:

@@ -1,5 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
-using GBATool.Commands;
+using GBATool.Commands.Menu;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Signals;

@@ -13,6 +13,8 @@ namespace GBATool.Utils;
 
 public static class Util
 {
+    public static readonly Color NullColor = Color.FromRgb(0, 0, 0);
+
     private static readonly Regex _regex = new(@"^[A-Za-z_][a-zA-Z0-9_\-\x20]*$");
 
     private const string _folderBanksKey = "folderBanks";

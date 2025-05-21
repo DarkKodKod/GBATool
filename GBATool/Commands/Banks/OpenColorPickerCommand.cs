@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Banks;
 
 public class OpenColorPickerCommand : Command
 {

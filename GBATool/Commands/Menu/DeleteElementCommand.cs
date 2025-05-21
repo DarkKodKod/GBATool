@@ -5,7 +5,7 @@ using GBATool.HistoryActions;
 using GBATool.Signals;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class DeleteElementCommand : ItemSelectedCommand
 {

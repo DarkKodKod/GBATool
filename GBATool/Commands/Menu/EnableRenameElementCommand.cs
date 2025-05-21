@@ -1,6 +1,6 @@
 ﻿using GBATool.ViewModels;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class EnableRenameElementCommand : ItemSelectedCommand
 {

@@ -5,7 +5,7 @@ using GBATool.VOs;
 using System.Windows;
 using System.Windows.Input;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Input;
 
 public class PreviewMouseMoveCommand : Command
 {

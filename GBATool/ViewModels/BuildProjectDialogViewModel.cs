@@ -1,7 +1,9 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
-using GBATool.Commands;
+using GBATool.Commands.FileSystem;
+using GBATool.Commands.Project;
+using GBATool.Commands.Utils;
 using GBATool.Models;
 using GBATool.Signals;
 using System.Windows.Controls;

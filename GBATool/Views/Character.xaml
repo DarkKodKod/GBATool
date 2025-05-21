@@ -4,12 +4,131 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GBATool.Views"
+             xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
+             xmlns:slt="clr-namespace:ArchitectureLibrary.WPF.Selectors;assembly=ArchitectureLibrary"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="720" d:DesignWidth="1050">
     <UserControl.DataContext>
         <vm:CharacterViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+        <!--DataTemplate x:Key="itemHeaderTemplate">
+            <StackPanel Orientation="Horizontal" Height="21" Width="100">
+                <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
+                    <TextBlock Name="txtDisplayName" 
+                               Width="80" 
+                               Text="{Binding Header}"/>
+                </ContentControl>
+                <TextBox Name="editableTextBox" Visibility="Collapsed" MinWidth="80" 
+                        Text="{Binding Header, UpdateSourceTrigger=LostFocus}"
+                        LostFocus="EditableTextBox_LostFocus"
+                        IsVisibleChanged="EditableTextBox_IsVisibleChanged"
+                        KeyDown="EditableTextBox_KeyDown"/>
+                <Image Source="/resources/tab_cross.png" Width="10" Height="10" ToolTip="Delete animation">
+                    <i:Interaction.Behaviors>
+                        <behaviors:EventToCommandBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.CharacterCloseTabCommand}" Event="MouseUp" PassArguments="True" />
+                    </i:Interaction.Behaviors>
+                </Image>
+            </StackPanel>
+            <DataTemplate.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsInEditMode}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter Property="Visibility" TargetName="editableTextBox" Value="Visible" />
+                        <Setter Property="Visibility" TargetName="txtDisplayName" Value="Collapsed" />
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate-->
+        <!--DataTemplate x:Key="itemContentTemplate">
+            <UserControl Content="{Binding Content}" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </DataTemplate>
+        <DataTemplate x:Key="newTabButtonHeaderTemplate">
+            <Image Source="/resources/tab_plus.png" 
+                   Width="16" Height="16" 
+                   ToolTip="New animation">
+                <i:Interaction.Behaviors>
+                    <behaviors:EventToCommandBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.CharacterNewTabCommand}" Event="MouseUp" PassArguments="True" />
+                </i:Interaction.Behaviors>
+            </Image>
+        </DataTemplate>
+        <DataTemplate x:Key="newTabButtonContentTemplate">
+            <Grid/>
+        </DataTemplate-->
+        <!--slt:TemplateSelector x:Key="headerTemplateSelector"
+                              NewButtonTemplate="{StaticResource newTabButtonHeaderTemplate}"
+                              ItemTemplate="{StaticResource itemHeaderTemplate}"/>
+        <slt:TemplateSelector x:Key="contentTemplateSelector"
+                              NewButtonTemplate="{StaticResource newTabButtonContentTemplate}"
+                              ItemTemplate="{StaticResource itemContentTemplate}"/-->
+    </UserControl.Resources>
     <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="10"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+            <!--TabControl Grid.Column="1" Grid.Row="1" 
+                    DockPanel.Dock="Right"
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch"
+                    Name="actionTabs"
+                    PreviewMouseDown="ActionTabs_PreviewMouseDown"
+                    ItemTemplateSelector="{StaticResource headerTemplateSelector}"
+                    ContentTemplateSelector="{StaticResource contentTemplateSelector}">
+            </TabControl-->
+        </Grid>
+        <Grid Grid.Row="1">
+            <GroupBox Header="Palette">
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="500"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Width="150" Grid.Row="0"
+                                Margin="15"
+                                ItemsSource="{Binding Palettes}" 
+                                DisplayMemberPath="Name"
+                                SelectedValuePath="Index"
+                                SelectedValue="{Binding Path=SelectedPalette}">
+                        <i:Interaction.Behaviors>
+                            <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+                        </i:Interaction.Behaviors>
+                    </ComboBox>
+                    <local:PaletteViewer PaletteIndex="0" 
+                                         Padding="0,10,10,10"
+                                         x:Name="palette"
+                                         Grid.Column="1"/>
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Palette Index:" 
+                               HorizontalAlignment="Left" 
+                               VerticalAlignment="Top"/>
+                        <ComboBox HorizontalAlignment="Left" 
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding Indices}"
+                                  Width="120" 
+                                  SelectedValue="{Binding Path=SelectedIndex}"/>
+                    </StackPanel>                    
+                </Grid>
+            </GroupBox>
+        </Grid>
     </Grid>
 </UserControl>

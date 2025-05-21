@@ -3,7 +3,7 @@ using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.VOs;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.TileSet;
 
 public class SelectSpriteCommand : Command
 {

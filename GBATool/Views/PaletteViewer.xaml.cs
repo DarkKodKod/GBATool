@@ -1,5 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
-using GBATool.Commands;
+using GBATool.Commands.Palettes;
 using GBATool.Signals;
 using GBATool.Utils;
 using System.ComponentModel;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GBATool.Building;
 
-public sealed class Palettes : Building<Palettes>
+public sealed class BuildPalettes : Building<BuildPalettes>
 {
     protected override string FileName { get; } = "palettes.asm";
 

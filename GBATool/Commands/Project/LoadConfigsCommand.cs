@@ -2,7 +2,7 @@
 using ArchitectureLibrary.Model;
 using GBATool.Models;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Project;
 
 public class LoadConfigsCommand : Command
 {

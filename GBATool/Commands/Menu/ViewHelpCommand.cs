@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
+using GBATool.Commands.Utils;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class ViewHelpCommand : Command
 {

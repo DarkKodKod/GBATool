@@ -6,7 +6,7 @@ using GBATool.Signals;
 using System.IO;
 using System.Windows;
 
-namespace GBATool.Commands;
+namespace GBATool.Commands.Menu;
 
 public class CreateProjectCommand : Command
 {

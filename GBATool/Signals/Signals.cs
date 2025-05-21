@@ -80,6 +80,11 @@ public class CleanUpSpriteListSignal : Signal { }
 public class AddSpriteSignal : Signal<SpriteVO> { }
 public class DeletingSpriteSignal : Signal<SpriteVO> { }
 
+// Character
+public class ColorPaletteControlSelectedSignal : Signal<int[]> { }
+public class CleanColorPaletteControlSelectedSignal : Signal { }
+public class AnimationTabNewSignal : Signal { }
+
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
 public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
