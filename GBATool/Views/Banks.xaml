@@ -21,309 +21,305 @@
         <vm:BanksViewModel />
     </UserControl.DataContext>
     <Grid Background="LightGray">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="40"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="10"/>
-            </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1" Grid.Row="1"
+                HorizontalAlignment="Left">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="3"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Column="1" Grid.Row="1"
-                  HorizontalAlignment="Left">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="3"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="3"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
-                    <TextBlock VerticalAlignment="Center" 
-                               Text="{Binding SelectedSpritePatternFormat}" 
-                               FontWeight="Bold"
-                               Visibility="{Binding IsNotBackground, Converter={StaticResource BoolToVis}}"/>
-                    <TextBlock VerticalAlignment="Center" 
-                               Text="1D" 
-                               FontWeight="Bold"
-                               Visibility="{Binding IsBackground, Converter={StaticResource BoolToVis}}"/>
-                    <Label Margin="20,0,0,0">Is Background:</Label>
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
-                    <Label Margin="20,0,0,0">256 colors:</Label>
-                    <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Grid.Row="2">
-                    <Label Margin="10,0,0,0">Transparent Color</Label>
-                    <Button Command="{Binding ActivatePickColorCommand}" BorderThickness="0">
-                        <Button.Content>
-                            <Rectangle Width="20" Height="20">
-                                <Rectangle.Fill>
-                                    <SolidColorBrush x:Name="scColor" Color="{Binding TransparentColor, Mode=TwoWay}" />
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </Button.Content>
-                        <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource parametersConverter}">
-                                <Binding RelativeSource="{RelativeSource Self}"/>
-                                <Binding Path="Color" ElementName="scColor"/>
-                            </MultiBinding>
-                        </Button.CommandParameter>
-                    </Button>
-                    <Button Width="150" Content="Obtain Transparent Color" Command="{Binding ObtainTransparentColorCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" Margin="10,0,0,0"/>
-                    <Label Margin="20,0,0,0">Palette:</Label>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                    <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding PaletteId}">
-                        <TextBlock Name="hlPalette" 
-                                   Text="{Binding PalettePath}" 
-                                   Style="{StaticResource linkStyle}" />
-                        </Hyperlink>
-                    </TextBlock>
-                    <Button Width="100" Content="Generate palette" Command="{Binding GeneratePaletteFromBankCommand}" Margin="10,0,0,0"/>
-                </StackPanel>
-                <Grid Grid.Row="4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="10" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Column="0" 
-                                Grid.Row="0" 
-                                Orientation="Horizontal" 
-                                HorizontalAlignment="Center">
-                        <Button Width="100"
-                                ToolTip="Move Up"
-                                Command="{Binding MoveUpSelectedSpriteElement}">
-                            <Button.CommandParameter>
-                                <MultiBinding Converter="{StaticResource parametersConverter}">
-                                    <Binding Path="SelectedSpriteFromBank"/>
-                                    <Binding Path="BankSprites"/>
-                                </MultiBinding>
-                            </Button.CommandParameter>
-                            <Image Width="16" Height="16" 
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Source="/resources/up.png">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <fx:GrayscaleEffect />
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="Opacity" Value="0.5"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </Button>
-                        <Button Width="100"
-                                ToolTip="Move Down"
-                                Command="{Binding MoveDownSelectedSpriteElement}">
-                            <Button.CommandParameter>
-                                <MultiBinding Converter="{StaticResource parametersConverter}">
-                                    <Binding Path="SelectedSpriteFromBank"/>
-                                    <Binding Path="BankSprites"/>
-                                </MultiBinding>
-                            </Button.CommandParameter>
-                            <Image Width="16" Height="16" 
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Source="/resources/down.png">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <fx:GrayscaleEffect />
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="Opacity" Value="0.5"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </Button>
-                        <Button Width="40" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}">
-                            <Image Width="16" Height="16" 
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Source="/resources/delete.png">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Effect">
-                                                    <Setter.Value>
-                                                        <fx:GrayscaleEffect />
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="Opacity" Value="0.5"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                        </Button>
-                    </StackPanel>
-                    <ListBox Grid.Column="0" 
-                             MinWidth="200"
-                             Grid.Row="1"
-                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                             ItemsSource="{Binding BankSprites}"
-                             DisplayMemberPath="Alias"
-                             SelectedValue="{Binding Path=SelectedSpriteFromBank, Mode=TwoWay}">
-                    </ListBox>
-                    <Border Width="256" Height="256"
-                            Grid.Column="2"
-                            Grid.RowSpan="2"
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Left">
-                        <Border.LayoutTransform>
-                            <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
-                        </Border.LayoutTransform>
-                        <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" 
-                                Background="DarkGray"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Top">
-                            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-                                   Source="{Binding PTImage}"
-                                   Width="{Binding CanvasWidth}"
-                                   Height="{Binding CanvasHeight}"
-                                   Name="imgBank"
-                                   Stretch="UniformToFill">
-                                <i:Interaction.Behaviors>
-                                    <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
-                                </i:Interaction.Behaviors>
-                            </Image>
-                            <Border>
-                                <Border.Background>
-                                    <VisualBrush TileMode="Tile"
-				                         Viewport="0,0,8,8" ViewportUnits="Absolute" 
-				                         Viewbox="0,0,8,8" ViewboxUnits="Absolute">
-                                        <VisualBrush.Visual>
-                                            <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </Border.Background>
-                                <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" Background="Transparent">
-                                    <i:Interaction.Behaviors>
-                                        <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
-                                    </i:Interaction.Behaviors>
-                                </Canvas>
-                            </Border>
-                            <Rectangle Width="{Binding SpriteRectWidth}"
-                                       Height="{Binding SpriteRectHeight}" 
-                                       Stroke="Magenta" 
-                                       StrokeThickness="0.7"
-                                       Canvas.Top="{Binding SpriteRectTop}"
-                                       Canvas.Left="{Binding SpriteRectLeft}"
-                                       Visibility="{Binding SpriteRectVisibility}"/>
-                            <Rectangle Width="{Binding SpriteRectWidth2}"
-                                       Height="{Binding SpriteRectHeight2}" 
-                                       Stroke="Magenta" 
-                                       StrokeThickness="0.7"
-                                       Canvas.Top="{Binding SpriteRectTop2}"
-                                       Canvas.Left="{Binding SpriteRectLeft2}"
-                                       Visibility="{Binding SpriteRectVisibility2}"/>
-                            <Rectangle Width="{Binding SpriteRectWidth3}"
-                                       Height="{Binding SpriteRectHeight3}" 
-                                       Stroke="Magenta" 
-                                       StrokeThickness="0.7"
-                                       Canvas.Top="{Binding SpriteRectTop3}"
-                                       Canvas.Left="{Binding SpriteRectLeft3}"
-                                       Visibility="{Binding SpriteRectVisibility3}"/>
-                        </Canvas>
-                    </Border>
-                </Grid>
-            </Grid>
-            <StackPanel Grid.Column="2" Grid.Row="1"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-                <Button Height="32" Width="32"
-                        Command="{Binding MoveSpriteToBankCommand}">
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <Label Margin="10,0,0,0">Sprite Pattern Format:</Label>
+                <TextBlock VerticalAlignment="Center" 
+                            Text="{Binding SelectedSpritePatternFormat}" 
+                            FontWeight="Bold"
+                            Visibility="{Binding IsNotBackground, Converter={StaticResource BoolToVis}}"/>
+                <TextBlock VerticalAlignment="Center" 
+                            Text="1D" 
+                            FontWeight="Bold"
+                            Visibility="{Binding IsBackground, Converter={StaticResource BoolToVis}}"/>
+                <Label Margin="20,0,0,0">Is Background:</Label>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsBackground, Mode=TwoWay}"/>
+                <Label Margin="20,0,0,0">256 colors:</Label>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Use256Colors, Mode=TwoWay}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <Label Margin="10,0,0,0">Transparent Color</Label>
+                <Button Command="{Binding ActivatePickColorCommand}" BorderThickness="0">
+                    <Button.Content>
+                        <Rectangle Width="20" Height="20">
+                            <Rectangle.Fill>
+                                <SolidColorBrush x:Name="scColor" Color="{Binding TransparentColor, Mode=TwoWay}" />
+                            </Rectangle.Fill>
+                        </Rectangle>
+                    </Button.Content>
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="Model" />
-                            <Binding Path="SelectedSprite"/>
+                            <Binding RelativeSource="{RelativeSource Self}"/>
+                            <Binding Path="Color" ElementName="scColor"/>
                         </MultiBinding>
                     </Button.CommandParameter>
-                    <Image Width="32" Height="32" 
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Source="/resources/left_arrow.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
                 </Button>
+                <Button Width="150" Content="Obtain Transparent Color" Command="{Binding ObtainTransparentColorCommand}" CommandParameter="{Binding SelectedSpriteFromBank}" Margin="10,0,0,0"/>
+                <Label Margin="20,0,0,0">Palette:</Label>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding PaletteId}">
+                    <TextBlock Name="hlPalette" 
+                                Text="{Binding PalettePath}" 
+                                Style="{StaticResource linkStyle}" />
+                    </Hyperlink>
+                </TextBlock>
+                <Button Width="100" Content="Generate palette" Command="{Binding GeneratePaletteFromBankCommand}" Margin="10,0,0,0"/>
             </StackPanel>
-            <Grid Grid.Row="1" Grid.Column="3">
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="3"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <ComboBox Width="200"
-                              ItemsSource="{Binding TileSets}" 
-                              DisplayMemberPath="Name"
-                              SelectedValuePath="Index"
-                              SelectedValue="{Binding Path=SelectedTileSet}">
-                        <i:Interaction.Behaviors>
-                            <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
-                        </i:Interaction.Behaviors>
-                    </ComboBox>
-                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                        <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding TileSetId}">
-                            <TextBlock Name="hlText" 
-                                       Text="{Binding TileSetPath}" 
-                                       Style="{StaticResource linkStyle}" />
-                            </Hyperlink>
-                    </TextBlock>
+                <StackPanel Grid.Column="0" 
+                            Grid.Row="0" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center">
+                    <Button Width="100"
+                            ToolTip="Move Up"
+                            Command="{Binding MoveUpSelectedSpriteElement}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource parametersConverter}">
+                                <Binding Path="SelectedSpriteFromBank"/>
+                                <Binding Path="BankSprites"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                        <Image Width="16" Height="16" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Source="/resources/up.png">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <fx:GrayscaleEffect />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Opacity" Value="0.5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    <Button Width="100"
+                            ToolTip="Move Down"
+                            Command="{Binding MoveDownSelectedSpriteElement}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource parametersConverter}">
+                                <Binding Path="SelectedSpriteFromBank"/>
+                                <Binding Path="BankSprites"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                        <Image Width="16" Height="16" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Source="/resources/down.png">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <fx:GrayscaleEffect />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Opacity" Value="0.5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    <Button Width="40" Command="{Binding DeleteBankSpriteCommand}" CommandParameter="{Binding SelectedSpriteFromBank}">
+                        <Image Width="16" Height="16" 
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Source="/resources/delete.png">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <fx:GrayscaleEffect />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Opacity" Value="0.5"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
                 </StackPanel>
-                <local:SpriteList x:Name="slSprites" Grid.Row="2" DeleteButton="Hidden" />
+                <ListBox Grid.Column="0" 
+                            MinWidth="200"
+                            Grid.Row="1"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                            ItemsSource="{Binding BankSprites}"
+                            DisplayMemberPath="Alias"
+                            SelectedValue="{Binding Path=SelectedSpriteFromBank, Mode=TwoWay}">
+                </ListBox>
+                <Border Width="256" Height="256"
+                        Grid.Column="2"
+                        Grid.RowSpan="2"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left">
+                    <Border.LayoutTransform>
+                        <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
+                    </Border.LayoutTransform>
+                    <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" 
+                            Background="DarkGray"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                                Source="{Binding PTImage}"
+                                Width="{Binding CanvasWidth}"
+                                Height="{Binding CanvasHeight}"
+                                Name="imgBank"
+                                Stretch="UniformToFill">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
+                            </i:Interaction.Behaviors>
+                        </Image>
+                        <Border>
+                            <Border.Background>
+                                <VisualBrush TileMode="Tile"
+				                        Viewport="0,0,8,8" ViewportUnits="Absolute" 
+				                        Viewbox="0,0,8,8" ViewboxUnits="Absolute">
+                                    <VisualBrush.Visual>
+                                        <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Border.Background>
+                            <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" Background="Transparent">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
+                                </i:Interaction.Behaviors>
+                            </Canvas>
+                        </Border>
+                        <Rectangle Width="{Binding SpriteRectWidth}"
+                                    Height="{Binding SpriteRectHeight}" 
+                                    Stroke="Magenta" 
+                                    StrokeThickness="0.7"
+                                    Canvas.Top="{Binding SpriteRectTop}"
+                                    Canvas.Left="{Binding SpriteRectLeft}"
+                                    Visibility="{Binding SpriteRectVisibility}"/>
+                        <Rectangle Width="{Binding SpriteRectWidth2}"
+                                    Height="{Binding SpriteRectHeight2}" 
+                                    Stroke="Magenta" 
+                                    StrokeThickness="0.7"
+                                    Canvas.Top="{Binding SpriteRectTop2}"
+                                    Canvas.Left="{Binding SpriteRectLeft2}"
+                                    Visibility="{Binding SpriteRectVisibility2}"/>
+                        <Rectangle Width="{Binding SpriteRectWidth3}"
+                                    Height="{Binding SpriteRectHeight3}" 
+                                    Stroke="Magenta" 
+                                    StrokeThickness="0.7"
+                                    Canvas.Top="{Binding SpriteRectTop3}"
+                                    Canvas.Left="{Binding SpriteRectLeft3}"
+                                    Visibility="{Binding SpriteRectVisibility3}"/>
+                    </Canvas>
+                </Border>
             </Grid>
+            <ScrollViewer Grid.Row="6" Background="White">
+                <WrapPanel Margin="5" Name="wpLinks">
+                    <WrapPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Margin" Value="9,0"/>
+                            <Setter Property="Padding" Value="2,2"/>
+                        </Style>
+                    </WrapPanel.Resources>
+                </WrapPanel>
+            </ScrollViewer>
         </Grid>
-        <ScrollViewer Grid.Row="1" Background="White">
-            <WrapPanel Margin="5" Name="wpLinks">
-                <WrapPanel.Resources>
-                    <Style TargetType="{x:Type TextBlock}">
-                        <Setter Property="Margin" Value="9,0"/>
-                        <Setter Property="Padding" Value="2,2"/>
-                    </Style>
-                </WrapPanel.Resources>
-            </WrapPanel>
-        </ScrollViewer>
+        <StackPanel Grid.Column="2" Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+            <Button Height="32" Width="32"
+                    Command="{Binding MoveSpriteToBankCommand}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="Model" />
+                        <Binding Path="SelectedSprite"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Image Width="32" Height="32" 
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/resources/left_arrow.png">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="3"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <ComboBox Width="200"
+                            ItemsSource="{Binding TileSets}" 
+                            DisplayMemberPath="Name"
+                            SelectedValuePath="Index"
+                            SelectedValue="{Binding Path=SelectedTileSet}">
+                    <i:Interaction.Behaviors>
+                        <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+                    </i:Interaction.Behaviors>
+                </ComboBox>
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
+                    <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding TileSetId}">
+                        <TextBlock Name="hlText" 
+                                    Text="{Binding TileSetPath}" 
+                                    Style="{StaticResource linkStyle}" />
+                        </Hyperlink>
+                </TextBlock>
+            </StackPanel>
+            <local:SpriteList x:Name="slSprites" Grid.Row="2" DeleteButton="Hidden" />
+        </Grid>
     </Grid>
 </UserControl>
