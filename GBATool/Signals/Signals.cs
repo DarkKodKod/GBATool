@@ -84,6 +84,10 @@ public class DeletingSpriteSignal : Signal<SpriteVO> { }
 public class ColorPaletteControlSelectedSignal : Signal<int[]> { }
 public class CleanColorPaletteControlSelectedSignal : Signal { }
 public class AnimationTabNewSignal : Signal { }
+public class RenamedAnimationTabSignal : Signal<string> { }
+public class AnimationTabDeletedSignal : Signal<ActionTabItem> { }
+public class SwitchCharacterFrameViewSignal : Signal<string, int> { }
+public class UpdateCharacterImageSignal : Signal { }
 
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }

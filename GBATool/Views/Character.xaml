@@ -17,7 +17,7 @@
     <UserControl.Resources>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
         <cv:ParametersConverter x:Key="parametersConverter"/>
-        <!--DataTemplate x:Key="itemHeaderTemplate">
+        <DataTemplate x:Key="itemHeaderTemplate">
             <StackPanel Orientation="Horizontal" Height="21" Width="100">
                 <ContentControl MouseDoubleClick="ContentControl_MouseDoubleClick">
                     <TextBlock Name="txtDisplayName" 
@@ -46,8 +46,8 @@
                     </MultiDataTrigger.Setters>
                 </MultiDataTrigger>
             </DataTemplate.Triggers>
-        </DataTemplate-->
-        <!--DataTemplate x:Key="itemContentTemplate">
+        </DataTemplate>
+        <DataTemplate x:Key="itemContentTemplate">
             <UserControl Content="{Binding Content}" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         </DataTemplate>
         <DataTemplate x:Key="newTabButtonHeaderTemplate">
@@ -61,13 +61,13 @@
         </DataTemplate>
         <DataTemplate x:Key="newTabButtonContentTemplate">
             <Grid/>
-        </DataTemplate-->
-        <!--slt:TemplateSelector x:Key="headerTemplateSelector"
+        </DataTemplate>
+        <slt:TemplateSelector x:Key="headerTemplateSelector"
                               NewButtonTemplate="{StaticResource newTabButtonHeaderTemplate}"
                               ItemTemplate="{StaticResource itemHeaderTemplate}"/>
         <slt:TemplateSelector x:Key="contentTemplateSelector"
                               NewButtonTemplate="{StaticResource newTabButtonContentTemplate}"
-                              ItemTemplate="{StaticResource itemContentTemplate}"/-->
+                              ItemTemplate="{StaticResource itemContentTemplate}"/>
     </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.RowDefinitions>
@@ -85,15 +85,15 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="10"/>
             </Grid.RowDefinitions>
-            <!--TabControl Grid.Column="1" Grid.Row="1" 
-                    DockPanel.Dock="Right"
-                    HorizontalAlignment="Stretch" 
-                    VerticalAlignment="Stretch"
-                    Name="actionTabs"
-                    PreviewMouseDown="ActionTabs_PreviewMouseDown"
-                    ItemTemplateSelector="{StaticResource headerTemplateSelector}"
-                    ContentTemplateSelector="{StaticResource contentTemplateSelector}">
-            </TabControl-->
+            <TabControl Grid.Column="1" Grid.Row="1" 
+                        DockPanel.Dock="Right"
+                        HorizontalAlignment="Stretch" 
+                        VerticalAlignment="Stretch"
+                        Name="actionTabs"
+                        PreviewMouseDown="ActionTabs_PreviewMouseDown"
+                        ItemTemplateSelector="{StaticResource headerTemplateSelector}"
+                        ContentTemplateSelector="{StaticResource contentTemplateSelector}">
+            </TabControl>
         </Grid>
         <Grid Grid.Row="1">
             <GroupBox Header="Palette">

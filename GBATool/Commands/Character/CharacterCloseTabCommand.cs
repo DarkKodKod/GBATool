@@ -1,4 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
+using ArchitectureLibrary.Signals;
+using GBATool.Signals;
+using GBATool.ViewModels;
 using System.Windows;
 using System.Windows.Input;
 
@@ -19,10 +22,10 @@ public class CharacterCloseTabCommand : Command
 
             FrameworkElement? source = (FrameworkElement?)args?.OriginalSource;
 
-            //if (source?.DataContext is ActionTabItem tabItem)
-            //{
-            //    SignalManager.Get<AnimationTabDeletedSignal>().Dispatch(tabItem);
-            //}
+            if (source?.DataContext is ActionTabItem tabItem)
+            {
+                SignalManager.Get<AnimationTabDeletedSignal>().Dispatch(tabItem);
+            }
         }
     }
 }

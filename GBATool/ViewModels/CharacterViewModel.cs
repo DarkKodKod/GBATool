@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
+using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
 using GBATool.FileSystem;
@@ -6,11 +7,15 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace GBATool.ViewModels;
 
 public class CharacterViewModel : ItemViewModel
 {
+    private ObservableCollection<ActionTabItem>? _tabs;
     private bool _doNotSavePalettes = false;
     private FileModelVO[]? _palettes;
     private int _selectedPalette = -1;
@@ -24,6 +29,21 @@ public class CharacterViewModel : ItemViewModel
     #endregion
 
     #region get/set
+    public ObservableCollection<ActionTabItem> Tabs
+    {
+        get
+        {
+            if (_tabs == null)
+            {
+                _tabs = new ObservableCollection<ActionTabItem>();
+                IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(_tabs);
+                itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
+            }
+
+            return _tabs;
+        }
+    }
+
     public int[] Indices
     {
         get { return _indices; }
@@ -98,6 +118,25 @@ public class CharacterViewModel : ItemViewModel
 
         Indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
+        #region Signals
+        SignalManager.Get<AnimationTabDeletedSignal>().Listener += OnAnimationTabDeleted;
+        SignalManager.Get<AnimationTabNewSignal>().Listener += OnAnimationTabNew;
+        SignalManager.Get<RenamedAnimationTabSignal>().Listener += OnRenamedAnimationTab;
+        SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener += OnSwitchCharacterFrameView;
+        SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener += OnColorPaletteControlSelected;
+        SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
+        #endregion
+
+        PopulateTabs();
+
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tab.Content?.DataContext is AActivate vm)
+            {
+                vm.OnActivate();
+            }
+        }
+
         _doNotSavePalettes = true;
 
         CharacterModel? model = GetModel();
@@ -115,11 +154,110 @@ public class CharacterViewModel : ItemViewModel
     public override void OnDeactivate()
     {
         base.OnDeactivate();
+
+        #region Signals
+        SignalManager.Get<AnimationTabDeletedSignal>().Listener -= OnAnimationTabDeleted;
+        SignalManager.Get<AnimationTabNewSignal>().Listener -= OnAnimationTabNew;
+        SignalManager.Get<RenamedAnimationTabSignal>().Listener -= OnRenamedAnimationTab;
+        SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener += OnSwitchCharacterFrameView;
+        SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener -= OnColorPaletteControlSelected;
+        SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
+        #endregion
+
+        foreach (ActionTabItem tab in Tabs)
+        {
+            //if (tab.Content is CharacterAnimationView animationView)
+            //{
+            //    animationView.OnDeactivate();
+            //}
+
+            //if (tab.Content?.DataContext is AActivate vm)
+            //{
+            //    vm.OnDeactivate();
+            //}
+        }
+    }
+
+    private void OnUpdateCharacterImage()
+    {
+        //
+    }
+
+    private void OnColorPaletteControlSelected(int[] obj)
+    {
+        //
+    }
+
+    private void OnSwitchCharacterFrameView(string arg1, int arg2)
+    {
+        //
+    }
+
+    private void OnRenamedAnimationTab(string obj)
+    {
+        //
+    }
+
+    private void OnAnimationTabNew()
+    {
+        //
+    }
+
+    private void OnAnimationTabDeleted(ActionTabItem item)
+    {
+        //
     }
 
     public CharacterModel? GetModel()
     {
         return ProjectItem?.FileHandler?.FileModel is CharacterModel model ? model : null;
+    }
+
+    public void PopulateTabs()
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        //foreach (CharacterAnimation animation in model.Animations)
+        //{
+        //    if (string.IsNullOrEmpty(animation.ID))
+        //    {
+        //        continue;
+        //    }
+
+        //    AddNewAnimation(animation.ID, animation.Name);
+        //}
+    }
+
+    private void AddNewAnimation(string id, string animationName)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+            return;
+
+        //CharacterAnimationView animationView = new();
+        //((CharacterAnimationViewModel)animationView.DataContext).CharacterModel = model;
+        //((CharacterAnimationViewModel)animationView.DataContext).FileHandler = ProjectItem?.FileHandler;
+        //((CharacterAnimationViewModel)animationView.DataContext).TabID = id;
+
+        //CharacterFrameEditorView frameView = new();
+        //((CharacterFrameEditorViewModel)frameView.DataContext).CharacterModel = model;
+        //((CharacterFrameEditorViewModel)frameView.DataContext).FileHandler = ProjectItem?.FileHandler;
+        //((CharacterFrameEditorViewModel)frameView.DataContext).TabID = id;
+
+        //Tabs.Add(new ActionTabItem
+        //{
+        //    ID = id,
+        //    Header = animationName,
+        //    Content = animationView,
+        //    FramesView = animationView,
+        //    PixelsView = frameView
+        //});
     }
 
     private void LoadPalette(CharacterModel model)
