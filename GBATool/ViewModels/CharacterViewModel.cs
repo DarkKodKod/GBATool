@@ -5,7 +5,9 @@ using GBATool.Commands.Character;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.Views;
 using GBATool.VOs;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -35,7 +37,7 @@ public class CharacterViewModel : ItemViewModel
         {
             if (_tabs == null)
             {
-                _tabs = new ObservableCollection<ActionTabItem>();
+                _tabs = [];
                 IEditableCollectionView itemsView = (IEditableCollectionView)CollectionViewSource.GetDefaultView(_tabs);
                 itemsView.NewItemPlaceholderPosition = NewItemPlaceholderPosition.AtEnd;
             }
@@ -166,46 +168,207 @@ public class CharacterViewModel : ItemViewModel
 
         foreach (ActionTabItem tab in Tabs)
         {
-            //if (tab.Content is CharacterAnimationView animationView)
-            //{
-            //    animationView.OnDeactivate();
-            //}
+            if (tab.Content is CharacterAnimationView animationView)
+            {
+                animationView.OnDeactivate();
+            }
 
-            //if (tab.Content?.DataContext is AActivate vm)
-            //{
-            //    vm.OnDeactivate();
-            //}
+            if (tab.Content?.DataContext is AActivate vm)
+            {
+                vm.OnDeactivate();
+            }
         }
     }
 
     private void OnUpdateCharacterImage()
     {
-        //
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tab.FramesView is CharacterAnimationView frameView)
+            {
+                if (frameView.DataContext is CharacterAnimationViewModel viewModel)
+                {
+                    viewModel.LoadFrameImage();
+                }
+
+                foreach (CharacterFrameView frame in frameView.FrameViewList)
+                {
+                    frame.OnActivate();
+                }
+            }
+        }
     }
 
-    private void OnColorPaletteControlSelected(int[] obj)
+    private void OnColorPaletteControlSelected(int[] colors)
     {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        if (_doNotSavePalettes)
+        {
+            return;
+        }
+
+        //        int colorInt = ((color.R & 0xff) << 16) | ((color.G & 0xff) << 8) | (color.B & 0xff);
         //
+        //        int prevColorInt = 0;
+        //
+        //        CharacterModel? model = GetModel();
+        //
+        //        if (model == null)
+        //            return;
+        //
+        //        string paletteId = model.PaletteIDs[(int)paletteIndex];
+        //
+        //        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(paletteId);
+        //        if (paletteModel != null)
+        //        {
+        //            switch (colorPosition)
+        //            {
+        //                case 0:
+        //                    prevColorInt = paletteModel.Color0;
+        //                    paletteModel.Color0 = colorInt;
+        //                    break;
+        //                case 1:
+        //                    prevColorInt = paletteModel.Color1;
+        //                    paletteModel.Color1 = colorInt;
+        //                    break;
+        //                case 2:
+        //                    prevColorInt = paletteModel.Color2;
+        //                    paletteModel.Color2 = colorInt;
+        //                    break;
+        //                case 3:
+        //                    prevColorInt = paletteModel.Color3;
+        //                    paletteModel.Color3 = colorInt;
+        //                    break;
+        //            }
+        //
+        //            ProjectFiles.SaveModel(paletteId, paletteModel);
+        //        }
+        //
+        //        Color prevColor = Util.GetColorFromInt(prevColorInt);
+        //
+        //        AdjustPaletteCache(paletteIndex, colorPosition, prevColor, color);
+
+        SignalManager.Get<UpdateCharacterImageSignal>().Dispatch();
     }
 
-    private void OnSwitchCharacterFrameView(string arg1, int arg2)
+    private void OnSwitchCharacterFrameView(string tabId, int frameIndex)
     {
-        //
+        if (!IsActive)
+        {
+            return;
+        }
+
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tab.ID == tabId)
+            {
+                tab.SwapContent(tabId, frameIndex);
+
+                if (tab.Content is CharacterAnimationView frameView)
+                {
+                    foreach (CharacterFrameView frame in frameView.FrameViewList)
+                    {
+                        frame.OnActivate();
+                    }
+                }
+
+                return;
+            }
+        }
     }
 
     private void OnRenamedAnimationTab(string obj)
     {
-        //
+        if (!IsActive)
+        {
+            return;
+        }
+
+        Save();
     }
 
     private void OnAnimationTabNew()
     {
-        //
+        if (!IsActive)
+        {
+            return;
+        }
+
+        string newTabName = "Animation_" + (Tabs.Count + 1);
+
+        AddNewAnimation(Guid.NewGuid().ToString(), newTabName);
+
+        Save();
     }
 
-    private void OnAnimationTabDeleted(ActionTabItem item)
+    private void OnAnimationTabDeleted(ActionTabItem tabItem)
     {
-        //
+        if (!IsActive)
+        {
+            return;
+        }
+
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tab == tabItem)
+            {
+                _ = Tabs.Remove(tab);
+
+                Save();
+
+                return;
+            }
+        }
+    }
+
+    private void Save()
+    {
+        CharacterModel? model = GetModel();
+
+        if (model != null)
+        {
+            int index = 0;
+
+            foreach (ActionTabItem tab in Tabs)
+            {
+                if (model.Animations.Count <= index)
+                {
+                    model.Animations.Add(new CharacterAnimation());
+                }
+
+                CharacterAnimationView? view = tab.FramesView as CharacterAnimationView;
+                CharacterAnimationViewModel? viewModel = view?.DataContext as CharacterAnimationViewModel;
+
+                model.Animations[index].ID = tab.ID;
+                model.Animations[index].Name = tab.Header;
+
+                if (viewModel != null)
+                    model.Animations[index].Speed = viewModel.Speed;
+
+                CollisionInfo collInfo = model.Animations[index].CollisionInfo;
+
+                if (viewModel != null)
+                {
+                    collInfo.Width = viewModel.CollisionWidth;
+                    collInfo.Height = viewModel.CollisionHeight;
+                    collInfo.OffsetX = viewModel.CollisionOffsetX;
+                    collInfo.OffsetY = viewModel.CollisionOffsetY;
+                }
+
+                index++;
+            }
+
+            for (int i = index; i < model.Animations.Count; ++i)
+            {
+                model.Animations[i].ID = string.Empty;
+            }
+
+            ProjectItem?.FileHandler?.Save();
+        }
     }
 
     public CharacterModel? GetModel()
@@ -222,15 +385,15 @@ public class CharacterViewModel : ItemViewModel
             return;
         }
 
-        //foreach (CharacterAnimation animation in model.Animations)
-        //{
-        //    if (string.IsNullOrEmpty(animation.ID))
-        //    {
-        //        continue;
-        //    }
+        foreach (CharacterAnimation animation in model.Animations)
+        {
+            if (string.IsNullOrEmpty(animation.ID))
+            {
+                continue;
+            }
 
-        //    AddNewAnimation(animation.ID, animation.Name);
-        //}
+            AddNewAnimation(animation.ID, animation.Name);
+        }
     }
 
     private void AddNewAnimation(string id, string animationName)
@@ -240,24 +403,24 @@ public class CharacterViewModel : ItemViewModel
         if (model == null)
             return;
 
-        //CharacterAnimationView animationView = new();
-        //((CharacterAnimationViewModel)animationView.DataContext).CharacterModel = model;
-        //((CharacterAnimationViewModel)animationView.DataContext).FileHandler = ProjectItem?.FileHandler;
-        //((CharacterAnimationViewModel)animationView.DataContext).TabID = id;
+        CharacterAnimationView animationView = new();
+        ((CharacterAnimationViewModel)animationView.DataContext).CharacterModel = model;
+        ((CharacterAnimationViewModel)animationView.DataContext).FileHandler = ProjectItem?.FileHandler;
+        ((CharacterAnimationViewModel)animationView.DataContext).TabID = id;
 
-        //CharacterFrameEditorView frameView = new();
-        //((CharacterFrameEditorViewModel)frameView.DataContext).CharacterModel = model;
-        //((CharacterFrameEditorViewModel)frameView.DataContext).FileHandler = ProjectItem?.FileHandler;
-        //((CharacterFrameEditorViewModel)frameView.DataContext).TabID = id;
+        CharacterFrameEditorView frameView = new();
+        ((CharacterFrameEditorViewModel)frameView.DataContext).CharacterModel = model;
+        ((CharacterFrameEditorViewModel)frameView.DataContext).FileHandler = ProjectItem?.FileHandler;
+        ((CharacterFrameEditorViewModel)frameView.DataContext).TabID = id;
 
-        //Tabs.Add(new ActionTabItem
-        //{
-        //    ID = id,
-        //    Header = animationName,
-        //    Content = animationView,
-        //    FramesView = animationView,
-        //    PixelsView = frameView
-        //});
+        Tabs.Add(new ActionTabItem
+        {
+            ID = id,
+            Header = animationName,
+            Content = animationView,
+            FramesView = animationView,
+            PixelsView = frameView
+        });
     }
 
     private void LoadPalette(CharacterModel model)

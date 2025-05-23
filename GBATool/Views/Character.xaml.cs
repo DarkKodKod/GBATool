@@ -20,6 +20,8 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
+            actionTabs.ItemsSource = vmCharacterModel.Tabs;
+
             #region Signals
             SignalManager.Get<CleanColorPaletteControlSelectedSignal>().Listener += OnCleanColorPaletteControlSelected;
             SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener += OnColorPaletteControlSelected;

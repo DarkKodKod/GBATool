@@ -12,7 +12,7 @@
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              d:DesignHeight="720" d:DesignWidth="1050">
     <UserControl.DataContext>
-        <vm:CharacterViewModel />
+        <vm:CharacterViewModel x:Name="vmCharacterModel"/>
     </UserControl.DataContext>
     <UserControl.Resources>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />

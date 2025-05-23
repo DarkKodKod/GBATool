@@ -18,3 +18,11 @@ public enum SpriteSize
     Size10 = 2,
     Size11 = 3
 }
+
+public enum SpriteProperties
+{
+    FlipX,
+    FlipY,
+    PaletteIndex,
+    BackBackground
+}

@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="GBATool.Views.CharacterFrameEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GBATool.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
+             mc:Ignorable="d" 
+             xmlns:vm="clr-namespace:GBATool.ViewModels"
+             d:DesignHeight="720" d:DesignWidth="1050">
+    <UserControl.DataContext>
+        <vm:CharacterFrameEditorViewModel />
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <cv:ParametersConverter x:Key="parametersConverter"/>
+    </UserControl.Resources>
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" ToolTip="Back to frames view"
+                Width="80"
+                Height="30"
+                Margin="30,0,0,0"
+                HorizontalAlignment="Left"
+                Command="{Binding SwitchCharacterFrameViewCommand}">
+            <Button.CommandParameter>
+                <MultiBinding Converter="{StaticResource parametersConverter}">
+                    <Binding Path="TabID" />
+                    <Binding Path="FrameIndex" />
+                </MultiBinding>
+            </Button.CommandParameter>
+            <Image Width="16" Height="16" 
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Source="/resources/play.png">
+                <Image.RenderTransform>
+                    <ScaleTransform ScaleX="-1"/>
+                </Image.RenderTransform>
+                <Image.RenderTransformOrigin>
+                    <Point X="0.5"/>
+                </Image.RenderTransformOrigin>
+            </Image>
+        </Button>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Column="0" Header="Animation Frame" Margin="10" Padding="10">
+                <local:FrameView x:Name="frameView" />
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Banks" Margin="10" Padding="10">
+                <Grid HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="3"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <ComboBox Width="200"
+                                  ItemsSource="{Binding Banks}" 
+                                  DisplayMemberPath="Name"
+                                  SelectedValuePath="Index"
+                                  SelectedValue="{Binding Path=SelectedBank}">
+                            <i:Interaction.Behaviors>
+                                <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+                            </i:Interaction.Behaviors>
+                        </ComboBox>
+                    </StackPanel>
+                    <local:BankViewerView 
+                        Grid.Row="2"
+                        Width="510"
+                        Height="510"
+                        x:Name="bankViewer"
+                        Scale="4"
+                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>

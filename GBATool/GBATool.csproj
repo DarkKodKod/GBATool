@@ -50,11 +50,19 @@
     <None Remove="Resources\new_project.png" />
     <None Remove="Resources\open_folder.png" />
     <None Remove="Resources\open_project.png" />
+    <None Remove="Resources\paint.png" />
     <None Remove="Resources\palette.png" />
     <None Remove="Resources\paste.png" />
     <None Remove="Resources\pattern_table.png" />
+    <None Remove="Resources\pause.png" />
+    <None Remove="Resources\play.png" />
+    <None Remove="Resources\previous_frame.png" />
     <None Remove="Resources\redo.png" />
+    <None Remove="Resources\select.png" />
     <None Remove="Resources\sprite_cross.png" />
+    <None Remove="Resources\stop.png" />
+    <None Remove="Resources\tab_cross.png" />
+    <None Remove="Resources\tab_plus.png" />
     <None Remove="Resources\tileset.png" />
     <None Remove="Resources\undo.png" />
     <None Remove="Resources\up.png" />
@@ -183,6 +191,9 @@
     <Resource Include="Resources\open_project.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\paint.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\palette.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -192,10 +203,31 @@
     <Resource Include="Resources\pattern_table.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\pause.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\play.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\previous_frame.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\redo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\select.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\sprite_cross.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\stop.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\tab_cross.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\tab_plus.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\tileset.png">

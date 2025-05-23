@@ -1,6 +1,7 @@
 ﻿using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Signals;
+using GBATool.Views;
 using System.Windows.Controls;
 
 namespace GBATool.ViewModels;
@@ -53,47 +54,47 @@ public class ActionTabItem : ViewModel
     {
         if (Content != FramesView)
         {
-            //if (Content is CharacterFrameEditorView characterView)
-            //{
-            //    CharacterFrameEditorViewModel? currentFrameViewModel = characterView.DataContext as CharacterFrameEditorViewModel;
+            if (Content is CharacterFrameEditorView characterView)
+            {
+                CharacterFrameEditorViewModel? currentFrameViewModel = characterView.DataContext as CharacterFrameEditorViewModel;
 
-            //    currentFrameViewModel?.OnDeactivate();
-            //}
+                currentFrameViewModel?.OnDeactivate();
+            }
 
-            //Content = FramesView;
+            Content = FramesView;
 
-            //if (Content is CharacterAnimationView animationView)
-            //{
-            //    animationView.OnActivate();
+            if (Content is CharacterAnimationView animationView)
+            {
+                animationView.OnActivate();
 
-            //    CharacterAnimationViewModel? viewModel = animationView.DataContext as CharacterAnimationViewModel;
-            //    viewModel?.OnActivate();
-            //}
+                CharacterAnimationViewModel? viewModel = animationView.DataContext as CharacterAnimationViewModel;
+                viewModel?.OnActivate();
+            }
         }
         else
         {
-            //if (Content is CharacterAnimationView animationView)
-            //{
-            //    animationView.OnDeactivate();
+            if (Content is CharacterAnimationView animationView)
+            {
+                animationView.OnDeactivate();
 
-            //    CharacterAnimationViewModel? viewModel = animationView.DataContext as CharacterAnimationViewModel;
-            //    viewModel?.OnDeactivate();
-            //}
+                CharacterAnimationViewModel? viewModel = animationView.DataContext as CharacterAnimationViewModel;
+                viewModel?.OnDeactivate();
+            }
 
-            //Content = PixelsView;
+            Content = PixelsView;
 
-            //if (Content is CharacterFrameEditorView characterView)
-            //{
-            //    CharacterFrameEditorViewModel? currentFrameViewModel = characterView.DataContext as CharacterFrameEditorViewModel;
+            if (Content is CharacterFrameEditorView characterView)
+            {
+                CharacterFrameEditorViewModel? currentFrameViewModel = characterView.DataContext as CharacterFrameEditorViewModel;
 
-            //    if (currentFrameViewModel != null)
-            //    {
-            //        currentFrameViewModel.TabID = tabId;
-            //        currentFrameViewModel.FrameIndex = frameIndex;
+                if (currentFrameViewModel != null)
+                {
+                    currentFrameViewModel.TabID = tabId;
+                    currentFrameViewModel.FrameIndex = frameIndex;
 
-            //        currentFrameViewModel.OnActivate();
-            //    }
-            //}
+                    currentFrameViewModel.OnActivate();
+                }
+            }
         }
     }
 
