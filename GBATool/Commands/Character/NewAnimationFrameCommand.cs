@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
+using System;
 
 namespace GBATool.Commands.Character;
 
@@ -10,7 +11,9 @@ public class NewAnimationFrameCommand : Command
     public override void Execute(object? parameter)
     {
         if (parameter == null)
+        {
             return;
+        }
 
         object[] values = (object[])parameter;
 
@@ -18,11 +21,13 @@ public class NewAnimationFrameCommand : Command
         string tabID = (string)values[1];
 
         if (fileHandler.FileModel is not CharacterModel model)
-            return;
-
-        for (int i = 0; i < model.Animations.Count; ++i)
         {
-            CharacterAnimation animation = model.Animations[i];
+            return;
+        }
+
+        foreach (var item in model.Animations)
+        {
+            CharacterAnimation animation = item.Value;
 
             if (animation.ID == tabID)
             {
@@ -30,15 +35,14 @@ public class NewAnimationFrameCommand : Command
 
                 FrameModel frame = new()
                 {
-                    Tiles = [],
-                    FixToGrid = true
+                    ID = Guid.NewGuid().ToString(),
                 };
 
-                animation.Frames.Add(frame);
+                animation.Frames.Add(frame.ID, frame);
 
                 fileHandler.Save();
 
-                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(tabID);
+                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(tabID, frame.ID);
 
                 return;
             }

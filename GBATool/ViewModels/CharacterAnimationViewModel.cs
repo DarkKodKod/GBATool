@@ -18,6 +18,7 @@ public class CharacterAnimationViewModel : ViewModel
     private float _speed = 0.1f;
     private bool _showCollisionBox = false;
     private string _tabID = string.Empty;
+    private string _animationID = string.Empty;
     private CharacterModel? _characterModel;
     private FileHandler? _fileHandler;
     private bool _isPlaying;
@@ -26,7 +27,7 @@ public class CharacterAnimationViewModel : ViewModel
     private double _rectangleLeft = 0.0;
     private ImageSource? _frameImage;
     private int _frameIndex;
-    private int _animationIndex = -1;
+    private string _frameID = string.Empty;
     private bool _dontSave = false;
     private DispatcherTimer? _dispatcherTimer;
     private int _collisionWidth;
@@ -36,7 +37,7 @@ public class CharacterAnimationViewModel : ViewModel
     private Visibility _rectangleVisibility = Visibility.Hidden;
     private double _rectangleWidth;
     private double _rectangleHeight;
-    private readonly Dictionary<int, ImageSource> _bitmapImages = [];
+    private readonly Dictionary<string, ImageSource> _bitmapImages = [];
 
     #region Commands
     public PauseCharacterAnimationCommand PauseCharacterAnimationCommand { get; } = new();
@@ -114,6 +115,17 @@ public class CharacterAnimationViewModel : ViewModel
         }
     }
 
+    public string FrameID
+    {
+        get { return _frameID; }
+        set
+        {
+            _frameID = value;
+
+            OnPropertyChanged("FrameID");
+        }
+    }
+
     public int FrameIndex
     {
         get
@@ -182,26 +194,26 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _collisionWidth = value;
 
-            if (_animationIndex != -1)
+            //            if (_animationIndex != -1)
+            //            {
+            //                CharacterModel? model = CharacterModel;
+
+            //                if (model != null)
             {
-                CharacterModel? model = CharacterModel;
+                //                    CollisionInfo colInfo = model.Animations[_animationIndex].CollisionInfo;
+                //
+                //                    colInfo.Width = value;
+                //
+                //                    model.Animations[_animationIndex].CollisionInfo = colInfo;
 
-                if (model != null)
+                //                   RectangleWidth = value;
+
+                if (!_dontSave)
                 {
-                    CollisionInfo colInfo = model.Animations[_animationIndex].CollisionInfo;
-
-                    colInfo.Width = value;
-
-                    model.Animations[_animationIndex].CollisionInfo = colInfo;
-
-                    RectangleWidth = value;
-
-                    if (!_dontSave)
-                    {
-                        FileHandler?.Save();
-                    }
+                    FileHandler?.Save();
                 }
             }
+            //           }
 
             OnPropertyChanged("CollisionWidth");
         }
@@ -214,26 +226,26 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _collisionHeight = value;
 
-            if (_animationIndex != -1)
+            //            if (_animationIndex != -1)
+            //            {
+            //                CharacterModel? model = CharacterModel;
+            //
+            //                if (model != null)
+            //                {
+            //                    CollisionInfo colInfo = model.Animations[_animationIndex].CollisionInfo;
+            //
+            //                    colInfo.Height = value;
+            //
+            //                    model.Animations[_animationIndex].CollisionInfo = colInfo;
+
+            RectangleHeight = value;
+
+            if (!_dontSave)
             {
-                CharacterModel? model = CharacterModel;
-
-                if (model != null)
-                {
-                    CollisionInfo colInfo = model.Animations[_animationIndex].CollisionInfo;
-
-                    colInfo.Height = value;
-
-                    model.Animations[_animationIndex].CollisionInfo = colInfo;
-
-                    RectangleHeight = value;
-
-                    if (!_dontSave)
-                    {
-                        FileHandler?.Save();
-                    }
-                }
+                FileHandler?.Save();
             }
+            //                }
+            //            }
 
             OnPropertyChanged("CollisionHeight");
         }
@@ -246,24 +258,24 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _collisionOffsetX = value;
 
-            if (_animationIndex != -1)
+            //            if (_animationIndex != -1)
+            //            {
+            //                if (CharacterModel != null)
+            //                {
+            //                    CollisionInfo colInfo = CharacterModel.Animations[_animationIndex].CollisionInfo;
+            //
+            //                    colInfo.OffsetX = value;
+            //
+            //                    CharacterModel.Animations[_animationIndex].CollisionInfo = colInfo;
+            //                }
+            //
+            //                RectangleLeft = value;
+            //
+            if (!_dontSave)
             {
-                if (CharacterModel != null)
-                {
-                    CollisionInfo colInfo = CharacterModel.Animations[_animationIndex].CollisionInfo;
-
-                    colInfo.OffsetX = value;
-
-                    CharacterModel.Animations[_animationIndex].CollisionInfo = colInfo;
-                }
-
-                RectangleLeft = value;
-
-                if (!_dontSave)
-                {
-                    FileHandler?.Save();
-                }
+                FileHandler?.Save();
             }
+            //            }
 
             OnPropertyChanged("CollisionOffsetX");
         }
@@ -276,24 +288,24 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _collisionOffsetY = value;
 
-            if (_animationIndex != -1)
+            //            if (_animationIndex != -1)
+            //            {
+            //                if (CharacterModel != null)
+            //                {
+            //                    CollisionInfo colInfo = CharacterModel.Animations[_animationIndex].CollisionInfo;
+            //
+            //                    colInfo.OffsetY = value;
+            //
+            //                    CharacterModel.Animations[_animationIndex].CollisionInfo = colInfo;
+            //                }
+            //
+            //                RectangleTop = value;
+            //
+            if (!_dontSave)
             {
-                if (CharacterModel != null)
-                {
-                    CollisionInfo colInfo = CharacterModel.Animations[_animationIndex].CollisionInfo;
-
-                    colInfo.OffsetY = value;
-
-                    CharacterModel.Animations[_animationIndex].CollisionInfo = colInfo;
-                }
-
-                RectangleTop = value;
-
-                if (!_dontSave)
-                {
-                    FileHandler?.Save();
-                }
+                FileHandler?.Save();
             }
+            //            }
 
             OnPropertyChanged("CollisionOffsetY");
         }
@@ -308,23 +320,23 @@ public class CharacterAnimationViewModel : ViewModel
             {
                 _speed = value;
 
-                if (_dispatcherTimer != null)
-                {
-                    _dispatcherTimer.Interval = TimeSpan.FromSeconds(Speed);
-                }
+                //                if (_dispatcherTimer != null)
+                //                {
+                //                    _dispatcherTimer.Interval = TimeSpan.FromSeconds(Speed);
+                //                }
+                //
+                //                if (_animationIndex != -1)
+                //                {
+                //                    if (CharacterModel != null)
+                //                    {
+                //                        CharacterModel.Animations[_animationIndex].Speed = value;
 
-                if (_animationIndex != -1)
+                if (!_dontSave)
                 {
-                    if (CharacterModel != null)
-                    {
-                        CharacterModel.Animations[_animationIndex].Speed = value;
-
-                        if (!_dontSave)
-                        {
-                            FileHandler?.Save();
-                        }
-                    }
+                    FileHandler?.Save();
                 }
+                //                    }
+                //                }
 
                 OnPropertyChanged("Speed");
             }
@@ -369,51 +381,36 @@ public class CharacterAnimationViewModel : ViewModel
         SignalManager.Get<StopCharacterAnimationSignal>().Listener += OnStopCharacterAnimation;
         SignalManager.Get<PlayCharacterAnimationSignal>().Listener += OnPlayCharacterAnimation;
         SignalManager.Get<PreviousFrameCharacterAnimationSignal>().Listener += OnPreviousFrameCharacterAnimation;
-        SignalManager.Get<DeleteAnimationFrameSignal>().Listener += OnDeleteAnimationFrame;
         #endregion
 
         _dontSave = true;
 
-        for (int i = 0; i < CharacterModel?.Animations.Count; ++i)
-        {
-            CharacterAnimation animation = CharacterModel.Animations[i];
+        var model = CharacterModel;
 
-            if (animation.ID == TabID && animation.Frames != null)
+        if (model != null)
+        {
+            if (model.Animations.TryGetValue(TabID, out CharacterAnimation? animation))
             {
-                for (int j = 0; j < animation.Frames.Count; ++j)
+                foreach (var item in animation.Frames)
                 {
-                    FrameModel frame = animation.Frames[j];
-
-                    if (frame.Tiles != null)
-                    {
-                        SignalManager.Get<NewAnimationFrameSignal>().Dispatch(TabID);
-                    }
+                    SignalManager.Get<NewAnimationFrameSignal>().Dispatch(animation.ID, item.Value.ID);
                 }
-            }
-        }
 
-        IsPlaying = false;
+                _animationID = animation.ID;
 
-        FrameIndex = 0;
-        _animationIndex = -1;
+                Speed = animation.Speed;
 
-        for (int i = 0; i < CharacterModel?.Animations.Count; ++i)
-        {
-            if (CharacterModel.Animations[i].ID == TabID)
-            {
-                _animationIndex = i;
-
-                Speed = CharacterModel.Animations[_animationIndex].Speed;
-
-                CollisionInfo cInfo = CharacterModel.Animations[_animationIndex].CollisionInfo;
+                CollisionInfo cInfo = animation.CollisionInfo;
 
                 CollisionWidth = cInfo.Width;
                 CollisionHeight = cInfo.Height;
                 CollisionOffsetX = cInfo.OffsetX;
                 CollisionOffsetY = cInfo.OffsetY;
-
-                break;
             }
+
+            IsPlaying = false;
+
+            FrameIndex = 0;
         }
 
         LoadFrameImage();
@@ -438,7 +435,6 @@ public class CharacterAnimationViewModel : ViewModel
         SignalManager.Get<StopCharacterAnimationSignal>().Listener -= OnStopCharacterAnimation;
         SignalManager.Get<PlayCharacterAnimationSignal>().Listener -= OnPlayCharacterAnimation;
         SignalManager.Get<PreviousFrameCharacterAnimationSignal>().Listener -= OnPreviousFrameCharacterAnimation;
-        SignalManager.Get<DeleteAnimationFrameSignal>().Listener -= OnDeleteAnimationFrame;
         #endregion
 
         IsPlaying = false;
@@ -452,46 +448,53 @@ public class CharacterAnimationViewModel : ViewModel
 
     public void LoadFrameImage()
     {
-        if (CharacterModel == null || _animationIndex == -1)
+        CharacterModel? model = CharacterModel;
+
+        if (model == null)
         {
             return;
         }
 
-        if (!_bitmapImages.TryGetValue(FrameIndex, out _))
+        if (string.IsNullOrEmpty(_animationID))
         {
-            ImageVO? vo = CharacterUtils.CreateImage(CharacterModel, _animationIndex, FrameIndex);
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        int frameIndex = 0;
+        foreach (var item in animation.Frames)
+        {
+            if (FrameIndex == frameIndex)
+            {
+                FrameID = item.Value.ID;
+                break;
+            }
+
+            frameIndex++;
+        }
+
+        if (string.IsNullOrEmpty(FrameID))
+        {
+            return;
+        }
+
+        if (!_bitmapImages.TryGetValue(FrameID, out _))
+        {
+            ImageVO? vo = CharacterUtils.CreateImage(model, _animationID, FrameID);
 
             if (vo == null || vo.Image == null)
             {
                 return;
             }
 
-            _bitmapImages.Add(FrameIndex, vo.Image);
+            _bitmapImages.Add(FrameID, vo.Image);
         }
 
-        FrameImage = _bitmapImages[FrameIndex];
-    }
-
-    private void OnDeleteAnimationFrame(string tabID, int frameIndex)
-    {
-        if (TabID != tabID)
-        {
-            return;
-        }
-
-        CharacterModel? model = CharacterModel;
-
-        if (model != null)
-        {
-            CharacterAnimation? animation = model.Animations.Find(anim => anim.ID == tabID);
-
-            animation?.Frames.RemoveAt(frameIndex);
-
-            if (!_dontSave)
-            {
-                FileHandler?.Save();
-            }
-        }
+        FrameImage = _bitmapImages[FrameID];
     }
 
     private void OnPauseCharacterAnimation(string tabId)
@@ -579,9 +582,14 @@ public class CharacterAnimationViewModel : ViewModel
 
         CharacterModel? model = CharacterModel;
 
-        if (model != null)
+        if (model == null)
         {
-            if (FrameIndex >= model.Animations[_animationIndex].Frames.Count)
+            return;
+        }
+
+        if (model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
+        {
+            if (FrameIndex >= animation.Frames.Count)
             {
                 FrameIndex = 0;
             }
@@ -600,12 +608,15 @@ public class CharacterAnimationViewModel : ViewModel
         {
             if (model != null)
             {
-                for (int i = model.Animations[_animationIndex].Frames.Count - 1; i >= 0; --i)
+                if (model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
                 {
-                    if (model.Animations[_animationIndex].Frames[i].Tiles != null)
+                    for (int i = animation.Frames.Count - 1; i >= 0; --i)
                     {
-                        FrameIndex = i;
-                        break;
+                        //                        if (animation.Frames[i].Tiles != null)
+                        //                        {
+                        //                            FrameIndex = i;
+                        //                            break;
+                        //                        }
                     }
                 }
             }

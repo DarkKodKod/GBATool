@@ -20,12 +20,27 @@ public struct CollisionInfo
     public int OffsetY { get; set; }
 }
 
+public class CharacterTile
+{
+    public string ID { get; set; } = string.Empty;
+    public Point Point { get; set; }
+    public bool FlipX { get; set; }
+    public bool FlipY { get; set; }
+}
+
+public class FrameModel
+{
+    public string ID { get; set; } = string.Empty;
+    public Dictionary<string, CharacterTile> Tiles { get; set; } = [];
+    public string BankID { get; set; } = string.Empty;
+}
+
 public class CharacterAnimation
 {
     public string ID { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public float Speed { get; set; }
-    public List<FrameModel> Frames { get; set; } = [];
+    public Dictionary<string, FrameModel> Frames { get; set; } = [];
     public CollisionInfo CollisionInfo { get; set; }
 }
 
@@ -49,5 +64,5 @@ public class CharacterModel : AFileModel
 
     public string PaletteID { get; set; } = string.Empty;
     public int PaletteIndex { get; set; } = 0;
-    public List<CharacterAnimation> Animations { get; set; } = [];
+    public Dictionary<string, CharacterAnimation> Animations { get; set; } = [];
 }

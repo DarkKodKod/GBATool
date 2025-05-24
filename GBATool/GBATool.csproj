@@ -48,6 +48,7 @@
     <None Remove="Resources\map.png" />
     <None Remove="Resources\new_element.png" />
     <None Remove="Resources\new_project.png" />
+    <None Remove="Resources\next_frame.png" />
     <None Remove="Resources\open_folder.png" />
     <None Remove="Resources\open_project.png" />
     <None Remove="Resources\paint.png" />
@@ -183,6 +184,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\new_project.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\next_frame.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\open_folder.png">

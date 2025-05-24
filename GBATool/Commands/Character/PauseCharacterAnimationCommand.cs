@@ -24,18 +24,9 @@ public class PauseCharacterAnimationCommand : Command
 
         string tabID = (string)values[1];
 
-        foreach (CharacterAnimation anim in model.Animations)
+        if (model.Animations.TryGetValue(tabID, out CharacterAnimation? animation))
         {
-            if (anim.ID == tabID && anim.Frames != null)
-            {
-                foreach (FrameModel frame in anim.Frames)
-                {
-                    if (frame.Tiles != null)
-                    {
-                        return true;
-                    }
-                }
-            }
+            return animation.Frames.Count > 1;
         }
 
         return false;

@@ -89,8 +89,8 @@ public class RenamedAnimationTabSignal : Signal<string> { }
 public class AnimationTabDeletedSignal : Signal<ActionTabItem> { }
 public class SwitchCharacterFrameViewSignal : Signal<string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
-public class NewAnimationFrameSignal : Signal<string> { }
-public class DeleteAnimationFrameSignal : Signal<string, int> { }
+public class NewAnimationFrameSignal : Signal<string, string> { }
+public class DeleteAnimationFrameSignal : Signal<int> { }
 public class OutputSelectedQuadrantSignal : Signal<Image, WriteableBitmap, Point> { }
 public class SavePropertySignal : Signal<int, bool, bool, int, bool> { }
 public class EraseTileSignal : Signal<int> { }

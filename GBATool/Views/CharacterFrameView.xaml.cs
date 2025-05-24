@@ -1,5 +1,7 @@
 ﻿using GBATool.Commands.Character;
 using GBATool.Models;
+using GBATool.Utils;
+using GBATool.VOs;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -11,7 +13,8 @@ namespace GBATool.Views;
 /// </summary>
 public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
 {
-    private string _tabId = string.Empty;
+    private string _animationID = string.Empty;
+    private string _frameID = string.Empty;
     private int _frameIndex;
     private ImageSource? _frameImage;
     private CharacterModel? _characterModel;
@@ -28,14 +31,25 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         }
     }
 
-    public string TabID
+    public string AnimationID
     {
-        get { return _tabId; }
+        get { return _animationID; }
         set
         {
-            _tabId = value;
+            _animationID = value;
 
-            OnPropertyChanged("TabID");
+            OnPropertyChanged("AnimationID");
+        }
+    }
+
+    public string FrameID
+    {
+        get { return _frameID; }
+        set
+        {
+            _frameID = value;
+
+            OnPropertyChanged("FrameID");
         }
     }
 
@@ -79,11 +93,12 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
     }
 
-    public CharacterFrameView(string tabID, int frameIndex, FileHandler fileHandler, CharacterModel model)
+    public CharacterFrameView(string animationID, string frameID, int frameIndex, FileHandler fileHandler, CharacterModel model)
     {
         InitializeComponent();
 
-        TabID = tabID;
+        AnimationID = animationID;
+        FrameID = frameID;
         FrameIndex = frameIndex;
         FileHandler = fileHandler;
         CharacterModel = model;
@@ -103,33 +118,18 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
             return;
         }
 
-        int animationIndex = -1;
-
-        for (int i = 0; i < CharacterModel.Animations.Count; ++i)
-        {
-            if (CharacterModel.Animations[i].ID == TabID)
-            {
-                animationIndex = i;
-                break;
-            }
-        }
-
-        if (animationIndex == -1 || FrameIndex == -1)
-        {
-            return;
-        }
-        if (FrameIndex >= 64)
+        if (string.IsNullOrEmpty(AnimationID) || string.IsNullOrEmpty(FrameID))
         {
             return;
         }
 
-        //        ImageVO? vo = CharacterUtils.CreateImage(CharacterModel, animationIndex, FrameIndex, ref CharacterViewModel.GroupedPalettes);
-        //
-        //        if (vo == null || vo.Image == null)
-        //        {
-        //            return;
-        //        }
-        //
-        //        FrameImage = vo.Image;
+        ImageVO? vo = CharacterUtils.CreateImage(CharacterModel, AnimationID, FrameID);
+
+        if (vo == null || vo.Image == null)
+        {
+            return;
+        }
+
+        FrameImage = vo.Image;
     }
 }

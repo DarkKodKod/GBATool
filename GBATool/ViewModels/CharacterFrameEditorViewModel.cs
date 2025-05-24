@@ -66,11 +66,18 @@ public class CharacterFrameEditorViewModel : ViewModel
 
             OnPropertyChanged("TabID");
 
-            for (int i = 0; i < CharacterModel?.Animations.Count; ++i)
+            var model = CharacterModel;
+
+            if (model == null)
+                return;
+
+            foreach (var item in model.Animations)
             {
-                if (CharacterModel.Animations[i].ID == TabID)
+                CharacterAnimation animation = item.Value;
+
+                if (animation.ID == TabID)
                 {
-                    AnimationIndex = i;
+                    AnimationID = animation.ID;
                     break;
                 }
             }
@@ -78,7 +85,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     }
 
     public CharacterModel? CharacterModel { get; set; }
-    public int AnimationIndex { get; set; }
+    public string AnimationID { get; set; } = string.Empty;
 
     public int FrameIndex
     {

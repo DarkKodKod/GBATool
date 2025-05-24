@@ -318,6 +318,9 @@ public class CharacterViewModel : ItemViewModel
             {
                 _ = Tabs.Remove(tab);
 
+                CharacterModel? model = GetModel();
+                model?.Animations.Remove(tabItem.ID);
+
                 Save();
 
                 return;
@@ -329,46 +332,32 @@ public class CharacterViewModel : ItemViewModel
     {
         CharacterModel? model = GetModel();
 
-        if (model != null)
+        if (model == null)
         {
-            int index = 0;
-
-            foreach (ActionTabItem tab in Tabs)
-            {
-                if (model.Animations.Count <= index)
-                {
-                    model.Animations.Add(new CharacterAnimation());
-                }
-
-                CharacterAnimationView? view = tab.FramesView as CharacterAnimationView;
-                CharacterAnimationViewModel? viewModel = view?.DataContext as CharacterAnimationViewModel;
-
-                model.Animations[index].ID = tab.ID;
-                model.Animations[index].Name = tab.Header;
-
-                if (viewModel != null)
-                    model.Animations[index].Speed = viewModel.Speed;
-
-                CollisionInfo collInfo = model.Animations[index].CollisionInfo;
-
-                if (viewModel != null)
-                {
-                    collInfo.Width = viewModel.CollisionWidth;
-                    collInfo.Height = viewModel.CollisionHeight;
-                    collInfo.OffsetX = viewModel.CollisionOffsetX;
-                    collInfo.OffsetY = viewModel.CollisionOffsetY;
-                }
-
-                index++;
-            }
-
-            for (int i = index; i < model.Animations.Count; ++i)
-            {
-                model.Animations[i].ID = string.Empty;
-            }
-
-            ProjectItem?.FileHandler?.Save();
+            return;
         }
+
+        foreach (ActionTabItem tab in Tabs)
+        {
+            model.Animations[tab.ID].ID = tab.ID;
+            model.Animations[tab.ID].Name = tab.Header;
+
+            CollisionInfo collInfo = model.Animations[tab.ID].CollisionInfo;
+
+            CharacterAnimationView? view = tab.FramesView as CharacterAnimationView;
+
+            if (view?.DataContext is CharacterAnimationViewModel viewModel)
+            {
+                model.Animations[tab.ID].Speed = viewModel.Speed;
+
+                collInfo.Width = viewModel.CollisionWidth;
+                collInfo.Height = viewModel.CollisionHeight;
+                collInfo.OffsetX = viewModel.CollisionOffsetX;
+                collInfo.OffsetY = viewModel.CollisionOffsetY;
+            }
+        }
+
+        ProjectItem?.FileHandler?.Save();
     }
 
     public CharacterModel? GetModel()
@@ -385,8 +374,10 @@ public class CharacterViewModel : ItemViewModel
             return;
         }
 
-        foreach (CharacterAnimation animation in model.Animations)
+        foreach (var item in model.Animations)
         {
+            CharacterAnimation animation = item.Value;
+
             if (string.IsNullOrEmpty(animation.ID))
             {
                 continue;
@@ -421,6 +412,11 @@ public class CharacterViewModel : ItemViewModel
             FramesView = animationView,
             PixelsView = frameView
         });
+
+        if (!model.Animations.ContainsKey(id))
+        {
+            model.Animations.Add(id, new CharacterAnimation());
+        }
     }
 
     private void LoadPalette(CharacterModel model)

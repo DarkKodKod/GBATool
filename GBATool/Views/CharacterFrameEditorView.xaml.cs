@@ -3,7 +3,6 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.ViewModels;
 using GBATool.VOs;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -23,8 +22,8 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        //        bankViewer.OnActivate();
-        //        frameView.OnActivate();
+        bankViewer.OnActivate();
+        frameView.OnActivate();
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
@@ -40,8 +39,8 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
-        //        bankViewer.OnDeactivate();
-        //        frameView.OnDeactivate();
+        bankViewer.OnDeactivate();
+        frameView.OnDeactivate();
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
@@ -66,18 +65,18 @@ public partial class CharacterFrameEditorView : UserControl
             if (charModel == null)
                 return;
 
-            List<CharacterTile>? listCharacterTile = charModel.Animations[viewModel.AnimationIndex].Frames[viewModel.FrameIndex].Tiles;
-
-            if (listCharacterTile == null)
-                return;
-
-            for (int i = 0; i < listCharacterTile.Count; ++i)
-            {
-                //                frameView.SpritePropertiesX[i] = listCharacterTile[i].FlipX;
-                //                frameView.SpritePropertiesY[i] = listCharacterTile[i].FlipY;
-                //                frameView.SpritePaletteIndices[i] = (PaletteIndex)listCharacterTile[i].PaletteIndex;
-                //                frameView.SpritePropertiesBack[i] = listCharacterTile[i].BackBackground;
-            }
+            //            List<CharacterTile>? listCharacterTile = charModel.Animations[viewModel.AnimationID].Frames[viewModel.FrameIndex].Tiles;
+            //
+            //            if (listCharacterTile == null)
+            //                return;
+            //
+            //            for (int i = 0; i < listCharacterTile.Count; ++i)
+            //            {
+            //                frameView.SpritePropertiesX[i] = listCharacterTile[i].FlipX;
+            //                frameView.SpritePropertiesY[i] = listCharacterTile[i].FlipY;
+            //                frameView.SpritePaletteIndices[i] = listCharacterTile[i].PaletteIndex;
+            //                frameView.SpritePropertiesBack[i] = listCharacterTile[i].BackBackground;
+            //            }
         }
     }
 
@@ -139,27 +138,34 @@ public partial class CharacterFrameEditorView : UserControl
     {
         if (DataContext is CharacterFrameEditorViewModel viewModel)
         {
-            List<CharacterTile>? tiles = viewModel.CharacterModel?.Animations[viewModel.AnimationIndex].Frames[viewModel.FrameIndex].Tiles;
+            var model = viewModel.CharacterModel;
 
-            if (tiles?.Count <= selectedFrameTile)
+            if (model == null)
             {
-                int times = selectedFrameTile - tiles.Count + 1;
-
-                for (int i = 0; i < times; i++)
-                {
-                    tiles.Add(new CharacterTile());
-                }
+                return;
             }
 
-            if (tiles != null)
-            {
-                tiles[selectedFrameTile].BankID = string.Empty;
-                tiles[selectedFrameTile].BankTileID = string.Empty;
-            }
-
-            viewModel.FileHandler?.Save();
-
-            LoadFrameImage();
+            //            List<CharacterTile>? tiles = model.Animations[viewModel.AnimationID].Frames[viewModel.FrameIndex].Tiles;
+            //
+            //            if (tiles?.Count <= selectedFrameTile)
+            //            {
+            //                int times = selectedFrameTile - tiles.Count + 1;
+            //
+            //                for (int i = 0; i < times; i++)
+            //                {
+            //                    tiles.Add(new CharacterTile());
+            //                }
+            //            }
+            //
+            //            if (tiles != null)
+            //            {
+            //                tiles[selectedFrameTile].BankID = string.Empty;
+            //                tiles[selectedFrameTile].BankTileID = string.Empty;
+            //            }
+            //
+            //            viewModel.FileHandler?.Save();
+            //
+            //            LoadFrameImage();
         }
     }
 
@@ -167,19 +173,24 @@ public partial class CharacterFrameEditorView : UserControl
     {
         if (DataContext is CharacterFrameEditorViewModel viewModel)
         {
-            List<CharacterTile>? listCharacterTile = viewModel.CharacterModel?.Animations[viewModel.AnimationIndex].Frames[viewModel.FrameIndex].Tiles;
+            var model = viewModel.CharacterModel;
 
-            if (listCharacterTile == null)
+            if (model == null)
                 return;
 
-            listCharacterTile[selectedFrameTile].FlipX = flipX;
-            listCharacterTile[selectedFrameTile].FlipY = flipY;
-            listCharacterTile[selectedFrameTile].PaletteIndex = paletteIndex;
-            listCharacterTile[selectedFrameTile].BackBackground = backBackground;
-
-            viewModel.FileHandler?.Save();
-
-            LoadFrameImage();
+            //            List<CharacterTile>? listCharacterTile = model.Animations[viewModel.AnimationID].Frames[viewModel.FrameIndex].Tiles;
+            //
+            //            if (listCharacterTile == null)
+            //                return;
+            //
+            //            listCharacterTile[selectedFrameTile].FlipX = flipX;
+            //            listCharacterTile[selectedFrameTile].FlipY = flipY;
+            //            listCharacterTile[selectedFrameTile].PaletteIndex = paletteIndex;
+            //            listCharacterTile[selectedFrameTile].BackBackground = backBackground;
+            //
+            //            viewModel.FileHandler?.Save();
+            //
+            //            LoadFrameImage();
         }
     }
 

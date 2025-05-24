@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:GBATool.Views"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              mc:Ignorable="d" 
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <cv:ParametersConverter x:Key="parametersConverter"/>
@@ -13,8 +14,8 @@
             <MenuItem Header="Delete Frame" Command="{Binding DeleteAnimationFrameCommand}">
                 <MenuItem.CommandParameter>
                     <MultiBinding Converter="{StaticResource parametersConverter}">
-                        <Binding Path="TabID" />
-                        <Binding Path="FrameIndex" />
+                        <Binding Path="AnimationID" />
+                        <Binding Path="FrameID" />
                         <Binding Path="FileHandler" />
                     </MultiBinding>
                 </MenuItem.CommandParameter>
@@ -26,7 +27,7 @@
             ToolTip="Edit Frame">
         <Button.CommandParameter>
             <MultiBinding Converter="{StaticResource parametersConverter}">
-                <Binding Path="TabID" />
+                <Binding Path="AnimationID" />
                 <Binding Path="FrameIndex" />
             </MultiBinding>
         </Button.CommandParameter>

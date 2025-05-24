@@ -28,6 +28,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
 
     public bool[] SpritePropertiesX { get; } = new bool[64];
     public bool[] SpritePropertiesY { get; } = new bool[64];
+    public int[] SpritePaletteIndices { get; } = new int[64];
     public bool[] SpritePropertiesBack { get; } = new bool[64];
 
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,5 +1,4 @@
-﻿using GBATool.FileSystem;
-using GBATool.Models;
+﻿using GBATool.Models;
 using GBATool.VOs;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -9,18 +8,18 @@ namespace GBATool.Utils;
 
 public static class CharacterUtils
 {
-    public static ImageVO? CreateImage(CharacterModel characterModel, int animationIndex, int frameIndex)
+    public static ImageVO? CreateImage(CharacterModel characterModel, string animationID, string frameID)
     {
-        if (characterModel.Animations[animationIndex].Frames == null ||
-            characterModel.Animations[animationIndex].Frames.Count == 0)
-        {
-            return null;
-        }
-
-        if (characterModel.Animations[animationIndex].Frames[frameIndex].Tiles == null)
-        {
-            return null;
-        }
+        //        if (characterModel.Animations[animationIndex].Frames == null ||
+        //            characterModel.Animations[animationIndex].Frames.Count == 0)
+        //        {
+        //            return null;
+        //        }
+        //
+        //        if (characterModel.Animations[animationIndex].Frames[frameIndex].Tiles == null)
+        //        {
+        //            return null;
+        //        }
 
         int maxWidth = 0;
         int maxHeight = 0;
@@ -29,23 +28,23 @@ public static class CharacterUtils
 
         using (bankBitmap.GetBitmapContext())
         {
-            List<CharacterTile>? listCharacterTile = characterModel.Animations[animationIndex].Frames[frameIndex].Tiles;
-
-            if (listCharacterTile == null)
-                return null;
-
-            foreach (CharacterTile tile in listCharacterTile)
+            //            List<CharacterTile>? listCharacterTile = characterModel.Animations[animationIndex].Frames[frameIndex].Tiles;
+            //
+            ////            if (listCharacterTile == null)
+            ////                return null;
+            //
+            //            foreach (CharacterTile tile in listCharacterTile)
             {
-                if (string.IsNullOrEmpty(tile.BankID) || string.IsNullOrEmpty(tile.BankTileID))
-                {
-                    continue;
-                }
-
-                BankModel? ptModel = ProjectFiles.GetModel<BankModel>(tile.BankID);
-                if (ptModel == null)
-                {
-                    continue;
-                }
+                //                if (string.IsNullOrEmpty(tile.BankID) || string.IsNullOrEmpty(tile.BankTileID))
+                //                {
+                //                    continue;
+                //                }
+                //
+                //                BankModel? ptModel = ProjectFiles.GetModel<BankModel>(tile.BankID);
+                //                if (ptModel == null)
+                //                {
+                //                    continue;
+                //                }
 
                 //                PTTileModel bankModel = ptModel.GetTileModel(tile.BankTileID);
 
@@ -113,14 +112,14 @@ public static class CharacterUtils
     {
         Color nullColor = Util.NullColor;
 
-        BankModel? bankModel = ProjectFiles.GetModel<BankModel>(characterTile.BankID);
-
-        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(paletteId);
+        //BankModel? bankModel = ProjectFiles.GetModel<BankModel>(characterTile.BankID);
+        //
+        //PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(paletteId);
 
         Dictionary<Color, Color> colors = new() { { nullColor, nullColor } };
 
-        if (bankModel == null)
-            return colors;
+        //if (bankModel == null)
+        //    return colors;
 
         //        foreach (PTTileModel tile in bankModel.PTTiles)
         //        {

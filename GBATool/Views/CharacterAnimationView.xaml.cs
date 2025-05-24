@@ -35,16 +35,8 @@ public partial class CharacterAnimationView : UserControl
         spFrames.Children.RemoveRange(0, spFrames.Children.Count - 1);
     }
 
-    private void OnDeleteAnimationFrame(string tabID, int frameIndex)
+    private void OnDeleteAnimationFrame(int frameIndex)
     {
-        if (DataContext is CharacterAnimationViewModel viewModel)
-        {
-            if (viewModel.TabID != tabID)
-            {
-                return;
-            }
-        }
-
         spFrames.Children.RemoveAt(frameIndex);
 
         foreach (CharacterFrameView frame in FrameViewList)
@@ -68,23 +60,29 @@ public partial class CharacterAnimationView : UserControl
         }
     }
 
-    private void OnNewAnimationFrame(string tabID)
+    private void OnNewAnimationFrame(string animationID, string frameID)
     {
-        if (DataContext is CharacterAnimationViewModel viewModel)
+        if (DataContext is not CharacterAnimationViewModel viewModel)
         {
-            if (viewModel.TabID != tabID)
-            {
-                return;
-            }
-
-            if (viewModel.FileHandler == null || viewModel.CharacterModel == null)
-                return;
-
-            CharacterFrameView frame = new(tabID, spFrames.Children.Count - 1, viewModel.FileHandler, viewModel.CharacterModel);
-
-            FrameViewList.Add(frame);
-
-            spFrames.Children.Insert(spFrames.Children.Count - 1, frame);
+            return;
         }
+
+        if (viewModel.TabID != animationID)
+        {
+            return;
+        }
+
+        var model = viewModel.CharacterModel;
+
+        if (viewModel.FileHandler == null || model == null)
+        {
+            return;
+        }
+
+        CharacterFrameView frame = new(animationID, frameID, spFrames.Children.Count - 1, viewModel.FileHandler, model);
+
+        FrameViewList.Add(frame);
+
+        spFrames.Children.Insert(spFrames.Children.Count - 1, frame);
     }
 }
