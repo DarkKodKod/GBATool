@@ -96,7 +96,7 @@
             </TabControl>
         </Grid>
         <Grid Grid.Row="1">
-            <GroupBox Header="Palette">
+            <GroupBox Header="Palette" Margin="10,0,10,10">
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>

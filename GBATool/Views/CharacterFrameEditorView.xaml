@@ -47,14 +47,47 @@
             </Image>
         </Button>
         <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="360"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <GroupBox Grid.Column="0" Header="Animation Frame" Margin="10" Padding="10">
-                <local:FrameView x:Name=" " />
+            <GroupBox Grid.Column="0" Header="Animation Frame" Margin="10,0,10,0" Padding="3">
+                <local:FrameView x:Name="frameView" Grid.Row="0" />
             </GroupBox>
-            <GroupBox Grid.Column="1" Header="Banks" Margin="10" Padding="10">
+            <GroupBox Header="Collision" Grid.Row="1" Margin="10,0,10,10" Padding="3">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="1">Width:</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
+                        <TextBlock Grid.Column="0" Grid.Row="2">Height:</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
+                        <TextBlock Grid.Column="0" Grid.Row="3">Offset X:</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
+                        <TextBlock Grid.Column="0" Grid.Row="4">Offset Y:</TextBlock>
+                        <TextBox Grid.Column="1" Grid.Row="4" Height="18" Width="50" TextAlignment="Right"/>
+                    </Grid>
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Header="Banks" Margin="10" Padding="10" Grid.RowSpan="2">
                 <Grid HorizontalAlignment="Center">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
