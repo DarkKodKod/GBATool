@@ -50,7 +50,7 @@ public class ActionTabItem : ViewModel
 
     public string OldCaptionValue { get; set; } = "";
 
-    public void SwapContent(string tabId, int frameIndex)
+    public void SwapContent(string tabId, string frameId, int frameIndex)
     {
         if (Content != FramesView)
         {
@@ -91,6 +91,7 @@ public class ActionTabItem : ViewModel
                 {
                     currentFrameViewModel.TabID = tabId;
                     currentFrameViewModel.FrameIndex = frameIndex;
+                    currentFrameViewModel.FrameID = frameId;
 
                     currentFrameViewModel.OnActivate();
                 }

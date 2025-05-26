@@ -13,8 +13,9 @@ public class SwitchCharacterFrameViewCommand : Command
 
         object[] values = (object[])parameter;
         string tabID = (string)values[0];
-        int frameIndex = (int)values[1];
+        string frameID = (string)values[1];
+        int frameIndex = (int)values[2];
 
-        SignalManager.Get<SwitchCharacterFrameViewSignal>().Dispatch(tabID, frameIndex);
+        SignalManager.Get<SwitchCharacterFrameViewSignal>().Dispatch(tabID, frameID, frameIndex);
     }
 }

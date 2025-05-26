@@ -1,13 +1,9 @@
-﻿using ArchitectureLibrary.Signals;
-using ArchitectureLibrary.Utils;
-using GBATool.Commands.Utils;
+﻿using GBATool.Commands.Utils;
 using GBATool.Enums;
-using GBATool.Signals;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace GBATool.Views;
 
@@ -17,7 +13,6 @@ namespace GBATool.Views;
 public partial class FrameView : UserControl, INotifyPropertyChanged
 {
     private ImageSource? _frameImage;
-    private string _projectGridSize = "8x8";
     private Visibility _rectangleVisibility = Visibility.Hidden;
     private double _rectangleTop = 0.0;
     private double _rectangleLeft = 0.0;
@@ -25,11 +20,6 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     private bool _flipY = false;
     private bool _backBackground = false;
     private EditFrameTools _editFrameTools;
-
-    public bool[] SpritePropertiesX { get; } = new bool[64];
-    public bool[] SpritePropertiesY { get; } = new bool[64];
-    public int[] SpritePaletteIndices { get; } = new int[64];
-    public bool[] SpritePropertiesBack { get; } = new bool[64];
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -51,16 +41,6 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
 
     public int SelectedFrameTile { get; set; } = -1;
 
-    public string ProjectGridSize
-    {
-        get => _projectGridSize;
-        set
-        {
-            _projectGridSize = value;
-
-            OnPropertyChanged("ProjectGridSize");
-        }
-    }
 
     public bool BackBackground
     {
@@ -77,8 +57,6 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
                 _backBackground = value;
 
                 OnPropertyChanged("BackBackground");
-
-                SaveProperty(SpriteProperties.BackBackground, new ValueUnion { boolean = value });
             }
         }
     }
@@ -98,8 +76,6 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
                 _flipX = value;
 
                 OnPropertyChanged("FlipX");
-
-                SaveProperty(SpriteProperties.FlipX, new ValueUnion { boolean = value });
             }
         }
     }
@@ -119,8 +95,6 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
                 _flipY = value;
 
                 OnPropertyChanged("FlipY");
-
-                SaveProperty(SpriteProperties.FlipY, new ValueUnion { boolean = value });
             }
         }
     }
@@ -188,114 +162,17 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         EditFrameTools = EditFrameTools.Select;
 
         #region Signals
-        //SignalManager.Get<OutputSelectedQuadrantSignal>().Listener += OnOutputSelectedQuadrant;
-        //SignalManager.Get<CharacterPaletteIndexSignal>().Listener += OnCharacterPaletteIndex;
         #endregion
     }
 
     public void OnDeactivate()
     {
         #region Signals
-        //SignalManager.Get<OutputSelectedQuadrantSignal>().Listener -= OnOutputSelectedQuadrant;
-        //SignalManager.Get<CharacterPaletteIndexSignal>().Listener -= OnCharacterPaletteIndex;
         #endregion
-    }
-
-    private void OnCharacterPaletteIndex(int paletteIndex)
-    {
-        SaveProperty(SpriteProperties.PaletteIndex, new ValueUnion { integer = paletteIndex });
-    }
-
-    private void OnOutputSelectedQuadrant(Image sender, WriteableBitmap bitmap, Point point)
-    {
-        if (sender.Name != "imgFrame")
-        {
-            return;
-        }
-
-        RectangleLeft = point.X;
-        RectangleTop = point.Y;
-        SelectedFrameTile = ((int)point.X / 8) + ((int)point.Y / 8 * 8);
-
-        if (EditFrameTools == EditFrameTools.Select)
-        {
-            RectangleVisibility = Visibility.Visible;
-
-            FlipX = SpritePropertiesX[SelectedFrameTile];
-            FlipY = SpritePropertiesY[SelectedFrameTile];
-            BackBackground = SpritePropertiesBack[SelectedFrameTile];
-
-            //SignalManager.Get<SelectPaletteIndexSignal>().Dispatch(SpritePaletteIndices[SelectedFrameTile]);
-        }
-        else if (EditFrameTools == EditFrameTools.Paint)
-        {
-            Point framePoint = new Point
-            {
-                X = RectangleLeft,
-                Y = RectangleTop
-            };
-
-            SignalManager.Get<PaintTileSignal>().Dispatch(SelectedFrameTile, framePoint);
-        }
-        else if (EditFrameTools == EditFrameTools.Erase)
-        {
-            SignalManager.Get<EraseTileSignal>().Dispatch(SelectedFrameTile);
-        }
     }
 
     protected virtual void OnPropertyChanged(string propname)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
-    }
-
-    public void SaveProperty(SpriteProperties property, ValueUnion value)
-    {
-        if (SelectedFrameTile == -1)
-        {
-            return;
-        }
-
-        bool didChange = false;
-
-        switch (property)
-        {
-            case SpriteProperties.FlipX:
-
-                if (SpritePropertiesX[SelectedFrameTile] != value.boolean)
-                {
-                    SpritePropertiesX[SelectedFrameTile] = value.boolean;
-
-                    didChange = true;
-                }
-                break;
-            case SpriteProperties.FlipY:
-
-                if (SpritePropertiesY[SelectedFrameTile] != value.boolean)
-                {
-                    SpritePropertiesY[SelectedFrameTile] = value.boolean;
-
-                    didChange = true;
-                }
-                break;
-            case SpriteProperties.PaletteIndex:
-
-                didChange = true;
-
-                break;
-            case SpriteProperties.BackBackground:
-
-                if (SpritePropertiesBack[SelectedFrameTile] != value.boolean)
-                {
-                    SpritePropertiesBack[SelectedFrameTile] = value.boolean;
-
-                    didChange = true;
-                }
-                break;
-        }
-
-        if (didChange)
-        {
-            SignalManager.Get<SavePropertySignal>().Dispatch(SelectedFrameTile, FlipX, FlipY, value.integer, BackBackground);
-        }
     }
 }

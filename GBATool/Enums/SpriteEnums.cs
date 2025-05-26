@@ -24,11 +24,3 @@ public enum ColorMode
     Mode4bpp = 0,
     Mode8bpp = 1
 }
-
-public enum SpriteProperties
-{
-    FlipX,
-    FlipY,
-    PaletteIndex,
-    BackBackground
-}

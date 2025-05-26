@@ -30,6 +30,7 @@
             <Button.CommandParameter>
                 <MultiBinding Converter="{StaticResource parametersConverter}">
                     <Binding Path="TabID" />
+                    <Binding Path="FrameID"/>
                     <Binding Path="FrameIndex" />
                 </MultiBinding>
             </Button.CommandParameter>
@@ -51,7 +52,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <GroupBox Grid.Column="0" Header="Animation Frame" Margin="10" Padding="10">
-                <local:FrameView x:Name="frameView" />
+                <local:FrameView x:Name=" " />
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Banks" Margin="10" Padding="10">
                 <Grid HorizontalAlignment="Center">

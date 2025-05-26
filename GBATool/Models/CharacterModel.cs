@@ -1,23 +1,18 @@
 ﻿using Nett;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Media;
 
 namespace GBATool.Models;
 
-public struct CollisionInfo
+public class CollisionInfo
 {
-    public CollisionInfo()
-    {
-        Width = 0;
-        Height = 0;
-        OffsetX = 0;
-        OffsetY = 0;
-    }
-
-    public int Width { get; set; }
-    public int Height { get; set; }
-    public int OffsetX { get; set; }
-    public int OffsetY { get; set; }
+    public string ID { get; set; } = string.Empty;
+    public int Width { get; set; } = 0;
+    public int Height { get; set; } = 0;
+    public int OffsetX { get; set; } = 0;
+    public int OffsetY { get; set; } = 0;
+    public Color Color { get; set; }
 }
 
 public class CharacterTile
@@ -33,6 +28,7 @@ public class FrameModel
     public string ID { get; set; } = string.Empty;
     public Dictionary<string, CharacterTile> Tiles { get; set; } = [];
     public string BankID { get; set; } = string.Empty;
+    public Dictionary<string, CollisionInfo> CollisionInfo { get; set; } = [];
 }
 
 public class CharacterAnimation
@@ -41,7 +37,6 @@ public class CharacterAnimation
     public string Name { get; set; } = string.Empty;
     public float Speed { get; set; }
     public Dictionary<string, FrameModel> Frames { get; set; } = [];
-    public CollisionInfo CollisionInfo { get; set; }
 }
 
 public class CharacterModel : AFileModel

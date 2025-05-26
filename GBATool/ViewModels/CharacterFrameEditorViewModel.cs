@@ -86,6 +86,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     public CharacterModel? CharacterModel { get; set; }
     public string AnimationID { get; set; } = string.Empty;
+    public string FrameID { get; set; } = string.Empty;
 
     public int FrameIndex
     {

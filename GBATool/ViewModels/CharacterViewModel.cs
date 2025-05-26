@@ -211,51 +211,10 @@ public class CharacterViewModel : ItemViewModel
             return;
         }
 
-        //        int colorInt = ((color.R & 0xff) << 16) | ((color.G & 0xff) << 8) | (color.B & 0xff);
-        //
-        //        int prevColorInt = 0;
-        //
-        //        CharacterModel? model = GetModel();
-        //
-        //        if (model == null)
-        //            return;
-        //
-        //        string paletteId = model.PaletteIDs[(int)paletteIndex];
-        //
-        //        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(paletteId);
-        //        if (paletteModel != null)
-        //        {
-        //            switch (colorPosition)
-        //            {
-        //                case 0:
-        //                    prevColorInt = paletteModel.Color0;
-        //                    paletteModel.Color0 = colorInt;
-        //                    break;
-        //                case 1:
-        //                    prevColorInt = paletteModel.Color1;
-        //                    paletteModel.Color1 = colorInt;
-        //                    break;
-        //                case 2:
-        //                    prevColorInt = paletteModel.Color2;
-        //                    paletteModel.Color2 = colorInt;
-        //                    break;
-        //                case 3:
-        //                    prevColorInt = paletteModel.Color3;
-        //                    paletteModel.Color3 = colorInt;
-        //                    break;
-        //            }
-        //
-        //            ProjectFiles.SaveModel(paletteId, paletteModel);
-        //        }
-        //
-        //        Color prevColor = Util.GetColorFromInt(prevColorInt);
-        //
-        //        AdjustPaletteCache(paletteIndex, colorPosition, prevColor, color);
-
         SignalManager.Get<UpdateCharacterImageSignal>().Dispatch();
     }
 
-    private void OnSwitchCharacterFrameView(string tabId, int frameIndex)
+    private void OnSwitchCharacterFrameView(string tabId, string frameId, int frameIndex)
     {
         if (!IsActive)
         {
@@ -266,7 +225,7 @@ public class CharacterViewModel : ItemViewModel
         {
             if (tab.ID == tabId)
             {
-                tab.SwapContent(tabId, frameIndex);
+                tab.SwapContent(tabId, frameId, frameIndex);
 
                 if (tab.Content is CharacterAnimationView frameView)
                 {
@@ -342,18 +301,11 @@ public class CharacterViewModel : ItemViewModel
             model.Animations[tab.ID].ID = tab.ID;
             model.Animations[tab.ID].Name = tab.Header;
 
-            CollisionInfo collInfo = model.Animations[tab.ID].CollisionInfo;
-
             CharacterAnimationView? view = tab.FramesView as CharacterAnimationView;
 
             if (view?.DataContext is CharacterAnimationViewModel viewModel)
             {
                 model.Animations[tab.ID].Speed = viewModel.Speed;
-
-                collInfo.Width = viewModel.CollisionWidth;
-                collInfo.Height = viewModel.CollisionHeight;
-                collInfo.OffsetX = viewModel.CollisionOffsetX;
-                collInfo.OffsetY = viewModel.CollisionOffsetY;
             }
         }
 

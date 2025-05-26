@@ -87,14 +87,11 @@ public class CleanColorPaletteControlSelectedSignal : Signal { }
 public class AnimationTabNewSignal : Signal { }
 public class RenamedAnimationTabSignal : Signal<string> { }
 public class AnimationTabDeletedSignal : Signal<ActionTabItem> { }
-public class SwitchCharacterFrameViewSignal : Signal<string, int> { }
+public class SwitchCharacterFrameViewSignal : Signal<string, string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string> { }
 public class DeleteAnimationFrameSignal : Signal<int> { }
 public class OutputSelectedQuadrantSignal : Signal<Image, WriteableBitmap, Point> { }
-public class SavePropertySignal : Signal<int, bool, bool, int, bool> { }
-public class EraseTileSignal : Signal<int> { }
-public class PaintTileSignal : Signal<int, Point> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
