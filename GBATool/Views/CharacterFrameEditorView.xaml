@@ -9,6 +9,8 @@
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
+             Unloaded="UserControl_Unloaded"
+             Loaded="UserControl_Loaded"
              d:DesignHeight="720" d:DesignWidth="1050">
     <UserControl.DataContext>
         <vm:CharacterFrameEditorViewModel />
@@ -52,8 +54,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="360"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
             <GroupBox Grid.Column="0" Header="Animation Frame" Margin="10,0,10,0" Padding="3">
                 <local:FrameView x:Name="frameView" Grid.Row="0" />
@@ -88,10 +90,10 @@
                 </Grid>
             </GroupBox>
             <GroupBox Grid.Column="1" Header="Banks" Margin="10" Padding="10" Grid.RowSpan="2">
-                <Grid HorizontalAlignment="Center">
+                <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
-                        <RowDefinition Height="3"/>
+                        <RowDefinition Height="5"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -107,11 +109,8 @@
                     </StackPanel>
                     <local:BankViewerView 
                         Grid.Row="2"
-                        Width="510"
-                        Height="510"
-                        x:Name="bankViewer"
-                        Scale="4"
-                        VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                        Force2DView="True"
+                        x:Name="bankViewer"/>
                 </Grid>
             </GroupBox>
         </Grid>

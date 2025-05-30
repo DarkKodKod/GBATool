@@ -22,7 +22,7 @@ public static class BankUtils
     public static readonly int SizeOfCellInPixels = 8;
     public static readonly int MaxTextureCellsWidth = 32;
 
-    public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache, int canvasWidth = 0, int canvasHeight = 0)
+    public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache, bool foce2DView = false, int canvasWidth = 0, int canvasHeight = 0)
     {
         BankImageMetaData metaData = new();
 
@@ -42,7 +42,7 @@ public static class BankUtils
 
         int index = 0;
 
-        bool is1DImage = bankModel.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
+        bool is1DImage = !foce2DView && (bankModel.IsBackground || (projectModel.SpritePatternFormat == SpritePattern.Format1D));
 
         int widthNextPosition = 0;
         int heightNextPosition = 0;

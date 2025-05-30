@@ -1,5 +1,7 @@
-﻿using GBATool.Commands.Utils;
+﻿using ArchitectureLibrary.Signals;
+using GBATool.Commands.Utils;
 using GBATool.Enums;
+using GBATool.Signals;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -162,17 +164,56 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         EditFrameTools = EditFrameTools.Select;
 
         #region Signals
+        SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         #endregion
     }
 
     public void OnDeactivate()
     {
         #region Signals
+        SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         #endregion
     }
 
     protected virtual void OnPropertyChanged(string propname)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
+    }
+
+    private void OnMouseImageSelected(Image image, Point point)
+    {
+        //if (sender.Name != "imgFrame")
+        //{
+        //    return;
+        //}
+
+        //RectangleLeft = point.X;
+        //RectangleTop = point.Y;
+        //SelectedFrameTile = ((int)point.X / 8) + ((int)point.Y / 8 * 8);
+
+        //if (EditFrameTools == EditFrameTools.Select)
+        //{
+        //    RectangleVisibility = Visibility.Visible;
+
+        //    FlipX = SpritePropertiesX[SelectedFrameTile];
+        //    FlipY = SpritePropertiesY[SelectedFrameTile];
+        //    BackBackground = SpritePropertiesBack[SelectedFrameTile];
+
+        //    SignalManager.Get<SelectPaletteIndexSignal>().Dispatch(SpritePaletteIndices[SelectedFrameTile]);
+        //}
+        //else if (EditFrameTools == EditFrameTools.Paint)
+        //{
+        //    Point framePoint = new Point
+        //    {
+        //        X = RectangleLeft,
+        //        Y = RectangleTop
+        //    };
+
+        //    SignalManager.Get<PaintTileSignal>().Dispatch(SelectedFrameTile, framePoint);
+        //}
+        //else if (EditFrameTools == EditFrameTools.Erase)
+        //{
+        //    SignalManager.Get<EraseTileSignal>().Dispatch(SelectedFrameTile);
+        //}
     }
 }

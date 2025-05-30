@@ -11,6 +11,10 @@
     <UserControl.Resources>
         <cv:ParametersConverter x:Key="parametersConverter"/>
         <ContextMenu x:Key="ButtonMenu">
+            <MenuItem Header="Duplicate Frame">
+            </MenuItem>
+            <MenuItem Header="Insert a Held Frame">
+            </MenuItem>
             <MenuItem Header="Delete Frame" Command="{Binding DeleteAnimationFrameCommand}">
                 <MenuItem.CommandParameter>
                     <MultiBinding Converter="{StaticResource parametersConverter}">
@@ -19,6 +23,9 @@
                         <Binding Path="FileHandler" />
                     </MultiBinding>
                 </MenuItem.CommandParameter>
+                <MenuItem.Icon>
+                    <Image Width="16" Height="16" Source="/resources/delete.png"/>
+                </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
     </UserControl.Resources>

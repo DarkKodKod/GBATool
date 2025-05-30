@@ -1,8 +1,10 @@
-﻿using ArchitectureLibrary.ViewModel;
+﻿using ArchitectureLibrary.Signals;
+using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
 using GBATool.FileSystem;
 using GBATool.Models;
+using GBATool.Signals;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private string _tabId = string.Empty;
     private int _frameIndex;
     private FileHandler? _fileHandler;
+    private BankModel? _bankModel = null;
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -98,16 +101,22 @@ public class CharacterFrameEditorViewModel : ViewModel
             OnPropertyChanged("FrameIndex");
         }
     }
+
+    public BankModel? BankModel
+    {
+        get => _bankModel;
+        set
+        {
+            _bankModel = value;
+
+            OnPropertyChanged(nameof(BankModel));
+        }
+    }
     #endregion
 
     public CharacterFrameEditorViewModel()
     {
-        UpdateDialogInfo();
-    }
-
-    private void UpdateDialogInfo()
-    {
-        FileModelVO[] filemodelVo = ProjectFiles.GetModels<BankModel>().ToArray();
+        FileModelVO[] filemodelVo = [.. ProjectFiles.GetModels<BankModel>()];
 
         IEnumerable<FileModelVO> banks = filemodelVo;
 
@@ -123,5 +132,60 @@ public class CharacterFrameEditorViewModel : ViewModel
 
             index++;
         }
+    }
+
+    public override void OnActivate()
+    {
+        base.OnActivate();
+
+        #region Signals
+        SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
+        SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
+        #endregion
+
+        if (Banks?.Length > 0)
+        {
+            BankModel = Banks[0].Model as BankModel;
+        }
+    }
+
+    public override void OnDeactivate()
+    {
+        base.OnDeactivate();
+
+        #region Signals
+        SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
+        SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
+        #endregion
+    }
+
+    private void OnUpdateCharacterImage()
+    {
+        // todo
+    }
+
+    private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
+    {
+        SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
+
+        if (Banks?.Length == 0)
+        {
+            return;
+        }
+
+        if (Banks?[SelectedBank].Model is not BankModel model)
+        {
+            return;
+        }
+
+        if (model == null)
+        {
+            return;
+        }
+
+        BankModel = model;
+
+        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
+        SignalManager.Get<RemoveSpriteSelectionFromBank>().Dispatch();
     }
 }

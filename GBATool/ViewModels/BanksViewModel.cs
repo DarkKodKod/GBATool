@@ -9,10 +9,8 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.VOs;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -28,35 +26,13 @@ public class BanksViewModel : ItemViewModel
     private string _paletteId = string.Empty;
     private int _selectedTileSet;
     private FileModelVO[]? _tileSets;
-    private ImageSource? _pTImage;
+    private ObservableCollection<SpriteModel> _bankSprites = [];
+    private BankModel? _bankModel = null;
+    private string _modelName = string.Empty;
     private bool _use256Colors = false;
     private bool _isBackground = false;
-    private bool _doNotSave = false;
-    private BankModel? _model;
-    private SpriteModel? _selectedSprite;
-    private SpriteModel? _selectedSpriteFromBank;
-    private Dictionary<string, WriteableBitmap> _bitmapCache = [];
-    private BankImageMetaData? _metaData;
-    private Visibility _spriteRectVisibility = Visibility.Hidden;
-    private double _spriteRectLeft;
-    private double _spriteRectWidth;
-    private double _spriteRectHeight;
-    private double _spriteRectTop;
-    private Visibility _spriteRectVisibility2 = Visibility.Hidden;
-    private double _spriteRectLeft2;
-    private double _spriteRectWidth2;
-    private double _spriteRectHeight2;
-    private double _spriteRectTop2;
-    private Visibility _spriteRectVisibility3 = Visibility.Hidden;
-    private double _spriteRectLeft3;
-    private double _spriteRectWidth3;
-    private double _spriteRectHeight3;
-    private double _spriteRectTop3;
-    private int _canvasHeght = 256;
-    private int _canvasWidth = 256;
-    private ObservableCollection<SpriteModel> _bankSprites = [];
-    private SpriteModel? _cacheSelectedSpriteFromBank = null;
     private Color _transparentColor = Color.FromRgb(0, 0, 0);
+    private bool _doNotSave = false;
 
     #region Commands
     public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
@@ -72,55 +48,6 @@ public class BanksViewModel : ItemViewModel
     #endregion
 
     #region get/set
-    public int CanvasHeight
-    {
-        get => _canvasHeght;
-        set
-        {
-            _canvasHeght = value;
-
-            OnPropertyChanged("CanvasHeight");
-        }
-    }
-
-    public int CanvasWidth
-    {
-        get => _canvasWidth;
-        set
-        {
-            _canvasWidth = value;
-
-            OnPropertyChanged("CanvasWidth");
-        }
-    }
-
-    public Color TransparentColor
-    {
-        get => _transparentColor;
-        set
-        {
-            if (_transparentColor != value)
-            {
-                _transparentColor = value;
-
-                UpdateAndSaveTransparentColor();
-            }
-
-            OnPropertyChanged("TransparentColor");
-        }
-    }
-
-    public ImageSource? PTImage
-    {
-        get => _pTImage;
-        set
-        {
-            _pTImage = value;
-
-            OnPropertyChanged("PTImage");
-        }
-    }
-
     public string TileSetPath
     {
         get => _tileSetPath;
@@ -176,37 +103,6 @@ public class BanksViewModel : ItemViewModel
         }
     }
 
-    public SpriteModel? SelectedSpriteFromBank
-    {
-        get => _selectedSpriteFromBank;
-        set
-        {
-            HideRectangleSelection();
-
-            _selectedSpriteFromBank = value;
-
-            if (_selectedSpriteFromBank is not null)
-            {
-                _cacheSelectedSpriteFromBank = value;
-
-                SelectSpriteFromBankImage(_selectedSpriteFromBank);
-            }
-
-            OnPropertyChanged("SelectedSpriteFromBank");
-        }
-    }
-
-    public SpriteModel? SelectedSprite
-    {
-        get => _selectedSprite;
-        set
-        {
-            _selectedSprite = value;
-
-            OnPropertyChanged("SelectedSprite");
-        }
-    }
-
     public string SelectedSpritePatternFormat
     {
         get => _selectedSpritePatternFormat;
@@ -229,6 +125,17 @@ public class BanksViewModel : ItemViewModel
         }
     }
 
+    public string ModelName
+    {
+        get => _modelName;
+        set
+        {
+            _modelName = value;
+
+            OnPropertyChanged("ModelName");
+        }
+    }
+
     public FileModelVO[]? TileSets
     {
         get => _tileSets;
@@ -237,6 +144,33 @@ public class BanksViewModel : ItemViewModel
             _tileSets = value;
 
             OnPropertyChanged("TileSets");
+        }
+    }
+
+    public BankModel? BankModel
+    {
+        get => _bankModel;
+        set
+        {
+            _bankModel = value;
+
+            OnPropertyChanged("BankModel");
+        }
+    }
+
+    public Color TransparentColor
+    {
+        get => _transparentColor;
+        set
+        {
+            if (_transparentColor != value)
+            {
+                _transparentColor = value;
+
+                UpdateAndSaveTransparentColor();
+            }
+
+            OnPropertyChanged("TransparentColor");
         }
     }
 
@@ -249,11 +183,11 @@ public class BanksViewModel : ItemViewModel
             {
                 _use256Colors = value;
 
-                AdjustCanvasHeight();
+                SignalManager.Get<AdjustCanvasBankSizeSignal>().Dispatch(value);
 
                 UpdateAndSaveUse256Colors();
 
-                ReloadImage();
+                SignalManager.Get<ReloadBankViewImageSignal>().Dispatch();
             }
 
             OnPropertyChanged("Use256Colors");
@@ -275,7 +209,7 @@ public class BanksViewModel : ItemViewModel
 
                 if (ModelManager.Get<ProjectModel>().SpritePatternFormat != SpritePattern.Format1D)
                 {
-                    ReloadImage();
+                    SignalManager.Get<ReloadBankViewImageSignal>().Dispatch();
                 }
             }
 
@@ -283,187 +217,11 @@ public class BanksViewModel : ItemViewModel
             OnPropertyChanged("IsNotBackground");
         }
     }
-
-    public BankModel? Model
-    {
-        get => _model;
-        set
-        {
-            _model = value;
-
-            OnPropertyChanged("Model");
-        }
-    }
-
-    public Visibility SpriteRectVisibility
-    {
-        get { return _spriteRectVisibility; }
-        set
-        {
-            _spriteRectVisibility = value;
-
-            OnPropertyChanged("SpriteRectVisibility");
-        }
-    }
-
-    public double SpriteRectLeft
-    {
-        get { return _spriteRectLeft; }
-        set
-        {
-            _spriteRectLeft = value;
-
-            OnPropertyChanged("SpriteRectLeft");
-        }
-    }
-
-    public double SpriteRectWidth
-    {
-        get { return _spriteRectWidth; }
-        set
-        {
-            _spriteRectWidth = value;
-
-            OnPropertyChanged("SpriteRectWidth");
-        }
-    }
-
-    public double SpriteRectHeight
-    {
-        get { return _spriteRectHeight; }
-        set
-        {
-            _spriteRectHeight = value;
-
-            OnPropertyChanged("SpriteRectHeight");
-        }
-    }
-
-    public double SpriteRectTop
-    {
-        get { return _spriteRectTop; }
-        set
-        {
-            _spriteRectTop = value;
-
-            OnPropertyChanged("SpriteRectTop");
-        }
-    }
-
-    public Visibility SpriteRectVisibility2
-    {
-        get { return _spriteRectVisibility2; }
-        set
-        {
-            _spriteRectVisibility2 = value;
-
-            OnPropertyChanged("SpriteRectVisibility2");
-        }
-    }
-
-    public double SpriteRectLeft2
-    {
-        get { return _spriteRectLeft2; }
-        set
-        {
-            _spriteRectLeft2 = value;
-
-            OnPropertyChanged("SpriteRectLeft2");
-        }
-    }
-
-    public double SpriteRectWidth2
-    {
-        get { return _spriteRectWidth2; }
-        set
-        {
-            _spriteRectWidth2 = value;
-
-            OnPropertyChanged("SpriteRectWidth2");
-        }
-    }
-
-    public double SpriteRectHeight2
-    {
-        get { return _spriteRectHeight2; }
-        set
-        {
-            _spriteRectHeight2 = value;
-
-            OnPropertyChanged("SpriteRectHeight2");
-        }
-    }
-
-    public double SpriteRectTop2
-    {
-        get { return _spriteRectTop2; }
-        set
-        {
-            _spriteRectTop2 = value;
-
-            OnPropertyChanged("SpriteRectTop2");
-        }
-    }
-
-    public Visibility SpriteRectVisibility3
-    {
-        get { return _spriteRectVisibility3; }
-        set
-        {
-            _spriteRectVisibility3 = value;
-
-            OnPropertyChanged("SpriteRectVisibility3");
-        }
-    }
-
-    public double SpriteRectLeft3
-    {
-        get { return _spriteRectLeft3; }
-        set
-        {
-            _spriteRectLeft3 = value;
-
-            OnPropertyChanged("SpriteRectLeft3");
-        }
-    }
-
-    public double SpriteRectWidth3
-    {
-        get { return _spriteRectWidth3; }
-        set
-        {
-            _spriteRectWidth3 = value;
-
-            OnPropertyChanged("SpriteRectWidth3");
-        }
-    }
-
-    public double SpriteRectHeight3
-    {
-        get { return _spriteRectHeight3; }
-        set
-        {
-            _spriteRectHeight3 = value;
-
-            OnPropertyChanged("SpriteRectHeight3");
-        }
-    }
-
-    public double SpriteRectTop3
-    {
-        get { return _spriteRectTop3; }
-        set
-        {
-            _spriteRectTop3 = value;
-
-            OnPropertyChanged("SpriteRectTop3");
-        }
-    }
     #endregion
 
     public BanksViewModel()
     {
-        UpdateDialogInfo();
+        TileSets = [.. ProjectFiles.GetModels<TileSetModel>()];
     }
 
     public override void OnActivate()
@@ -473,17 +231,14 @@ public class BanksViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<SelectTileSetSignal>().Listener += OnSelectTileSet;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
-        SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
-        SignalManager.Get<BankImageUpdatedSignal>().Listener += OnBankImageUpdated;
-        SignalManager.Get<BankSpriteDeletedSignal>().Listener += OnBankSpriteDeleted;
-        SignalManager.Get<ObtainTransparentColorSignal>().Listener += OnObtainTransparentColor;
-        SignalManager.Get<GeneratePaletteFromBankSignal>().Listener += OnGeneratePaletteFromBank;
-        SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
-        SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener += OnMoveUpSelectedSpriteElement;
-        SignalManager.Get<SetColorFromColorPickerSignal>().Listener += OnSetColorFromColorPicker;
         SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener += OnPaletteCreatedSuccessfully;
+        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener += OnUpdateBankViewerParentWithImageMetadata;
+        SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
+        SignalManager.Get<CleanupBankSpritesSignal>().Listener += OnCleanupBankSprites;
+        SignalManager.Get<SetColorFromColorPickerSignal>().Listener += OnSetColorFromColorPicker;
+        SignalManager.Get<ReturnTransparentColorFromBankSignal>().Listener += OnReturnTransparentColorFromBank;
         #endregion
 
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -497,7 +252,11 @@ public class BanksViewModel : ItemViewModel
             return;
         }
 
-        Model = model;
+        BankModel = model;
+
+        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
+
+        SetPaletteId(model.PaletteId);
 
         _doNotSave = true;
 
@@ -505,17 +264,18 @@ public class BanksViewModel : ItemViewModel
         IsBackground = model.IsBackground;
         TransparentColor = Util.GetColorFromInt(model.TransparentColor);
 
-        SetPaletteId(model.PaletteId);
-
         _doNotSave = false;
 
-        CanvasWidth = 256;
-        AdjustCanvasHeight();
-
         LoadTileSetSprites();
-        LoadImage(model);
 
         model.CleanUpDeletedSprites();
+
+        string? name = ProjectItem?.FileHandler?.Name;
+
+        if (!string.IsNullOrEmpty(name))
+        {
+            ModelName = name;
+        }
     }
 
     public override void OnDeactivate()
@@ -525,23 +285,106 @@ public class BanksViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<SelectTileSetSignal>().Listener -= OnSelectTileSet;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
-        SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
-        SignalManager.Get<BankImageUpdatedSignal>().Listener -= OnBankImageUpdated;
-        SignalManager.Get<ObtainTransparentColorSignal>().Listener -= OnObtainTransparentColor;
-        SignalManager.Get<GeneratePaletteFromBankSignal>().Listener -= OnGeneratePaletteFromBank;
-        SignalManager.Get<BankSpriteDeletedSignal>().Listener -= OnBankSpriteDeleted;
-        SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
-        SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener -= OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener -= OnMoveUpSelectedSpriteElement;
-        SignalManager.Get<SetColorFromColorPickerSignal>().Listener -= OnSetColorFromColorPicker;
         SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener -= OnPaletteCreatedSuccessfully;
+        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener -= OnUpdateBankViewerParentWithImageMetadata;
+        SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
+        SignalManager.Get<CleanupBankSpritesSignal>().Listener -= OnCleanupBankSprites;
+        SignalManager.Get<SetColorFromColorPickerSignal>().Listener -= OnSetColorFromColorPicker;
+        SignalManager.Get<ReturnTransparentColorFromBankSignal>().Listener -= OnReturnTransparentColorFromBank;
         #endregion
+    }
+
+    private void OnCleanupBankSprites()
+    {
+        BankSprites.Clear();
+    }
+
+    private void OnReturnTransparentColorFromBank(Color color)
+    {
+        TransparentColor = color;
     }
 
     private void OnSetColorFromColorPicker(Control _, Color color)
     {
         TransparentColor = color;
+    }
+
+    private void UpdateAndSaveIsBackground()
+    {
+        if (_doNotSave)
+            return;
+
+        if (_bankModel == null)
+            return;
+
+        _bankModel.IsBackground = IsBackground;
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void UpdateAndSaveTransparentColor()
+    {
+        if (_doNotSave)
+            return;
+
+        if (_bankModel == null)
+            return;
+
+        _bankModel.TransparentColor = Util.GetIntFromColor(TransparentColor);
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void UpdateAndSaveUse256Colors()
+    {
+        if (_doNotSave)
+            return;
+
+        if (_bankModel == null)
+        {
+            return;
+        }
+
+        _bankModel.Use256Colors = Use256Colors;
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void OnUpdateBankViewerParentWithImageMetadata(BankImageMetaData? metaData)
+    {
+        if (metaData == null)
+            return;
+
+        BankSprites = [.. metaData.bankSprites];
+
+        FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
+
+        foreach (string tileSetId in metaData.UniqueTileSet)
+        {
+            // Add the link object
+            foreach (FileModelVO tileset in tileSets)
+            {
+                if (tileset.Model?.GUID == tileSetId)
+                {
+                    SignalManager.Get<AddNewTileSetLinkSignal>().Dispatch(new BankLinkVO() { Caption = tileset.Name, Id = tileSetId });
+                    break;
+                }
+            }
+        }
+
+        if (_doNotSave)
+            return;
+
+        ProjectItem?.FileHandler?.Save();
+    }
+
+    private void OnReloadBankImage()
+    {
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
     }
 
     private void OnPaletteCreatedSuccessfully(PaletteModel paletteModel)
@@ -599,7 +442,7 @@ public class BanksViewModel : ItemViewModel
 
         model.ReplaceSpriteList(spriteReflist);
 
-        ReloadImage();
+        SignalManager.Get<ReloadBankImageSignal>().Dispatch();
     }
 
     private void OnMoveDownSelectedSpriteElement(int itemAtIndex)
@@ -622,7 +465,7 @@ public class BanksViewModel : ItemViewModel
 
         model.ReplaceSpriteList(spriteReflist);
 
-        ReloadImage();
+        SignalManager.Get<ReloadBankImageSignal>().Dispatch();
     }
 
     private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
@@ -635,11 +478,6 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
 
         LoadTileSetSprites();
-    }
-
-    private void UpdateDialogInfo()
-    {
-        TileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
     }
 
     private void OnSelectTileSet(string id)
@@ -661,53 +499,6 @@ public class BanksViewModel : ItemViewModel
 
             index++;
         }
-    }
-
-    private void UpdateAndSaveUse256Colors()
-    {
-        if (_doNotSave)
-            return;
-
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-        {
-            return;
-        }
-
-        model.Use256Colors = Use256Colors;
-
-        ProjectItem?.FileHandler?.Save();
-    }
-
-    private void UpdateAndSaveTransparentColor()
-    {
-        if (_doNotSave)
-            return;
-
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-            return;
-
-        model.TransparentColor = Util.GetIntFromColor(TransparentColor);
-
-        ProjectItem?.FileHandler?.Save();
-    }
-
-    private void UpdateAndSaveIsBackground()
-    {
-        if (_doNotSave)
-            return;
-
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-            return;
-
-        model.IsBackground = IsBackground;
-
-        ProjectItem?.FileHandler?.Save();
     }
 
     private void LoadTileSetSprites()
@@ -741,7 +532,6 @@ public class BanksViewModel : ItemViewModel
         }
 
         TileSetId = model.GUID;
-        SelectedSprite = null;
 
         WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image);
 
@@ -768,424 +558,13 @@ public class BanksViewModel : ItemViewModel
                 SpriteID = tileSetSprite.ID,
                 Bitmap = cropped,
                 Width = width,
-                Height = height
+                Height = height,
+                TileSetID = tileSetSprite.TileSetID
             };
 
             SignalManager.Get<AddSpriteSignal>().Dispatch(sprite);
         }
 
         SignalManager.Get<UpdateSpriteListSignal>().Dispatch();
-    }
-
-    private void AdjustCanvasHeight()
-    {
-        if (Use256Colors)
-        {
-            CanvasHeight = 128;
-        }
-        else
-        {
-            CanvasHeight = 256;
-        }
-    }
-
-    private void ReloadImage()
-    {
-        if (_doNotSave)
-            return;
-
-        _bitmapCache.Clear();
-
-        BankSprites.Clear();
-
-        SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
-
-        OnBankImageUpdated();
-    }
-
-    private void LoadImage(BankModel model)
-    {
-        _metaData = BankUtils.CreateImage(model, ref _bitmapCache);
-
-        PTImage = _metaData.image;
-        BankSprites = [.. _metaData.bankSprites];
-
-        FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
-
-        foreach (string tileSetId in _metaData.UniqueTileSet)
-        {
-            // Add the link object
-            foreach (FileModelVO tileset in tileSets)
-            {
-                if (tileset.Model?.GUID == tileSetId)
-                {
-                    SignalManager.Get<AddNewTileSetLinkSignal>().Dispatch(new BankLinkVO() { Caption = tileset.Name, Id = tileSetId });
-                    break;
-                }
-            }
-        }
-    }
-
-    private void OnSelectSprite(SpriteVO sprite)
-    {
-        TileSetModel? model = ProjectFiles.GetModel<TileSetModel>(TileSetId);
-
-        if (model == null)
-        {
-            return;
-        }
-
-        foreach (SpriteModel item in model.Sprites)
-        {
-            if (item.ID == sprite.SpriteID)
-            {
-                SelectedSprite = item;
-                break;
-            }
-        }
-    }
-
-    private void OnBankImageUpdated()
-    {
-        ProjectItem?.FileHandler?.Save();
-
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-        {
-            return;
-        }
-
-        LoadImage(model);
-
-        UnselectSpriteFromBankImage();
-
-        if (_cacheSelectedSpriteFromBank != null)
-        {
-            SelectedSpriteFromBank = _cacheSelectedSpriteFromBank;
-        }
-    }
-
-    private void OnGeneratePaletteFromBank()
-    {
-        List<Color> colorArray = new([TransparentColor]);
-
-        foreach (SpriteModel spriteModel in BankSprites)
-        {
-            _bitmapCache.TryGetValue(spriteModel.TileSetID, out WriteableBitmap? sourceBitmap);
-
-            if (sourceBitmap == null)
-            {
-                continue;
-            }
-
-            int width = 0;
-            int height = 0;
-
-            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
-
-            WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
-
-            int yOffset = 0;
-            int xOffset = 0;
-
-            loop:
-            for (int y = 0; y < 8; y++)
-            {
-                for (int x = 0; x < 8; x++)
-                {
-                    Color color = cropped.GetPixel(x + xOffset, y + yOffset);
-
-                    if (!colorArray.Contains(color))
-                    {
-                        if (colorArray.Count < 16)
-                        {
-                            colorArray.Add(color);
-                        }
-                    }
-                }
-            }
-
-            xOffset += 8;
-            if (xOffset > cropped.PixelWidth)
-            {
-                yOffset += 8;
-                if (yOffset <= cropped.PixelHeight)
-                {
-                    xOffset = 0;
-                    goto loop;
-                }
-            }
-            else
-            {
-                goto loop;
-            }
-        }
-
-        if (colorArray.Count > 1)
-        {
-            string? name = ProjectItem?.FileHandler?.Name;
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray, Use256Colors);
-            }
-        }
-    }
-
-    private void OnObtainTransparentColor(SpriteModel spriteModel)
-    {
-        TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteModel.TileSetID);
-
-        if (tileSetModel == null)
-        {
-            return;
-        }
-
-        SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == spriteModel.ID);
-
-        if (sm == null)
-        {
-            return;
-        }
-
-        int width = 0;
-        int height = 0;
-
-        SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
-
-        _bitmapCache.TryGetValue(tileSetModel.GUID, out WriteableBitmap? sourceBitmap);
-
-        if (sourceBitmap == null)
-        {
-            return;
-        }
-
-        WriteableBitmap cropped = sourceBitmap.Crop(sm.PosX, sm.PosY, width, height);
-
-        TransparentColor = cropped.GetPixel(0, 0);
-    }
-
-    private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
-    {
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-        {
-            return;
-        }
-
-        bool ret = model.RemoveSprite(spriteToDelete);
-
-        if (ret)
-        {
-            _cacheSelectedSpriteFromBank = null;
-
-            ReloadImage();
-        }
-    }
-
-    private bool Is1DImage()
-    {
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-        {
-            return false;
-        }
-
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-        bool is1DImage = model.IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
-
-        return is1DImage;
-    }
-
-    private void OnMouseImageSelected(Image _, Point point)
-    {
-        UnselectSpriteFromBankImage();
-
-        _cacheSelectedSpriteFromBank = null;
-
-        SelectSpriteFromBankImage(point);
-    }
-
-    private void UnselectSpriteFromBankImage()
-    {
-        HideRectangleSelection();
-
-        SelectedSpriteFromBank = null;
-    }
-
-    private void HideRectangleSelection()
-    {
-        SpriteRectVisibility = Visibility.Hidden;
-        SpriteRectVisibility2 = Visibility.Hidden;
-        SpriteRectVisibility3 = Visibility.Hidden;
-    }
-
-    private void SelectSpriteFromBankImage(SpriteModel? spriteModel)
-    {
-        if (_metaData == null || string.IsNullOrEmpty(spriteModel?.ID))
-        {
-            return;
-        }
-
-        if (Is1DImage())
-        {
-            int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
-            int firstIndex = 0;
-            int spriteTilesTotal = 0;
-
-            foreach (SpriteModel sprite in _metaData.bankSprites)
-            {
-                spriteTilesTotal = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
-
-                if (sprite.ID == spriteModel?.ID)
-                {
-                    break;
-                }
-
-                firstIndex += spriteTilesTotal;
-            }
-
-            ShowRectOverSprite1D(spriteTilesTotal, firstIndex, canvasWidthInCells);
-        }
-        else
-        {
-            // 2d
-            SpriteRectVisibility = Visibility.Visible;
-
-            int width = 0;
-            int height = 0;
-            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
-
-            // Going through the list again to find the first occurrence of this item
-            (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteModel.ID);
-
-            int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
-            int left = (firstIndex % canvasWidthInCells) * BankUtils.SizeOfCellInPixels;
-            int top = (firstIndex / BankUtils.MaxTextureCellsWidth) * BankUtils.SizeOfCellInPixels;
-
-            SpriteRectLeft = left;
-            SpriteRectWidth = width;
-            SpriteRectHeight = height;
-            SpriteRectTop = top;
-        }
-    }
-
-    private void SelectSpriteFromBankImage(Point point)
-    {
-        if (_metaData == null)
-        {
-            return;
-        }
-
-        int x = (int)Math.Floor(point.X / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
-        int y = (int)Math.Floor(point.Y / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
-
-        int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
-        int lengthHeight = CanvasHeight / BankUtils.SizeOfCellInPixels;
-        int yPos = (y / BankUtils.SizeOfCellInPixels);
-        int xPos = (x / BankUtils.SizeOfCellInPixels);
-
-        int cellIndex = (canvasWidthInCells * yPos) + xPos;
-
-        (int _, string spriteID, string tileSetId) = _metaData.SpriteIndices.Find(item => item.Item1 == cellIndex);
-
-        if (string.IsNullOrEmpty(spriteID))
-        {
-            return;
-        }
-
-        // Going through the list again to find the first occurrence of this item
-        (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteID);
-
-        TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(tileSetId);
-
-        if (tileSetModel == null)
-        {
-            return;
-        }
-
-        SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteID);
-
-        if (string.IsNullOrEmpty(sprite?.ID))
-        {
-            return;
-        }
-
-        SelectedSpriteFromBank = sprite;
-    }
-
-    private void OnReloadBankImage()
-    {
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-        SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
-
-        ReloadImage();
-    }
-
-    private void ShowRectOverSprite1D(int spriteTilesTotal, int firstIndex, int canvasWidthInCells)
-    {
-        SpriteRectVisibility = Visibility.Visible;
-
-        bool useNextRect = false;
-
-        int left = (firstIndex % canvasWidthInCells) * BankUtils.SizeOfCellInPixels;
-        int width = spriteTilesTotal * BankUtils.SizeOfCellInPixels;
-        int top = (firstIndex / BankUtils.MaxTextureCellsWidth) * BankUtils.SizeOfCellInPixels;
-
-        int whatIsLeft = 0;
-
-        int maxCellsInPixels = BankUtils.MaxTextureCellsWidth * BankUtils.SizeOfCellInPixels;
-
-        if (left + width > maxCellsInPixels)
-        {
-            int sub = maxCellsInPixels - left;
-
-            whatIsLeft = width - sub;
-            width = sub;
-
-            useNextRect = true;
-        }
-
-        SpriteRectLeft = left;
-        SpriteRectWidth = width;
-        SpriteRectHeight = BankUtils.SizeOfCellInPixels;
-        SpriteRectTop = top;
-
-        if (useNextRect)
-        {
-            useNextRect = false;
-
-            SpriteRectVisibility2 = Visibility.Visible;
-
-            width = whatIsLeft;
-
-            if (width > maxCellsInPixels)
-            {
-                whatIsLeft = width - maxCellsInPixels;
-                width = maxCellsInPixels;
-
-                useNextRect = true;
-            }
-
-            SpriteRectLeft2 = 0;
-            SpriteRectWidth2 = width;
-            SpriteRectHeight2 = BankUtils.SizeOfCellInPixels;
-            SpriteRectTop2 = top + BankUtils.SizeOfCellInPixels;
-
-            if (useNextRect)
-            {
-                SpriteRectVisibility3 = Visibility.Visible;
-
-                SpriteRectLeft3 = 0;
-                SpriteRectWidth3 = whatIsLeft;
-                SpriteRectHeight3 = BankUtils.SizeOfCellInPixels;
-                SpriteRectTop3 = top + (BankUtils.SizeOfCellInPixels * 2);
-            }
-        }
     }
 }

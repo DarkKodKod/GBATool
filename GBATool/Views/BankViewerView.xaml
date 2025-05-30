@@ -8,21 +8,26 @@
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              mc:Ignorable="d" 
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             d:DesignHeight="400" d:DesignWidth="400">
-    <Border>
-        <Canvas Width="128" Height="128" 
-			Background="DarkGray"
-			HorizontalAlignment="Left"
-			VerticalAlignment="Top">
-            <Canvas.RenderTransform>
-                <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
-            </Canvas.RenderTransform>
+             d:DesignHeight="256" d:DesignWidth="256">
+    <Border Width="256" Height="256"
+            Grid.Column="2"
+            Grid.RowSpan="2"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left">
+        <Border.LayoutTransform>
+            <ScaleTransform ScaleX="2.7" ScaleY="2.7"/>
+        </Border.LayoutTransform>
+        <Canvas Background="DarkGray"
+                Width="{Binding CanvasWidth}"
+                Height="{Binding CanvasHeight}"
+			    HorizontalAlignment="Left"
+			    VerticalAlignment="Top">
             <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-			   Source="{Binding BankImage}"
-			   Width="128"
-			   Height="128"
-			   Name="imgBank"
-			   Stretch="UniformToFill">
+			       Source="{Binding BankImage}"
+			       Width="{Binding CanvasWidth}"
+                   Height="{Binding CanvasHeight}"
+			       Name="imgBank"
+			       Stretch="UniformToFill">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
                 </i:Interaction.Behaviors>
@@ -37,18 +42,33 @@
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Border.Background>
-                <Canvas Width="128" Height="128" Background="Transparent">
+                <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" Background="Transparent">
                     <i:Interaction.Behaviors>
                         <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgBank}"/>
                     </i:Interaction.Behaviors>
-                    <Rectangle Width="8" Height="8" 
-						   Stroke="Red" 
-						   StrokeThickness="0.5"
-						   Canvas.Top="{Binding SelectionRectangleTop}"
-						   Canvas.Left="{Binding SelectionRectangleLeft}"
-						   Visibility="{Binding SelectionRectangleVisibility}"/>
                 </Canvas>
             </Border>
+            <Rectangle Width="{Binding SpriteRectWidth}"
+                       Height="{Binding SpriteRectHeight}" 
+                       Stroke="Magenta" 
+                       StrokeThickness="0.7"
+                       Canvas.Top="{Binding SpriteRectTop}"
+                       Canvas.Left="{Binding SpriteRectLeft}"
+                       Visibility="{Binding SpriteRectVisibility}"/>
+            <Rectangle Width="{Binding SpriteRectWidth2}"
+                       Height="{Binding SpriteRectHeight2}" 
+                       Stroke="Magenta" 
+                       StrokeThickness="0.7"
+                       Canvas.Top="{Binding SpriteRectTop2}"
+                       Canvas.Left="{Binding SpriteRectLeft2}"
+                       Visibility="{Binding SpriteRectVisibility2}"/>
+            <Rectangle Width="{Binding SpriteRectWidth3}"
+                       Height="{Binding SpriteRectHeight3}" 
+                       Stroke="Magenta" 
+                       StrokeThickness="0.7"
+                       Canvas.Top="{Binding SpriteRectTop3}"
+                       Canvas.Left="{Binding SpriteRectLeft3}"
+                       Visibility="{Binding SpriteRectVisibility3}"/>
         </Canvas>
     </Border>
 </UserControl>

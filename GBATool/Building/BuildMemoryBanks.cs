@@ -42,7 +42,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
             int imageWidth = cellsCount.width * 8;
             int imageHeight = cellsCount.height * 8;
 
-            BankImageMetaData metaData = BankUtils.CreateImage(bank, ref bitmapCache, imageWidth, imageHeight);
+            BankImageMetaData metaData = BankUtils.CreateImage(bank, ref bitmapCache, false, imageWidth, imageHeight);
 
             if (metaData.image == null)
                 continue;

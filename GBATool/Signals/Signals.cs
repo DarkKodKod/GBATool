@@ -1,13 +1,13 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Enums;
 using GBATool.Models;
+using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.VOs;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace GBATool.Signals;
 
@@ -91,7 +91,6 @@ public class SwitchCharacterFrameViewSignal : Signal<string, string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string> { }
 public class DeleteAnimationFrameSignal : Signal<int> { }
-public class OutputSelectedQuadrantSignal : Signal<Image, WriteableBitmap, Point> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
@@ -102,15 +101,22 @@ public class PlayCharacterAnimationSignal : Signal<string> { }
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
 public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
 public class CleanupTileSetLinksSignal : Signal { }
+public class CleanupBankSpritesSignal : Signal { }
+public class AdjustCanvasBankSizeSignal : Signal<bool> { }
+public class ReloadBankViewImageSignal : Signal { }
 public class SelectTileSetSignal : Signal<string> { }
 public class BankImageUpdatedSignal : Signal { }
 public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 public class ObtainTransparentColorSignal : Signal<SpriteModel> { }
-public class GeneratePaletteFromBankSignal : Signal { }
+public class GeneratePaletteFromBankSignal : Signal<string, IEnumerable<SpriteModel>, Color, bool> { }
+public class SetBankModelToBankViewerSignal : Signal<BankModel?> { }
+public class UpdateBankViewerParentWithImageMetadataSignal : Signal<BankImageMetaData?> { }
 public class ReloadBankImageSignal : Signal { }
 public class MoveDownSelectedSpriteElementSignal : Signal<int> { }
+public class RemoveSpriteSelectionFromBank : Signal { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
+public class ReturnTransparentColorFromBankSignal : Signal<Color> { }
 public class TryCreatePaletteElementSignal : Signal<string, List<Color>, bool> { }
 public class PaletteCreatedSuccessfullySignal : Signal<PaletteModel> { }
 

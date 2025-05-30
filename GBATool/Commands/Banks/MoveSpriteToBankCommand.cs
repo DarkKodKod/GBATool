@@ -1,7 +1,9 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
+using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.VOs;
 using System.Windows;
 
 namespace GBATool.Commands.Banks;
@@ -17,8 +19,9 @@ public class MoveSpriteToBankCommand : Command
 
         object[] values = (object[])parameter;
         BankModel? model = (BankModel?)values[0];
+        SpriteVO spriteVO = (SpriteVO)values[1];
 
-        if (values[1] == null)
+        if (string.IsNullOrEmpty(spriteVO.SpriteID))
         {
             return false;
         }
@@ -36,7 +39,26 @@ public class MoveSpriteToBankCommand : Command
         object[] values = (object[])parameter;
 
         BankModel model = (BankModel)values[0];
-        SpriteModel sprite = (SpriteModel)values[1];
+        SpriteVO spriteVO = (SpriteVO)values[1];
+
+        if (spriteVO.TileSetID == null)
+        {
+            return;
+        }
+
+        TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteVO.TileSetID);
+
+        if (tileSetModel == null)
+        {
+            return;
+        }
+
+        SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteVO.SpriteID);
+
+        if (string.IsNullOrEmpty(sprite?.ID))
+        {
+            return;
+        }
 
         (bool, string) ret = model.RegisterSprite(sprite);
 

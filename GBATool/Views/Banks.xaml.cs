@@ -16,6 +16,7 @@ namespace GBATool.Views
         {
             InitializeComponent();
 
+            bankViewerView.OnActivate();
             slSprites.OnActivate();
 
             SignalManager.Get<AddNewTileSetLinkSignal>().Listener += OnAddNewTileSetLink;
@@ -59,6 +60,7 @@ namespace GBATool.Views
             SignalManager.Get<CleanupTileSetLinksSignal>().Listener -= OnCleanupTileSetLinks;
 
             slSprites.OnDeactivate();
+            bankViewerView.OnDeactivate();
         }
     }
 }

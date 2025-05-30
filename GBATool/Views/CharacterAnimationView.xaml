@@ -20,216 +20,206 @@
         </Style>
     </UserControl.Resources>
     <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="385"/>
-            <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="400"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock>Speed:</TextBlock>
-                <TextBox Height="18" Width="50" Text="{Binding Speed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                <TextBlock Margin="20,0,0,0">Frame Index:</TextBlock>
-                <Border BorderThickness="1" BorderBrush="Black">
-                    <TextBlock TextAlignment="Center" Background="White" Height="18" Width="20" Text="{Binding FrameIndex}"/>
-                </Border>
-            </StackPanel>
-            <Canvas Grid.Row="2" Background="DarkGray" 
-                    Width="64" Height="64"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-                <Canvas.RenderTransform>
-                    <ScaleTransform ScaleX="6" ScaleY="6"/>
-                </Canvas.RenderTransform>
-                <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-                       Width="64"
-	                   Height="64"
-                       Source="{Binding FrameImage, Mode=OneWay}"
-                       Stretch="UniformToFill">
-                </Image>
-            </Canvas>
-            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="5,0,0,0"/>
-                    </Style>
-                </StackPanel.Resources>
-                <Button Height="35" Width="35" 
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Margin" Value="5,0,0,0"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button Height="35" Width="35" 
                         ToolTip="Previous Frame"
                         Command="{Binding PreviousFrameCharacterAnimationCommand}">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="CharacterModel" />
-                            <Binding Path="TabID" />
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                    <Image Width="16" Height="16" 
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="CharacterModel" />
+                        <Binding Path="TabID" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Image Width="16" Height="16" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Source="/resources/previous_frame.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button Height="35" Width="35" 
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+            <Button Height="35" Width="35" 
                         Name="btmPlay"
                         ToolTip="Play"
                         Command="{Binding PlayCharacterAnimationCommand}">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="CharacterModel" />
-                            <Binding Path="TabID" />
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource NormalButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                    <Setter Property="Background" Value="LightGreen"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <Image Width="16" Height="16" 
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="CharacterModel" />
+                        <Binding Path="TabID" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource NormalButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                <Setter Property="Background" Value="LightGreen"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Image Width="16" Height="16" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Source="/resources/play.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button Height="35" Width="35" 
-                        ToolTip="Pause" 
-                        Command="{Binding PauseCharacterAnimationCommand}">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="CharacterModel" />
-                            <Binding Path="TabID" />
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource NormalButton}">
+                    <Image.Style>
+                        <Style TargetType="Image">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPaused}" Value="True">
-                                    <Setter Property="Background" Value="LightGreen"/>
-                                </DataTrigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
                             </Style.Triggers>
                         </Style>
-                    </Button.Style>
-                    <Image Width="16" Height="16" 
+                    </Image.Style>
+                </Image>
+            </Button>
+            <Button Height="35" Width="35" 
+                        ToolTip="Pause" 
+                        Command="{Binding PauseCharacterAnimationCommand}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="CharacterModel" />
+                        <Binding Path="TabID" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource NormalButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsPaused}" Value="True">
+                                <Setter Property="Background" Value="LightGreen"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Image Width="16" Height="16" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Source="/resources/pause.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button Height="35" Width="35" 
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+            <Button Height="35" Width="35" 
                         ToolTip="Stop"
                         Command="{Binding StopCharacterAnimationCommand}">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="CharacterModel" />
-                            <Binding Path="TabID" />
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                    <Image Width="16" Height="16" 
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="CharacterModel" />
+                        <Binding Path="TabID" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Image Width="16" Height="16" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Source="/resources/stop.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-                <Button Height="35" Width="35" 
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+            <Button Height="35" Width="35" 
                         ToolTip="Next Frame"
                         Command="{Binding NextFrameCharacterAnimationCommand}">
-                    <Button.CommandParameter>
-                        <MultiBinding Converter="{StaticResource parametersConverter}">
-                            <Binding Path="CharacterModel" />
-                            <Binding Path="TabID" />
-                        </MultiBinding>
-                    </Button.CommandParameter>
-                    <Image Width="16" Height="16" 
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="CharacterModel" />
+                        <Binding Path="TabID" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Image Width="16" Height="16" 
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Source="/resources/next_frame.png">
-                        <Image.Style>
-                            <Style TargetType="Image">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="False">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <fx:GrayscaleEffect />
-                                            </Setter.Value>
-                                        </Setter>
-                                        <Setter Property="Opacity" Value="0.5"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Image.Style>
-                    </Image>
-                </Button>
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Column="3">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <fx:GrayscaleEffect />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Button>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <TextBlock VerticalAlignment="Center">Speed:</TextBlock>
+            <TextBox Height="18" TextAlignment="Center" Width="50" Text="{Binding Speed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Margin="20,0,0,0" VerticalAlignment="Center">Frame Index:</TextBlock>
+            <Border BorderThickness="1" BorderBrush="Black" VerticalAlignment="Center">
+                <TextBlock TextAlignment="Center" Background="White" Height="18" Width="20" Text="{Binding FrameIndex}"/>
+            </Border>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <CheckBox VerticalAlignment="Center">Show collision boxes</CheckBox>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1"
+                      Grid.Column="0"
+                      Name="scrollViewer"
+                      VerticalScrollBarVisibility="Auto" 
+                      Background="DarkGray"
+                      PanningMode="Both">
+            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   Source="{Binding FrameImage, Mode=OneWay}"
+                   Stretch="None">
+            </Image>
+        </ScrollViewer>
+        <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="250"/>
