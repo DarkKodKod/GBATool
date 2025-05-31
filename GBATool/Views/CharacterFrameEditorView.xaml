@@ -11,7 +11,7 @@
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              Unloaded="UserControl_Unloaded"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="720" d:DesignWidth="1050">
+             d:DesignHeight="730" d:DesignWidth="1050">
     <UserControl.DataContext>
         <vm:CharacterFrameEditorViewModel />
     </UserControl.DataContext>
@@ -59,7 +59,13 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <GroupBox Grid.Column="0" Header="Frame" Margin="10,0,10,0" Padding="10">
-                    <local:FrameView x:Name="frameView" Grid.Row="0" />
+                    <local:FrameView 
+                        Width="624"
+                        Height="416"
+                        x:Name="frameView" 
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Grid.Row="0"/>
                 </GroupBox>
                 <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
