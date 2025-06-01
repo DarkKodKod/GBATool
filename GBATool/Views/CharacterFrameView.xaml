@@ -37,6 +37,7 @@
                 <Binding Path="AnimationID" />
                 <Binding Path="FrameID"/>
                 <Binding Path="FrameIndex" />
+                <Binding Path="CharacterModel"/>
             </MultiBinding>
         </Button.CommandParameter>
         <Grid>
@@ -49,6 +50,7 @@
                     VerticalAlignment="Top" HorizontalAlignment="Left">
                 <Canvas Background="DarkGray"
                         Height="64" Width="64"
+                        Visibility="{Binding ImageVisibility}"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                     <Canvas.RenderTransform>

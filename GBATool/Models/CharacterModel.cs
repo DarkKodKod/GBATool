@@ -29,6 +29,7 @@ public class FrameModel
     public Dictionary<string, CharacterTile> Tiles { get; set; } = [];
     public string BankID { get; set; } = string.Empty;
     public Dictionary<string, CollisionInfo> CollisionInfo { get; set; } = [];
+    public bool IsHeldFrame { get; set; } = false;
 }
 
 public class CharacterAnimation

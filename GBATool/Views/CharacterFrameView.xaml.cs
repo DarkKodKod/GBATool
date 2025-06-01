@@ -3,6 +3,7 @@ using GBATool.Models;
 using GBATool.Utils;
 using GBATool.VOs;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -18,6 +19,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
     private int _frameIndex;
     private ImageSource? _frameImage;
     private CharacterModel? _characterModel;
+    private Visibility _imageVisibility = Visibility.Visible;
 
     #region get/set
     public CharacterModel? CharacterModel
@@ -50,6 +52,17 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
             _frameID = value;
 
             OnPropertyChanged("FrameID");
+        }
+    }
+
+    public Visibility ImageVisibility
+    {
+        get { return _imageVisibility; }
+        set
+        {
+            _imageVisibility = value;
+
+            OnPropertyChanged(nameof(ImageVisibility));
         }
     }
 
@@ -122,6 +135,8 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             return;
         }
+
+        ImageVisibility = CharacterModel.Animations[AnimationID].Frames[FrameID].IsHeldFrame ? Visibility.Hidden : Visibility.Visible;
 
         ImageVO? vo = CharacterUtils.CreateImage(CharacterModel, AnimationID, FrameID);
 
