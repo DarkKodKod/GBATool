@@ -86,7 +86,7 @@ public class MainWindowViewModel : ViewModel
         set
         {
             _projectName = value;
-            OnPropertyChanged("ProjectName");
+            OnPropertyChanged(nameof(ProjectName));
         }
     }
 
@@ -96,7 +96,7 @@ public class MainWindowViewModel : ViewModel
         set
         {
             _recentProjects = value;
-            OnPropertyChanged("RecentProjects");
+            OnPropertyChanged(nameof(RecentProjects));
         }
     }
 
@@ -106,7 +106,7 @@ public class MainWindowViewModel : ViewModel
         set
         {
             _projectItems = value;
-            OnPropertyChanged("ProjectItems");
+            OnPropertyChanged(nameof(ProjectItems));
         }
     }
 
@@ -116,7 +116,7 @@ public class MainWindowViewModel : ViewModel
         set
         {
             _title = value;
-            OnPropertyChanged("Title");
+            OnPropertyChanged(nameof(Title));
         }
     }
     #endregion
@@ -193,7 +193,7 @@ public class MainWindowViewModel : ViewModel
             newItem.FileHandler.Save();
         }
 
-        OnPropertyChanged("ProjectItems");
+        OnPropertyChanged(nameof(ProjectItems));
     }
 
     private void OnDeleteElement(ProjectItem item)
@@ -221,7 +221,7 @@ public class MainWindowViewModel : ViewModel
 
         if (matchItem != null)
         {
-            OnPropertyChanged("ProjectItems");
+            OnPropertyChanged(nameof(ProjectItems));
 
             if (originalParent != null)
             {
@@ -566,7 +566,7 @@ public class MainWindowViewModel : ViewModel
 
         draggedElement.IsSelected = true;
 
-        OnPropertyChanged("ProjectItems");
+        OnPropertyChanged(nameof(ProjectItems));
     }
     #endregion
 }

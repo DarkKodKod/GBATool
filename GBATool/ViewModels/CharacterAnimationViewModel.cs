@@ -45,7 +45,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _isPlaying = value;
 
-            OnPropertyChanged("IsPlaying");
+            OnPropertyChanged(nameof(IsPlaying));
         }
     }
 
@@ -56,7 +56,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _isPaused = value;
 
-            OnPropertyChanged("IsPaused");
+            OnPropertyChanged(nameof(IsPaused));
         }
     }
 
@@ -67,7 +67,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _frameID = value;
 
-            OnPropertyChanged("FrameID");
+            OnPropertyChanged(nameof(FrameID));
         }
     }
 
@@ -81,7 +81,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _frameIndex = value;
 
-            OnPropertyChanged("FrameIndex");
+            OnPropertyChanged(nameof(FrameIndex));
         }
     }
 
@@ -95,7 +95,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _frameImage = value;
 
-            OnPropertyChanged("FrameImage");
+            OnPropertyChanged(nameof(FrameImage));
         }
     }
 
@@ -106,7 +106,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _fileHandler = value;
 
-            OnPropertyChanged("FileHandler");
+            OnPropertyChanged(nameof(FileHandler));
         }
     }
 
@@ -117,7 +117,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _characterModel = value;
 
-            OnPropertyChanged("CharacterModel");
+            OnPropertyChanged(nameof(CharacterModel));
         }
     }
 
@@ -128,7 +128,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             _tabID = value;
 
-            OnPropertyChanged("TabID");
+            OnPropertyChanged(nameof(TabID));
         }
     }
 
@@ -143,7 +143,7 @@ public class CharacterAnimationViewModel : ViewModel
 
                 UpdateSpeedValue(value);
 
-                OnPropertyChanged("Speed");
+                OnPropertyChanged(nameof(Speed));
             }
         }
     }

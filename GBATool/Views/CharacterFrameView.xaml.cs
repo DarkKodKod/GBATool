@@ -29,7 +29,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             _characterModel = value;
 
-            OnPropertyChanged("CharacterModel");
+            OnPropertyChanged(nameof(CharacterModel));
         }
     }
 
@@ -40,7 +40,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             _animationID = value;
 
-            OnPropertyChanged("AnimationID");
+            OnPropertyChanged(nameof(AnimationID));
         }
     }
 
@@ -51,7 +51,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             _frameID = value;
 
-            OnPropertyChanged("FrameID");
+            OnPropertyChanged(nameof(FrameID));
         }
     }
 
@@ -75,7 +75,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             _frameIndex = value;
 
-            OnPropertyChanged("FrameIndex");
+            OnPropertyChanged(nameof(FrameIndex));
         }
     }
 
@@ -89,7 +89,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             _frameImage = value;
 
-            OnPropertyChanged("FrameImage");
+            OnPropertyChanged(nameof(FrameImage));
         }
     }
     #endregion

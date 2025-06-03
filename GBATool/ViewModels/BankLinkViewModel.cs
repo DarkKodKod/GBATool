@@ -15,7 +15,7 @@ public class BankLinkViewModel : ViewModel
         {
             _caption = value;
 
-            OnPropertyChanged("Caption");
+            OnPropertyChanged(nameof(Caption));
         }
     }
 
@@ -26,7 +26,7 @@ public class BankLinkViewModel : ViewModel
         {
             _tileSetId = value;
 
-            OnPropertyChanged("TileSetId");
+            OnPropertyChanged(nameof(TileSetId));
         }
     }
 

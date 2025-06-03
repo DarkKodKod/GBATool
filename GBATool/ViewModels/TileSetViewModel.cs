@@ -72,7 +72,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _imgSource = value;
 
-            OnPropertyChanged("ImgSource");
+            OnPropertyChanged(nameof(ImgSource));
         }
     }
 
@@ -83,7 +83,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _imagePath = value;
 
-            OnPropertyChanged("ImagePath");
+            OnPropertyChanged(nameof(ImagePath));
 
             UpdateImage();
         }
@@ -98,7 +98,7 @@ public class TileSetViewModel : ItemViewModel
             {
                 _alias = value;
 
-                OnPropertyChanged("Alias");
+                OnPropertyChanged(nameof(Alias));
 
                 UpdateAndSaveAlias(value);
             }
@@ -112,7 +112,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _actualHeight = value;
 
-            OnPropertyChanged("ActualHeight");
+            OnPropertyChanged(nameof(ActualHeight));
         }
     }
 
@@ -123,7 +123,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _actualWidth = value;
 
-            OnPropertyChanged("ActualWidth");
+            OnPropertyChanged(nameof(ActualWidth));
         }
     }
 
@@ -134,7 +134,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _isSelecting = value;
 
-            OnPropertyChanged("IsSelecting");
+            OnPropertyChanged(nameof(IsSelecting));
         }
     }
 
@@ -145,7 +145,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _shape = value;
 
-            OnPropertyChanged("Shape");
+            OnPropertyChanged(nameof(Shape));
         }
     }
 
@@ -156,7 +156,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _size = value;
 
-            OnPropertyChanged("Size");
+            OnPropertyChanged(nameof(Size));
         }
     }
 
@@ -167,7 +167,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _imageScale = value;
 
-            OnPropertyChanged("ImageScale");
+            OnPropertyChanged(nameof(ImageScale));
         }
     }
 
@@ -178,7 +178,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _gridVisibility = value;
 
-            OnPropertyChanged("GridVisibility");
+            OnPropertyChanged(nameof(GridVisibility));
         }
     }
 
@@ -189,7 +189,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _selectionRectVisibility = value;
 
-            OnPropertyChanged("SelectionRectVisibility");
+            OnPropertyChanged(nameof(SelectionRectVisibility));
         }
     }
 
@@ -200,7 +200,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _selectionRectLeft = value;
 
-            OnPropertyChanged("SelectionRectLeft");
+            OnPropertyChanged(nameof(SelectionRectLeft));
         }
     }
 
@@ -211,7 +211,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _selectionRectWidth = value;
 
-            OnPropertyChanged("SelectionRectWidth");
+            OnPropertyChanged(nameof(SelectionRectWidth));
         }
     }
 
@@ -222,7 +222,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _selectionRectHeight = value;
 
-            OnPropertyChanged("SelectionRectHeight");
+            OnPropertyChanged(nameof(SelectionRectHeight));
         }
     }
 
@@ -233,7 +233,7 @@ public class TileSetViewModel : ItemViewModel
         {
             _selectionRectTop = value;
 
-            OnPropertyChanged("SelectionRectTop");
+            OnPropertyChanged(nameof(SelectionRectTop));
         }
     }
     #endregion
@@ -260,7 +260,7 @@ public class TileSetViewModel : ItemViewModel
         Filters[12] = "TGA";
         Filters[13] = "*.tga";
 
-        OnPropertyChanged("Filters");
+        OnPropertyChanged(nameof(Filters));
     }
 
     private void OnBrowseFileSuccess(string filePath, bool newFile)

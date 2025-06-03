@@ -19,7 +19,7 @@ public class ImportImageDialogViewModel : ViewModel
         set
         {
             _filePath = value;
-            OnPropertyChanged("FilePath");
+            OnPropertyChanged(nameof(FilePath));
         }
     }
 
@@ -55,7 +55,7 @@ public class ImportImageDialogViewModel : ViewModel
         Filters[12] = "TGA";
         Filters[13] = "*.tga";
 
-        OnPropertyChanged("Filters");
+        OnPropertyChanged(nameof(Filters));
     }
 
     private void OnCloseDialog()

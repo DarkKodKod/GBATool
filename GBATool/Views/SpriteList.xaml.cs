@@ -32,7 +32,7 @@ namespace GBATool.Views
             set
             {
                 _selectedSprite = value;
-                OnPropertyChanged("SelectedSprite");
+                OnPropertyChanged(nameof(SelectedSprite));
             }
         }
 
@@ -43,7 +43,7 @@ namespace GBATool.Views
             {
                 _spriteModels = value;
 
-                OnPropertyChanged("SpriteModels");
+                OnPropertyChanged(nameof(SpriteModels));
             }
         }
 
@@ -54,7 +54,7 @@ namespace GBATool.Views
             {
                 _deleteButton = value;
 
-                OnPropertyChanged("DeleteButton");
+                OnPropertyChanged(nameof(DeleteButton));
             }
         }
         #endregion

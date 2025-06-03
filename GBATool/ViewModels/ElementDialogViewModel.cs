@@ -27,7 +27,7 @@ public class ElementDialogViewModel : ViewModel
         set
         {
             _selectedType = value;
-            OnPropertyChanged("SelectedType");
+            OnPropertyChanged(nameof(SelectedType));
         }
     }
 

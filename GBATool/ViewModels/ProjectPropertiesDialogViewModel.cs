@@ -26,7 +26,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         set
         {
             _selectedSpriteFormat = value;
-            OnPropertyChanged("SelectedSpriteFormat");
+            OnPropertyChanged(nameof(SelectedSpriteFormat));
 
             _changed = true;
         }
@@ -38,7 +38,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         set
         {
             _projectTitle = value;
-            OnPropertyChanged("ProjectTitle");
+            OnPropertyChanged(nameof(ProjectTitle));
 
             _changed = true;
         }
@@ -50,7 +50,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         set
         {
             _softwareVersion = value;
-            OnPropertyChanged("SoftwareVersion");
+            OnPropertyChanged(nameof(SoftwareVersion));
 
             _changed = true;
         }
@@ -62,7 +62,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         set
         {
             _projectInitials = value;
-            OnPropertyChanged("ProjectInitials");
+            OnPropertyChanged(nameof(ProjectInitials));
 
             _changed = true;
         }
@@ -74,7 +74,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         set
         {
             _developerId = value;
-            OnPropertyChanged("DeveloperId");
+            OnPropertyChanged(nameof(DeveloperId));
 
             _changed = true;
         }

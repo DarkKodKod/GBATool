@@ -37,7 +37,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         {
             _frameImage = value;
 
-            OnPropertyChanged("FrameImage");
+            OnPropertyChanged(nameof(FrameImage));
         }
     }
 
@@ -58,7 +58,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
             {
                 _backBackground = value;
 
-                OnPropertyChanged("BackBackground");
+                OnPropertyChanged(nameof(BackBackground));
             }
         }
     }
@@ -77,7 +77,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
             {
                 _flipX = value;
 
-                OnPropertyChanged("FlipX");
+                OnPropertyChanged(nameof(FlipX));
             }
         }
     }
@@ -96,7 +96,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
             {
                 _flipY = value;
 
-                OnPropertyChanged("FlipY");
+                OnPropertyChanged(nameof(FlipY));
             }
         }
     }
@@ -115,7 +115,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
                     RectangleVisibility = Visibility.Hidden;
                 }
 
-                OnPropertyChanged("EditFrameTools");
+                OnPropertyChanged(nameof(EditFrameTools));
             }
         }
     }
@@ -127,7 +127,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         {
             _rectangleLeft = value;
 
-            OnPropertyChanged("RectangleLeft");
+            OnPropertyChanged(nameof(RectangleLeft));
         }
     }
 
@@ -138,7 +138,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         {
             _rectangleTop = value;
 
-            OnPropertyChanged("RectangleTop");
+            OnPropertyChanged(nameof(RectangleTop));
         }
     }
 
@@ -149,7 +149,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         {
             _rectangleVisibility = value;
 
-            OnPropertyChanged("RectangleVisibility");
+            OnPropertyChanged(nameof(RectangleVisibility));
         }
     }
     #endregion

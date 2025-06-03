@@ -27,7 +27,7 @@ public class ActionTabItem : ViewModel
 
                 _header = value;
 
-                OnPropertyChanged("Header");
+                OnPropertyChanged(nameof(Header));
 
                 if (changedName)
                 {
@@ -44,7 +44,7 @@ public class ActionTabItem : ViewModel
         {
             _content = value;
 
-            OnPropertyChanged("Content");
+            OnPropertyChanged(nameof(Content));
         }
     }
 
@@ -108,7 +108,7 @@ public class ActionTabItem : ViewModel
             {
                 _isInEditMode = value;
 
-                OnPropertyChanged("IsInEditMode");
+                OnPropertyChanged(nameof(IsInEditMode));
             }
         }
     }

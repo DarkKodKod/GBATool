@@ -28,7 +28,7 @@ public class BuildProjectDialogViewModel : ViewModel
         set
         {
             _folderSourcePath = value;
-            OnPropertyChanged("FolderSourcePath");
+            OnPropertyChanged(nameof(FolderSourcePath));
         }
     }
 
@@ -38,7 +38,7 @@ public class BuildProjectDialogViewModel : ViewModel
         set
         {
             _folderAssetsPath = value;
-            OnPropertyChanged("FolderAssetsPath");
+            OnPropertyChanged(nameof(FolderAssetsPath));
         }
     }
     #endregion

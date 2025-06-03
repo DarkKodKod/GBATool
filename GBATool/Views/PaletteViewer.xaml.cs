@@ -38,7 +38,7 @@ namespace GBATool.Views
             {
                 _solidColorBrushList = value;
 
-                OnPropertyChanged("SolidColorBrushList");
+                OnPropertyChanged(nameof(SolidColorBrushList));
             }
         }
         #endregion
@@ -98,7 +98,7 @@ namespace GBATool.Views
 
             SolidColorBrushList[colorIndex] = new SolidColorBrush(color);
 
-            OnPropertyChanged("SolidColorBrushList");
+            OnPropertyChanged(nameof(SolidColorBrushList));
         }
 
         protected virtual void OnPropertyChanged(string propname)

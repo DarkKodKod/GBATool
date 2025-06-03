@@ -18,7 +18,7 @@ public class FileModelVO : INotifyPropertyChanged
             {
                 _name = value;
 
-                OnPropertyChanged("Name");
+                OnPropertyChanged(nameof(Name));
             }
         }
     }

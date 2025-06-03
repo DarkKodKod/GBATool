@@ -55,7 +55,7 @@ public class BanksViewModel : ItemViewModel
         {
             _tileSetPath = value;
 
-            OnPropertyChanged("TileSetPath");
+            OnPropertyChanged(nameof(TileSetPath));
         }
     }
 
@@ -66,7 +66,7 @@ public class BanksViewModel : ItemViewModel
         {
             _tileSetId = value;
 
-            OnPropertyChanged("TileSetId");
+            OnPropertyChanged(nameof(TileSetId));
         }
     }
 
@@ -77,7 +77,7 @@ public class BanksViewModel : ItemViewModel
         {
             _palettePath = value;
 
-            OnPropertyChanged("PalettePath");
+            OnPropertyChanged(nameof(PalettePath));
         }
     }
 
@@ -88,7 +88,7 @@ public class BanksViewModel : ItemViewModel
         {
             _paletteId = value;
 
-            OnPropertyChanged("PaletteId");
+            OnPropertyChanged(nameof(PaletteId));
         }
     }
 
@@ -99,7 +99,7 @@ public class BanksViewModel : ItemViewModel
         {
             _bankSprites = value;
 
-            OnPropertyChanged("BankSprites");
+            OnPropertyChanged(nameof(BankSprites));
         }
     }
 
@@ -110,7 +110,7 @@ public class BanksViewModel : ItemViewModel
         {
             _selectedSpritePatternFormat = value;
 
-            OnPropertyChanged("SelectedSpritePatternFormat");
+            OnPropertyChanged(nameof(SelectedSpritePatternFormat));
         }
     }
 
@@ -121,7 +121,7 @@ public class BanksViewModel : ItemViewModel
         {
             _selectedTileSet = value;
 
-            OnPropertyChanged("SelectedTileSet");
+            OnPropertyChanged(nameof(SelectedTileSet));
         }
     }
 
@@ -132,7 +132,7 @@ public class BanksViewModel : ItemViewModel
         {
             _modelName = value;
 
-            OnPropertyChanged("ModelName");
+            OnPropertyChanged(nameof(ModelName));
         }
     }
 
@@ -143,7 +143,7 @@ public class BanksViewModel : ItemViewModel
         {
             _tileSets = value;
 
-            OnPropertyChanged("TileSets");
+            OnPropertyChanged(nameof(TileSets));
         }
     }
 
@@ -154,7 +154,7 @@ public class BanksViewModel : ItemViewModel
         {
             _bankModel = value;
 
-            OnPropertyChanged("BankModel");
+            OnPropertyChanged(nameof(BankModel));
         }
     }
 
@@ -170,7 +170,7 @@ public class BanksViewModel : ItemViewModel
                 UpdateAndSaveTransparentColor();
             }
 
-            OnPropertyChanged("TransparentColor");
+            OnPropertyChanged(nameof(TransparentColor));
         }
     }
 
@@ -190,7 +190,7 @@ public class BanksViewModel : ItemViewModel
                 SignalManager.Get<ReloadBankViewImageSignal>().Dispatch();
             }
 
-            OnPropertyChanged("Use256Colors");
+            OnPropertyChanged(nameof(Use256Colors));
         }
     }
 
@@ -213,8 +213,8 @@ public class BanksViewModel : ItemViewModel
                 }
             }
 
-            OnPropertyChanged("IsBackground");
-            OnPropertyChanged("IsNotBackground");
+            OnPropertyChanged(nameof(IsBackground));
+            OnPropertyChanged(nameof(IsNotBackground));
         }
     }
     #endregion

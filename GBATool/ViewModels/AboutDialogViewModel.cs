@@ -15,7 +15,7 @@ public class AboutDialogViewModel : ViewModel
         set
         {
             _version = value;
-            OnPropertyChanged("Version");
+            OnPropertyChanged(nameof(Version));
         }
     }
 

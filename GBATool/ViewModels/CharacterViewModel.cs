@@ -53,7 +53,7 @@ public class CharacterViewModel : ItemViewModel
         {
             _indices = value;
 
-            OnPropertyChanged("Indices");
+            OnPropertyChanged(nameof(Indices));
         }
     }
 
@@ -69,7 +69,7 @@ public class CharacterViewModel : ItemViewModel
                 UpdateAndSaveIndex(value);
             }
 
-            OnPropertyChanged("SelectedIndex");
+            OnPropertyChanged(nameof(SelectedIndex));
         }
     }
 
@@ -80,7 +80,7 @@ public class CharacterViewModel : ItemViewModel
         {
             _palettes = value;
 
-            OnPropertyChanged("Palettes");
+            OnPropertyChanged(nameof(Palettes));
         }
     }
 
@@ -96,7 +96,7 @@ public class CharacterViewModel : ItemViewModel
                 UpdateAndSavePalette(value);
             }
 
-            OnPropertyChanged("SelectedPalette");
+            OnPropertyChanged(nameof(SelectedPalette));
         }
     }
     #endregion

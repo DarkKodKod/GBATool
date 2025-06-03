@@ -111,7 +111,7 @@ public class ProjectItem : ViewModel, IClipboardable
             if (value != _isSelected)
             {
                 _isSelected = value;
-                OnPropertyChanged("IsSelected");
+                OnPropertyChanged(nameof(IsSelected));
 
                 if (_isSelected)
                 {
@@ -139,7 +139,7 @@ public class ProjectItem : ViewModel, IClipboardable
 
                 _displayName = value;
 
-                OnPropertyChanged("DisplayName");
+                OnPropertyChanged(nameof(DisplayName));
 
                 if (changedName)
                 {
@@ -165,7 +165,7 @@ public class ProjectItem : ViewModel, IClipboardable
             {
                 _isInEditMode = value;
 
-                OnPropertyChanged("IsInEditMode");
+                OnPropertyChanged(nameof(IsInEditMode));
             }
         }
     }

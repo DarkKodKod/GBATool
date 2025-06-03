@@ -25,7 +25,7 @@ public class ProjectDialogViewModel : ViewModel
                 return;
 
             _projectName = value;
-            OnPropertyChanged("ProjectName");
+            OnPropertyChanged(nameof(ProjectName));
         }
     }
 
@@ -35,7 +35,7 @@ public class ProjectDialogViewModel : ViewModel
         set
         {
             _folderPath = value;
-            OnPropertyChanged("FolderPath");
+            OnPropertyChanged(nameof(FolderPath));
         }
     }
     #endregion

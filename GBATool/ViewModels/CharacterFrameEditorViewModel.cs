@@ -34,7 +34,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _fileHandler = value;
 
-            OnPropertyChanged("FileHandler");
+            OnPropertyChanged(nameof(FileHandler));
         }
     }
 
@@ -45,7 +45,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _banks = value;
 
-            OnPropertyChanged("Banks");
+            OnPropertyChanged(nameof(Banks));
         }
     }
 
@@ -56,7 +56,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _selectedBank = value;
 
-            OnPropertyChanged("SelectedBank");
+            OnPropertyChanged(nameof(SelectedBank));
         }
     }
 
@@ -67,7 +67,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _tabId = value;
 
-            OnPropertyChanged("TabID");
+            OnPropertyChanged(nameof(TabID));
 
             var model = CharacterModel;
 
@@ -98,7 +98,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _frameIndex = value;
 
-            OnPropertyChanged("FrameIndex");
+            OnPropertyChanged(nameof(FrameIndex));
         }
     }
 
