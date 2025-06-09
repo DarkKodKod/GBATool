@@ -111,11 +111,6 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        if (bankViewerView.MetaData == null)
-        {
-            return;
-        }
-
         object data = e.Data.GetData(typeof(SpriteControlVO));
 
         SpriteControlVO sprite = (SpriteControlVO)data;
@@ -184,27 +179,54 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        SpriteControlVO originalSprite = (SpriteControlVO)data;
+        SpriteControlVO draggingSprite = (SpriteControlVO)data;
 
-        if (!frameViewView.Canvas.Children.Contains(originalSprite.Image))
+        if (frameViewView.Canvas.Children.Contains(draggingSprite.Image))
         {
             SpriteControlVO sprite = new()
             {
-                Image = new() { Source = originalSprite.Image?.Source },
-                SpriteID = originalSprite.SpriteID,
-                TileSetID = originalSprite.TileSetID,
-                Width = originalSprite.Width,
-                Height = originalSprite.Height
+                Image = new() { Source = draggingSprite.Image?.Source },
+                SpriteID = draggingSprite.SpriteID,
+                TileSetID = draggingSprite.TileSetID,
+                Width = draggingSprite.Width,
+                Height = draggingSprite.Height
             };
+
+            Point elementPosition = e.GetPosition(frameViewView.Canvas);
+
+            Canvas.SetLeft(sprite.Image, elementPosition.X - _spriteOffsetX);
+            Canvas.SetTop(sprite.Image, elementPosition.Y - _spriteOffsetY);
 
             _ = frameViewView.Canvas.Children.Add(sprite.Image);
 
-            originalSprite = sprite;
+            frameViewView.Canvas.Children.Remove(draggingSprite.Image);
+        }
+    }
+
+    private void FrameView_DragOver(object sender, DragEventArgs e)
+    {
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        object data = e.Data.GetData(typeof(SpriteControlVO));
+
+        SpriteControlVO draggingSprite = (SpriteControlVO)data;
+
+        if (draggingSprite.Image == null)
+            return;
+
+        if (!frameViewView.Canvas.Children.Contains(draggingSprite.Image))
+        {
+            draggingSprite.Image.IsHitTestVisible = false;
+
+            _ = frameViewView.Canvas.Children.Add(draggingSprite.Image);
         }
 
         Point elementPosition = e.GetPosition(frameViewView.Canvas);
 
-        Canvas.SetLeft(originalSprite.Image, elementPosition.X);
-        Canvas.SetTop(originalSprite.Image, elementPosition.Y);
+        Canvas.SetLeft(draggingSprite.Image, elementPosition.X - _spriteOffsetX);
+        Canvas.SetTop(draggingSprite.Image, elementPosition.Y - _spriteOffsetY);
     }
 }

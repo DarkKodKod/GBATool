@@ -65,6 +65,7 @@
                         x:Name="frameView" 
                         AllowDrop="True"
                         Drop="FrameView_Drop"
+                        DragOver="FrameView_DragOver"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Grid.Row="0"/>
