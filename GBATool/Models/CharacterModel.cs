@@ -15,18 +15,22 @@ public class CollisionInfo
     public Color Color { get; set; }
 }
 
-public class CharacterTile
+public class CharacterSprite
 {
     public string ID { get; set; } = string.Empty;
-    public Point Point { get; set; }
+    public Point Position { get; set; }
     public bool FlipX { get; set; }
     public bool FlipY { get; set; }
+    public string SpriteID { get; set; } = string.Empty;
+    public string TileSetID { get; set; } = string.Empty;
+    public int Width { get; set; }
+    public int Height { get; set; }
 }
 
 public class FrameModel
 {
     public string ID { get; set; } = string.Empty;
-    public Dictionary<string, CharacterTile> Tiles { get; set; } = [];
+    public Dictionary<string, CharacterSprite> Tiles { get; set; } = [];
     public string BankID { get; set; } = string.Empty;
     public Dictionary<string, CollisionInfo> CollisionInfo { get; set; } = [];
     public bool IsHeldFrame { get; set; } = false;

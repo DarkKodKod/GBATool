@@ -9,12 +9,12 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="490" d:DesignWidth="650">
+             d:DesignHeight="605" d:DesignWidth="925">
     <Grid>
         <Canvas Width="232" Height="152" 
 		        Background="DarkGray"
                 RenderOptions.BitmapScalingMode="NearestNeighbor"
-                RenderTransform="3 0 0 3 -232 -152">
+                RenderTransform="4 0 0 4 -355 -230">
             <Image Width="232"
 	               Height="152"
                    Source="{Binding FrameImage}"

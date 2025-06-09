@@ -108,7 +108,7 @@ public static class CharacterUtils
         return new ImageVO() { Image = bankBitmap, Width = maxWidth, Height = maxHeight };
     }
 
-    private static Dictionary<Color, Color> FillColorCacheByGroup(CharacterTile characterTile, int group, string paletteId)
+    private static Dictionary<Color, Color> FillColorCacheByGroup(CharacterSprite characterTile, int group, string paletteId)
     {
         Color nullColor = Util.NullColor;
 

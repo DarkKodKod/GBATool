@@ -1,11 +1,15 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.VOs;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace GBATool.Views;
 
@@ -41,7 +45,7 @@ public partial class CharacterFrameEditorView : UserControl
         frameView.OnDeactivate();
     }
 
-    private void UserControl_MouseMove(object sender, MouseEventArgs e)
+    private void BankViewer_MouseMove(object sender, MouseEventArgs e)
     {
         if (e.LeftButton != MouseButtonState.Pressed)
         {
@@ -104,7 +108,7 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void UserControl_DragOver(object sender, DragEventArgs e)
+    private void BankViewer_DragOver(object sender, DragEventArgs e)
     {
         if (bankViewer.DataContext is not BankViewerView bankViewerView)
         {
@@ -194,13 +198,45 @@ public partial class CharacterFrameEditorView : UserControl
 
             Point elementPosition = e.GetPosition(frameViewView.Canvas);
 
-            Canvas.SetLeft(sprite.Image, elementPosition.X - _spriteOffsetX);
-            Canvas.SetTop(sprite.Image, elementPosition.Y - _spriteOffsetY);
+            int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
+            int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
+
+            Canvas.SetLeft(sprite.Image, exactPosX);
+            Canvas.SetTop(sprite.Image, exactPosY);
 
             _ = frameViewView.Canvas.Children.Add(sprite.Image);
 
             frameViewView.Canvas.Children.Remove(draggingSprite.Image);
+
+            SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY));
         }
+    }
+
+    private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
+    {
+        if (string.IsNullOrEmpty(sprite.SpriteID))
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(sprite.TileSetID))
+        {
+            return;
+        }
+
+        CharacterSprite characterSprite = new()
+        {
+            ID = Guid.NewGuid().ToString(),
+            Position = position,
+            FlipX = false,
+            FlipY = false,
+            SpriteID = sprite.SpriteID,
+            TileSetID = sprite.TileSetID,
+            Width = sprite.Width,
+            Height = sprite.Height
+        };  
+
+        SignalManager.Get<AddNewSpriteIntoCharacterFrame>().Dispatch(characterSprite);
     }
 
     private void FrameView_DragOver(object sender, DragEventArgs e)
@@ -226,7 +262,78 @@ public partial class CharacterFrameEditorView : UserControl
 
         Point elementPosition = e.GetPosition(frameViewView.Canvas);
 
-        Canvas.SetLeft(draggingSprite.Image, elementPosition.X - _spriteOffsetX);
-        Canvas.SetTop(draggingSprite.Image, elementPosition.Y - _spriteOffsetY);
+        int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
+        int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
+
+        Canvas.SetLeft(draggingSprite.Image, exactPosX);
+        Canvas.SetTop(draggingSprite.Image, exactPosY);
+    }
+
+    private void FrameView_MouseMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        Point positionInCanvas = e.GetPosition(frameViewView.canvas);
+
+        EllipseGeometry hitArea = new(positionInCanvas, 1.0, 1.0);
+        List<Image> hitList = [];
+
+        VisualTreeHelper.HitTest(frameViewView.canvas,
+                new HitTestFilterCallback(o =>
+                {
+                    if (o.GetType() == typeof(Image))
+                        return HitTestFilterBehavior.ContinueSkipChildren;
+                    else
+                        return HitTestFilterBehavior.Continue;
+                }),
+                new HitTestResultCallback(result =>
+                {
+                    if (result?.VisualHit is Image)
+                    {
+                        IntersectionDetail intersectionDetail = ((GeometryHitTestResult)result).IntersectionDetail;
+                        if (intersectionDetail == IntersectionDetail.FullyContains)
+                        {
+                            hitList.Add((Image)result.VisualHit);
+                            return HitTestResultBehavior.Continue;
+                        }
+                        else if (intersectionDetail != IntersectionDetail.Intersects &&
+                            intersectionDetail != IntersectionDetail.FullyInside)
+                        {
+                            return HitTestResultBehavior.Stop;
+                        }
+                    }
+
+                    return HitTestResultBehavior.Continue;
+                }),
+                new GeometryHitTestParameters(hitArea));
+
+        if (hitList.Count > 0)
+        {
+            SpriteControlVO spriteControl = new()
+            {
+                Image = hitList[0],
+                //SpriteID = bankViewerView.SelectedSpriteFromBank.ID,
+                //TileSetID = bankViewerView.SelectedSpriteFromBank.TileSetID,
+                //Width = width,
+                //Height = height,
+                //OffsetX = spriteInfo.OffsetX,
+                //OffsetY = spriteInfo.OffsetY
+            };
+
+            DataObject data = new(spriteControl);
+
+            _spriteOffsetX = 0;
+            _spriteOffsetY = 0;
+
+            _ = DragDrop.DoDragDrop((DependencyObject)e.Source, data, DragDropEffects.Move);
+        }
     }
 }

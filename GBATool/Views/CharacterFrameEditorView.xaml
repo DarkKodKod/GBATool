@@ -59,16 +59,21 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <GroupBox Grid.Column="0" Header="Frame" Margin="10,0,10,0" Padding="10">
-                    <local:FrameView 
-                        Width="624"
-                        Height="416"
-                        x:Name="frameView" 
-                        AllowDrop="True"
-                        Drop="FrameView_Drop"
-                        DragOver="FrameView_DragOver"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        Grid.Row="0"/>
+                    <ScrollViewer
+                        PanningMode="Both"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+                        <local:FrameView 
+                            Width="925"
+                            Height="605"
+                            x:Name="frameView" 
+                            AllowDrop="True"
+                            Drop="FrameView_Drop"
+                            DragOver="FrameView_DragOver"
+                            MouseMove="FrameView_MouseMove"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                    </ScrollViewer>
                 </GroupBox>
                 <Grid Grid.Column="1">
                     <Grid.RowDefinitions>
@@ -148,8 +153,8 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             AllowDrop="True"
-                            MouseMove="UserControl_MouseMove"
-                            DragOver="UserControl_DragOver"
+                            MouseMove="BankViewer_MouseMove"
+                            DragOver="BankViewer_DragOver"
                             DragLeave="BankViewer_DragLeave"
                             Drop="BankViewer_Drop"
                             Force2DView="True"
