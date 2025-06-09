@@ -30,6 +30,8 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     #endregion
 
     #region get/set
+    public Canvas Canvas { get => canvas; }
+
     public ImageSource? FrameImage
     {
         get => _frameImage;

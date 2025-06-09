@@ -2,7 +2,6 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
-using System.Linq;
 
 namespace GBATool.Commands.Character;
 

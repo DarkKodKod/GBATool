@@ -230,6 +230,19 @@ public static class Util
         }
     }
 
+    public static System.Windows.Controls.Image GetImageFromWriteableBitmap(BitmapSource bitmap)
+    {
+        System.Windows.Controls.Image imageCtrol = new()
+        {
+            Source = bitmap
+        };
+
+        RenderOptions.SetCachingHint(imageCtrol, CachingHint.Cache);
+        RenderOptions.SetBitmapScalingMode(imageCtrol, BitmapScalingMode.NearestNeighbor);
+
+        return imageCtrol;
+    }
+
     public static void CopyBitmapImageToWriteableBitmap(ref WriteableBitmap dest, int nXDest, int nYDest, WriteableBitmap src)
     {
         using (dest.GetBitmapContext())

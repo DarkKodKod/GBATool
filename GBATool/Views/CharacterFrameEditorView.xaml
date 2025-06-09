@@ -11,7 +11,7 @@
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              Unloaded="UserControl_Unloaded"
              Loaded="UserControl_Loaded"
-             d:DesignHeight="730" d:DesignWidth="1050">
+             d:DesignHeight="790" d:DesignWidth="1050">
     <UserControl.DataContext>
         <vm:CharacterFrameEditorViewModel />
     </UserControl.DataContext>
@@ -63,6 +63,8 @@
                         Width="624"
                         Height="416"
                         x:Name="frameView" 
+                        AllowDrop="True"
+                        Drop="FrameView_Drop"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Grid.Row="0"/>
@@ -144,6 +146,11 @@
                         <local:BankViewerView 
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            AllowDrop="True"
+                            MouseMove="UserControl_MouseMove"
+                            DragOver="UserControl_DragOver"
+                            DragLeave="BankViewer_DragLeave"
+                            Drop="BankViewer_Drop"
                             Force2DView="True"
                             x:Name="bankViewer"/>
                     </ScrollViewer>

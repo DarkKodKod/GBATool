@@ -62,6 +62,10 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
     #endregion
 
     #region get/set
+    public BankImageMetaData? MetaData { get => _metaData; }
+
+    public Canvas Canvas { get => canvas; }
+
     public SpriteModel? SelectedSprite
     {
         get => _selectedSprite;
@@ -69,7 +73,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _selectedSprite = value;
 
-            OnPropertyChanged("SelectedSprite");
+            OnPropertyChanged(nameof(SelectedSprite));
         }
     }
 
@@ -95,7 +99,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
                 ShowSelectionOverSprite(_selectedSpriteFromBank);
             }
 
-            OnPropertyChanged("SelectedSpriteFromBank");
+            OnPropertyChanged(nameof(SelectedSpriteFromBank));
         }
     }
 
@@ -106,7 +110,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _canvasHeght = value;
 
-            OnPropertyChanged("CanvasHeight");
+            OnPropertyChanged(nameof(CanvasHeight));
         }
     }
 
@@ -117,7 +121,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _canvasWidth = value;
 
-            OnPropertyChanged("CanvasWidth");
+            OnPropertyChanged(nameof(CanvasWidth));
         }
     }
 
@@ -128,7 +132,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _scale = value;
 
-            OnPropertyChanged("Scale");
+            OnPropertyChanged(nameof(Scale));
         }
     }
 
@@ -139,7 +143,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _bankImage = value;
 
-            OnPropertyChanged("BankImage");
+            OnPropertyChanged(nameof(BankImage));
         }
     }
 
@@ -150,7 +154,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectVisibility = value;
 
-            OnPropertyChanged("SpriteRectVisibility");
+            OnPropertyChanged(nameof(SpriteRectVisibility));
         }
     }
 
@@ -161,7 +165,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectLeft = value;
 
-            OnPropertyChanged("SpriteRectLeft");
+            OnPropertyChanged(nameof(SpriteRectLeft));
         }
     }
 
@@ -172,7 +176,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectWidth = value;
 
-            OnPropertyChanged("SpriteRectWidth");
+            OnPropertyChanged(nameof(SpriteRectWidth));
         }
     }
 
@@ -183,7 +187,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectHeight = value;
 
-            OnPropertyChanged("SpriteRectHeight");
+            OnPropertyChanged(nameof(SpriteRectHeight));
         }
     }
 
@@ -194,7 +198,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectTop = value;
 
-            OnPropertyChanged("SpriteRectTop");
+            OnPropertyChanged(nameof(SpriteRectTop));
         }
     }
 
@@ -205,7 +209,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectVisibility2 = value;
 
-            OnPropertyChanged("SpriteRectVisibility2");
+            OnPropertyChanged(nameof(SpriteRectVisibility2));
         }
     }
 
@@ -216,7 +220,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectLeft2 = value;
 
-            OnPropertyChanged("SpriteRectLeft2");
+            OnPropertyChanged(nameof(SpriteRectLeft2));
         }
     }
 
@@ -227,7 +231,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectWidth2 = value;
 
-            OnPropertyChanged("SpriteRectWidth2");
+            OnPropertyChanged(nameof(SpriteRectWidth2));
         }
     }
 
@@ -238,7 +242,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectHeight2 = value;
 
-            OnPropertyChanged("SpriteRectHeight2");
+            OnPropertyChanged(nameof(SpriteRectHeight2));
         }
     }
 
@@ -249,7 +253,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectTop2 = value;
 
-            OnPropertyChanged("SpriteRectTop2");
+            OnPropertyChanged(nameof(SpriteRectTop2));
         }
     }
 
@@ -260,7 +264,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectVisibility3 = value;
 
-            OnPropertyChanged("SpriteRectVisibility3");
+            OnPropertyChanged(nameof(SpriteRectVisibility3));
         }
     }
 
@@ -271,7 +275,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectLeft3 = value;
 
-            OnPropertyChanged("SpriteRectLeft3");
+            OnPropertyChanged(nameof(SpriteRectLeft3));
         }
     }
 
@@ -282,7 +286,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectWidth3 = value;
 
-            OnPropertyChanged("SpriteRectWidth3");
+            OnPropertyChanged(nameof(SpriteRectWidth3));
         }
     }
 
@@ -293,7 +297,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectHeight3 = value;
 
-            OnPropertyChanged("SpriteRectHeight3");
+            OnPropertyChanged(nameof(SpriteRectHeight3));
         }
     }
 
@@ -304,7 +308,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             _spriteRectTop3 = value;
 
-            OnPropertyChanged("SpriteRectTop3");
+            OnPropertyChanged(nameof(SpriteRectTop3));
         }
     }
     #endregion

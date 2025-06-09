@@ -9,17 +9,17 @@
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              mc:Ignorable="d" 
-             d:DesignHeight="390" d:DesignWidth="550">
+             d:DesignHeight="490" d:DesignWidth="650">
     <Grid>
-        <Canvas Width="240" Height="160" 
+        <Canvas Width="232" Height="152" 
 		        Background="DarkGray"
-                RenderTransform="2.6 0 0 2.6 -195 -129">
-            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-	                Width="240"
-	                Height="160"
-                    Source="{Binding FrameImage}"
-                    Name="imgFrame"
-	                Stretch="UniformToFill">
+                RenderOptions.BitmapScalingMode="NearestNeighbor"
+                RenderTransform="3 0 0 3 -232 -152">
+            <Image Width="232"
+	               Height="152"
+                   Source="{Binding FrameImage}"
+                   Name="imgFrame"
+	               Stretch="UniformToFill">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True"  />
                 </i:Interaction.Behaviors>
@@ -34,7 +34,11 @@
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Border.Background>
-                <Canvas Width="240" Height="160" Background="Transparent">
+                <Canvas 
+                    Width="232" 
+                    Height="152" 
+                    x:Name="canvas"
+                    Background="Transparent">
                     <i:Interaction.Behaviors>
                         <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgFrame}"/>
                     </i:Interaction.Behaviors>

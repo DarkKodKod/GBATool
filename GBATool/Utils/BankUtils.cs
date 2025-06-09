@@ -9,12 +9,20 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
 
+public class SpriteInfo
+{
+    public BitmapSource? BitmapSource { get; set; }
+    public int OffsetX { get; set; } = 0;
+    public int OffsetY { get; set; } = 0;
+}
+
 public class BankImageMetaData
 {
     public WriteableBitmap? image;
     public List<(int, string, string)> SpriteIndices = [];
     public List<string> UniqueTileSet = [];
     public List<SpriteModel> bankSprites = [];
+    public Dictionary<string, SpriteInfo> Sprites = [];
 }
 
 public static class BankUtils
@@ -126,6 +134,16 @@ public static class BankUtils
             else
             {
                 index = (MaxTextureCellsWidth * (heightNextPosition / SizeOfCellInPixels)) + (widthNextPosition / SizeOfCellInPixels);
+
+                // Keep the sprite as a separated image in a cache
+                metaData.Sprites.Add(
+                    sprite.ID,
+                    new()
+                    {
+                        BitmapSource = sourceBitmap.Crop(posX, posY, width, height),
+                        OffsetX = widthNextPosition,
+                        OffsetY = heightNextPosition
+                    });
 
                 // 2D
                 for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
