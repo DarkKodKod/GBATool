@@ -20,6 +20,7 @@ public partial class CharacterFrameEditorView : UserControl
 {
     private double _spriteOffsetX;
     private double _spriteOffsetY;
+    private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
 
     public CharacterFrameEditorView()
     {
@@ -80,6 +81,7 @@ public partial class CharacterFrameEditorView : UserControl
 
             SpriteControlVO spriteControl = new()
             {
+                ID = "new",
                 Image = Util.GetImageFromWriteableBitmap(spriteInfo.BitmapSource),
                 SpriteID = bankViewerView.SelectedSpriteFromBank.ID,
                 TileSetID = bankViewerView.SelectedSpriteFromBank.TileSetID,
@@ -187,8 +189,16 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (frameViewView.Canvas.Children.Contains(draggingSprite.Image))
         {
+            string id = draggingSprite.ID;
+
+            if (id == "new")
+            {
+                id = Guid.NewGuid().ToString();
+            }
+
             SpriteControlVO sprite = new()
             {
+                ID = id,
                 Image = new() { Source = draggingSprite.Image?.Source },
                 SpriteID = draggingSprite.SpriteID,
                 TileSetID = draggingSprite.TileSetID,
@@ -212,21 +222,21 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
+    private void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
     {
-        if (string.IsNullOrEmpty(sprite.SpriteID))
+        if (sprite.Image == null)
         {
             return;
         }
 
-        if (string.IsNullOrEmpty(sprite.TileSetID))
+        if (!_spritesInFrames.TryGetValue(sprite.Image, out _))
         {
-            return;
+            _spritesInFrames.Add(sprite.Image, sprite);
         }
 
         CharacterSprite characterSprite = new()
         {
-            ID = Guid.NewGuid().ToString(),
+            ID = sprite.ID,
             Position = position,
             FlipX = false,
             FlipY = false,
@@ -234,7 +244,7 @@ public partial class CharacterFrameEditorView : UserControl
             TileSetID = sprite.TileSetID,
             Width = sprite.Width,
             Height = sprite.Height
-        };  
+        };
 
         SignalManager.Get<AddNewSpriteIntoCharacterFrame>().Dispatch(characterSprite);
     }
@@ -317,23 +327,29 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (hitList.Count > 0)
         {
-            SpriteControlVO spriteControl = new()
+            if (!_spritesInFrames.TryGetValue(hitList[0], out SpriteControlVO? spriteControl))
             {
-                Image = hitList[0],
-                //SpriteID = bankViewerView.SelectedSpriteFromBank.ID,
-                //TileSetID = bankViewerView.SelectedSpriteFromBank.TileSetID,
-                //Width = width,
-                //Height = height,
-                //OffsetX = spriteInfo.OffsetX,
-                //OffsetY = spriteInfo.OffsetY
-            };
+                return;
+            }
 
             DataObject data = new(spriteControl);
 
             _spriteOffsetX = 0;
             _spriteOffsetY = 0;
 
-            _ = DragDrop.DoDragDrop((DependencyObject)e.Source, data, DragDropEffects.Move);
+            DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)e.Source, data, DragDropEffects.Move);
+
+            if (result == DragDropEffects.None)
+            {
+                if (frameViewView.Canvas.Children.Contains(spriteControl.Image))
+                {
+                    frameViewView.Canvas.Children.Remove(spriteControl.Image);
+
+                    SignalManager.Get<DeleteSpriteFromCharacterFrame>().Dispatch(spriteControl.ID);
+
+                    _spritesInFrames.Remove(hitList[0]);
+                }
+            }
         }
     }
 }

@@ -14,6 +14,7 @@
         <Canvas Width="232" Height="152" 
 		        Background="DarkGray"
                 RenderOptions.BitmapScalingMode="NearestNeighbor"
+                RenderOptions.EdgeMode="Aliased"
                 RenderTransform="4 0 0 4 -355 -230">
             <Image Width="232"
 	               Height="152"
@@ -30,7 +31,7 @@
 					             Viewport="0,0,8,8" ViewportUnits="Absolute" 
 					             Viewbox="0,0,8,8" ViewboxUnits="Absolute">
                         <VisualBrush.Visual>
-                            <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
+                            <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100" />
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </Border.Background>

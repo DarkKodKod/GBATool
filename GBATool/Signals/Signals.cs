@@ -97,6 +97,7 @@ public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddNewSpriteIntoCharacterFrame : Signal<CharacterSprite> { }
+public class DeleteSpriteFromCharacterFrame : Signal<string> { }
 
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
