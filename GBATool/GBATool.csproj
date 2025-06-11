@@ -90,7 +90,7 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="Nett" Version="0.15.0" />
-    <PackageReference Include="System.CodeDom" Version="9.0.5" />
+    <PackageReference Include="System.CodeDom" Version="9.0.6" />
     <PackageReference Include="WriteableBitmapEx" Version="1.6.8" />
   </ItemGroup>
 
