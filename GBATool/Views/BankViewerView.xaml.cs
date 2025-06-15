@@ -420,6 +420,11 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void OnMouseImageSelected(Image image, Point point)
     {
+        if (image.Name != "imgBank")
+        {
+            return;
+        }
+
         SelectedSpriteFromBank = null;
         _cacheSelectedSpriteFromBank = null;
 

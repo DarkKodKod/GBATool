@@ -21,6 +21,7 @@
         <Canvas x:Name="canvas"
                 Width="{Binding CanvasWidth}"
                 Height="{Binding CanvasHeight}"
+                RenderOptions.BitmapScalingMode="NearestNeighbor"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top">
             <Canvas.Background>

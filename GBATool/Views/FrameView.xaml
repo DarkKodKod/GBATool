@@ -18,7 +18,6 @@
                 RenderTransform="4 0 0 4 -355 -230">
             <Image Width="232"
 	               Height="152"
-                   Source="{Binding FrameImage}"
                    Name="imgFrame"
 	               Stretch="UniformToFill">
                 <i:Interaction.Behaviors>
@@ -43,13 +42,6 @@
                     <i:Interaction.Behaviors>
                         <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgFrame}"/>
                     </i:Interaction.Behaviors>
-                    <Rectangle 
-                        Width="8" Height="8" 
-                        Stroke="Red" 
-                        StrokeThickness="0.5"
-                        Canvas.Top="{Binding RectangleTop}"
-                        Canvas.Left="{Binding RectangleLeft}"
-                        Visibility="{Binding RectangleVisibility}"/>
                 </Canvas>
             </Border>
         </Canvas>

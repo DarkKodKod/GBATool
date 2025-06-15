@@ -21,6 +21,7 @@ public partial class CharacterFrameEditorView : UserControl
     private double _spriteOffsetX;
     private double _spriteOffsetY;
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
+    private readonly Thickness SelectionThickness = new(0.5);
 
     public CharacterFrameEditorView()
     {
@@ -30,7 +31,6 @@ public partial class CharacterFrameEditorView : UserControl
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         bankViewer.OnActivate();
-        frameView.OnActivate();
 
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
         {
@@ -38,12 +38,19 @@ public partial class CharacterFrameEditorView : UserControl
         }
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(viewModel.BankModel);
+
+        #region Signals
+        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
+        #endregion
     }
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
         bankViewer.OnDeactivate();
-        frameView.OnDeactivate();
+
+        #region Signals
+        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
+        #endregion
     }
 
     private void BankViewer_MouseMove(object sender, MouseEventArgs e)
@@ -170,9 +177,20 @@ public partial class CharacterFrameEditorView : UserControl
 
         SpriteControlVO sprite = (SpriteControlVO)data;
 
-        if (bankViewerView.Canvas.Children.Contains(sprite.Image))
+        UIElement? element;
+
+        if (sprite.Image?.Parent is Border border)
         {
-            bankViewerView.Canvas.Children.Remove(sprite.Image);
+            element = border;
+        }
+        else
+        {
+            element = sprite.Image;
+        }
+
+        if (bankViewerView.Canvas.Children.Contains(element))
+        {
+            bankViewerView.Canvas.Children.Remove(element);
         }
     }
 
@@ -203,7 +221,17 @@ public partial class CharacterFrameEditorView : UserControl
                 SpriteID = draggingSprite.SpriteID,
                 TileSetID = draggingSprite.TileSetID,
                 Width = draggingSprite.Width,
-                Height = draggingSprite.Height
+                Height = draggingSprite.Height,
+                OffsetX = draggingSprite.OffsetX,
+                OffsetY = draggingSprite.OffsetY
+            };
+
+            Border border = new()
+            {
+                Background = Brushes.Transparent,
+                BorderBrush = Brushes.Red,
+                BorderThickness = SelectionThickness,
+                Child = sprite.Image
             };
 
             Point elementPosition = e.GetPosition(frameViewView.Canvas);
@@ -211,10 +239,12 @@ public partial class CharacterFrameEditorView : UserControl
             int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
             int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
 
-            Canvas.SetLeft(sprite.Image, exactPosX);
-            Canvas.SetTop(sprite.Image, exactPosY);
+            Canvas.SetLeft(border, exactPosX);
+            Canvas.SetTop(border, exactPosY);
 
-            _ = frameViewView.Canvas.Children.Add(sprite.Image);
+            UnselectAllImagesInFrameView();
+
+            _ = frameViewView.Canvas.Children.Add(border);
 
             frameViewView.Canvas.Children.Remove(draggingSprite.Image);
 
@@ -261,7 +291,27 @@ public partial class CharacterFrameEditorView : UserControl
         SpriteControlVO draggingSprite = (SpriteControlVO)data;
 
         if (draggingSprite.Image == null)
+        {
             return;
+        }
+
+        Point elementPosition = e.GetPosition(frameViewView.Canvas);
+
+        if (draggingSprite.Image.Parent is Border border)
+        {
+            if (frameViewView.Canvas.Children.Contains(border))
+            {
+                border.Child = null;
+
+                double imagePosX = Canvas.GetLeft(border);
+                double imagePosY = Canvas.GetTop(border);
+
+                frameViewView.Canvas.Children.Remove(border);
+
+                _spriteOffsetX = elementPosition.X - imagePosX;
+                _spriteOffsetY = elementPosition.Y - imagePosY;
+            }
+        }
 
         if (!frameViewView.Canvas.Children.Contains(draggingSprite.Image))
         {
@@ -270,13 +320,33 @@ public partial class CharacterFrameEditorView : UserControl
             _ = frameViewView.Canvas.Children.Add(draggingSprite.Image);
         }
 
-        Point elementPosition = e.GetPosition(frameViewView.Canvas);
-
         int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
         int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
 
         Canvas.SetLeft(draggingSprite.Image, exactPosX);
         Canvas.SetTop(draggingSprite.Image, exactPosY);
+    }
+
+    private void FrameView_DragLeave(object sender, DragEventArgs e)
+    {
+        if (e.OriginalSource is not Canvas)
+        {
+            return;
+        }
+
+        object data = e.Data.GetData(typeof(SpriteControlVO));
+
+        SpriteControlVO sprite = (SpriteControlVO)data;
+
+        if (sprite.Image == null)
+        {
+            return;
+        }
+
+        if (frameView.DataContext is FrameView frameViewView)
+        {
+            frameViewView.Canvas.Children.Remove(sprite.Image);
+        }
     }
 
     private void FrameView_MouseMove(object sender, MouseEventArgs e)
@@ -341,14 +411,89 @@ public partial class CharacterFrameEditorView : UserControl
 
             if (result == DragDropEffects.None)
             {
-                if (frameViewView.Canvas.Children.Contains(spriteControl.Image))
+                UIElement? element;
+
+                if (spriteControl.Image?.Parent is Border border)
                 {
-                    frameViewView.Canvas.Children.Remove(spriteControl.Image);
+                    element = border;
+                }
+                else
+                {
+                    element = spriteControl.Image;
+                }
+
+                if (frameViewView.Canvas.Children.Contains(element))
+                {
+                    frameViewView.Canvas.Children.Remove(element);
 
                     SignalManager.Get<DeleteSpriteFromCharacterFrame>().Dispatch(spriteControl.ID);
 
                     _spritesInFrames.Remove(hitList[0]);
                 }
+            }
+        }
+    }
+
+    private void UnselectAllImagesInFrameView()
+    {
+        foreach (KeyValuePair<Image, SpriteControlVO> item in _spritesInFrames)
+        {
+            if (item.Key != null)
+            {
+                if (item.Key.Parent is Border border)
+                {
+                    border.BorderThickness = new Thickness(0.0);
+                }
+            }
+        }
+    }
+
+    private void OnSelectImageControlInFrameView(Point point)
+    {
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        EllipseGeometry hitArea = new(point, 1.0, 1.0);
+        List<Image> hitList = [];
+
+        VisualTreeHelper.HitTest(frameViewView.canvas,
+                new HitTestFilterCallback(o =>
+                {
+                    if (o.GetType() == typeof(Image))
+                        return HitTestFilterBehavior.ContinueSkipChildren;
+                    else
+                        return HitTestFilterBehavior.Continue;
+                }),
+                new HitTestResultCallback(result =>
+                {
+                    if (result?.VisualHit is Image)
+                    {
+                        IntersectionDetail intersectionDetail = ((GeometryHitTestResult)result).IntersectionDetail;
+                        if (intersectionDetail == IntersectionDetail.FullyContains)
+                        {
+                            hitList.Add((Image)result.VisualHit);
+                            return HitTestResultBehavior.Continue;
+                        }
+                        else if (intersectionDetail != IntersectionDetail.Intersects &&
+                            intersectionDetail != IntersectionDetail.FullyInside)
+                        {
+                            return HitTestResultBehavior.Stop;
+                        }
+                    }
+
+                    return HitTestResultBehavior.Continue;
+                }),
+                new GeometryHitTestParameters(hitArea));
+
+        if (hitList.Count > 0)
+        {
+            UnselectAllImagesInFrameView();
+
+            if (hitList[0].Parent is Border border)
+            {
+                border.BorderThickness = SelectionThickness;
             }
         }
     }

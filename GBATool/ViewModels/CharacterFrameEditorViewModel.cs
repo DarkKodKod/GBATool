@@ -9,6 +9,8 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GBATool.ViewModels;
 
@@ -141,6 +143,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         #region Signals
         SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
+        SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         #endregion
 
         if (Banks?.Length > 0)
@@ -156,6 +159,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         #region Signals
         SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
+        SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         #endregion
     }
 
@@ -187,5 +191,15 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
         SignalManager.Get<RemoveSpriteSelectionFromBank>().Dispatch();
+    }
+
+    private void OnMouseImageSelected(Image imageParent, Point point)
+    {
+        if (imageParent.Name != "imgFrame")
+        {
+            return;
+        }
+
+        SignalManager.Get<SelectImageControlInFrameViewSignal>().Dispatch(point);
     }
 }

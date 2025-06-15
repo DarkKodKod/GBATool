@@ -71,6 +71,7 @@
                             Drop="FrameView_Drop"
                             DragOver="FrameView_DragOver"
                             MouseMove="FrameView_MouseMove"
+                            DragLeave="FrameView_DragLeave"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"/>
                     </ScrollViewer>

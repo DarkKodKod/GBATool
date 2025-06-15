@@ -21,14 +21,6 @@ public enum OutputMessageType
     Error
 }
 
-public enum EditFrameTools
-{
-    None = 0,
-    Select = 1,
-    Paint = 2,
-    Erase = 3
-}
-
 public enum SpritePattern
 {
     [Description("1D")]

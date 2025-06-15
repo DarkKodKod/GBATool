@@ -91,6 +91,7 @@ public class SwitchCharacterFrameViewSignal : Signal<string, string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string> { }
 public class DeleteAnimationFrameSignal : Signal<int> { }
+public class SelectImageControlInFrameViewSignal : Signal<Point> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
