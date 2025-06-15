@@ -363,37 +363,8 @@ public partial class CharacterFrameEditorView : UserControl
 
         Point positionInCanvas = e.GetPosition(frameViewView.canvas);
 
-        EllipseGeometry hitArea = new(positionInCanvas, 1.0, 1.0);
-        List<Image> hitList = [];
-
-        VisualTreeHelper.HitTest(frameViewView.canvas,
-                new HitTestFilterCallback(o =>
-                {
-                    if (o.GetType() == typeof(Image))
-                        return HitTestFilterBehavior.ContinueSkipChildren;
-                    else
-                        return HitTestFilterBehavior.Continue;
-                }),
-                new HitTestResultCallback(result =>
-                {
-                    if (result?.VisualHit is Image)
-                    {
-                        IntersectionDetail intersectionDetail = ((GeometryHitTestResult)result).IntersectionDetail;
-                        if (intersectionDetail == IntersectionDetail.FullyContains)
-                        {
-                            hitList.Add((Image)result.VisualHit);
-                            return HitTestResultBehavior.Continue;
-                        }
-                        else if (intersectionDetail != IntersectionDetail.Intersects &&
-                            intersectionDetail != IntersectionDetail.FullyInside)
-                        {
-                            return HitTestResultBehavior.Stop;
-                        }
-                    }
-
-                    return HitTestResultBehavior.Continue;
-                }),
-                new GeometryHitTestParameters(hitArea));
+        CanvasHitDetection<Image> hitDetection = new(new(positionInCanvas, 1.0, 1.0), frameViewView.canvas);
+        List<Image> hitList = hitDetection.HitTest();
 
         if (hitList.Count > 0)
         {
@@ -455,37 +426,8 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        EllipseGeometry hitArea = new(point, 1.0, 1.0);
-        List<Image> hitList = [];
-
-        VisualTreeHelper.HitTest(frameViewView.canvas,
-                new HitTestFilterCallback(o =>
-                {
-                    if (o.GetType() == typeof(Image))
-                        return HitTestFilterBehavior.ContinueSkipChildren;
-                    else
-                        return HitTestFilterBehavior.Continue;
-                }),
-                new HitTestResultCallback(result =>
-                {
-                    if (result?.VisualHit is Image)
-                    {
-                        IntersectionDetail intersectionDetail = ((GeometryHitTestResult)result).IntersectionDetail;
-                        if (intersectionDetail == IntersectionDetail.FullyContains)
-                        {
-                            hitList.Add((Image)result.VisualHit);
-                            return HitTestResultBehavior.Continue;
-                        }
-                        else if (intersectionDetail != IntersectionDetail.Intersects &&
-                            intersectionDetail != IntersectionDetail.FullyInside)
-                        {
-                            return HitTestResultBehavior.Stop;
-                        }
-                    }
-
-                    return HitTestResultBehavior.Continue;
-                }),
-                new GeometryHitTestParameters(hitArea));
+        CanvasHitDetection<Image> hitDetection = new(new(point, 1.0, 1.0), frameViewView.canvas);
+        List<Image> hitList = hitDetection.HitTest();
 
         if (hitList.Count > 0)
         {
