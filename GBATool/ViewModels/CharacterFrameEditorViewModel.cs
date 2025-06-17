@@ -5,6 +5,7 @@ using GBATool.Commands.Character;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.Utils;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ public class CharacterFrameEditorViewModel : ViewModel
     private int _frameIndex;
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
+    private string _selectedFrameSprite = string.Empty;
+    private BankImageMetaData? _bankImageMetaData = null;
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -29,6 +32,17 @@ public class CharacterFrameEditorViewModel : ViewModel
     #endregion
 
     #region get/set
+    public string SelectedFrameSprite
+    {
+        get => _selectedFrameSprite;
+        set
+        {
+            _selectedFrameSprite = value;
+
+            OnPropertyChanged(nameof(SelectedFrameSprite));
+        }
+    }
+
     public FileHandler? FileHandler
     {
         get => _fileHandler;
@@ -93,6 +107,17 @@ public class CharacterFrameEditorViewModel : ViewModel
     public string AnimationID { get; set; } = string.Empty;
     public string FrameID { get; set; } = string.Empty;
 
+    public BankImageMetaData? BankImageMetaData
+    {
+        get => _bankImageMetaData;
+        set
+        {
+            _bankImageMetaData = value;
+
+            OnPropertyChanged(nameof(BankImageMetaData));
+        }
+    }
+
     public int FrameIndex
     {
         get => _frameIndex;
@@ -144,12 +169,82 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
+        SignalManager.Get<SelectFrameSpriteSignal>().Listener += OnSelectFrameSprite;
+        SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
+        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener += OnUpdateBankViewerParentWithImageMetadata;
+        SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         #endregion
 
         if (Banks?.Length > 0)
         {
             BankModel = Banks[0].Model as BankModel;
         }
+    }
+
+    private void LoadFrameSprites()
+    {
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (BankImageMetaData == null)
+        {
+            return;
+        }
+
+        List<SpriteControlVO> sprites = [];
+
+        foreach (var item in frame.Tiles)
+        {
+            if (!BankImageMetaData.Sprites.TryGetValue(item.Value.SpriteID, out SpriteInfo? spriteInfo))
+            {
+                continue;
+            }
+
+            if (spriteInfo == null || spriteInfo.BitmapSource == null)
+            {
+                continue;
+            }
+
+            SpriteControlVO sprite = new()
+            {
+                ID = item.Value.ID,
+                Image = Util.GetImageFromWriteableBitmap(spriteInfo.BitmapSource),
+                SpriteID = item.Value.SpriteID,
+                TileSetID = item.Value.TileSetID,
+                Width = item.Value.Width,
+                Height = item.Value.Height,
+                OffsetX = spriteInfo.OffsetX,
+                OffsetY = spriteInfo.OffsetY,
+                PositionX = (int)item.Value.Position.X,
+                PositionY = (int)item.Value.Position.Y
+            };
+
+            sprites.Add(sprite);
+        }
+
+        if (sprites.Count > 0)
+        {
+            SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites);
+        }
+    }
+
+    private void OnSelectFrameSprite(SpriteControlVO sprite)
+    {
+        SelectedFrameSprite = sprite.ID;
     }
 
     public override void OnDeactivate()
@@ -160,7 +255,77 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
+        SignalManager.Get<SelectFrameSpriteSignal>().Listener -= OnSelectFrameSprite;
+        SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
+        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener -= OnUpdateBankViewerParentWithImageMetadata;
+        SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         #endregion
+    }
+
+    private void OnUpdateBankViewerParentWithImageMetadata(BankImageMetaData? metaData)
+    {
+        if (metaData == null)
+            return;
+
+        BankImageMetaData = metaData;
+
+        LoadFrameSprites();
+    }
+
+    private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite)
+    {
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (frame.Tiles.TryGetValue(sprite.ID, out _))
+        {
+            frame.Tiles[sprite.ID] = sprite;
+        }
+        else
+        {
+            frame.Tiles.Add(sprite.ID, sprite);
+        }
+
+        FileHandler?.Save();
+    }
+
+    private void OnDeleteSpriteFromCharacterFrame(string spriteID)
+    {
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (frame.Tiles.Remove(spriteID))
+        {
+            FileHandler?.Save();
+        }
     }
 
     private void OnUpdateCharacterImage()

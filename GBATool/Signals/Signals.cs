@@ -92,13 +92,15 @@ public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string> { }
 public class DeleteAnimationFrameSignal : Signal<int> { }
 public class SelectImageControlInFrameViewSignal : Signal<Point> { }
+public class SelectFrameSpriteSignal : Signal<SpriteControlVO> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
-public class AddNewSpriteIntoCharacterFrame : Signal<CharacterSprite> { }
-public class DeleteSpriteFromCharacterFrame : Signal<string> { }
+public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite> { }
+public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
+public class DeleteSpriteFromCharacterFrameSignal : Signal<string> { }
 
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }

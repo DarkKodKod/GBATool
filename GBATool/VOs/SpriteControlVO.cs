@@ -12,5 +12,7 @@ public record SpriteControlVO
     public int Height { get; init; }
     public int OffsetX { get; init; }
     public int OffsetY { get; init; }
+    public int PositionX { get; init; }
+    public int PositionY { get; init; }
 }
 

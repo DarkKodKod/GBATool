@@ -30,6 +30,11 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
+        #region Signals
+        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
+        SignalManager.Get<FillWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
+        #endregion
+
         bankViewer.OnActivate();
 
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
@@ -37,19 +42,22 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(viewModel.BankModel);
+        frameView.canvas.Children.Clear();
 
-        #region Signals
-        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
-        #endregion
+        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(viewModel.BankModel);
     }
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
         bankViewer.OnDeactivate();
 
+        _spritesInFrames.Clear();
+        _spriteOffsetX = 0;
+        _spriteOffsetY = 0;
+
         #region Signals
-        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
+        SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener -= OnSelectImageControlInFrameView;
+        SignalManager.Get<FillWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
         #endregion
     }
 
@@ -177,31 +185,48 @@ public partial class CharacterFrameEditorView : UserControl
 
         SpriteControlVO sprite = (SpriteControlVO)data;
 
-        UIElement? element;
+        // If the dragging object is comming from the FrameView then it needs to be removed from the Character model too
+        if (sprite.Image != null)
+        {
+            if (_spritesInFrames.TryGetValue(sprite.Image, out SpriteControlVO? spriteControl))
+            {
+                SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Dispatch(spriteControl.ID);
 
-        if (sprite.Image?.Parent is Border border)
-        {
-            element = border;
-        }
-        else
-        {
-            element = sprite.Image;
+                _spritesInFrames.Remove(sprite.Image);
+            }
         }
 
-        if (bankViewerView.Canvas.Children.Contains(element))
+        if (bankViewerView.Canvas.Children.Contains(sprite.Image))
         {
-            bankViewerView.Canvas.Children.Remove(element);
+            bankViewerView.Canvas.Children.Remove(sprite.Image);
         }
     }
 
-    private void FrameView_Drop(object sender, DragEventArgs e)
+    private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList)
     {
-        object data = e.Data.GetData(typeof(SpriteControlVO));
-
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
         }
+
+        foreach (SpriteControlVO vo in spriteVOList)
+        {
+            (SpriteControlVO _, Border border) = AddSpriteToFrameView(vo.ID, vo, vo.PositionX, vo.PositionY, vo.Image);
+
+            _ = frameViewView.Canvas.Children.Add(border);
+        }
+
+        UnselectAllImagesInFrameView();
+    }
+
+    private void FrameView_Drop(object sender, DragEventArgs e)
+    {
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        object data = e.Data.GetData(typeof(SpriteControlVO));
 
         SpriteControlVO draggingSprite = (SpriteControlVO)data;
 
@@ -214,37 +239,27 @@ public partial class CharacterFrameEditorView : UserControl
                 id = Guid.NewGuid().ToString();
             }
 
-            SpriteControlVO sprite = new()
-            {
-                ID = id,
-                Image = new() { Source = draggingSprite.Image?.Source },
-                SpriteID = draggingSprite.SpriteID,
-                TileSetID = draggingSprite.TileSetID,
-                Width = draggingSprite.Width,
-                Height = draggingSprite.Height,
-                OffsetX = draggingSprite.OffsetX,
-                OffsetY = draggingSprite.OffsetY
-            };
+            Image image = new() { Source = draggingSprite.Image?.Source };
 
-            Border border = new()
-            {
-                Background = Brushes.Transparent,
-                BorderBrush = Brushes.Red,
-                BorderThickness = SelectionThickness,
-                Child = sprite.Image
-            };
+            UnselectAllImagesInFrameView();
 
             Point elementPosition = e.GetPosition(frameViewView.Canvas);
 
             int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
             int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
 
-            Canvas.SetLeft(border, exactPosX);
-            Canvas.SetTop(border, exactPosY);
-
-            UnselectAllImagesInFrameView();
+            (SpriteControlVO sprite, Border border) = AddSpriteToFrameView(id, draggingSprite, exactPosX, exactPosY, image);
 
             _ = frameViewView.Canvas.Children.Add(border);
+
+            // remove the previous instance of the Image control in the canvas now that there is a new one to replace it.
+            if (draggingSprite.Image != null)
+            {
+                if (_spritesInFrames.TryGetValue(draggingSprite.Image, out _))
+                {
+                    _spritesInFrames.Remove(draggingSprite.Image);
+                }
+            }
 
             frameViewView.Canvas.Children.Remove(draggingSprite.Image);
 
@@ -252,16 +267,47 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
+    private (SpriteControlVO, Border) AddSpriteToFrameView(string id, SpriteControlVO draggingSprite, int exactPosX, int exactPosY, Image? image)
+    {
+        SpriteControlVO sprite = new()
+        {
+            ID = id,
+            Image = image,
+            SpriteID = draggingSprite.SpriteID,
+            TileSetID = draggingSprite.TileSetID,
+            Width = draggingSprite.Width,
+            Height = draggingSprite.Height,
+            OffsetX = draggingSprite.OffsetX,
+            OffsetY = draggingSprite.OffsetY
+        };
+
+        Border border = new()
+        {
+            Background = Brushes.Transparent,
+            BorderBrush = Brushes.Red,
+            BorderThickness = SelectionThickness,
+            Child = sprite.Image
+        };
+
+        Canvas.SetLeft(border, exactPosX);
+        Canvas.SetTop(border, exactPosY);
+
+        if (sprite.Image != null)
+        {
+            if (!_spritesInFrames.TryGetValue(sprite.Image, out _))
+            {
+                _spritesInFrames.Add(sprite.Image, sprite);
+            }
+        }
+
+        return (sprite, border);
+    }
+
+    private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
     {
         if (sprite.Image == null)
         {
             return;
-        }
-
-        if (!_spritesInFrames.TryGetValue(sprite.Image, out _))
-        {
-            _spritesInFrames.Add(sprite.Image, sprite);
         }
 
         CharacterSprite characterSprite = new()
@@ -273,10 +319,10 @@ public partial class CharacterFrameEditorView : UserControl
             SpriteID = sprite.SpriteID,
             TileSetID = sprite.TileSetID,
             Width = sprite.Width,
-            Height = sprite.Height
+            Height = sprite.Height,
         };
 
-        SignalManager.Get<AddNewSpriteIntoCharacterFrame>().Dispatch(characterSprite);
+        SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite);
     }
 
     private void FrameView_DragOver(object sender, DragEventArgs e)
@@ -382,25 +428,9 @@ public partial class CharacterFrameEditorView : UserControl
 
             if (result == DragDropEffects.None)
             {
-                UIElement? element;
+                SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Dispatch(spriteControl.ID);
 
-                if (spriteControl.Image?.Parent is Border border)
-                {
-                    element = border;
-                }
-                else
-                {
-                    element = spriteControl.Image;
-                }
-
-                if (frameViewView.Canvas.Children.Contains(element))
-                {
-                    frameViewView.Canvas.Children.Remove(element);
-
-                    SignalManager.Get<DeleteSpriteFromCharacterFrame>().Dispatch(spriteControl.ID);
-
-                    _spritesInFrames.Remove(hitList[0]);
-                }
+                _spritesInFrames.Remove(hitList[0]);
             }
         }
     }
@@ -436,6 +466,11 @@ public partial class CharacterFrameEditorView : UserControl
             if (hitList[0].Parent is Border border)
             {
                 border.BorderThickness = SelectionThickness;
+
+                if (_spritesInFrames.TryGetValue(hitList[0], out SpriteControlVO? sprite))
+                {
+                    SignalManager.Get<SelectFrameSpriteSignal>().Dispatch(sprite);
+                }
             }
         }
     }

@@ -211,10 +211,7 @@ public class CharacterAnimationViewModel : ViewModel
         IsPlaying = false;
         IsPaused = false;
 
-        if (_dispatcherTimer != null)
-        {
-            _dispatcherTimer.Stop();
-        }
+        _dispatcherTimer?.Stop();
     }
 
     public void LoadFrameImage()
