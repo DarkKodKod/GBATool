@@ -1,181 +1,156 @@
-﻿using GBATool.Models;
-using GBATool.VOs;
+﻿using GBATool.FileSystem;
+using GBATool.Models;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
 
 public static class CharacterUtils
 {
-    public static ImageVO? CreateImage(CharacterModel characterModel, string animationID, string frameID)
+    public const int CanvasWidth = 232;
+    public const int CanvasHeight = 152;
+
+    private readonly static ConcurrentDictionary<string, WriteableBitmap> _frameBitmapCache = [];
+
+    public static WriteableBitmap? GetFrameImageFromCache(CharacterModel characterModel, string animationID, string frameID)
     {
-        //        if (characterModel.Animations[animationIndex].Frames == null ||
-        //            characterModel.Animations[animationIndex].Frames.Count == 0)
-        //        {
-        //            return null;
-        //        }
-        //
-        //        if (characterModel.Animations[animationIndex].Frames[frameIndex].Tiles == null)
-        //        {
-        //            return null;
-        //        }
+        if (!_frameBitmapCache.TryGetValue(frameID, out WriteableBitmap? sourceBitmap))
+        {
+            sourceBitmap = CreateImage(characterModel, animationID, frameID);
 
-        int maxWidth = 0;
-        int maxHeight = 0;
+            if (sourceBitmap == null)
+            {
+                return null;
+            }
 
-        WriteableBitmap? bankBitmap = BitmapFactory.New(64, 64);
+            sourceBitmap.Freeze();
+
+            _frameBitmapCache.TryAdd(frameID, sourceBitmap);
+        }
+
+        return sourceBitmap;
+    }
+
+    public static void InvalidateFrameImageFromCache(string frameID)
+    {
+        if (_frameBitmapCache.ContainsKey(frameID))
+        {
+            _frameBitmapCache.TryRemove(frameID, out WriteableBitmap? _);
+        }
+    }
+
+    private static WriteableBitmap? CreateImage(CharacterModel characterModel, string animationID, string frameID)
+    {
+        if (characterModel.Animations[animationID].Frames == null ||
+            characterModel.Animations[animationID].Frames.Count == 0)
+        {
+            return null;
+        }
+
+        if (characterModel.Animations[animationID].Frames[frameID].Tiles == null)
+        {
+            return null;
+        }
+
+        int minPosX = CanvasWidth;
+        int minPosY = CanvasHeight;
+        int maxPosX = 0;
+        int maxPosY = 0;
+
+        WriteableBitmap? bankBitmap = BitmapFactory.New(CanvasWidth, CanvasHeight);
 
         using (bankBitmap.GetBitmapContext())
         {
-            //            List<CharacterTile>? listCharacterTile = characterModel.Animations[animationIndex].Frames[frameIndex].Tiles;
-            //
-            ////            if (listCharacterTile == null)
-            ////                return null;
-            //
-            //            foreach (CharacterTile tile in listCharacterTile)
+            Dictionary<string, CharacterSprite> listCharacterTile = characterModel.Animations[animationID].Frames[frameID].Tiles;
+
+            if (listCharacterTile.Count == 0)
             {
-                //                if (string.IsNullOrEmpty(tile.BankID) || string.IsNullOrEmpty(tile.BankTileID))
-                //                {
-                //                    continue;
-                //                }
-                //
-                //                BankModel? ptModel = ProjectFiles.GetModel<BankModel>(tile.BankID);
-                //                if (ptModel == null)
-                //                {
-                //                    continue;
-                //                }
+                return null;
+            }
 
-                //                PTTileModel bankModel = ptModel.GetTileModel(tile.BankTileID);
+            foreach (KeyValuePair<string, CharacterSprite> tile in listCharacterTile)
+            {
+                CharacterSprite sprite = tile.Value;
 
-                //                if (string.IsNullOrEmpty(bankModel.GUID) && string.IsNullOrEmpty(bankModel.TileSetID))
+                if (string.IsNullOrEmpty(sprite.SpriteID) || string.IsNullOrEmpty(sprite.TileSetID))
                 {
-                    //                    continue;
+                    continue;
                 }
 
-                //                WriteableBitmap? sourceBitmap = CreateImageUtil.GetCacheBitmap(bankModel.TileSetID);
-                //
-                //                if (sourceBitmap == null)
-                //                {
-                //                    continue;
-                //                }
-                //
-                //                WriteableBitmap cropped = sourceBitmap.Crop((int)bankModel.Point.X, (int)bankModel.Point.Y, 8, 8);
-                //
-                //                using (cropped.GetBitmapContext())
-                //                {
-                //                    if (tile.FlipX)
-                //                    {
-                //                        cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Vertical);
-                //                    }
-                //
-                //                    if (tile.FlipY)
-                //                    {
-                //                        cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Horizontal);
-                //                    }
-                //
-                //                    Tuple<int, PaletteIndex> tuple = Tuple.Create(bankModel.Group, (PaletteIndex)tile.PaletteIndex);
-                //
-                //                    if (groupedPalettes != null)
-                //                    {
-                //                        if (!groupedPalettes.TryGetValue(tuple, out Dictionary<Color, Color>? colors))
-                //                        {
-                //                            colors = FillColorCacheByGroup(tile, bankModel.Group, characterModel.PaletteIDs[tile.PaletteIndex]);
-                //
-                //                            groupedPalettes.Add(tuple, colors);
-                //                        }
-                //
-                //                        CreateImageUtil.PaintPixelsBasedOnPalettes(ref cropped, ref colors);
-                //                    }
-                //                }
+                TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
 
-                //                int destX = (int)Math.Floor(tile.Point.X / 8) * 8;
-                //                int destY = (int)Math.Floor(tile.Point.Y / 8) * 8;
-                //
-                //                if (destX + 8 > maxWidth)
-                //                {
-                //                    maxWidth = destX + 8;
-                //                }
-                //                if (destY + 8 > maxHeight)
-                //                {
-                //                    maxHeight = destY + 8;
-                //                }
-                //
-                //                Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
+                if (tileSetModel == null)
+                {
+                    continue;
+                }
+
+                SpriteModel? spriteModel = tileSetModel.Sprites.Find((item) => item.ID == sprite.SpriteID);
+
+                if (spriteModel == null)
+                {
+                    continue;
+                }
+
+                (_, WriteableBitmap? bitmapCached) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
+
+                if (bitmapCached == null)
+                {
+                    continue;
+                }
+
+                WriteableBitmap sourceBitmap = bitmapCached.CloneCurrentValue();
+
+                int width = 0;
+                int height = 0;
+
+                SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+
+                WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
+
+                using (cropped.GetBitmapContext())
+                {
+                    if (sprite.FlipX)
+                    {
+                        cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Vertical);
+                    }
+
+                    if (sprite.FlipY)
+                    {
+                        cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Horizontal);
+                    }
+                }
+
+                int destX = (int)sprite.Position.X;
+                int destY = (int)sprite.Position.Y;
+
+                if (destX < minPosX)
+                {
+                    minPosX = destX;
+                }
+                if (destY < minPosY)
+                {
+                    minPosY = destY;
+                }
+                if (maxPosX < destX + width)
+                {
+                    maxPosX = destX + width;
+                }
+                if (maxPosY < destY + height)
+                {
+                    maxPosY = destY + height;
+                }
+
+                Util.CopyBitmapImageToWriteableBitmap(ref bankBitmap, destX, destY, cropped);
             }
         }
 
-        return new ImageVO() { Image = bankBitmap, Width = maxWidth, Height = maxHeight };
-    }
+        if (minPosX != CanvasWidth && minPosY != CanvasHeight)
+        {
+            bankBitmap = bankBitmap.Crop(minPosX, minPosY, maxPosX, maxPosY);
+            bankBitmap.Freeze();
+        }
 
-    private static Dictionary<Color, Color> FillColorCacheByGroup(CharacterSprite characterTile, int group, string paletteId)
-    {
-        Color nullColor = Util.NullColor;
-
-        //BankModel? bankModel = ProjectFiles.GetModel<BankModel>(characterTile.BankID);
-        //
-        //PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(paletteId);
-
-        Dictionary<Color, Color> colors = new() { { nullColor, nullColor } };
-
-        //if (bankModel == null)
-        //    return colors;
-
-        //        foreach (PTTileModel tile in bankModel.PTTiles)
-        //        {
-        //            if (string.IsNullOrEmpty(tile.GUID))
-        //            {
-        //                continue;
-        //            }
-        //
-        //            if (tile.Group != group)
-        //            {
-        //                continue;
-        //            }
-        //
-        //            TileSetModel? model = ProjectFiles.GetModel<TileSetModel>(tile.TileSetID);
-        //
-        //            if (model == null)
-        //            {
-        //                continue;
-        //            }
-        //
-        //            if (!TileSetModel.BitmapCache.TryGetValue(tile.TileSetID, out WriteableBitmap? tileSetBitmap))
-        //            {
-        //                continue;
-        //            }
-        //
-        //            WriteableBitmap cropped = tileSetBitmap.Crop((int)tile.Point.X, (int)tile.Point.Y, 8, 8);
-        //
-        //            for (int y = 0; y < 8; ++y)
-        //            {
-        //                for (int x = 0; x < 8; ++x)
-        //                {
-        //                    Color color = cropped.GetPixel(x, y);
-        //                    color.A = 255;
-        //
-        //                    if (!colors.TryGetValue(color, out Color newColor))
-        //                    {
-        //                        if (paletteModel == null)
-        //                        {
-        //                            newColor = nullColor;
-        //                        }
-        //                        else
-        //                        {
-        //                            switch (colors.Count)
-        //                            {
-        //                                case 1: newColor = Util.GetColorFromInt(paletteModel.Color1); break;
-        //                                case 2: newColor = Util.GetColorFromInt(paletteModel.Color2); break;
-        //                                case 3: newColor = Util.GetColorFromInt(paletteModel.Color3); break;
-        //                            }
-        //                        }
-        //
-        //                        colors.Add(color, newColor);
-        //                    }
-        //                }
-        //            }
-        //        }
-
-        return colors;
+        return bankBitmap;
     }
 }

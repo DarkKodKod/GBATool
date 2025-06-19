@@ -4,10 +4,9 @@ using GBATool.Commands.Character;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
-using GBATool.VOs;
 using System;
-using System.Collections.Generic;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace GBATool.ViewModels;
@@ -26,7 +25,6 @@ public class CharacterAnimationViewModel : ViewModel
     private string _frameID = string.Empty;
     private bool _dontSave = false;
     private DispatcherTimer? _dispatcherTimer;
-    private readonly Dictionary<string, ImageSource> _bitmapImages = [];
 
     #region Commands
     public PauseCharacterAnimationCommand PauseCharacterAnimationCommand { get; } = new();
@@ -250,19 +248,14 @@ public class CharacterAnimationViewModel : ViewModel
             return;
         }
 
-        if (!_bitmapImages.TryGetValue(FrameID, out _))
+        WriteableBitmap? image = CharacterUtils.GetFrameImageFromCache(model, _animationID, FrameID);
+
+        if (image == null)
         {
-            ImageVO? vo = CharacterUtils.CreateImage(model, _animationID, FrameID);
-
-            if (vo == null || vo.Image == null)
-            {
-                return;
-            }
-
-            _bitmapImages.Add(FrameID, vo.Image);
+            return;
         }
 
-        FrameImage = _bitmapImages[FrameID];
+        FrameImage = image;
     }
 
     private void UpdateSpeedValue(float speed)
@@ -332,8 +325,6 @@ public class CharacterAnimationViewModel : ViewModel
         {
             return;
         }
-
-        _bitmapImages.Clear();
 
         IsPlaying = false;
         IsPaused = false;

@@ -300,6 +300,8 @@ public class CharacterFrameEditorViewModel : ViewModel
             frame.Tiles.Add(sprite.ID, sprite);
         }
 
+        CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
+
         FileHandler?.Save();
     }
 
@@ -321,6 +323,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             return;
         }
+
+        CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
 
         if (frame.Tiles.Remove(spriteID))
         {

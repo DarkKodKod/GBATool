@@ -1,11 +1,11 @@
 ﻿using GBATool.Commands.Character;
 using GBATool.Models;
 using GBATool.Utils;
-using GBATool.VOs;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.Views;
 
@@ -138,13 +138,13 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
 
         ImageVisibility = CharacterModel.Animations[AnimationID].Frames[FrameID].IsHeldFrame ? Visibility.Hidden : Visibility.Visible;
 
-        ImageVO? vo = CharacterUtils.CreateImage(CharacterModel, AnimationID, FrameID);
+        WriteableBitmap? image = CharacterUtils.GetFrameImageFromCache(CharacterModel, AnimationID, FrameID);
 
-        if (vo == null || vo.Image == null)
+        if (image == null)
         {
             return;
         }
 
-        FrameImage = vo.Image;
+        FrameImage = image;
     }
 }
