@@ -513,7 +513,7 @@ public class BanksViewModel : ItemViewModel
             return;
         }
 
-        BitmapImage? image = TileSetModel.LoadBitmap(model);
+        WriteableBitmap? image = TileSetModel.LoadBitmap(model);
 
         if (image == null)
         {

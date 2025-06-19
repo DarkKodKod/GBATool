@@ -241,7 +241,7 @@ public class ProjectItem : ViewModel, IClipboardable
                     }
                     break;
                 case "Items":
-                    Items = new ObservableCollection<ProjectItem>();
+                    Items = [];
 
                     if (value != "null")
                     {

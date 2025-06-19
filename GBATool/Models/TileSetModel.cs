@@ -3,7 +3,6 @@ using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
 using Nett;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -35,8 +34,6 @@ public class TileSetModel : AFileModel
     public int ImageHeight { get; set; } = 0;
     public List<SpriteModel> Sprites { get; set; } = [];
 
-    private static readonly ConcurrentDictionary<string, BitmapImage> BitmapCache = [];
-
     public TileSetModel()
     {
         SignalManager.Get<ProjectItemLoadedSignal>().Listener += OnProjectItemLoaded;
@@ -49,27 +46,12 @@ public class TileSetModel : AFileModel
             return;
         }
 
-        Util.GenerateBitmapFromTileSet(this, out BitmapImage? bitmap);
-
-        if (bitmap != null && !BitmapCache.ContainsKey(GUID))
-        {
-            _ = BitmapCache.TryAdd(GUID, bitmap);
-        }
+        _ = TileSetUtils.GetSourceBitmapFromCache(this);
     }
 
-    public static BitmapImage? LoadBitmap(TileSetModel tileSetModel, bool forceRedraw = false)
+    public static WriteableBitmap? LoadBitmap(TileSetModel tileSetModel, bool forceRedraw = false)
     {
-        bool exists = BitmapCache.TryGetValue(tileSetModel.GUID, out BitmapImage? bitmap);
-
-        if (bitmap == null || !exists || forceRedraw)
-        {
-            Util.GenerateBitmapFromTileSet(tileSetModel, out bitmap);
-
-            if (bitmap != null)
-            {
-                BitmapCache[tileSetModel.GUID] = bitmap;
-            }
-        }
+        (_, WriteableBitmap? bitmap) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel, forceRedraw);
 
         return bitmap;
     }

@@ -44,11 +44,9 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
     private int _canvasWidth = 256;
     private SpriteModel? _cacheSelectedSpriteFromBank = null;
     private BankImageMetaData? _metaData = null;
-    private Dictionary<string, WriteableBitmap> _bitmapCache = [];
     private BankModel? _bankModel = null;
     private SpriteModel? _selectedSprite = null;
 
-    public Dictionary<string, WriteableBitmap> BitmapCache = [];
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public static readonly DependencyProperty Force2DViewProperty = DependencyProperty.Register(
@@ -467,8 +465,6 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void ReloadImage()
     {
-        _bitmapCache.Clear();
-
         SignalManager.Get<CleanupBankSpritesSignal>().Dispatch();
         SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
         SignalManager.Get<BankImageUpdatedSignal>().Dispatch();
@@ -481,7 +477,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void LoadImage(BankModel model)
     {
-        _metaData = BankUtils.CreateImage(model, ref _bitmapCache, Force2DView);
+        _metaData = BankUtils.CreateImage(model, Force2DView);
 
         if (_metaData == null)
             return;
@@ -709,7 +705,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
         SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
 
-        _bitmapCache.TryGetValue(tileSetModel.GUID, out WriteableBitmap? sourceBitmap);
+        (_, WriteableBitmap? sourceBitmap) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
 
         if (sourceBitmap == null)
         {
@@ -727,7 +723,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
         foreach (SpriteModel spriteModel in bankSprites)
         {
-            _bitmapCache.TryGetValue(spriteModel.TileSetID, out WriteableBitmap? sourceBitmap);
+            (_, WriteableBitmap? sourceBitmap) = TileSetUtils.GetSourceBitmapFromCache(spriteModel.TileSetID);
 
             if (sourceBitmap == null)
             {

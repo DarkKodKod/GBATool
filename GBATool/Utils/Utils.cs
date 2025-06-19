@@ -1,8 +1,5 @@
-﻿using ArchitectureLibrary.Model;
-using GBATool.Enums;
+﻿using GBATool.Enums;
 using GBATool.Models;
-using System;
-using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -202,32 +199,6 @@ public static class Util
         }
         while (current != null);
         return null;
-    }
-
-    public static void GenerateBitmapFromTileSet(TileSetModel model, out BitmapImage? bitmap)
-    {
-        bitmap = null;
-
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-        if (string.IsNullOrEmpty(model.ImagePath))
-        {
-            return;
-        }
-
-        string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
-
-        if (File.Exists(path))
-        {
-            bitmap = new();
-
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-            bitmap.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-            bitmap.EndInit();
-            bitmap.Freeze();
-        }
     }
 
     public static System.Windows.Controls.Image GetImageFromWriteableBitmap(BitmapSource bitmap)

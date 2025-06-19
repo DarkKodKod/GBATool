@@ -2,9 +2,7 @@
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
@@ -30,7 +28,7 @@ public static class BankUtils
     public static readonly int SizeOfCellInPixels = 8;
     public static readonly int MaxTextureCellsWidth = 32;
 
-    public static BankImageMetaData CreateImage(BankModel bankModel, ref Dictionary<string, WriteableBitmap> bitmapCache, bool foce2DView = false, int canvasWidth = 0, int canvasHeight = 0)
+    public static BankImageMetaData CreateImage(BankModel bankModel, bool foce2DView = false, int canvasWidth = 0, int canvasHeight = 0)
     {
         BankImageMetaData metaData = new();
 
@@ -70,12 +68,14 @@ public static class BankUtils
                 continue;
             }
 
-            WriteableBitmap? sourceBitmap = GetSourceBitmapFromCache(ref bitmapCache, tileSetModel, ref metaData);
+            WriteableBitmap? sourceBitmapCached = TileSetUtils.GetSourceBitmapFromCacheWithMetaData(tileSetModel, ref metaData);
 
-            if (sourceBitmap == null)
+            if (sourceBitmapCached == null)
             {
                 continue;
             }
+
+            WriteableBitmap sourceBitmap = sourceBitmapCached.CloneCurrentValue();
 
             SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
 
@@ -182,29 +182,5 @@ public static class BankUtils
         metaData.image = bankBitmap;
 
         return metaData;
-    }
-
-    private static WriteableBitmap? GetSourceBitmapFromCache(ref Dictionary<string, WriteableBitmap> bitmapCache, TileSetModel model, ref BankImageMetaData metaData)
-    {
-        if (!bitmapCache.TryGetValue(model.GUID, out WriteableBitmap? sourceBitmap))
-        {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-            string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
-
-            BitmapImage bmImage = new();
-            bmImage.BeginInit();
-            bmImage.CacheOption = BitmapCacheOption.OnLoad;
-            bmImage.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-            bmImage.EndInit();
-            bmImage.Freeze();
-            sourceBitmap = BitmapFactory.ConvertToPbgra32Format(bmImage);
-
-            bitmapCache.Add(model.GUID, sourceBitmap);
-
-            metaData.UniqueTileSet.Add(model.GUID);
-        }
-
-        return sourceBitmap;
     }
 }

@@ -26,8 +26,6 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 
-        Dictionary<string, WriteableBitmap> bitmapCache = [];
-
         int processedCount = 0;
 
         foreach (FileModelVO vo in bankModelVOs)
@@ -42,7 +40,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
             int imageWidth = cellsCount.width * 8;
             int imageHeight = cellsCount.height * 8;
 
-            BankImageMetaData metaData = BankUtils.CreateImage(bank, ref bitmapCache, false, imageWidth, imageHeight);
+            BankImageMetaData metaData = BankUtils.CreateImage(bank, false, imageWidth, imageHeight);
 
             if (metaData.image == null)
                 continue;
