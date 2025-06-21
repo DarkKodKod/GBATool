@@ -147,7 +147,7 @@ public static class CharacterUtils
 
         if (minPosX != CanvasWidth && minPosY != CanvasHeight)
         {
-            bankBitmap = bankBitmap.Crop(minPosX, minPosY, maxPosX, maxPosY);
+            bankBitmap = bankBitmap.Crop(minPosX, minPosY, maxPosX - minPosX, maxPosY - minPosY);
             bankBitmap.Freeze();
         }
 

@@ -46,21 +46,23 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Content="{Binding FrameIndex}"/>
-            <Border Width="128" Height="128" Grid.Row="1"
-                    VerticalAlignment="Top" HorizontalAlignment="Left">
+            <Border Width="128" Height="128" Grid.Row="1">
                 <Canvas Background="DarkGray"
                         Height="64" Width="64"
                         Visibility="{Binding ImageVisibility}"
+                        ClipToBounds="True"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
                     <Canvas.RenderTransform>
-                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                        <ScaleTransform ScaleX="2" ScaleY="2" />
                     </Canvas.RenderTransform>
                     <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-                           Stretch="UniformToFill" 
-                           Source="{Binding FrameImage}"
-                           Width="64"
-	                       Height="64">
+                           Source="{Binding FrameImage}">
+                        <Image.RenderTransform>
+                            <ScaleTransform
+                                ScaleX="{Binding ImageAspectRatio}"
+                                ScaleY="{Binding ImageAspectRatio}"/>
+                        </Image.RenderTransform>
                     </Image>
                 </Canvas>
             </Border>

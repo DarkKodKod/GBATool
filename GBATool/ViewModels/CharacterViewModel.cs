@@ -227,14 +227,6 @@ public class CharacterViewModel : ItemViewModel
             {
                 tab.SwapContent(tabId, frameId, frameIndex);
 
-                if (tab.Content is CharacterAnimationView frameView)
-                {
-                    foreach (CharacterFrameView frame in frameView.FrameViewList)
-                    {
-                        frame.OnActivate();
-                    }
-                }
-
                 return;
             }
         }

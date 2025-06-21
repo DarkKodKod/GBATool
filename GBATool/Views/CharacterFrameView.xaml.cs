@@ -1,6 +1,7 @@
 ﻿using GBATool.Commands.Character;
 using GBATool.Models;
 using GBATool.Utils;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
     private ImageSource? _frameImage;
     private CharacterModel? _characterModel;
     private Visibility _imageVisibility = Visibility.Visible;
+    private float _imageAspectRatio = 1.0f;
 
     #region get/set
     public CharacterModel? CharacterModel
@@ -92,6 +94,17 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
             OnPropertyChanged(nameof(FrameImage));
         }
     }
+
+    public float ImageAspectRatio
+    {
+        get { return _imageAspectRatio; }
+        set
+        {
+            _imageAspectRatio = value;
+
+            OnPropertyChanged(nameof(ImageAspectRatio));
+        }
+    }
     #endregion
 
     #region Commands
@@ -146,5 +159,11 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         }
 
         FrameImage = image;
+
+        double aspectWidth = 64.0 / image.Width;
+        double aspectHeight = 64.0 / image.Height;
+        double minAspectRation = Math.Min(aspectWidth, aspectHeight);
+
+        ImageAspectRatio = (float)minAspectRation;
     }
 }
