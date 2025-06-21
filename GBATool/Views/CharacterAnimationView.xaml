@@ -214,10 +214,19 @@
                       VerticalScrollBarVisibility="Auto" 
                       Background="DarkGray"
                       PanningMode="Both">
-            <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
-                   Source="{Binding FrameImage, Mode=OneWay}"
-                   Stretch="None">
-            </Image>
+            <Canvas x:Name="parentCanvas">
+                <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                       Source="{Binding FrameImage}"
+                       ClipToBounds="True"
+                       x:Name="previewImage"
+                       Stretch="None">
+                    <Image.RenderTransform>
+                        <ScaleTransform
+                            ScaleX="{Binding ImageAspectRatio}"
+                            ScaleY="{Binding ImageAspectRatio}"/>
+                    </Image.RenderTransform>
+                </Image>
+            </Canvas>
         </ScrollViewer>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>

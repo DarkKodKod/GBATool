@@ -101,6 +101,7 @@ public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite> { }
 public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
 public class DeleteSpriteFromCharacterFrameSignal : Signal<string> { }
+public class PreviewImageUpdatedSignal : Signal<double, double> { }
 
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }

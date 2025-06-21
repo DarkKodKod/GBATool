@@ -25,6 +25,7 @@ public class CharacterAnimationViewModel : ViewModel
     private string _frameID = string.Empty;
     private bool _dontSave = false;
     private DispatcherTimer? _dispatcherTimer;
+    private float _imageAspectRatio = 1.0f;
 
     #region Commands
     public PauseCharacterAnimationCommand PauseCharacterAnimationCommand { get; } = new();
@@ -55,6 +56,17 @@ public class CharacterAnimationViewModel : ViewModel
             _isPaused = value;
 
             OnPropertyChanged(nameof(IsPaused));
+        }
+    }
+
+    public float ImageAspectRatio
+    {
+        get { return _imageAspectRatio; }
+        set
+        {
+            _imageAspectRatio = value;
+
+            OnPropertyChanged(nameof(ImageAspectRatio));
         }
     }
 
@@ -256,6 +268,14 @@ public class CharacterAnimationViewModel : ViewModel
         }
 
         FrameImage = image;
+
+        double aspectWidth = 300.0 / image.Width;
+        double aspectHeight = 300.0 / image.Height;
+        double minAspectRation = Math.Min(aspectWidth, aspectHeight);
+
+        ImageAspectRatio = (float)minAspectRation;
+
+        SignalManager.Get<PreviewImageUpdatedSignal>().Dispatch(image.Width * minAspectRation, image.Height * minAspectRation);
     }
 
     private void UpdateSpeedValue(float speed)

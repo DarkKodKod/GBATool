@@ -133,6 +133,11 @@ public class CharacterViewModel : ItemViewModel
 
         foreach (ActionTabItem tab in Tabs)
         {
+            if (tab.Content is CharacterAnimationView animationView)
+            {
+                animationView.OnActivate();
+            }
+
             if (tab.Content?.DataContext is AActivate vm)
             {
                 vm.OnActivate();
