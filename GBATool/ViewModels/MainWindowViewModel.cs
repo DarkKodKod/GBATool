@@ -217,7 +217,7 @@ public class MainWindowViewModel : ViewModel
             parent = parent.Parent;
         }
 
-        ProjectItem? matchItem = FindInItemsAndDelete(_projectItems, path.ToArray(), path.ToArray().Length - 1);
+        ProjectItem? matchItem = FindInItemsAndDelete(_projectItems, [.. path], path.ToArray().Length - 1);
 
         if (matchItem != null)
         {

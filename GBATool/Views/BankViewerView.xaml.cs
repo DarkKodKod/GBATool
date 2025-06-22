@@ -326,7 +326,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ObtainTransparentColorSignal>().Listener += OnObtainTransparentColor;
         SignalManager.Get<GeneratePaletteFromBankSignal>().Listener += OnGeneratePaletteFromBank;
         SignalManager.Get<SetBankModelToBankViewerSignal>().Listener += OnSetBankModelToBankViewer;
-        SignalManager.Get<CleanUpSpriteListSignal>().Listener -= OnCleanUpSpriteList;
+        SignalManager.Get<CleanUpSpriteListSignal>().Listener += OnCleanUpSpriteList;
         SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
         SignalManager.Get<AdjustCanvasBankSizeSignal>().Listener += OnAdjustCanvasBankSize;
         SignalManager.Get<ReloadBankViewImageSignal>().Listener += OnReloadBankViewImage;
@@ -348,9 +348,9 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<GeneratePaletteFromBankSignal>().Listener -= OnGeneratePaletteFromBank;
         SignalManager.Get<SetBankModelToBankViewerSignal>().Listener -= OnSetBankModelToBankViewer;
         SignalManager.Get<CleanUpSpriteListSignal>().Listener -= OnCleanUpSpriteList;
-        SignalManager.Get<AdjustCanvasBankSizeSignal>().Listener += OnAdjustCanvasBankSize;
-        SignalManager.Get<ReloadBankViewImageSignal>().Listener += OnReloadBankViewImage;
-        SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener += OnRemoveSpriteSelectionFromBank;
+        SignalManager.Get<AdjustCanvasBankSizeSignal>().Listener -= OnAdjustCanvasBankSize;
+        SignalManager.Get<ReloadBankViewImageSignal>().Listener -= OnReloadBankViewImage;
+        SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener -= OnRemoveSpriteSelectionFromBank;
         #endregion
     }
 

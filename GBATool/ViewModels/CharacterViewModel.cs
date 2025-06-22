@@ -166,7 +166,7 @@ public class CharacterViewModel : ItemViewModel
         SignalManager.Get<AnimationTabDeletedSignal>().Listener -= OnAnimationTabDeleted;
         SignalManager.Get<AnimationTabNewSignal>().Listener -= OnAnimationTabNew;
         SignalManager.Get<RenamedAnimationTabSignal>().Listener -= OnRenamedAnimationTab;
-        SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener += OnSwitchCharacterFrameView;
+        SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener -= OnSwitchCharacterFrameView;
         SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener -= OnColorPaletteControlSelected;
         SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
         #endregion
