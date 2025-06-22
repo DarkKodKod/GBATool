@@ -131,8 +131,8 @@
                           PanningMode="Both"
                           Background="DarkGray"
                           VerticalScrollBarVisibility="Auto" 
-                          PreviewMouseUp="scrollViewer_PreviewMouseUp"
-                          MouseEnter="scrollViewer_MouseEnter"
+                          PreviewMouseUp="ScrollViewer_PreviewMouseUp"
+                          MouseEnter="ScrollViewer_MouseEnter"
                           HorizontalScrollBarVisibility="Auto">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseWheelCommand}" Event="PreviewMouseWheel" PassArguments="True" />

@@ -64,6 +64,11 @@ namespace GBATool.Views
 
         private void OnMouseMove(MouseMoveVO vo)
         {
+            if (vo.Sender is ScrollViewer)
+            {
+                return;
+            }
+
             if (tbSelect.IsChecked == false || !_validPanningMovement)
             {
                 return;
@@ -427,18 +432,14 @@ namespace GBATool.Views
             tb32x64.IsChecked = false;
         }
 
-        private void scrollViewer_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void ScrollViewer_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             _previousMousePosition = new(0, 0);
-
-            e.Handled = true;
         }
 
-        private void scrollViewer_MouseEnter(object sender, MouseEventArgs e)
+        private void ScrollViewer_MouseEnter(object sender, MouseEventArgs e)
         {
             _validPanningMovement = true;
-
-            e.Handled = true;
         }
     }
 }
