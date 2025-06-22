@@ -310,15 +310,18 @@ public class TileSetViewModel : ItemViewModel
         int width = 0;
         int height = 0;
 
-        var pos = Mouse.GetPosition(canvas);
+        System.Windows.Point pos = Mouse.GetPosition(canvas);
+
+        int x = (int)Math.Round(pos.X);
+        int y = (int)Math.Round(pos.Y);
 
         SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
 
         SelectionRectVisibility = Visibility.Visible;
-        SelectionRectLeft = pos.X;
+        SelectionRectLeft = x;
         SelectionRectWidth = width;
         SelectionRectHeight = height;
-        SelectionRectTop = pos.Y;
+        SelectionRectTop = y;
     }
 
     private void OnMouseWheel(MouseWheelVO vo)

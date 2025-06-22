@@ -130,19 +130,7 @@ public class CharacterViewModel : ItemViewModel
         #endregion
 
         PopulateTabs();
-
-        foreach (ActionTabItem tab in Tabs)
-        {
-            if (tab.Content is CharacterAnimationView animationView)
-            {
-                animationView.OnActivate();
-            }
-
-            if (tab.Content?.DataContext is AActivate vm)
-            {
-                vm.OnActivate();
-            }
-        }
+        ActivateTabs();
 
         _doNotSavePalettes = true;
 
@@ -314,7 +302,7 @@ public class CharacterViewModel : ItemViewModel
         return ProjectItem?.FileHandler?.FileModel is CharacterModel model ? model : null;
     }
 
-    public void PopulateTabs()
+    private void PopulateTabs()
     {
         CharacterModel? model = GetModel();
 
@@ -332,11 +320,44 @@ public class CharacterViewModel : ItemViewModel
                 continue;
             }
 
-            AddNewAnimation(animation.ID, animation.Name);
+            AddAnimation(animation.ID, animation.Name);
         }
     }
 
-    private void AddNewAnimation(string id, string animationName)
+    private void ActivateTabs()
+    {
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tab.Content is CharacterAnimationView animationView)
+            {
+                animationView.OnActivate();
+            }
+
+            if (tab.Content?.DataContext is AActivate vm)
+            {
+                vm.OnActivate();
+            }
+        }
+    }
+
+    private void ActivateTab(string tabID)
+    {
+        foreach (ActionTabItem tab in Tabs)
+        {
+            if (tabID != tab.ID)
+            {
+                continue;
+            }
+
+            if (tab.Content is CharacterAnimationView animationView)
+            {
+                animationView.OnActivate();
+                return;
+            }
+        }
+    }
+
+    private void AddAnimation(string id, string animationName)
     {
         CharacterModel? model = GetModel();
 
@@ -361,11 +382,23 @@ public class CharacterViewModel : ItemViewModel
             FramesView = animationView,
             PixelsView = frameView
         });
+    }
+
+    private void AddNewAnimation(string id, string animationName)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+            return;
+
+        AddAnimation(id, animationName);
 
         if (!model.Animations.ContainsKey(id))
         {
             model.Animations.Add(id, new CharacterAnimation());
         }
+
+        ActivateTab(id);
     }
 
     private void LoadPalette(CharacterModel model)
