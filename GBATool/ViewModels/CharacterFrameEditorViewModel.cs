@@ -200,10 +200,14 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        if (BankImageMetaData == null)
+        BankModel? bankModel = ProjectFiles.GetModel<BankModel>(frame.BankID);
+
+        if (bankModel == null)
         {
             return;
         }
+
+        BankImageMetaData = BankUtils.CreateImage(bankModel, true);
 
         List<SpriteControlVO> sprites = [];
 
@@ -239,6 +243,18 @@ public class CharacterFrameEditorViewModel : ViewModel
         if (sprites.Count > 0)
         {
             SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites);
+
+            for (int i = 0; i < Banks?.Length; i++)
+            {
+                if (Banks[i].Model is not BankModel bank)
+                    continue;
+
+                if (bank.GUID == frame.BankID)
+                {
+                    SelectedBank = i;
+                    return;
+                }
+            }
         }
     }
 
@@ -272,7 +288,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         LoadFrameSprites();
     }
 
-    private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite)
+    private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite, string bankID)
     {
         var model = CharacterModel;
 
@@ -290,6 +306,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             return;
         }
+
+        frame.BankID = bankID;
 
         if (frame.Tiles.TryGetValue(sprite.ID, out _))
         {
@@ -341,12 +359,12 @@ public class CharacterFrameEditorViewModel : ViewModel
     {
         SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
 
-        if (Banks?.Length == 0)
+        if (Banks == null || Banks.Length == 0)
         {
             return;
         }
 
-        if (Banks?[SelectedBank].Model is not BankModel model)
+        if (Banks[SelectedBank].Model is not BankModel model)
         {
             return;
         }

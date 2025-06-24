@@ -8,6 +8,7 @@ public record SpriteControlVO
     public Image? Image { get; init; }
     public string SpriteID { get; init; } = string.Empty;
     public string TileSetID { get; init; } = string.Empty;
+    public string BankID { get; init; } = string.Empty;
     public int Width { get; init; }
     public int Height { get; init; }
     public int OffsetX { get; init; }

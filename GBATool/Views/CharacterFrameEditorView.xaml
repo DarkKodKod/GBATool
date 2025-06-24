@@ -138,7 +138,7 @@
                                   ItemsSource="{Binding Banks}" 
                                   DisplayMemberPath="Name"
                                   SelectedValuePath="Index"
-                                  SelectedValue="{Binding Path=SelectedBank}">
+                                  SelectedValue="{Binding Path=SelectedBank, Mode=TwoWay}">
                             <i:Interaction.Behaviors>
                                 <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
                             </i:Interaction.Behaviors>

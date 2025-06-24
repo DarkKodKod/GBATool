@@ -21,7 +21,7 @@ public partial class CharacterFrameEditorView : UserControl
     private double _spriteOffsetX;
     private double _spriteOffsetY;
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
-    private readonly Thickness SelectionThickness = new(0.5);
+    private readonly Thickness SelectionThickness = new(0.3, 0.1, 0.1, 0.3);
 
     public CharacterFrameEditorView()
     {
@@ -83,6 +83,16 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.BankModel == null)
+        {
+            return;
+        }
+
         if (bankViewerView.MetaData.Sprites.TryGetValue(bankViewerView.SelectedSpriteFromBank.ID, out SpriteInfo? spriteInfo))
         {
             if (spriteInfo.BitmapSource == null)
@@ -100,6 +110,7 @@ public partial class CharacterFrameEditorView : UserControl
                 Image = Util.GetImageFromWriteableBitmap(spriteInfo.BitmapSource),
                 SpriteID = bankViewerView.SelectedSpriteFromBank.ID,
                 TileSetID = bankViewerView.SelectedSpriteFromBank.TileSetID,
+                BankID = viewModel.BankModel.GUID,
                 Width = width,
                 Height = height,
                 OffsetX = spriteInfo.OffsetX,
@@ -226,6 +237,16 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.BankModel == null)
+        {
+            return;
+        }
+
         object data = e.Data.GetData(typeof(SpriteControlVO));
 
         SpriteControlVO draggingSprite = (SpriteControlVO)data;
@@ -263,7 +284,9 @@ public partial class CharacterFrameEditorView : UserControl
 
             frameViewView.Canvas.Children.Remove(draggingSprite.Image);
 
-            SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY));
+            string bankID = string.IsNullOrEmpty(sprite.BankID) ? viewModel.BankModel.GUID : sprite.BankID;
+
+            SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), bankID);
         }
     }
 
@@ -283,10 +306,9 @@ public partial class CharacterFrameEditorView : UserControl
 
         Border border = new()
         {
-            Background = Brushes.Transparent,
             BorderBrush = Brushes.Red,
             BorderThickness = SelectionThickness,
-            Child = sprite.Image
+            Child = sprite.Image,
         };
 
         Canvas.SetLeft(border, exactPosX);
@@ -303,7 +325,7 @@ public partial class CharacterFrameEditorView : UserControl
         return (sprite, border);
     }
 
-    private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position)
+    private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position, string bankID)
     {
         if (sprite.Image == null)
         {
@@ -322,7 +344,7 @@ public partial class CharacterFrameEditorView : UserControl
             Height = sprite.Height,
         };
 
-        SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite);
+        SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite, bankID);
     }
 
     private void FrameView_DragOver(object sender, DragEventArgs e)

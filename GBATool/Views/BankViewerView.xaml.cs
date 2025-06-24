@@ -705,12 +705,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
         SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
 
-        (_, WriteableBitmap? sourceBitmap) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
+        (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
 
-        if (sourceBitmap == null)
+        if (sourceBitmapCached == null)
         {
             return;
         }
+
+        WriteableBitmap sourceBitmap = sourceBitmapCached.CloneCurrentValue();
 
         WriteableBitmap cropped = sourceBitmap.Crop(sm.PosX, sm.PosY, width, height);
 
@@ -723,12 +725,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
         foreach (SpriteModel spriteModel in bankSprites)
         {
-            (_, WriteableBitmap? sourceBitmap) = TileSetUtils.GetSourceBitmapFromCache(spriteModel.TileSetID);
+            (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(spriteModel.TileSetID);
 
-            if (sourceBitmap == null)
+            if (sourceBitmapCached == null)
             {
                 continue;
             }
+
+            WriteableBitmap sourceBitmap = sourceBitmapCached.CloneCurrentValue();
 
             int width = 0;
             int height = 0;

@@ -64,11 +64,6 @@ public static class CharacterUtils
         {
             Dictionary<string, CharacterSprite> listCharacterTile = characterModel.Animations[animationID].Frames[frameID].Tiles;
 
-            if (listCharacterTile.Count == 0)
-            {
-                return null;
-            }
-
             foreach (KeyValuePair<string, CharacterSprite> tile in listCharacterTile)
             {
                 CharacterSprite sprite = tile.Value;

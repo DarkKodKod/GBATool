@@ -98,7 +98,7 @@ public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
-public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite> { }
+public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite, string> { }
 public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
 public class DeleteSpriteFromCharacterFrameSignal : Signal<string> { }
 public class PreviewImageUpdatedSignal : Signal<double, double> { }
