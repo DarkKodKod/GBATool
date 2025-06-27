@@ -195,7 +195,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<SelectFrameSpriteSignal>().Listener += OnSelectFrameSprite;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
-        SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFRameEditorViewLoaded;
+        SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
