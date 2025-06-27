@@ -1,4 +1,5 @@
-﻿using ArchitectureLibrary.Signals;
+﻿using ArchitectureLibrary.Model;
+using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
@@ -22,6 +23,8 @@ public partial class CharacterFrameEditorView : UserControl
     private double _spriteOffsetY;
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
     private readonly Thickness SelectionThickness = new(0.3, 0.1, 0.1, 0.3);
+    private readonly List<Image> _onionSkinImages = [];
+    private const double _onionSkinOpacity = 0.25;
 
     public CharacterFrameEditorView()
     {
@@ -33,6 +36,8 @@ public partial class CharacterFrameEditorView : UserControl
         #region Signals
         SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener += OnSelectImageControlInFrameView;
         SignalManager.Get<FillWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
+        SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener += OnFillWithPreviousFrameSpriteControls;
+        SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
         #endregion
 
         bankViewer.OnActivate();
@@ -45,6 +50,7 @@ public partial class CharacterFrameEditorView : UserControl
         frameView.canvas.Children.Clear();
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(viewModel.BankModel);
+        SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Dispatch();
     }
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -58,6 +64,8 @@ public partial class CharacterFrameEditorView : UserControl
         #region Signals
         SignalManager.Get<SelectImageControlInFrameViewSignal>().Listener -= OnSelectImageControlInFrameView;
         SignalManager.Get<FillWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
+        SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener -= OnFillWithPreviousFrameSpriteControls;
+        SignalManager.Get<OptionOnionSkinSignal>().Listener -= OnOptionOnionSkin;
         #endregion
     }
 
@@ -230,19 +238,34 @@ public partial class CharacterFrameEditorView : UserControl
         UnselectAllImagesInFrameView();
     }
 
-    private void FrameView_Drop(object sender, DragEventArgs e)
+    private void OnFillWithPreviousFrameSpriteControls(List<SpriteControlVO> spriteVOList)
     {
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
         }
 
-        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        foreach (SpriteControlVO vo in spriteVOList)
         {
-            return;
-        }
+            if (vo.Image == null)
+            {
+                continue;
+            }
 
-        if (viewModel.BankModel == null)
+            vo.Image.Opacity = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin ? _onionSkinOpacity : 0.0;
+
+            Canvas.SetLeft(vo.Image, vo.PositionX);
+            Canvas.SetTop(vo.Image, vo.PositionY);
+
+            _ = frameViewView.Canvas.Children.Add(vo.Image);
+
+            _onionSkinImages.Add(vo.Image);
+        }
+    }
+
+    private void FrameView_Drop(object sender, DragEventArgs e)
+    {
+        if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
         }
@@ -284,9 +307,7 @@ public partial class CharacterFrameEditorView : UserControl
 
             frameViewView.Canvas.Children.Remove(draggingSprite.Image);
 
-            string bankID = string.IsNullOrEmpty(sprite.BankID) ? viewModel.BankModel.GUID : sprite.BankID;
-
-            SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), bankID);
+            SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), draggingSprite.BankID);
         }
     }
 
@@ -298,6 +319,7 @@ public partial class CharacterFrameEditorView : UserControl
             Image = image,
             SpriteID = draggingSprite.SpriteID,
             TileSetID = draggingSprite.TileSetID,
+            BankID = draggingSprite.BankID,
             Width = draggingSprite.Width,
             Height = draggingSprite.Height,
             OffsetX = draggingSprite.OffsetX,
@@ -327,7 +349,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private static void SaveCharacterSpriteInformation(SpriteControlVO sprite, Point position, string bankID)
     {
-        if (sprite.Image == null)
+        if (sprite.Image == null || string.IsNullOrEmpty(bankID))
         {
             return;
         }
@@ -494,6 +516,14 @@ public partial class CharacterFrameEditorView : UserControl
                     SignalManager.Get<SelectFrameSpriteSignal>().Dispatch(sprite);
                 }
             }
+        }
+    }
+
+    private void OnOptionOnionSkin(bool enabledOnionSkin)
+    {
+        foreach (Image image in _onionSkinImages)
+        {
+            image.Opacity = enabledOnionSkin ? _onionSkinOpacity : 0.0;
         }
     }
 }

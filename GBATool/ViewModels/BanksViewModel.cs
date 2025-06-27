@@ -228,6 +228,8 @@ public class BanksViewModel : ItemViewModel
     {
         base.OnActivate();
 
+        _doNotSave = true;
+
         #region Signals
         SignalManager.Get<SelectTileSetSignal>().Listener += OnSelectTileSet;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
@@ -258,13 +260,9 @@ public class BanksViewModel : ItemViewModel
 
         SetPaletteId(model.PaletteId);
 
-        _doNotSave = true;
-
         Use256Colors = model.Use256Colors;
         IsBackground = model.IsBackground;
         TransparentColor = Util.GetColorFromInt(model.TransparentColor);
-
-        _doNotSave = false;
 
         LoadTileSetSprites();
 
@@ -276,6 +274,8 @@ public class BanksViewModel : ItemViewModel
         {
             ModelName = name;
         }
+
+        _doNotSave = false;
     }
 
     public override void OnDeactivate()

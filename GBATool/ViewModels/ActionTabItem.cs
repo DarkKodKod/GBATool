@@ -73,8 +73,23 @@ public class ActionTabItem : ViewModel
         }
         else
         {
+            string previousFrameID = string.Empty;
+            int previousFrameIndex = 0;
+
             if (Content is CharacterAnimationView animationView)
             {
+                for (int i = 0; i < animationView.FrameViewList.Count; i++)
+                {
+                    CharacterFrameView characterFrameView = animationView.FrameViewList[i];
+                    if (characterFrameView.FrameID == frameId)
+                    {
+                        int index = i == 0 ? animationView.FrameViewList.Count - 1 : i - 1;
+
+                        previousFrameID = animationView.FrameViewList[index].FrameID;
+                        previousFrameIndex = animationView.FrameViewList[index].FrameIndex;
+                    }
+                }
+
                 animationView.OnDeactivate();
 
                 CharacterAnimationViewModel? viewModel = animationView.DataContext as CharacterAnimationViewModel;
@@ -85,13 +100,13 @@ public class ActionTabItem : ViewModel
 
             if (Content is CharacterFrameEditorView characterView)
             {
-                CharacterFrameEditorViewModel? currentFrameViewModel = characterView.DataContext as CharacterFrameEditorViewModel;
-
-                if (currentFrameViewModel != null)
+                if (characterView.DataContext is CharacterFrameEditorViewModel currentFrameViewModel)
                 {
                     currentFrameViewModel.TabID = tabId;
                     currentFrameViewModel.FrameIndex = frameIndex;
                     currentFrameViewModel.FrameID = frameId;
+                    currentFrameViewModel.PreviousFrameID = previousFrameID;
+                    currentFrameViewModel.PreviousFrameIndex = previousFrameIndex;
 
                     currentFrameViewModel.OnActivate();
                 }

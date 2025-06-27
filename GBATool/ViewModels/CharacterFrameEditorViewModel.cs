@@ -1,4 +1,5 @@
-﻿using ArchitectureLibrary.Signals;
+﻿using ArchitectureLibrary.Model;
+using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
@@ -18,13 +19,14 @@ namespace GBATool.ViewModels;
 public class CharacterFrameEditorViewModel : ViewModel
 {
     private FileModelVO[]? _banks;
-    private int _selectedBank;
+    private int _selectedBank = -1;
     private string _tabId = string.Empty;
     private int _frameIndex;
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
     private string _selectedFrameSprite = string.Empty;
     private BankImageMetaData? _bankImageMetaData = null;
+    private bool _enableOnionSkin;
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -40,6 +42,25 @@ public class CharacterFrameEditorViewModel : ViewModel
             _selectedFrameSprite = value;
 
             OnPropertyChanged(nameof(SelectedFrameSprite));
+        }
+    }
+
+    public bool EnableOnionSkin
+    {
+        get => _enableOnionSkin;
+        set
+        {
+            if (value != _enableOnionSkin)
+            {
+                _enableOnionSkin = value;
+
+                ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin = value;
+                ModelManager.Get<GBAToolConfigurationModel>().Save();
+
+                SignalManager.Get<OptionOnionSkinSignal>().Dispatch(value);
+            }
+
+            OnPropertyChanged(nameof(EnableOnionSkin));
         }
     }
 
@@ -106,6 +127,8 @@ public class CharacterFrameEditorViewModel : ViewModel
     public CharacterModel? CharacterModel { get; set; }
     public string AnimationID { get; set; } = string.Empty;
     public string FrameID { get; set; } = string.Empty;
+    public string PreviousFrameID { get; set; } = string.Empty;
+    public int PreviousFrameIndex { get; set; }
 
     public BankImageMetaData? BankImageMetaData
     {
@@ -171,14 +194,11 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         SignalManager.Get<SelectFrameSpriteSignal>().Listener += OnSelectFrameSprite;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener += OnUpdateBankViewerParentWithImageMetadata;
         SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFRameEditorViewLoaded;
         #endregion
 
-        if (Banks?.Length > 0)
-        {
-            BankModel = Banks[0].Model as BankModel;
-        }
+        EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
     }
 
     private void LoadFrameSprites()
@@ -195,25 +215,48 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        (_, List<SpriteControlVO>? previousSprites, _) = LoadSpritesFromFrame(animation, PreviousFrameID);
+
+        if (previousSprites?.Count > 0)
         {
-            return;
+            SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Dispatch(previousSprites);
+        }
+
+        (BankImageMetaData? metaData, List<SpriteControlVO>? sprites, string bankID) = LoadSpritesFromFrame(animation, FrameID);
+
+        if (metaData != null)
+        {
+            BankImageMetaData = metaData;
+
+            if (sprites?.Count > 0)
+            {
+                SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites);
+
+                SelectBank(bankID);
+            }
+        }
+    }
+
+    private static (BankImageMetaData? meta, List<SpriteControlVO>? sprites, string bankID) LoadSpritesFromFrame(CharacterAnimation animation, string frameID)
+    {
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        {
+            return (null, null, string.Empty);
         }
 
         BankModel? bankModel = ProjectFiles.GetModel<BankModel>(frame.BankID);
-
         if (bankModel == null)
         {
-            return;
+            return (null, null, string.Empty);
         }
 
-        BankImageMetaData = BankUtils.CreateImage(bankModel, true);
+        BankImageMetaData meteaData = BankUtils.CreateImage(bankModel, true);
 
         List<SpriteControlVO> sprites = [];
 
-        foreach (var item in frame.Tiles)
+        foreach (KeyValuePair<string, CharacterSprite> item in frame.Tiles)
         {
-            if (!BankImageMetaData.Sprites.TryGetValue(item.Value.SpriteID, out SpriteInfo? spriteInfo))
+            if (!meteaData.Sprites.TryGetValue(item.Value.SpriteID, out SpriteInfo? spriteInfo))
             {
                 continue;
             }
@@ -229,6 +272,7 @@ public class CharacterFrameEditorViewModel : ViewModel
                 Image = Util.GetImageFromWriteableBitmap(spriteInfo.BitmapSource),
                 SpriteID = item.Value.SpriteID,
                 TileSetID = item.Value.TileSetID,
+                BankID = bankModel.GUID,
                 Width = item.Value.Width,
                 Height = item.Value.Height,
                 OffsetX = spriteInfo.OffsetX,
@@ -240,20 +284,22 @@ public class CharacterFrameEditorViewModel : ViewModel
             sprites.Add(sprite);
         }
 
-        if (sprites.Count > 0)
+        return (meteaData, sprites, frame.BankID);
+    }
+
+    private void SelectBank(string bankID)
+    {
+        for (int i = 0; i < Banks?.Length; i++)
         {
-            SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites);
-
-            for (int i = 0; i < Banks?.Length; i++)
+            if (Banks[i].Model is not BankModel bank)
             {
-                if (Banks[i].Model is not BankModel bank)
-                    continue;
+                continue;
+            }
 
-                if (bank.GUID == frame.BankID)
-                {
-                    SelectedBank = i;
-                    return;
-                }
+            if (bank.GUID == bankID)
+            {
+                SelectedBank = i;
+                return;
             }
         }
     }
@@ -273,18 +319,13 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         SignalManager.Get<SelectFrameSpriteSignal>().Listener -= OnSelectFrameSprite;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener -= OnUpdateBankViewerParentWithImageMetadata;
         SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         #endregion
     }
 
-    private void OnUpdateBankViewerParentWithImageMetadata(BankImageMetaData? metaData)
+    private void OnCharacterFrameEditorViewLoaded()
     {
-        if (metaData == null)
-            return;
-
-        BankImageMetaData = metaData;
-
         LoadFrameSprites();
     }
 

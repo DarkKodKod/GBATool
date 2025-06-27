@@ -23,110 +23,112 @@
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Button Grid.Row="0" ToolTip="Back to frames view"
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Button ToolTip="Back to frames view"
                 Width="80"
                 Height="30"
                 Margin="5,0,0,0"
                 HorizontalAlignment="Left"
                 Command="{Binding SwitchCharacterFrameViewCommand}">
-            <Button.CommandParameter>
-                <MultiBinding Converter="{StaticResource parametersConverter}">
-                    <Binding Path="TabID" />
-                    <Binding Path="FrameID"/>
-                    <Binding Path="FrameIndex" />
-                </MultiBinding>
-            </Button.CommandParameter>
-            <Image Width="16" Height="16" 
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="TabID" />
+                        <Binding Path="FrameID"/>
+                        <Binding Path="FrameIndex" />
+                    </MultiBinding>
+                </Button.CommandParameter>
+                <Image Width="16" Height="16" 
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
                    Source="/resources/play.png">
-                <Image.RenderTransform>
-                    <ScaleTransform ScaleX="-1"/>
-                </Image.RenderTransform>
-                <Image.RenderTransformOrigin>
-                    <Point X="0.5"/>
-                </Image.RenderTransformOrigin>
-            </Image>
-        </Button>
+                    <Image.RenderTransform>
+                        <ScaleTransform ScaleX="-1"/>
+                    </Image.RenderTransform>
+                    <Image.RenderTransformOrigin>
+                        <Point X="0.5"/>
+                    </Image.RenderTransformOrigin>
+                </Image>
+            </Button>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <CheckBox VerticalAlignment="Center" IsChecked="{Binding EnableOnionSkin, Mode=TwoWay}">Enable Onion Skin</CheckBox>
+        </StackPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="250"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <GroupBox Grid.Column="0" Header="Frame" Margin="10,0,10,0" Padding="10">
-                    <ScrollViewer
-                        PanningMode="Both"
-                        HorizontalScrollBarVisibility="Auto"
-                        VerticalScrollBarVisibility="Auto">
-                        <local:FrameView 
-                            Width="925"
-                            Height="605"
-                            x:Name="frameView" 
-                            AllowDrop="True"
-                            Drop="FrameView_Drop"
-                            DragOver="FrameView_DragOver"
-                            MouseMove="FrameView_MouseMove"
-                            DragLeave="FrameView_DragLeave"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"/>
-                    </ScrollViewer>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Grid.Row="0" Grid.Column="0" Header="Frame" Margin="10,0,10,0" Padding="10">
+                <ScrollViewer
+                    PanningMode="Both"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto">
+                    <local:FrameView 
+                        Width="925"
+                        Height="605"
+                        x:Name="frameView" 
+                        AllowDrop="True"
+                        Drop="FrameView_Drop"
+                        DragOver="FrameView_DragOver"
+                        MouseMove="FrameView_MouseMove"
+                        DragLeave="FrameView_DragLeave"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+                </ScrollViewer>
+            </GroupBox>
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Header="Sprite Configuration" Grid.Row="0" Margin="10,0,10,0" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <CheckBox IsChecked="{Binding FlipX, Mode=TwoWay}" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
+                            <CheckBox IsChecked="{Binding FlipY, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
+                        </StackPanel>
+                        <CheckBox IsChecked="{Binding BackBackground, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="2">Back background</CheckBox>
+                    </Grid>
                 </GroupBox>
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <GroupBox Header="Sprite Configuration" Grid.Row="0" Margin="10,0,10,0" Padding="10">
-                        <Grid>
+                <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
                                 <RowDefinition Height="10" />
                                 <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                                <CheckBox IsChecked="{Binding FlipX, Mode=TwoWay}" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
-                                <CheckBox IsChecked="{Binding FlipY, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
-                            </StackPanel>
-                            <CheckBox IsChecked="{Binding BackBackground, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="2">Back background</CheckBox>
+                            <TextBlock Grid.Column="0" Grid.Row="1">Width:</TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2">Height:</TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
+                            <TextBlock Grid.Column="0" Grid.Row="3">Offset X:</TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
+                            <TextBlock Grid.Column="0" Grid.Row="4">Offset Y:</TextBlock>
+                            <TextBox Grid.Column="1" Grid.Row="4" Height="18" Width="50" TextAlignment="Right"/>
                         </Grid>
-                    </GroupBox>
-                    <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" Padding="10">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="10" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                    <RowDefinition Height="auto" />
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Column="0" Grid.Row="1">Width:</TextBlock>
-                                <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
-                                <TextBlock Grid.Column="0" Grid.Row="2">Height:</TextBlock>
-                                <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
-                                <TextBlock Grid.Column="0" Grid.Row="3">Offset X:</TextBlock>
-                                <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
-                                <TextBlock Grid.Column="0" Grid.Row="4">Offset Y:</TextBlock>
-                                <TextBox Grid.Column="1" Grid.Row="4" Height="18" Width="50" TextAlignment="Right"/>
-                            </Grid>
-                        </Grid>
-                    </GroupBox>
-                </Grid>
+                    </Grid>
+                </GroupBox>
             </Grid>
-            <GroupBox Grid.Row="1" Header="Banks" Padding="10" Margin="10">
+            <GroupBox Grid.ColumnSpan="2" Grid.Row="1" Header="Banks" Padding="10" Margin="10">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>

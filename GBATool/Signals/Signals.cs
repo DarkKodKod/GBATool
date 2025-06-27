@@ -23,6 +23,7 @@ public class CloseDialogSignal : Signal { }
 public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> { }
 public class MouseWheelSignal : Signal<MouseWheelVO> { }
 public class MouseImageSelectedSignal : Signal<Image, Point> { }
+public class OptionOnionSkinSignal : Signal<bool> { }
 
 // MainWindowViewModel
 public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
@@ -100,6 +101,7 @@ public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite, string> { }
 public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
+public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
 public class DeleteSpriteFromCharacterFrameSignal : Signal<string> { }
 public class PreviewImageUpdatedSignal : Signal<double, double> { }
 
@@ -116,6 +118,7 @@ public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 public class ObtainTransparentColorSignal : Signal<SpriteModel> { }
 public class GeneratePaletteFromBankSignal : Signal<string, IEnumerable<SpriteModel>, Color, bool> { }
 public class SetBankModelToBankViewerSignal : Signal<BankModel?> { }
+public class CharacterFrameEditorViewLoadedSignal : Signal { }
 public class UpdateBankViewerParentWithImageMetadataSignal : Signal<BankImageMetaData?> { }
 public class ReloadBankImageSignal : Signal { }
 public class MoveDownSelectedSpriteElementSignal : Signal<int> { }

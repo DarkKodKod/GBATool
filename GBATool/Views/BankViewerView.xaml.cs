@@ -463,7 +463,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void ReloadImage()
+    private static void ReloadImage()
     {
         SignalManager.Get<CleanupBankSpritesSignal>().Dispatch();
         SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
