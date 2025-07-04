@@ -25,8 +25,12 @@ public class CharacterFrameEditorViewModel : ViewModel
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
     private string _selectedFrameSprite = string.Empty;
+    private int _relativeOriginX;
+    private int _relativeOriginY;
+    private int _verticalAxis;
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
+    private bool _dontSave = false;
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -42,6 +46,45 @@ public class CharacterFrameEditorViewModel : ViewModel
             _selectedFrameSprite = value;
 
             OnPropertyChanged(nameof(SelectedFrameSprite));
+        }
+    }
+
+    public int RelativeOriginX
+    {
+        get => _relativeOriginX;
+        set
+        {
+            _relativeOriginX = value;
+
+            OnPropertyChanged(nameof(RelativeOriginX));
+
+            UpdateOriginPosition(value, RelativeOriginY);
+        }
+    }
+
+    public int RelativeOriginY
+    {
+        get => _relativeOriginY;
+        set
+        {
+            _relativeOriginY = value;
+
+            OnPropertyChanged(nameof(RelativeOriginY));
+
+            UpdateOriginPosition(RelativeOriginX, value);
+        }
+    }
+
+    public int VerticalAxis
+    {
+        get => _verticalAxis;
+        set
+        {
+            _verticalAxis = value;
+
+            OnPropertyChanged(nameof(VerticalAxis));
+
+            UpdateVerticalAxis(value);
         }
     }
 
@@ -215,6 +258,14 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
+        _dontSave = true;
+
+        VerticalAxis = animation.VerticalAxis;
+        Point origin = animation.RelativeOrigin;
+
+        RelativeOriginX = (int)origin.X;
+        RelativeOriginY = (int)origin.Y;
+
         (_, List<SpriteControlVO>? previousSprites, _) = LoadSpritesFromFrame(animation, PreviousFrameID);
 
         if (previousSprites?.Count > 0)
@@ -235,6 +286,8 @@ public class CharacterFrameEditorViewModel : ViewModel
                 SelectBank(bankID);
             }
         }
+
+        _dontSave = false;
     }
 
     private static (BankImageMetaData? meta, List<SpriteControlVO>? sprites, string bankID) LoadSpritesFromFrame(CharacterAnimation animation, string frameID)
@@ -361,6 +414,9 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
 
+        if (_dontSave)
+            return;
+
         FileHandler?.Save();
     }
 
@@ -429,5 +485,55 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         SignalManager.Get<SelectImageControlInFrameViewSignal>().Dispatch(point);
+    }
+
+    private void UpdateOriginPosition(int posX, int posY)
+    {
+        SignalManager.Get<UpdateOriginPositionSignal>().Dispatch(posX, posY);
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        Point newPos = new(posX, posY);
+
+        animation.RelativeOrigin = newPos;
+
+        if (_dontSave)
+            return;
+
+        FileHandler?.Save();
+    }
+
+    private void UpdateVerticalAxis(int value)
+    {
+        SignalManager.Get<UpdateVerticalAxisSignal>().Dispatch(value);
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        animation.VerticalAxis = value;
+
+        if (_dontSave)
+            return;
+
+        FileHandler?.Save();
     }
 }

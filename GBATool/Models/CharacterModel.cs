@@ -41,6 +41,8 @@ public class CharacterAnimation
     public string ID { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public float Speed { get; set; }
+    public Point RelativeOrigin { get; set; }
+    public int VerticalAxis { get; set; }
     public Dictionary<string, FrameModel> Frames { get; set; } = [];
 }
 

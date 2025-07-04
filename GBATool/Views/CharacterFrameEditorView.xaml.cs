@@ -7,6 +7,7 @@ using GBATool.ViewModels;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -40,6 +41,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
         #endregion
 
+        frameView.OnActivate();
         bankViewer.OnActivate();
 
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
@@ -56,6 +58,7 @@ public partial class CharacterFrameEditorView : UserControl
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
         bankViewer.OnDeactivate();
+        frameView.OnDeactivate();
 
         _spritesInFrames.Clear();
         _spriteOffsetX = 0;
@@ -526,4 +529,14 @@ public partial class CharacterFrameEditorView : UserControl
             image.Opacity = enabledOnionSkin ? _onionSkinOpacity : 0.0;
         }
     }
+
+    private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+    {
+        Regex _regex = IsAllNumbersRegex();
+
+        e.Handled = _regex.IsMatch(e.Text);
+    }
+
+    [GeneratedRegex("[^0-9.-]+")]
+    private static partial Regex IsAllNumbersRegex();
 }

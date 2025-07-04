@@ -7,6 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
+             xmlns:b="clr-namespace:GBATool.Utils"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              Unloaded="UserControl_Unloaded"
@@ -51,6 +52,36 @@
             </Button>
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
             <CheckBox VerticalAlignment="Center" IsChecked="{Binding EnableOnionSkin, Mode=TwoWay}">Enable Onion Skin</CheckBox>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <Label VerticalAlignment="Center">RelativeOrigin:</Label>
+            <TextBox 
+                VerticalAlignment="Center" 
+                Width="25" 
+                Text="{Binding RelativeOriginX, Mode=TwoWay}"
+                PreviewTextInput="NumberValidationTextBox"
+                MaxLength="3"
+                HorizontalAlignment="Left"
+                TextWrapping="NoWrap"
+                b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            <TextBox 
+                VerticalAlignment="Center" 
+                Width="25" 
+                Text="{Binding RelativeOriginY, Mode=TwoWay}"
+                PreviewTextInput="NumberValidationTextBox"
+                MaxLength="3"
+                HorizontalAlignment="Left"
+                TextWrapping="NoWrap"
+                b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            <Label VerticalAlignment="Center" Margin="10,0,0,0">Vertical Axis:</Label>
+            <TextBox 
+                VerticalAlignment="Center" 
+                Width="25" 
+                Text="{Binding VerticalAxis, Mode=TwoWay}"
+                PreviewTextInput="NumberValidationTextBox"
+                MaxLength="3"
+                HorizontalAlignment="Left"
+                TextWrapping="NoWrap"
+                b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

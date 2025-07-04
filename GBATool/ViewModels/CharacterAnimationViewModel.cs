@@ -196,7 +196,7 @@ public class CharacterAnimationViewModel : ViewModel
 
         LoadFrameImage();
 
-        _dispatcherTimer = new DispatcherTimer
+        _dispatcherTimer = new DispatcherTimer(DispatcherPriority.Input)
         {
             Interval = TimeSpan.FromSeconds(Speed)
         };

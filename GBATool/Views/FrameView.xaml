@@ -44,6 +44,19 @@
                     </i:Interaction.Behaviors>
                 </Canvas>
             </Border>
+            <Line
+                X1="{Binding VerticalLineXPos}" Y1="0"
+                X2="{Binding VerticalLineXPos}" Y2="152"
+                Stroke="Red"
+                StrokeThickness="0.5" />
+            <Path 
+                Data="{Binding CrossData}" 
+                Stroke="Black"
+                StrokeThickness="0.5"/>
+            <Path 
+                Data="{Binding OriginGuide}"
+                Stroke="Green"
+                StrokeThickness="0.3"/>
         </Canvas>
     </Grid>
 </UserControl>
