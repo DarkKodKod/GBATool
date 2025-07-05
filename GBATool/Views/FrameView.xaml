@@ -55,7 +55,7 @@
                 StrokeThickness="0.5"/>
             <Path 
                 Data="{Binding OriginGuide}"
-                Stroke="Green"
+                Stroke="Yellow"
                 StrokeThickness="0.3"/>
         </Canvas>
     </Grid>

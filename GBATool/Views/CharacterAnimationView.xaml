@@ -203,7 +203,7 @@
             <TextBox Height="18" TextAlignment="Center" Width="50" Text="{Binding Speed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Margin="20,0,0,0" VerticalAlignment="Center">Frame Index:</TextBlock>
             <Border BorderThickness="1" BorderBrush="Black" VerticalAlignment="Center">
-                <TextBlock TextAlignment="Center" Background="White" Height="18" Width="20" Text="{Binding FrameIndex}"/>
+                <TextBlock TextAlignment="Center" Background="White" Height="18" Width="20" Text="{Binding  FrameIndex}"/>
             </Border>
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
             <CheckBox VerticalAlignment="Center">Show collision boxes</CheckBox>
@@ -219,6 +219,7 @@
                        Source="{Binding FrameImage}"
                        ClipToBounds="True"
                        x:Name="previewImage"
+                       Loaded="PreviewImage_Loaded"
                        Stretch="None">
                     <Image.RenderTransform>
                         <ScaleTransform

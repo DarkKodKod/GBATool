@@ -1,9 +1,10 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.ViewModels;
-using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace GBATool.Views;
 
@@ -12,10 +13,6 @@ namespace GBATool.Views;
 /// </summary>
 public partial class CharacterAnimationView : UserControl
 {
-    private double _imagePreviewWidth = 0;
-    private double _imagePreviewHeight = 0;
-    private bool _fullyLoaded = false;
-
     public List<CharacterFrameView> FrameViewList { get; set; } = [];
 
     public CharacterAnimationView()
@@ -25,30 +22,16 @@ public partial class CharacterAnimationView : UserControl
 
     public void OnActivate()
     {
-        void CheckLayourUpdate(object? o, EventArgs e)
-        {
-            if (ActualHeight > 0 && ActualWidth > 0)
-            {
-                _fullyLoaded = true;
-
-                LayoutUpdated -= CheckLayourUpdate;
-
-                CalculateImagePosition();
-            }
-        }
-
         SignalManager.Get<NewAnimationFrameSignal>().Listener += OnNewAnimationFrame;
         SignalManager.Get<DeleteAnimationFrameSignal>().Listener += OnDeleteAnimationFrame;
-        SignalManager.Get<PreviewImageUpdatedSignal>().Listener += OnPreviewImageUpdated;
-
-        LayoutUpdated += CheckLayourUpdate;
+        SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Listener += OnInformationToCorrectlyDisplayTheMetaSpriteCentered;
     }
 
     public void OnDeactivate()
     {
         SignalManager.Get<NewAnimationFrameSignal>().Listener -= OnNewAnimationFrame;
         SignalManager.Get<DeleteAnimationFrameSignal>().Listener -= OnDeleteAnimationFrame;
-        SignalManager.Get<PreviewImageUpdatedSignal>().Listener -= OnPreviewImageUpdated;
+        SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Listener -= OnInformationToCorrectlyDisplayTheMetaSpriteCentered;
 
         FrameViewList.Clear();
         spFrames.Children.RemoveRange(0, spFrames.Children.Count - 1);
@@ -105,25 +88,35 @@ public partial class CharacterAnimationView : UserControl
         spFrames.Children.Insert(spFrames.Children.Count - 1, frame);
     }
 
-    private void OnPreviewImageUpdated(double imageWidth, double imageHeight)
+    private void OnInformationToCorrectlyDisplayTheMetaSpriteCentered(double offsetX, double offsetY, double imageWidth, double imageHeight)
     {
-        _imagePreviewWidth = imageWidth;
-        _imagePreviewHeight = imageHeight;
-
-        CalculateImagePosition();
+        UpdateImagePosition(previewImage, imageWidth, imageHeight, offsetX, offsetY);
     }
 
-    private void CalculateImagePosition()
+    private void UpdateImagePosition(Image image, double imageWidth, double imageHeight, double offsetX, double offsetY)
     {
-        if (!_fullyLoaded)
+        double left = (parentCanvas.ActualWidth / 2) - (imageWidth / 2) - offsetX;
+        Canvas.SetLeft(image, left);
+
+        double top = (parentCanvas.ActualHeight / 2) - (imageHeight / 2) - offsetY;
+        Canvas.SetTop(image, top);
+    }
+
+    private void PreviewImage_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Image image)
         {
             return;
         }
 
-        double left = (parentCanvas.ActualWidth / 2) - (_imagePreviewWidth / 2);
-        Canvas.SetLeft(previewImage, left);
+        if (image.RenderTransform is not ScaleTransform transform)
+        {
+            return;
+        }
 
-        double top = (parentCanvas.ActualHeight / 2) - (_imagePreviewHeight / 2);
-        Canvas.SetTop(previewImage, top);
+        double imageWidth = image.ActualWidth * transform.ScaleX;
+        double imageHeight = image.ActualHeight * transform.ScaleY;
+
+        UpdateImagePosition(image, imageWidth, imageHeight, 0.0, 0.0);
     }
 }

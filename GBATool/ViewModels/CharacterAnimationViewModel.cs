@@ -5,6 +5,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -27,6 +28,9 @@ public class CharacterAnimationViewModel : ViewModel
     private DispatcherTimer? _dispatcherTimer;
     private float _imageAspectRatio = 1.0f;
 
+    private const double CanvasWidth = 300.0;
+    private const double CanvasHeight = 300.0;
+
     #region Commands
     public PauseCharacterAnimationCommand PauseCharacterAnimationCommand { get; } = new();
     public NextFrameCharacterAnimationCommand NextFrameCharacterAnimationCommand { get; } = new();
@@ -39,7 +43,7 @@ public class CharacterAnimationViewModel : ViewModel
     #region get/set
     public bool IsPlaying
     {
-        get { return _isPlaying; }
+        get => _isPlaying;
         set
         {
             _isPlaying = value;
@@ -50,7 +54,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public bool IsPaused
     {
-        get { return _isPaused; }
+        get => _isPaused;
         set
         {
             _isPaused = value;
@@ -61,7 +65,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public float ImageAspectRatio
     {
-        get { return _imageAspectRatio; }
+        get => _imageAspectRatio;
         set
         {
             _imageAspectRatio = value;
@@ -72,7 +76,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public string FrameID
     {
-        get { return _frameID; }
+        get => _frameID;
         set
         {
             _frameID = value;
@@ -83,10 +87,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public int FrameIndex
     {
-        get
-        {
-            return _frameIndex;
-        }
+        get => _frameIndex;
         set
         {
             _frameIndex = value;
@@ -97,10 +98,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public ImageSource? FrameImage
     {
-        get
-        {
-            return _frameImage;
-        }
+        get => _frameImage;
         set
         {
             _frameImage = value;
@@ -111,7 +109,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public FileHandler? FileHandler
     {
-        get { return _fileHandler; }
+        get => _fileHandler;
         set
         {
             _fileHandler = value;
@@ -122,7 +120,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public CharacterModel? CharacterModel
     {
-        get { return _characterModel; }
+        get => _characterModel;
         set
         {
             _characterModel = value;
@@ -133,7 +131,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public string TabID
     {
-        get { return _tabID; }
+        get => _tabID;
         set
         {
             _tabID = value;
@@ -144,7 +142,7 @@ public class CharacterAnimationViewModel : ViewModel
 
     public float Speed
     {
-        get { return _speed; }
+        get => _speed;
         set
         {
             if (_speed != value)
@@ -269,13 +267,71 @@ public class CharacterAnimationViewModel : ViewModel
 
         FrameImage = image;
 
-        double aspectWidth = 300.0 / image.Width;
-        double aspectHeight = 300.0 / image.Height;
+        WriteableBitmap? firstFrameWithImage = GetImageFromTheFirstValidFrame(model, animation, frameIndex);
+
+        double aspectWidth = CanvasWidth / image.Width;
+        double aspectHeight = CanvasHeight / image.Height;
+
+        if (firstFrameWithImage != null)
+        {
+            aspectWidth = CanvasWidth / firstFrameWithImage.Width;
+            aspectHeight = CanvasHeight / firstFrameWithImage.Height;
+        }
+
         double minAspectRation = Math.Min(aspectWidth, aspectHeight);
 
         ImageAspectRatio = (float)minAspectRation;
 
-        SignalManager.Get<PreviewImageUpdatedSignal>().Dispatch(image.Width * minAspectRation, image.Height * minAspectRation);
+        if (firstFrameWithImage != null)
+        {
+            SendInformationToTheViewAboutTheMetaSprite(animation, firstFrameWithImage.Width, firstFrameWithImage.Height, minAspectRation);
+        }
+    }
+
+    private void SendInformationToTheViewAboutTheMetaSprite(CharacterAnimation animation, double imageWidth, double imageHeight, double scale)
+    {
+        double offsetX = 0;
+        double offsetY = 0;
+
+        FrameModel frameModel = animation.Frames[FrameID];
+
+        foreach (KeyValuePair<string, CharacterSprite> item in frameModel.Tiles)
+        {
+            if (item.Value.Position.X < animation.RelativeOrigin.X &&
+                (animation.RelativeOrigin.X - item.Value.Position.X) > offsetX)
+            {
+                offsetX = animation.RelativeOrigin.X - item.Value.Position.X;
+            }
+
+            if (item.Value.Position.Y < animation.RelativeOrigin.Y &&
+                (animation.RelativeOrigin.Y - item.Value.Position.Y) > offsetY)
+            {
+                offsetY = animation.RelativeOrigin.Y - item.Value.Position.Y;
+            }
+        }
+
+        SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Dispatch(
+            offsetX * scale,
+            offsetY * scale,
+            imageWidth * scale,
+            imageHeight * scale);
+    }
+
+    private WriteableBitmap? GetImageFromTheFirstValidFrame(CharacterModel model, CharacterAnimation animation, int currentFrameIndex)
+    {
+        foreach (KeyValuePair<string, FrameModel> frame in animation.Frames)
+        {
+            foreach (KeyValuePair<string, CharacterSprite> sprite in frame.Value.Tiles)
+            {
+                if (!string.IsNullOrEmpty(sprite.Key) &&
+                    !string.IsNullOrEmpty(sprite.Value.SpriteID))
+                {
+                    return CharacterUtils.GetFrameImageFromCache(model, _animationID, frame.Key);
+                }
+            }
+        }
+
+        return null;
     }
 
     private void UpdateSpeedValue(float speed)
