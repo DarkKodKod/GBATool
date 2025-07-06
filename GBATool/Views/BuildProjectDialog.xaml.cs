@@ -3,6 +3,7 @@ using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -32,7 +33,7 @@ namespace GBATool.Views
 
         private void OnWriteBuildOutput(string newLine, OutputMessageType messageType, string color = "")
         {
-            BrushConverter bc = new BrushConverter();
+            BrushConverter bc = new();
 
             TextRange tr = new(tbOutput.Document.ContentEnd, tbOutput.Document.ContentEnd)
             {
@@ -61,7 +62,7 @@ namespace GBATool.Views
             #endregion
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             CleanUp();
         }

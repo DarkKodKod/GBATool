@@ -8,6 +8,7 @@ namespace GBATool.Building;
 public abstract class Building<T> where T : class, new()
 {
     private readonly List<string> _errors = [];
+    private readonly List<string> _warnings = [];
 
     private static readonly Lazy<T> instance = new(() => new T());
 
@@ -56,13 +57,24 @@ public abstract class Building<T> where T : class, new()
         _errors.Add(error);
     }
 
+    protected void AddWarning(string warning)
+    {
+        _warnings.Add(warning);
+    }
+
     public string[] GetErrors()
     {
         return [.. _errors];
     }
 
+    public string[] GetWarnings()
+    {
+        return [.. _warnings];
+    }
+
     private void PrepareGenerate()
     {
         _errors.Clear();
+        _warnings.Clear();
     }
 }

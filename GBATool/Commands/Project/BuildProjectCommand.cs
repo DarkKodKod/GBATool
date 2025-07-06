@@ -50,6 +50,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating header");
             OutputError(BuildHeader.Instance.GetErrors());
+            OutputWarnings(BuildHeader.Instance.GetWarnings());
             goto finish;
         }
 
@@ -59,6 +60,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating banks");
             OutputError(BuildMemoryBanks.Instance.GetErrors());
+            OutputWarnings(BuildMemoryBanks.Instance.GetWarnings());
             goto finish;
         }
 
@@ -68,6 +70,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating tiles definitions");
             OutputError(BuildTilesDefinitions.Instance.GetErrors());
+            OutputWarnings(BuildTilesDefinitions.Instance.GetWarnings());
             goto finish;
         }
 
@@ -77,6 +80,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating backgrounds");
             OutputError(BuildBackgrounds.Instance.GetErrors());
+            OutputWarnings(BuildBackgrounds.Instance.GetWarnings());
             goto finish;
         }
 
@@ -86,6 +90,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating meta sprites");
             OutputError(BuildMetaSprites.Instance.GetErrors());
+            OutputWarnings(BuildMetaSprites.Instance.GetWarnings());
             goto finish;
         }
 
@@ -95,6 +100,7 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating palettes");
             OutputError(BuildPalettes.Instance.GetErrors());
+            OutputWarnings(BuildPalettes.Instance.GetWarnings());
             goto finish;
         }
 
@@ -130,11 +136,24 @@ public class BuildProjectCommand : Command
         SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Error, "");
     }
 
+    private static void OutputWarning(string message)
+    {
+        SignalManager.Get<WriteBuildOutputSignal>().Dispatch(message, OutputMessageType.Warning, "");
+    }
+
     private static void OutputError(string[] messages)
     {
         for (int i = 0; i < messages.Length; i++)
         {
-            SignalManager.Get<WriteBuildOutputSignal>().Dispatch(messages[i], OutputMessageType.Error, "");
+            OutputError(messages[i]);
+        }
+    }
+
+    private static void OutputWarnings(string[] messages)
+    {
+        for (int i = 0; i < messages.Length; i++)
+        {
+            OutputWarning(messages[i]);
         }
     }
 }
