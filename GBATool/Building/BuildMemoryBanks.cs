@@ -54,7 +54,14 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
             {
                 try
                 {
-                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount.width, cellsCount.height, ref palette);
+                    List<string> warnings = [];
+
+                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount.width, cellsCount.height, ref palette, warnings);
+
+                    foreach (string item in warnings)
+                    {
+                        AddWarning($"{vo.Name}, " + item);
+                    }
                 }
                 catch (Exception e)
                 {

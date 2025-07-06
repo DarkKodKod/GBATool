@@ -50,9 +50,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating header");
             OutputError(BuildHeader.Instance.GetErrors());
-            OutputWarnings(BuildHeader.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildHeader.Instance.GetWarnings());
 
         OutputInfo("Building banks...");
         ok = await BuildMemoryBanks.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -60,9 +60,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating banks");
             OutputError(BuildMemoryBanks.Instance.GetErrors());
-            OutputWarnings(BuildMemoryBanks.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildMemoryBanks.Instance.GetWarnings());
 
         OutputInfo("Building tiles definitions...");
         ok = await BuildTilesDefinitions.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -70,9 +70,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating tiles definitions");
             OutputError(BuildTilesDefinitions.Instance.GetErrors());
-            OutputWarnings(BuildTilesDefinitions.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildTilesDefinitions.Instance.GetWarnings());
 
         OutputInfo("Building backgrounds...");
         ok = await BuildBackgrounds.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -80,9 +80,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating backgrounds");
             OutputError(BuildBackgrounds.Instance.GetErrors());
-            OutputWarnings(BuildBackgrounds.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildBackgrounds.Instance.GetWarnings());
 
         OutputInfo("Building meta sprites...");
         ok = await BuildMetaSprites.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -90,9 +90,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating meta sprites");
             OutputError(BuildMetaSprites.Instance.GetErrors());
-            OutputWarnings(BuildMetaSprites.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildMetaSprites.Instance.GetWarnings());
 
         OutputInfo("Building palettes...");
         ok = await BuildPalettes.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -100,9 +100,9 @@ public class BuildProjectCommand : Command
         {
             OutputError("Problems generating palettes");
             OutputError(BuildPalettes.Instance.GetErrors());
-            OutputWarnings(BuildPalettes.Instance.GetWarnings());
             goto finish;
         }
+        OutputWarnings(BuildPalettes.Instance.GetWarnings());
 
         OutputInfo("Build completed", "Green");
 

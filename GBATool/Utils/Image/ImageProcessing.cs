@@ -14,7 +14,7 @@ public static class ImageProcessing
     {
         List<Color> palette = [];
 
-        int numberOfColors = (int)Math.Pow((int)bpp, 2);
+        int numberOfColors = bpp.GetNumberOfColors();
 
         for (int i = 0; i < numberOfColors; i++)
         {
@@ -24,7 +24,7 @@ public static class ImageProcessing
         return palette;
     }
 
-    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, int width, int height, ref List<Color> palette)
+    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, int width, int height, ref List<Color> palette, List<string> warnings)
     {
         int bitsPerPixel = (int)bpp;
         const int bitPlaneSizeInBytes = 8; // 8x8 bits in a tile
@@ -59,24 +59,25 @@ public static class ImageProcessing
                         {
                             if (!colors.TryGetValue(color, out int colorIndex))
                             {
-                                if (colors.Count < numberOfColors)
-                                {
-                                    colorIndex = colors.Count;
+                                colorIndex = colors.Count;
 
-                                    colors.Add(color, colorIndex);
+                                colors.Add(color, colorIndex);
 
-                                    palette[colorIndex] = Color.FromRgb(color.R, color.G, color.B);
-                                }
-                                else
+                                if (colorIndex >= numberOfColors)
                                 {
-                                    throw new InvalidOperationException("This color does not fit in the color count");
+                                    warnings.Add("Color exceed the color count");
                                 }
                             }
 
-                            if (bpp == BitsPerPixel.f4bpp)
-                                Set4BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
-                            else
-                                Set8BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                            if (colorIndex < numberOfColors)
+                            {
+                                palette[colorIndex] = Color.FromRgb(color.R, color.G, color.B);
+
+                                if (bpp == BitsPerPixel.f4bpp)
+                                    Set4BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                else
+                                    Set8BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                            }
                         }
 
                         pixelIndex++;

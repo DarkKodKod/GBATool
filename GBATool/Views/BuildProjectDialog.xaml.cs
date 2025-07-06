@@ -45,7 +45,7 @@ namespace GBATool.Views
                 switch (messageType)
                 {
                     case OutputMessageType.Information: color = "Black"; break;
-                    case OutputMessageType.Warning: color = "Yellow"; break;
+                    case OutputMessageType.Warning: color = "#B56F00"; break;
                     case OutputMessageType.Error: color = "Red"; break;
                 }
             }
