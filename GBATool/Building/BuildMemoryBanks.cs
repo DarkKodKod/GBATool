@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Utils;

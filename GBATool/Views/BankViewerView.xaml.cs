@@ -719,7 +719,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ReturnTransparentColorFromBankSignal>().Dispatch(cropped.GetPixel(0, 0));
     }
 
-    private void OnGeneratePaletteFromBank(string name, IEnumerable<SpriteModel> bankSprites, Color transparentColor, bool use256Colors)
+    private void OnGeneratePaletteFromBank(string name, IEnumerable<SpriteModel> bankSprites, Color transparentColor, BitsPerPixel bitPerPixel)
     {
         List<Color> colorArray = new([transparentColor]);
 
@@ -753,7 +753,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
                     if (!colorArray.Contains(color))
                     {
-                        if (colorArray.Count < 16)
+                        if (colorArray.Count < bitPerPixel.GetNumberOfColors())
                         {
                             colorArray.Add(color);
                         }
@@ -781,7 +781,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             if (!string.IsNullOrEmpty(name))
             {
-                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray, use256Colors);
+                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray, bitPerPixel);
             }
         }
     }

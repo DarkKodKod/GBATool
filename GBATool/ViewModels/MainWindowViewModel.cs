@@ -494,7 +494,7 @@ public class MainWindowViewModel : ViewModel
         }
     }
 
-    private void OnTryCreatePaletteElement(string name, List<Color> colorArray, bool use256Colors)
+    private void OnTryCreatePaletteElement(string name, List<Color> colorArray, BitsPerPixel bitsPerPixel)
     {
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 

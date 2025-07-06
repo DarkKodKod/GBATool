@@ -1,5 +1,6 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
+using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using System.Collections.Generic;
@@ -55,6 +56,8 @@ public class GeneratePaletteFromBankCommand : Command
             return;
         }
 
-        SignalManager.Get<GeneratePaletteFromBankSignal>().Dispatch(name, listOfSprites, transparentColor, use256Colors);
+        BitsPerPixel bpp = use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
+
+        SignalManager.Get<GeneratePaletteFromBankSignal>().Dispatch(name, listOfSprites, transparentColor, bpp);
     }
 }

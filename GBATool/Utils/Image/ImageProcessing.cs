@@ -1,16 +1,11 @@
-﻿using System;
+﻿using GBATool.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils.Image;
-
-public enum BitsPerPixel
-{
-    f4bpp = 4,
-    f8bpp = 8
-}
 
 // Information taken from: https://sneslab.net/wiki/Graphics_Format
 public static class ImageProcessing
@@ -43,25 +38,15 @@ public static class ImageProcessing
         int currentX = 0;
         int currentY = 0;
 
-        int numberOfColors = (int)Math.Pow(bitsPerPixel, 2);
+        int numberOfColors = bpp.GetNumberOfColors();
 
         Color transparentColor = palette.First();
-
-        Dictionary<int, Dictionary<Color, int>> groupedPalettes = [];
+        Dictionary<Color, int> colors = new() { { transparentColor, 0 } };
 
         for (int j = 0; j < height; ++j)
         {
             for (int i = 0; i < width; ++i)
             {
-                int group = 0;
-
-                if (!groupedPalettes.TryGetValue(group, out Dictionary<Color, int>? colors))
-                {
-                    colors = new Dictionary<Color, int> { { transparentColor, 0 } };
-
-                    groupedPalettes.Add(group, colors);
-                }
-
                 // read pixels in the 8x8 quadrant
                 for (int y = currentY; y < currentY + 8; ++y)
                 {

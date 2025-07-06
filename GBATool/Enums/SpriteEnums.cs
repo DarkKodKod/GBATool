@@ -24,3 +24,9 @@ public enum ColorMode
     Mode4bpp = 0,
     Mode8bpp = 1
 }
+
+public enum BitsPerPixel
+{
+    f4bpp = 4,
+    f8bpp = 8
+}

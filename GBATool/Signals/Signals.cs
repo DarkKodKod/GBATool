@@ -118,7 +118,7 @@ public class SelectTileSetSignal : Signal<string> { }
 public class BankImageUpdatedSignal : Signal { }
 public class BankSpriteDeletedSignal : Signal<SpriteModel> { }
 public class ObtainTransparentColorSignal : Signal<SpriteModel> { }
-public class GeneratePaletteFromBankSignal : Signal<string, IEnumerable<SpriteModel>, Color, bool> { }
+public class GeneratePaletteFromBankSignal : Signal<string, IEnumerable<SpriteModel>, Color, BitsPerPixel> { }
 public class SetBankModelToBankViewerSignal : Signal<BankModel?> { }
 public class CharacterFrameEditorViewLoadedSignal : Signal { }
 public class UpdateBankViewerParentWithImageMetadataSignal : Signal<BankImageMetaData?> { }
@@ -128,7 +128,7 @@ public class RemoveSpriteSelectionFromBank : Signal { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
 public class ReturnTransparentColorFromBankSignal : Signal<Color> { }
-public class TryCreatePaletteElementSignal : Signal<string, List<Color>, bool> { }
+public class TryCreatePaletteElementSignal : Signal<string, List<Color>, BitsPerPixel> { }
 public class PaletteCreatedSuccessfullySignal : Signal<PaletteModel> { }
 
 // Palettes
