@@ -43,6 +43,22 @@ public class BankModel : AFileModel
     [TomlIgnore]
     public bool IsFull { get; private set; }
 
+    public int GetTileIndex(string spriteID)
+    {
+        int count = 0;
+        foreach (SpriteRef sprite in Sprites)
+        {
+            if (sprite.SpriteID == spriteID)
+            {
+                return count;
+            }
+
+            count++;
+        }
+
+        return count;
+    }
+
     public (bool, string) RegisterSprite(SpriteModel sprite)
     {
         SpriteRef? find = Sprites.Find((spriteRef) => spriteRef.SpriteID == sprite.ID);
