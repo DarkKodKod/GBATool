@@ -30,3 +30,11 @@ public enum BitsPerPixel
     f4bpp = 4,
     f8bpp = 8
 }
+
+public enum Priority
+{
+    Lowest = 0,
+    Low = 1,
+    High = 2,
+    Highest = 3,
+}

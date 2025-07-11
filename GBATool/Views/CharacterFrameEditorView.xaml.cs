@@ -361,8 +361,8 @@ public partial class CharacterFrameEditorView : UserControl
         {
             ID = sprite.ID,
             Position = position,
-            FlipX = false,
-            FlipY = false,
+            FlipHorizontal = false,
+            FlipVertical = false,
             SpriteID = sprite.SpriteID,
             TileSetID = sprite.TileSetID,
             Width = sprite.Width,

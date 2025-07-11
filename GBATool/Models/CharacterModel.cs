@@ -1,4 +1,5 @@
-﻿using Nett;
+﻿using GBATool.Enums;
+using Nett;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
@@ -19,12 +20,19 @@ public class CharacterSprite
 {
     public string ID { get; set; } = string.Empty;
     public Point Position { get; set; }
-    public bool FlipX { get; set; }
-    public bool FlipY { get; set; }
+    public bool FlipHorizontal { get; set; }
+    public bool FlipVertical { get; set; }
     public string SpriteID { get; set; } = string.Empty;
     public string TileSetID { get; set; } = string.Empty;
     public int Width { get; set; }
     public int Height { get; set; }
+    public bool EnableMosaic { get; set; }
+    public bool IsMask { get; set; }
+    public bool EnableAlphaBlending { get; set; }
+    public bool AffineIsEnabled { get; set; }
+    public bool IsHidden { get; set; }
+    public bool IsDoubleSized { get; set; }
+    public Priority Priority { get; set; }
 }
 
 public class FrameModel

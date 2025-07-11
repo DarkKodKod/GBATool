@@ -105,12 +105,12 @@ public static class CharacterUtils
 
                 using (cropped.GetBitmapContext())
                 {
-                    if (sprite.FlipX)
+                    if (sprite.FlipHorizontal)
                     {
                         cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Vertical);
                     }
 
-                    if (sprite.FlipY)
+                    if (sprite.FlipVertical)
                     {
                         cropped = WriteableBitmapExtensions.Flip(cropped, WriteableBitmapExtensions.FlipMode.Horizontal);
                     }
