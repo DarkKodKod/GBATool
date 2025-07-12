@@ -11,6 +11,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
+// Information taken from pages:
+// - https://gbadev.net/gbadoc/sprites.html
+// - https://www.coranac.com/tonc/text/regobj.htm
+
 namespace GBATool.Building;
 
 public sealed class BuildMetaSprites : Building<BuildMetaSprites>
@@ -53,7 +57,6 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         await outputFile.WriteAsync(Environment.NewLine);
 
         List<string> animationIndices = [];
-        List<string> listOfCollectionFrames = [];
 
         foreach (KeyValuePair<string, CharacterAnimation> animationItem in model.Animations)
         {
@@ -69,7 +72,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             int frameIndex = 0;
             List<string> frameNames = [];
 
-            #region Frame description
+            #region Frame information
             foreach (KeyValuePair<string, FrameModel> frameItem in animation.Frames)
             {
                 FrameModel frameModel = frameItem.Value;
@@ -81,253 +84,233 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                     continue;
                 }
 
-                frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}_0");
+                frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}");
 
-                await WriteFrameAttribute0(outputFile, frameNames.Last(), frameModel, bankModel);
+                int nextFrameIndex = frameIndex + 1 < animation.Frames.Count ? frameIndex + 1 : 0;
 
-                frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}_1");
+                await outputFile.WriteLineAsync("    align 2");
+                await outputFile.WriteLineAsync($"{frameNames.Last()}:");
 
-                await WriteFrameAttribute1(outputFile, frameNames.Last(), frameModel);
+                await outputFile.WriteLineAsync($"    ; number of sprites");
+                await outputFile.WriteLineAsync($"    db 0x{frameModel.Tiles.Count:X2}");
+                await outputFile.WriteLineAsync($"    ; collisions lits");
+                await outputFile.WriteLineAsync($"    db 0x{frameModel.CollisionInfo.Count:X2}");
+                await outputFile.WriteLineAsync($"    ; pointer to the next frame(low 16 bits)");
+                await outputFile.WriteLineAsync($"    dh ({name}_{animation.Name}_frame_{nextFrameIndex} and 0xFFFF)");
+                await outputFile.WriteLineAsync($"    ; pointer to the next frame(high 16 bits)");
+                await outputFile.WriteLineAsync($"    dh (({name}_{animation.Name}_frame_{nextFrameIndex} shr 16) and 0xFFFF)");
 
-                frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}_2");
+                foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)
+                {
+                    CharacterSprite sprite = tileItem.Value;
 
-                await WriteFrameAttribute2(outputFile, frameNames.Last(), frameModel, bankModel, model);
+                    await WriteFrameAttribute0(sprite, outputFile, bankModel);
+                    await WriteFrameAttribute1(sprite, outputFile);
+                    await WriteFrameAttribute2(sprite, outputFile, bankModel, model);
+                    await WriteFrameAttribute3(sprite, outputFile);
+                }
+
+                await outputFile.WriteAsync(Environment.NewLine);
 
                 frameIndex++;
             }
             #endregion
 
             #region Frames configuration
-            await outputFile.WriteLineAsync("    align 1");
+            await outputFile.WriteLineAsync("    align 4");
             await outputFile.WriteLineAsync($"{name}_{animation.Name}_configuration:");
 
             int frameDuration = (int)(animation.Speed * FrameRate);
 
             await outputFile.WriteLineAsync($"    ; number of frames");
-            await outputFile.WriteLineAsync($"    db ${frameNames.Count:X2} ; decimal {frameNames.Count}");
+            await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2}; decimal {frameNames.Count}");
             await outputFile.WriteLineAsync($"    ; frame duration");
-            await outputFile.WriteLineAsync($"    db ${frameDuration:X2} ; decimal {frameDuration}");
+            await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
+            await outputFile.WriteLineAsync($"    ; fill");
+            await outputFile.WriteLineAsync($"    db 0x00, 0x00");
+            await outputFile.WriteLineAsync($"    ; pointer to the first frame");
+            await outputFile.WriteLineAsync($"    dw {frameNames.First()}");
 
             await outputFile.WriteAsync(Environment.NewLine);
-            #endregion
-
-            #region List of frames
-            if (frameNames.Count > 0)
-            {
-                listOfCollectionFrames.Add($"{name}_{animation.Name}_frames");
-
-                await outputFile.WriteLineAsync("    align 4");
-                await outputFile.WriteLineAsync(listOfCollectionFrames.Last() + ":");
-
-                foreach (string frameName in frameNames)
-                {
-                    await outputFile.WriteLineAsync($"    dw {frameName}");
-                }
-
-                await outputFile.WriteAsync(Environment.NewLine);
-            }
             #endregion
         }
 
         #region Animation info
         if (animationIndices.Count > 0)
         {
-            await outputFile.WriteLineAsync("; aninmation indices");
-
-            for (int i = 0; i < animationIndices.Count; ++i)
-            {
-                string index = animationIndices[i].ToUpper();
-                string nameUpper = name.ToUpper();
-
-                await outputFile.WriteLineAsync($"ANIM_{nameUpper}_{index} = ${i:X2}");
-            }
-
-            await outputFile.WriteAsync(Environment.NewLine);
-            await outputFile.WriteLineAsync("    align 4");
-            await outputFile.WriteLineAsync($"{name}_anim_frames_table:");
-
-            foreach (string frameListName in listOfCollectionFrames)
-            {
-                await outputFile.WriteLineAsync($"    dw {frameListName}");
-            }
-
-            await outputFile.WriteAsync(Environment.NewLine);
             await outputFile.WriteLineAsync("    align 4");
             await outputFile.WriteLineAsync($"{name}_anim_config_table:");
 
             for (int i = 0; i < animationIndices.Count; ++i)
             {
-                string index = animationIndices[i];
-                await outputFile.WriteLineAsync($"    dw {name}_{index}_configuration");
+                string indexName = animationIndices[i];
+                await outputFile.WriteLineAsync($"    dw {name}_{indexName}_configuration");
+            }
+
+            await outputFile.WriteAsync(Environment.NewLine);
+            await outputFile.WriteLineAsync("; animation indices");
+
+            for (int i = 0; i < animationIndices.Count; ++i)
+            {
+                string indexName = animationIndices[i].ToUpper();
+                string nameUpper = name.ToUpper();
+
+                await outputFile.WriteLineAsync($"ANIM_{nameUpper}_{indexName} = {i}");
             }
         }
         #endregion
     }
 
-    private static async Task WriteFrameAttribute0(StreamWriter outputFile, string name, FrameModel frameModel, BankModel bankModel)
+    private static async Task WriteFrameAttribute0(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel)
     {
-        await outputFile.WriteLineAsync("    align 2");
-        await outputFile.WriteLineAsync($"{name}:");
+        string yPosition = "0000000000000000b"; // TODO
 
-        foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)
+        string objectMode = "0000000000000000b";
+
+        if (sprite.AffineIsEnabled)
         {
-            CharacterSprite sprite = tileItem.Value;
+            objectMode = "ATTR_0_ROTATION_SCALING";
 
-            string yPosition = "0000000000000000b"; // TODO
-
-            string objectMode = "0000000000000000b";
-
-            if (sprite.AffineIsEnabled)
+            if (sprite.IsHidden)
             {
-                objectMode = "ATTR_0_ROTATION_SCALING";
-
-                if (sprite.IsHidden)
-                {
-                    objectMode += "or ATTR_0_HIDE";
-                }
-                else if (sprite.IsDoubleSized)
-                {
-                    objectMode += "or ATTR_0_DOUBLE_SIZED";
-                }
+                objectMode += "or ATTR_0_HIDE";
             }
-
-            string gfxMode = "0000000000000000b";
-
-            if (sprite.EnableAlphaBlending && sprite.IsMask)
+            else if (sprite.IsDoubleSized)
             {
-                gfxMode = "ATTR_0_SEMI_TRANSPARENT or ATTR_0_TRANSPARENT_WIND";
+                objectMode += "or ATTR_0_DOUBLE_SIZED";
             }
-            else if (sprite.IsMask)
-            {
-                gfxMode = "ATTR_0_TRANSPARENT_WIND";
-            }
-            else if (sprite.EnableAlphaBlending)
-            {
-                gfxMode = "ATTR_0_SEMI_TRANSPARENT";
-            }
-
-            string mosaic = sprite.EnableMosaic ? "ATTR_0_MOSAIC" : "0000000000000000b";
-            string colorMode = bankModel.Use256Colors ? "ATTR_0_COLOR_DEPTH" : "0000000000000000b";
-
-            SpriteShape shape = SpriteShape.Shape00;
-            SpriteSize size = SpriteSize.Size00;
-
-            SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
-
-            string spriteShape = "ATTR_0_SPRITE_SIZE_00";
-
-            switch (shape)
-            {
-                case SpriteShape.Shape01:
-                    spriteShape = "ATTR_0_SPRITE_SIZE_01";
-                    break;
-                case SpriteShape.Shape10:
-                    spriteShape = "ATTR_0_SPRITE_SIZE_10";
-                    break;
-                case SpriteShape.Shape00:
-                default:
-                    break;
-            }
-
-            string attribute0 = $"{spriteShape} or {colorMode} or {mosaic} or {gfxMode} or {objectMode} or {yPosition}";
-
-            await outputFile.WriteAsync($"    dh ({attribute0})" + Environment.NewLine);
         }
 
-        await outputFile.WriteAsync(Environment.NewLine);
+        string gfxMode = "0000000000000000b";
+
+        if (sprite.EnableAlphaBlending && sprite.IsMask)
+        {
+            gfxMode = "ATTR_0_SEMI_TRANSPARENT or ATTR_0_TRANSPARENT_WIND";
+        }
+        else if (sprite.IsMask)
+        {
+            gfxMode = "ATTR_0_TRANSPARENT_WIND";
+        }
+        else if (sprite.EnableAlphaBlending)
+        {
+            gfxMode = "ATTR_0_SEMI_TRANSPARENT";
+        }
+
+        string mosaic = sprite.EnableMosaic ? "ATTR_0_MOSAIC" : "0000000000000000b";
+        string colorMode = bankModel.Use256Colors ? "ATTR_0_COLOR_DEPTH" : "0000000000000000b";
+
+        SpriteShape shape = SpriteShape.Shape00;
+        SpriteSize size = SpriteSize.Size00;
+
+        SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
+
+        string spriteShape = "ATTR_0_SPRITE_SIZE_00";
+
+        switch (shape)
+        {
+            case SpriteShape.Shape01:
+                spriteShape = "ATTR_0_SPRITE_SIZE_01";
+                break;
+            case SpriteShape.Shape10:
+                spriteShape = "ATTR_0_SPRITE_SIZE_10";
+                break;
+            case SpriteShape.Shape00:
+            default:
+                break;
+        }
+
+        string attribute0 = $"{spriteShape} or {colorMode} or {mosaic} or {gfxMode} or {objectMode} or {yPosition}";
+
+        await outputFile.WriteAsync($"    dh ({attribute0})" + Environment.NewLine);
     }
 
-    private static async Task WriteFrameAttribute1(StreamWriter outputFile, string name, FrameModel frameModel)
+    private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile)
     {
-        await outputFile.WriteLineAsync("    align 2");
-        await outputFile.WriteLineAsync($"{name}:");
+        string xPosition = "00000000000000000b"; // TODO
 
-        foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)
+        SpriteShape shape = SpriteShape.Shape00;
+        SpriteSize size = SpriteSize.Size00;
+
+        SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
+
+        string spriteSize = "ATTR_1_SPRITE_SIZE_00";
+
+        switch (size)
         {
-            CharacterSprite sprite = tileItem.Value;
-
-            string xPosition = "00000000000000000b"; // TODO
-
-            SpriteShape shape = SpriteShape.Shape00;
-            SpriteSize size = SpriteSize.Size00;
-
-            SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
-
-            string spriteSize = "ATTR_1_SPRITE_SIZE_00";
-
-            switch (size)
-            {
-                case SpriteSize.Size01:
-                    spriteSize = "ATTR_1_SPRITE_SIZE_01";
-                    break;
-                case SpriteSize.Size10:
-                    spriteSize = "ATTR_1_SPRITE_SIZE_10";
-                    break;
-                case SpriteSize.Size11:
-                    spriteSize = "ATTR_1_SPRITE_SIZE_11";
-                    break;
-                case SpriteSize.Size00:
-                default:
-                    break;
-            }
-
-            string attribute1;
-
-            if (!sprite.AffineIsEnabled)
-            {
-                string horizontalFlip = sprite.FlipHorizontal ? "ATTR_1_FLIP_HORIZONTAL" : "0000000000000000b";
-                string verticalFlip = sprite.FlipVertical ? "ATTR_1_FLIP_VERTICAL" : "0000000000000000b";
-
-                attribute1 = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPosition}";
-            }
-            else
-            {
-                string affineIndex = "0000000000000000b";
-
-                attribute1 = $"{spriteSize} or {affineIndex} or {xPosition}";
-            }
-
-            await outputFile.WriteAsync($"    dh ({attribute1})" + Environment.NewLine);
+            case SpriteSize.Size01:
+                spriteSize = "ATTR_1_SPRITE_SIZE_01";
+                break;
+            case SpriteSize.Size10:
+                spriteSize = "ATTR_1_SPRITE_SIZE_10";
+                break;
+            case SpriteSize.Size11:
+                spriteSize = "ATTR_1_SPRITE_SIZE_11";
+                break;
+            case SpriteSize.Size00:
+            default:
+                break;
         }
 
-        await outputFile.WriteAsync(Environment.NewLine);
+        string attribute1;
+
+        if (!sprite.AffineIsEnabled)
+        {
+            string horizontalFlip = sprite.FlipHorizontal ? "ATTR_1_FLIP_HORIZONTAL" : "0000000000000000b";
+            string verticalFlip = sprite.FlipVertical ? "ATTR_1_FLIP_VERTICAL" : "0000000000000000b";
+
+            attribute1 = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPosition}";
+        }
+        else
+        {
+            string affineIndex = "0000000000000000b";
+
+            attribute1 = $"{spriteSize} or {affineIndex} or {xPosition}";
+        }
+
+        await outputFile.WriteAsync($"    dh ({attribute1})" + Environment.NewLine);
     }
 
-    private static async Task WriteFrameAttribute2(StreamWriter outputFile, string name, FrameModel frameModel, BankModel bankModel, CharacterModel characterModel)
+    private static async Task WriteFrameAttribute2(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)
     {
-        await outputFile.WriteLineAsync("    align 2");
-        await outputFile.WriteLineAsync($"{name}:");
+        string tileIndex = "0000000000000000b"; // TODO
 
-        foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)
+        string priority = sprite.Priority switch
         {
-            CharacterSprite sprite = tileItem.Value;
+            Priority.Highest => "0000110000000000b",
+            Priority.High => "0000100000000000b",
+            Priority.Low => "0000010000000000b",
+            _ => "0000000000000000b",
+        };
 
-            string tileIndex = "0000000000000000b"; // TODO
+        string paletteIndex = "0000000000000000b";
 
-            string priority = sprite.Priority switch
-            {
-                Priority.Highest => "0000110000000000b",
-                Priority.High => "0000100000000000b",
-                Priority.Low => "0000010000000000b",
-                _ => "0000000000000000b",
-            };
+        if (!bankModel.Use256Colors)
+        {
+            BitArray b = new(new byte[] { (byte)characterModel.PaletteIndex });
+            char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
 
-            string paletteIndex = "0000000000000000b";
-
-            if (!bankModel.Use256Colors)
-            {
-                BitArray b = new(new byte[] { (byte)characterModel.PaletteIndex });
-                char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
-
-                paletteIndex = new(bits);
-                paletteIndex += "00000000b";
-            }
-
-            string attribute2 = $"{paletteIndex} or {priority} or {tileIndex}";
-
-            await outputFile.WriteAsync($"    dh ({attribute2})" + Environment.NewLine);
+            paletteIndex = new(bits);
+            paletteIndex += "00000000b";
         }
 
-        await outputFile.WriteAsync(Environment.NewLine);
+        string attribute2 = $"{paletteIndex} or {priority} or {tileIndex}";
+
+        await outputFile.WriteAsync($"    dh ({attribute2})" + Environment.NewLine);
+    }
+
+    private static async Task WriteFrameAttribute3(CharacterSprite sprite, StreamWriter outputFile)
+    {
+        string attribute3 = "0000000000000000b";
+
+        if (sprite.AffineIsEnabled)
+        {
+            string fraction = "0000000000000000b";
+            string integer = "0000000000000000b";
+            string signBit = "0000000000000000b";
+
+            attribute3 = $"{signBit} or {integer} or {fraction}";
+        }
+
+        await outputFile.WriteAsync($"    dh ({attribute3})" + Environment.NewLine);
     }
 }
