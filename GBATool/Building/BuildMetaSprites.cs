@@ -5,7 +5,6 @@ using GBATool.Models;
 using GBATool.Utils;
 using GBATool.VOs;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -93,8 +92,10 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
                 await outputFile.WriteLineAsync($"    ; number of sprites");
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.Tiles.Count:X2}");
-                await outputFile.WriteLineAsync($"    ; collisions lits");
+                await outputFile.WriteLineAsync($"    ; collision list");
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.CollisionInfo.Count:X2}");
+                await outputFile.WriteLineAsync($"    ; Bank");
+                await outputFile.WriteLineAsync($"    db 0x00, 0x00");
                 await outputFile.WriteLineAsync($"    ; pointer to the next frame(low 16 bits)");
                 await outputFile.WriteLineAsync($"    dh ({name}_{animation.Name}_frame_{nextFrameIndex} and 0xFFFF)");
                 await outputFile.WriteLineAsync($"    ; pointer to the next frame(high 16 bits)");
@@ -104,8 +105,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 {
                     CharacterSprite sprite = tileItem.Value;
 
-                    await WriteFrameAttribute0(sprite, outputFile, bankModel);
-                    await WriteFrameAttribute1(sprite, outputFile);
+                    await WriteFrameAttribute0(sprite, outputFile, bankModel, animation);
+                    await WriteFrameAttribute1(sprite, outputFile, animation);
                     await WriteFrameAttribute2(sprite, outputFile, bankModel, model);
                     await WriteFrameAttribute3(sprite, outputFile);
                 }
@@ -126,8 +127,10 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2}; decimal {frameNames.Count}");
             await outputFile.WriteLineAsync($"    ; frame duration");
             await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
-            await outputFile.WriteLineAsync($"    ; fill");
-            await outputFile.WriteLineAsync($"    db 0x00, 0x00");
+            await outputFile.WriteLineAsync($"    ; vertical axis");
+            await outputFile.WriteLineAsync($"    db {animation.VerticalAxis:X2}; decimal {animation.VerticalAxis}");
+            await outputFile.WriteLineAsync($"    ; Empty");
+            await outputFile.WriteLineAsync($"    db 0x00");
             await outputFile.WriteLineAsync($"    ; pointer to the first frame");
             await outputFile.WriteLineAsync($"    dw {frameNames.First()}");
 
@@ -161,9 +164,10 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         #endregion
     }
 
-    private static async Task WriteFrameAttribute0(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel)
+    private static async Task WriteFrameAttribute0(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterAnimation animation)
     {
-        string yPosition = "0000000000000000b"; // TODO
+        string yPosition = Util.ConvertShortToBits((short)(sprite.Position.Y - animation.RelativeOrigin.Y));
+        yPosition += "b";
 
         string objectMode = "0000000000000000b";
 
@@ -224,9 +228,10 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         await outputFile.WriteAsync($"    dh ({attribute0})" + Environment.NewLine);
     }
 
-    private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile)
+    private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile, CharacterAnimation animation)
     {
-        string xPosition = "00000000000000000b"; // TODO
+        string xPosition = Util.ConvertShortToBits((short)(sprite.Position.X - animation.RelativeOrigin.X));
+        xPosition += "b";
 
         SpriteShape shape = SpriteShape.Shape00;
         SpriteSize size = SpriteSize.Size00;
@@ -272,7 +277,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
     private static async Task WriteFrameAttribute2(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)
     {
-        string tileIndex = "0000000000000000b"; // TODO
+        string tileIndex = Util.ConvertShortToBits((short)bankModel.GetTileIndex(sprite.SpriteID));
+        tileIndex += "b";
 
         string priority = sprite.Priority switch
         {
@@ -286,11 +292,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
         if (!bankModel.Use256Colors)
         {
-            BitArray b = new(new byte[] { (byte)characterModel.PaletteIndex });
-            char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
-
-            paletteIndex = new(bits);
-            paletteIndex += "00000000b";
+            paletteIndex = Util.ConvertShortToBits((short)characterModel.PaletteIndex);
+            paletteIndex += "b";
         }
 
         string attribute2 = $"{paletteIndex} or {priority} or {tileIndex}";

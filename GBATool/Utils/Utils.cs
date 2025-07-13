@@ -1,5 +1,8 @@
 ﻿using GBATool.Enums;
 using GBATool.Models;
+using System;
+using System.Collections;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -252,5 +255,14 @@ public static class Util
     public static int GetIntFromColor(Color color)
     {
         return (color.R << 16) | (color.G << 8) | (color.B);
+    }
+
+    public static string ConvertShortToBits(short value)
+    {
+        BitArray b = new(BitConverter.GetBytes(value));
+        char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
+        Array.Reverse(bits);
+
+        return new(bits);
     }
 }
