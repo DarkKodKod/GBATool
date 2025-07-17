@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Building;
 
-using TileBlocks = (int width, int height);
+using TileBlocks = (int width, int height, int numberOfTiles);
 
 public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 {
@@ -56,7 +56,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
                 {
                     List<string> warnings = [];
 
-                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount.width, cellsCount.height, ref palette, warnings);
+                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount, ref palette, warnings);
 
                     foreach (string item in warnings)
                     {

@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace GBATool.Models;
 
-using TileBlocks = (int width, int height);
+using TileBlocks = (int width, int height, int numberOfTiles);
 
 public record SpriteRef
 {
@@ -199,10 +199,9 @@ public class BankModel : AFileModel
         {
             tilesWidth = countTiles < BankUtils.MaxTextureCellsWidth ? countTiles : BankUtils.MaxTextureCellsWidth;
 
-            float div = countTiles / BankUtils.MaxTextureCellsWidth;
-            tilesHeight = (int)float.Ceiling(div + 0.5f);
+            tilesHeight = (int)Util.BankRowsRound(countTiles / (double)BankUtils.MaxTextureCellsWidth);
         }
 
-        return (tilesWidth, tilesHeight);
+        return (tilesWidth, tilesHeight, countTiles);
     }
 }

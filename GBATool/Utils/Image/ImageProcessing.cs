@@ -7,6 +7,8 @@ using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils.Image;
 
+using TileBlocks = (int width, int height, int numberOfTiles);
+
 // Information taken from: https://sneslab.net/wiki/Graphics_Format
 public static class ImageProcessing
 {
@@ -24,12 +26,12 @@ public static class ImageProcessing
         return palette;
     }
 
-    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, int width, int height, ref List<Color> palette, List<string> warnings)
+    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, TileBlocks cellsCount, ref List<Color> palette, List<string> warnings)
     {
         int bitsPerPixel = (int)bpp;
         const int bitPlaneSizeInBytes = 8; // 8x8 bits in a tile
 
-        int bufferSize = (bitsPerPixel * bitPlaneSizeInBytes) * width * height;
+        int bufferSize = (bitsPerPixel * bitPlaneSizeInBytes) * cellsCount.numberOfTiles;
 
         byte[] bytes = new byte[bufferSize];
         Array.Fill<byte>(bytes, 0);
@@ -37,16 +39,20 @@ public static class ImageProcessing
         int pixelIndex = 0;
         int currentX = 0;
         int currentY = 0;
+        int countingTiles = 0;
 
         int numberOfColors = bpp.GetNumberOfColors();
 
         Color transparentColor = palette.First();
         Dictionary<Color, int> colors = new() { { transparentColor, 0 } };
 
-        for (int j = 0; j < height; ++j)
+        for (int j = 0; j < cellsCount.height; ++j)
         {
-            for (int i = 0; i < width; ++i)
+            for (int i = 0; i < cellsCount.width; ++i)
             {
+                if (countingTiles >= cellsCount.numberOfTiles)
+                    goto done;
+
                 // read pixels in the 8x8 quadrant
                 for (int y = currentY; y < currentY + 8; ++y)
                 {
@@ -85,12 +91,14 @@ public static class ImageProcessing
                 }
 
                 currentX += 8;
+                countingTiles++;
             }
 
             currentX = 0;
             currentY += 8;
         }
 
+        done:
         return bytes;
     }
 

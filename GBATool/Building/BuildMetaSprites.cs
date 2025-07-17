@@ -230,7 +230,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
     private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile, CharacterAnimation animation)
     {
-        string xPosition = Util.ConvertShortToBits((short)(sprite.Position.X - animation.RelativeOrigin.X));
+        string xPosition = Util.ConvertIntToBits((int)(sprite.Position.X - animation.RelativeOrigin.X), 0x1FF);
         xPosition += "b";
 
         SpriteShape shape = SpriteShape.Shape00;

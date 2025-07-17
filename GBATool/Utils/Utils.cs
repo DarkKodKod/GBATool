@@ -265,4 +265,33 @@ public static class Util
 
         return new(bits);
     }
+
+    public static string ConvertIntToBits(int value, int inputMask = Int32.MaxValue)
+    {
+        BitArray b = new(BitConverter.GetBytes(value));
+        BitArray mask = new(BitConverter.GetBytes(inputMask));
+
+        b = b.And(mask);
+
+        char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
+        Array.Reverse(bits);
+
+        return new(bits);
+    }
+
+    public static double BankRowsRound(double value)
+    {
+        // has fraction
+        if (value % 1.0 != 0)
+        {
+            return Math.Ceiling(value);
+        }
+        else
+        {
+            if (value == 0)
+                return 1.0;
+            else
+                return value;
+        }
+    }
 }
