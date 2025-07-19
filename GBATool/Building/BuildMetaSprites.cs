@@ -83,6 +83,16 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                     continue;
                 }
 
+                string bankNameLow = "db 0x00, 0x00";
+                string bankNameHigh = "db 0x00, 0x00";
+
+                FileModelVO? fileModelVO = ProjectFiles.GetFileModel(bankModel.GUID);
+                if (fileModelVO != null)
+                {
+                    bankNameLow = $"dh (block_{fileModelVO.Name} and 0xFFFF)";
+                    bankNameHigh = $"dh ((block_{fileModelVO.Name} shr 16) and 0xFFFF)";
+                }
+
                 frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}");
 
                 int nextFrameIndex = frameIndex + 1 < animation.Frames.Count ? frameIndex + 1 : 0;
@@ -94,11 +104,13 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.Tiles.Count:X2}");
                 await outputFile.WriteLineAsync($"    ; collision list");
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.CollisionInfo.Count:X2}");
-                await outputFile.WriteLineAsync($"    ; Bank");
-                await outputFile.WriteLineAsync($"    db 0x00, 0x00");
-                await outputFile.WriteLineAsync($"    ; pointer to the next frame(low 16 bits)");
+                await outputFile.WriteLineAsync($"    ; pointer to the Block source (low 16 bits)");
+                await outputFile.WriteLineAsync($"    {bankNameLow}");
+                await outputFile.WriteLineAsync($"    ; pointer to the Block source (high 16 bits)");
+                await outputFile.WriteLineAsync($"    {bankNameHigh}");
+                await outputFile.WriteLineAsync($"    ; pointer to the next frame (low 16 bits)");
                 await outputFile.WriteLineAsync($"    dh ({name}_{animation.Name}_frame_{nextFrameIndex} and 0xFFFF)");
-                await outputFile.WriteLineAsync($"    ; pointer to the next frame(high 16 bits)");
+                await outputFile.WriteLineAsync($"    ; pointer to the next frame (high 16 bits)");
                 await outputFile.WriteLineAsync($"    dh (({name}_{animation.Name}_frame_{nextFrameIndex} shr 16) and 0xFFFF)");
 
                 foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)

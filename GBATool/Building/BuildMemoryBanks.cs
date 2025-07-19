@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GBATool.Building;
@@ -48,7 +49,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
             byte[]? imageData = null;
 
-            List<System.Windows.Media.Color> palette = ImageProcessing.GetNewPalette(bpp, bank.TransparentColor);
+            List<Color> palette = ImageProcessing.GetNewPalette(bpp, bank.TransparentColor);
 
             using (metaData.image.GetBitmapContext())
             {
