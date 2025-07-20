@@ -89,8 +89,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 FileModelVO? fileModelVO = ProjectFiles.GetFileModel(bankModel.GUID);
                 if (fileModelVO != null)
                 {
-                    bankNameLow = $"dh (block_{fileModelVO.Name} and 0xFFFF)";
-                    bankNameHigh = $"dh ((block_{fileModelVO.Name} shr 16) and 0xFFFF)";
+                    bankNameLow = $"dh (Block_{fileModelVO.Name} and 0xFFFF)";
+                    bankNameHigh = $"dh ((Block_{fileModelVO.Name} shr 16) and 0xFFFF)";
                 }
 
                 frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}");

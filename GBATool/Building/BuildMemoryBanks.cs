@@ -20,6 +20,8 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 {
     protected override string FileName { get; } = string.Empty;
 
+    private readonly List<string> _bankNames = [];
+
     protected override async Task<bool> DoGenerate()
     {
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -27,6 +29,8 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
         string outputPath = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
+
+        _bankNames.Clear();
 
         int processedCount = 0;
 
@@ -79,6 +83,8 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
             if (!string.IsNullOrEmpty(vo.Name))
             {
+                _bankNames.Add(vo.Name);
+
                 string fileName = Path.Combine(outputPath, vo.Name.ToLower());
 
                 await File.WriteAllBytesAsync(fileName + ".bin", imageData).ConfigureAwait(false);
@@ -87,11 +93,58 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
             processedCount++;
         }
 
+        await WriteBlocksMetaData();
+
         if (processedCount == 0)
         {
             AddError("No banks processed");
         }
 
         return GetErrors().Length == 0;
+    }
+
+    private async Task WriteBlocksMetaData()
+    {
+        if (_bankNames.Count == 0)
+        {
+            return;
+        }
+
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        string fullPath = Path.Combine(Path.GetFullPath(projectModel.Build.GeneratedAssetsPath), "blocks_metadata.asm");
+
+        using StreamWriter outputFile = new(fullPath);
+
+        await outputFile.WriteLineAsync("    align 4");
+
+        foreach (string bankName in _bankNames)
+        {
+            await outputFile.WriteLineAsync($"Size_block_{bankName.ToLower()}:");
+            await outputFile.WriteLineAsync($"    dw (__block_{bankName.ToLower()} - block_{bankName.ToLower()})");
+        }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("    align 4");
+
+        foreach (string bankName in _bankNames)
+        {
+            await outputFile.WriteLineAsync($"Block_{bankName.ToLower()}:");
+            await outputFile.WriteLineAsync($"    dw block_{bankName.ToLower()}");
+        }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("    align 32");
+
+        foreach (string bankName in _bankNames)
+        {
+            await outputFile.WriteLineAsync($"block_{bankName.ToLower()}:");
+
+            await outputFile.WriteLineAsync($"    file \"{bankName.ToLower() + ".bin"}\"");
+
+            await outputFile.WriteLineAsync($"__block_{bankName.ToLower()}:");
+        }
     }
 }
