@@ -68,6 +68,8 @@ public sealed class BuildPalettes : Building<BuildPalettes>
 
     private static void WritePalettesToOutputFile(ref SortedDictionary<string, int[]> pals, StreamWriter outputFile)
     {
+        outputFile.WriteLineAsync("    align 32");
+    
         foreach (var palette in pals)
         {
             int cont = 0;
