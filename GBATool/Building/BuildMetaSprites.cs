@@ -21,6 +21,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
     protected override string FileName { get; } = string.Empty;
 
     private const float FrameRate = 59.727500569606f;
+    
+    private readonly List<(string, string)> _configTables = [];
 
     protected override async Task<bool> DoGenerate()
     {
@@ -40,17 +42,28 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 continue;
             }
 
-            string fullPath = Path.Combine(Path.GetFullPath(projectModel.Build.GeneratedAssetsPath), item.Name + ".asm");
+            string parentFolder = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
 
-            using StreamWriter outputFile = new(fullPath);
+            using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".asm"));
 
             await WriteMetaSprites(outputFile, model, item.Name);
+
+            // write the companion literal pool file
+            if (_configTables.Count > 0)
+            {
+                using StreamWriter literalPoolOutputFile = new(Path.Combine(parentFolder, "literal_poool_" + item.Name + ".asm"));
+
+                await WriteLiteralPoolFile(literalPoolOutputFile);
+
+                _configTables.Clear();
+            }
+                
         }
 
         return GetErrors().Length == 0;
     }
 
-    private static async Task WriteMetaSprites(StreamWriter outputFile, CharacterModel model, string name)
+    private async Task WriteMetaSprites(StreamWriter outputFile, CharacterModel model, string name)
     {
         await outputFile.WriteLineAsync("; This file is auto generated!");
         await outputFile.WriteAsync(Environment.NewLine);
@@ -153,8 +166,12 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         #region Animation info
         if (animationIndices.Count > 0)
         {
+            string configTableName = $"{name}_anim_config_table";
+
             await outputFile.WriteLineAsync("    align 4");
-            await outputFile.WriteLineAsync($"{name}_anim_config_table:");
+            await outputFile.WriteLineAsync(configTableName+":");
+
+            _configTables.Add(($"{name}AnimConfigTable", configTableName));
 
             for (int i = 0; i < animationIndices.Count; ++i)
             {
@@ -327,5 +344,19 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         }
 
         await outputFile.WriteAsync($"    dh ({attribute3})" + Environment.NewLine);
+    }
+
+    private async Task WriteLiteralPoolFile(StreamWriter outputFile)
+    {
+        await outputFile.WriteLineAsync("; This file is auto generated!");
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("    align 4");
+
+        foreach ((string, string) configName in _configTables)
+        {
+            await outputFile.WriteLineAsync(configName.Item1 + ":");
+            await outputFile.WriteLineAsync("    dw " + configName.Item2);
+        }
     }
 }
