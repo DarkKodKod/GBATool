@@ -21,7 +21,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
     protected override string FileName { get; } = string.Empty;
 
     private const float FrameRate = 59.727500569606f;
-    
+
     private readonly List<(string, string)> _configTables = [];
 
     protected override async Task<bool> DoGenerate()
@@ -57,7 +57,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
                 _configTables.Clear();
             }
-                
+
         }
 
         return GetErrors().Length == 0;
@@ -96,15 +96,14 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                     continue;
                 }
 
-                string bankNameLow = "db 0x00, 0x00";
-                string bankNameHigh = "db 0x00, 0x00";
-
                 FileModelVO? fileModelVO = ProjectFiles.GetFileModel(bankModel.GUID);
-                if (fileModelVO != null)
+                if (fileModelVO == null)
                 {
-                    bankNameLow = $"dh (Block_{fileModelVO.Name} and 0xFFFF)";
-                    bankNameHigh = $"dh ((Block_{fileModelVO.Name} shr 16) and 0xFFFF)";
+                    continue;
                 }
+
+                string bankName = $"dw Block_{fileModelVO.Name}";
+                string bankSize = $"dw Size_block_{fileModelVO.Name?.ToLower()}";
 
                 frameNames.Add($"{name}_{animation.Name}_frame_{frameIndex}");
 
@@ -117,14 +116,14 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.Tiles.Count:X2}");
                 await outputFile.WriteLineAsync($"    ; collision list");
                 await outputFile.WriteLineAsync($"    db 0x{frameModel.CollisionInfo.Count:X2}");
-                await outputFile.WriteLineAsync($"    ; pointer to the Block source (low 16 bits)");
-                await outputFile.WriteLineAsync($"    {bankNameLow}");
-                await outputFile.WriteLineAsync($"    ; pointer to the Block source (high 16 bits)");
-                await outputFile.WriteLineAsync($"    {bankNameHigh}");
-                await outputFile.WriteLineAsync($"    ; pointer to the next frame (low 16 bits)");
-                await outputFile.WriteLineAsync($"    dh ({name}_{animation.Name}_frame_{nextFrameIndex} and 0xFFFF)");
-                await outputFile.WriteLineAsync($"    ; pointer to the next frame (high 16 bits)");
-                await outputFile.WriteLineAsync($"    dh (({name}_{animation.Name}_frame_{nextFrameIndex} shr 16) and 0xFFFF)");
+                await outputFile.WriteLineAsync($"    ; Reserved");
+                await outputFile.WriteLineAsync($"    db 0x00, 0x00");
+                await outputFile.WriteLineAsync($"    ; pointer to the Block source");
+                await outputFile.WriteLineAsync($"    {bankName}");
+                await outputFile.WriteLineAsync($"    ; size in bytes of the block used by this frame");
+                await outputFile.WriteLineAsync($"    {bankSize}");
+                await outputFile.WriteLineAsync($"    ; pointer to the next frame");
+                await outputFile.WriteLineAsync($"    dw {name}_{animation.Name}_frame_{nextFrameIndex}");
 
                 foreach (KeyValuePair<string, CharacterSprite> tileItem in frameModel.Tiles)
                 {
@@ -149,11 +148,11 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             int frameDuration = (int)(animation.Speed * FrameRate);
 
             await outputFile.WriteLineAsync($"    ; number of frames");
-            await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2}; decimal {frameNames.Count}");
+            await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2} ; decimal {frameNames.Count}");
             await outputFile.WriteLineAsync($"    ; frame duration");
             await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
             await outputFile.WriteLineAsync($"    ; vertical axis");
-            await outputFile.WriteLineAsync($"    db {animation.VerticalAxis:X2}; decimal {animation.VerticalAxis}");
+            await outputFile.WriteLineAsync($"    db 0x{animation.VerticalAxis:X2} ; decimal {animation.VerticalAxis}");
             await outputFile.WriteLineAsync($"    ; Empty");
             await outputFile.WriteLineAsync($"    db 0x00");
             await outputFile.WriteLineAsync($"    ; pointer to the first frame");
@@ -169,7 +168,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             string configTableName = $"{name}_anim_config_table";
 
             await outputFile.WriteLineAsync("    align 4");
-            await outputFile.WriteLineAsync(configTableName+":");
+            await outputFile.WriteLineAsync(configTableName + ":");
 
             _configTables.Add(($"{name}AnimConfigTable", configTableName));
 
@@ -304,9 +303,20 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         await outputFile.WriteAsync($"    dh ({attribute1})" + Environment.NewLine);
     }
 
-    private static async Task WriteFrameAttribute2(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)
+    private async Task WriteFrameAttribute2(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)
     {
-        string tileIndex = Util.ConvertShortToBits((short)bankModel.GetTileIndex(sprite.SpriteID));
+        int index = 0;
+
+        try
+        {
+            _ = bankModel.GetTileIndex(sprite.SpriteID, ref index);
+        }
+        catch (Exception e)
+        {
+            AddError(e.Message);
+        }
+
+        string tileIndex = Util.ConvertShortToBits((short)index);
         tileIndex += "b";
 
         string priority = sprite.Priority switch

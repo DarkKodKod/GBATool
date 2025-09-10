@@ -70,7 +70,7 @@ public sealed class BuildPalettes : Building<BuildPalettes>
     {
         outputFile.Write(Environment.NewLine);
         outputFile.WriteLineAsync("    align 32");
-    
+
         foreach (var palette in pals)
         {
             int cont = 0;

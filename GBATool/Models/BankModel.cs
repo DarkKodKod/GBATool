@@ -3,6 +3,7 @@ using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Utils;
 using Nett;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -43,20 +44,44 @@ public class BankModel : AFileModel
     [TomlIgnore]
     public bool IsFull { get; private set; }
 
-    public int GetTileIndex(string spriteID)
+    public bool GetTileIndex(string spriteID, ref int index)
     {
-        int count = 0;
-        foreach (SpriteRef sprite in Sprites)
+        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+        bool is1DImage = IsBackground || (projectModel.SpritePatternFormat == SpritePattern.Format1D);
+
+        if (is1DImage)
         {
-            if (sprite.SpriteID == spriteID)
+            foreach (SpriteRef sprite in Sprites)
             {
-                return count;
+                if (string.IsNullOrEmpty(sprite.TileSetID))
+                {
+                    continue;
+                }
+
+                if (sprite.SpriteID == spriteID)
+                {
+                    return true;
+                }
+
+                TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
+                if (tileSetModel != null)
+                {
+                    SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == sprite.SpriteID);
+
+                    if (sm != null)
+                    {
+                        index += SpriteUtils.Count8x8Tiles(sm.Shape, sm.Size);
+                    }
+                }
             }
 
-            count++;
+            throw new InvalidOperationException("No sprite found in the bank");
         }
-
-        return count;
+        else
+        {
+            throw new InvalidOperationException("Get the index for 2D Mapping is not implemented");
+        }
     }
 
     public (bool, string) RegisterSprite(SpriteModel sprite)
