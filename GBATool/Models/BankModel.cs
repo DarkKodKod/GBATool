@@ -38,7 +38,6 @@ public class BankModel : AFileModel
     public bool Use256Colors { get; set; }
     public bool IsBackground { get; set; }
     public int TransparentColor { get; set; } = 0;
-    public string PaletteId { get; set; } = string.Empty;
     public List<SpriteRef> Sprites { get; set; } = [];
 
     [TomlIgnore]

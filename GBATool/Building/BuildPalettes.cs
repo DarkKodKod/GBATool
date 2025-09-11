@@ -69,7 +69,7 @@ public sealed class BuildPalettes : Building<BuildPalettes>
     private static void WritePalettesToOutputFile(ref SortedDictionary<string, int[]> pals, StreamWriter outputFile)
     {
         outputFile.Write(Environment.NewLine);
-        outputFile.WriteLineAsync("    align 32");
+        _ = outputFile.WriteLineAsync("    align 32");
 
         foreach (var palette in pals)
         {
@@ -80,7 +80,7 @@ public sealed class BuildPalettes : Building<BuildPalettes>
 
             foreach (int item in palette.Value)
             {
-                System.Windows.Media.Color color = Util.GetColorFromInt(item);
+                System.Windows.Media.Color color = PaletteUtils.GetColorFromInt(item);
 
                 ushort rgb555 = (ushort)(((color.B & 0xF8) << 7) | ((color.G & 0xF8) << 2) | (color.R >> 3));
 

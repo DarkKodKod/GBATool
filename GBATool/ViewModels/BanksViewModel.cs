@@ -22,8 +22,6 @@ public class BanksViewModel : ItemViewModel
     private string _selectedSpritePatternFormat = string.Empty;
     private string _tileSetPath = string.Empty;
     private string _tileSetId = string.Empty;
-    private string _palettePath = string.Empty;
-    private string _paletteId = string.Empty;
     private int _selectedTileSet;
     private FileModelVO[]? _tileSets;
     private ObservableCollection<SpriteModel> _bankSprites = [];
@@ -67,28 +65,6 @@ public class BanksViewModel : ItemViewModel
             _tileSetId = value;
 
             OnPropertyChanged(nameof(TileSetId));
-        }
-    }
-
-    public string PalettePath
-    {
-        get => _palettePath;
-        set
-        {
-            _palettePath = value;
-
-            OnPropertyChanged(nameof(PalettePath));
-        }
-    }
-
-    public string PaletteId
-    {
-        get => _paletteId;
-        set
-        {
-            _paletteId = value;
-
-            OnPropertyChanged(nameof(PaletteId));
         }
     }
 
@@ -235,7 +211,6 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener += OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener += OnMoveUpSelectedSpriteElement;
-        SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener += OnPaletteCreatedSuccessfully;
         SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener += OnUpdateBankViewerParentWithImageMetadata;
         SignalManager.Get<ReloadBankImageSignal>().Listener += OnReloadBankImage;
         SignalManager.Get<CleanupBankSpritesSignal>().Listener += OnCleanupBankSprites;
@@ -258,11 +233,10 @@ public class BanksViewModel : ItemViewModel
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
 
-        SetPaletteId(model.PaletteId);
 
         Use256Colors = model.Use256Colors;
         IsBackground = model.IsBackground;
-        TransparentColor = Util.GetColorFromInt(model.TransparentColor);
+        TransparentColor = PaletteUtils.GetColorFromInt(model.TransparentColor);
 
         LoadTileSetSprites();
 
@@ -287,7 +261,6 @@ public class BanksViewModel : ItemViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<MoveDownSelectedSpriteElementSignal>().Listener -= OnMoveDownSelectedSpriteElement;
         SignalManager.Get<MoveUpSelectedSpriteElementSignal>().Listener -= OnMoveUpSelectedSpriteElement;
-        SignalManager.Get<PaletteCreatedSuccessfullySignal>().Listener -= OnPaletteCreatedSuccessfully;
         SignalManager.Get<UpdateBankViewerParentWithImageMetadataSignal>().Listener -= OnUpdateBankViewerParentWithImageMetadata;
         SignalManager.Get<ReloadBankImageSignal>().Listener -= OnReloadBankImage;
         SignalManager.Get<CleanupBankSpritesSignal>().Listener -= OnCleanupBankSprites;
@@ -385,41 +358,6 @@ public class BanksViewModel : ItemViewModel
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
         SelectedSpritePatternFormat = projectModel.SpritePatternFormat.Description();
-    }
-
-    private void OnPaletteCreatedSuccessfully(PaletteModel paletteModel)
-    {
-        SetPaletteId(paletteModel.GUID);
-
-        BankModel? model = GetModel<BankModel>();
-
-        if (model == null)
-        {
-            return;
-        }
-
-        model.PaletteId = paletteModel.GUID;
-
-        ProjectItem?.FileHandler?.Save();
-    }
-
-    private void SetPaletteId(string id)
-    {
-        PaletteId = id;
-
-        if (!string.IsNullOrEmpty(PaletteId))
-        {
-            FileModelVO? fileModelVO = ProjectFiles.GetFileModel(PaletteId);
-
-            if (fileModelVO != null && fileModelVO.Path != null && fileModelVO.Name != null)
-            {
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-                string itemPath = System.IO.Path.Combine(fileModelVO.Path, fileModelVO.Name);
-
-                PalettePath = itemPath[projectModel.ProjectPath.Length..];
-            }
-        }
     }
 
     private void OnMoveUpSelectedSpriteElement(int itemAtIndex)

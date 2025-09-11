@@ -243,15 +243,6 @@ public static class Util
         }
     }
 
-    public static Color GetColorFromInt(int colorInt)
-    {
-        byte R = (byte)(colorInt >> 16);
-        byte G = (byte)(colorInt >> 8);
-        byte B = (byte)colorInt;
-
-        return Color.FromRgb(R, G, B);
-    }
-
     public static int GetIntFromColor(Color color)
     {
         return (color.R << 16) | (color.G << 8) | (color.B);

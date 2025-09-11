@@ -39,7 +39,7 @@ namespace GBATool.Views
 
             for (int i = 0; i < 16; i++)
             {
-                tempList[i] = new SolidColorBrush(Util.GetColorFromInt(colors[i]));
+                tempList[i] = new SolidColorBrush(PaletteUtils.GetColorFromInt(colors[i]));
             }
 
             palette.SolidColorBrushList = tempList;

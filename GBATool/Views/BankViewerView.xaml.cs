@@ -721,6 +721,8 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void OnGeneratePaletteFromBank(string name, IEnumerable<SpriteModel> bankSprites, Color transparentColor, BitsPerPixel bitPerPixel)
     {
+        int maxNumberOfColor = bitPerPixel.GetNumberOfColors();
+
         List<Color> colorArray = new([transparentColor]);
 
         foreach (SpriteModel spriteModel in bankSprites)
@@ -741,39 +743,20 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
             WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
 
-            int yOffset = 0;
-            int xOffset = 0;
-
-            loop:
-            for (int y = 0; y < 8; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < 8; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    Color color = cropped.GetPixel(x + xOffset, y + yOffset);
+                    Color color = cropped.GetPixel(x, y);
 
                     if (!colorArray.Contains(color))
                     {
-                        if (colorArray.Count < bitPerPixel.GetNumberOfColors())
+                        if (colorArray.Count < maxNumberOfColor)
                         {
                             colorArray.Add(color);
                         }
                     }
                 }
-            }
-
-            xOffset += 8;
-            if (xOffset > cropped.PixelWidth)
-            {
-                yOffset += 8;
-                if (yOffset <= cropped.PixelHeight)
-                {
-                    xOffset = 0;
-                    goto loop;
-                }
-            }
-            else
-            {
-                goto loop;
             }
         }
 

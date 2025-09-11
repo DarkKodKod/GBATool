@@ -60,6 +60,7 @@
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=Use256Colors, Mode=TwoWay}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="2">
+                <Label Margin="10,0,0,0">Palette Configuration:</Label>
                 <Label Margin="10,0,0,0">Transparent Color</Label>
                 <Button Command="{Binding ActivatePickColorCommand}" BorderThickness="0">
                     <Button.Content>
@@ -77,14 +78,6 @@
                     </Button.CommandParameter>
                 </Button>
                 <Button Width="150" Content="Obtain Transparent Color" Command="{Binding ObtainTransparentColorCommand}" CommandParameter="{Binding Path=SelectedSpriteFromBank, ElementName=bankViewerView}" Margin="10,0,0,0"/>
-                <Label Margin="20,0,0,0">Palette:</Label>
-                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5">
-                <Hyperlink Command="{Binding GoToProjectItemCommand}" CommandParameter="{Binding PaletteId}">
-                    <TextBlock Name="hlPalette" 
-                                Text="{Binding PalettePath}" 
-                                Style="{StaticResource linkStyle}" />
-                    </Hyperlink>
-                </TextBlock>
                 <Button Width="100" Content="Generate palette" Command="{Binding GeneratePaletteFromBankCommand}" Margin="10,0,0,0">
                     <Button.CommandParameter>
                         <MultiBinding Converter="{StaticResource parametersConverter}">

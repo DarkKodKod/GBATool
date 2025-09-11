@@ -1,7 +1,6 @@
 ﻿using GBATool.Enums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -12,21 +11,7 @@ using TileBlocks = (int width, int height, int numberOfTiles);
 // Information taken from: https://sneslab.net/wiki/Graphics_Format
 public static class ImageProcessing
 {
-    public static List<Color> GetNewPalette(BitsPerPixel bpp, int transparentColor)
-    {
-        List<Color> palette = [];
-
-        int numberOfColors = bpp.GetNumberOfColors();
-
-        for (int i = 0; i < numberOfColors; i++)
-        {
-            palette.Add(Util.GetColorFromInt(transparentColor));
-        }
-
-        return palette;
-    }
-
-    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, WriteableBitmap bitmap, TileBlocks cellsCount, ref List<Color> palette, List<string> warnings)
+    public static byte[]? ConvertToXbpp(BitsPerPixel bpp, in WriteableBitmap bitmap, in TileBlocks cellsCount, in List<Color> palette, ref List<string> warnings)
     {
         int bitsPerPixel = (int)bpp;
         const int bitPlaneSizeInBytes = 8; // 8x8 bits in a tile
@@ -40,11 +25,6 @@ public static class ImageProcessing
         int currentX = 0;
         int currentY = 0;
         int countingTiles = 0;
-
-        int numberOfColors = bpp.GetNumberOfColors();
-
-        Color transparentColor = palette.First();
-        Dictionary<Color, int> colors = new() { { transparentColor, 0 } };
 
         for (int j = 0; j < cellsCount.height; ++j)
         {
@@ -61,29 +41,31 @@ public static class ImageProcessing
                         Color color = bitmap.GetPixel(x, y);
                         color.A = 255;
 
-                        if (!transparentColor.Equals(color))
+                        int colorIndex = 0;
+                        bool colorFoundInPalette = false;
+                        foreach (Color paletteColor in palette)
                         {
-                            if (!colors.TryGetValue(color, out int colorIndex))
+                            if (paletteColor.Equals(color))
                             {
-                                colorIndex = colors.Count;
-
-                                colors.Add(color, colorIndex);
-
-                                if (colorIndex >= numberOfColors)
-                                {
-                                    warnings.Add("Color exceed the color count");
-                                }
-                            }
-
-                            if (colorIndex < numberOfColors)
-                            {
-                                palette[colorIndex] = Color.FromRgb(color.R, color.G, color.B);
-
                                 if (bpp == BitsPerPixel.f4bpp)
+                                {
                                     Set4BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                }
                                 else
+                                {
                                     Set8BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                }
+
+                                colorFoundInPalette = true;
+                                break;
                             }
+
+                            colorIndex++;
+                        }
+
+                        if (!colorFoundInPalette)
+                        {
+                            warnings.Add("Color in the bank is not found in the given palette");
                         }
 
                         pixelIndex++;

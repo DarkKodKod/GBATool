@@ -49,11 +49,19 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
             BankImageMetaData metaData = BankUtils.CreateImage(bank, false, imageWidth, imageHeight);
 
             if (metaData.image == null)
+            {
                 continue;
+            }
+
+            bool ret = GetPaletteIfExistInCharacters(bank, out List<Color> palette);
+
+            if (!ret)
+            {
+                AddError($"No palette configure for bank {vo.Name}");
+                continue;
+            }
 
             byte[]? imageData = null;
-
-            List<Color> palette = ImageProcessing.GetNewPalette(bpp, bank.TransparentColor);
 
             using (metaData.image.GetBitmapContext())
             {
@@ -61,7 +69,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
                 {
                     List<string> warnings = [];
 
-                    imageData = ImageProcessing.ConvertToXbpp(bpp, metaData.image, cellsCount, ref palette, warnings);
+                    imageData = ImageProcessing.ConvertToXbpp(bpp, in metaData.image, in cellsCount, in palette, ref warnings);
 
                     foreach (string item in warnings)
                     {
@@ -70,7 +78,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
                 }
                 catch (Exception e)
                 {
-                    AddError(e.ToString());
+                    AddError(e.Message);
                     continue;
                 }
 
@@ -101,6 +109,49 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
         }
 
         return GetErrors().Length == 0;
+    }
+
+    private static bool GetPaletteIfExistInCharacters(BankModel bank, out List<Color> palette)
+    {
+        palette = [];
+
+        List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
+
+        foreach (FileModelVO fileModel in models)
+        {
+            if (fileModel.Model is not CharacterModel character)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(character.PaletteID))
+            {
+                continue;
+            }
+
+            foreach (KeyValuePair<string, CharacterAnimation> animation in character.Animations)
+            {
+                foreach (KeyValuePair<string, FrameModel> frame in animation.Value.Frames)
+                {
+                    if (frame.Value.BankID == bank.GUID)
+                    {
+                        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(character.PaletteID);
+
+                        if (paletteModel != null)
+                        {
+                            for (int i = 0; i < paletteModel.Colors.Length; i++)
+                            {
+                                palette.Add(PaletteUtils.GetColorFromInt(paletteModel.Colors[i]));
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private async Task WriteBlocksMetaData()
