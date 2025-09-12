@@ -8,9 +8,10 @@
              xmlns:slt="clr-namespace:ArchitectureLibrary.WPF.Selectors;assembly=ArchitectureLibrary"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:b="clr-namespace:GBATool.Utils"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="720" d:DesignWidth="1050">
+             d:DesignHeight="720" d:DesignWidth="1250">
     <UserControl.DataContext>
         <vm:CharacterViewModel x:Name="vmCharacterModel"/>
     </UserControl.DataContext>
@@ -74,7 +75,10 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="*"/>
@@ -95,8 +99,12 @@
                         ContentTemplateSelector="{StaticResource contentTemplateSelector}">
             </TabControl>
         </Grid>
-        <Grid Grid.Row="1">
-            <GroupBox Header="Palette" Margin="10,0,10,10">
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Palette" Margin="10,0,0,10" Grid.Column="0">
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
@@ -104,29 +112,69 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <ComboBox Width="150" Grid.Row="0"
-                                Margin="15"
-                                ItemsSource="{Binding Palettes}" 
-                                DisplayMemberPath="Name"
-                                SelectedValuePath="Index"
-                                SelectedValue="{Binding Path=SelectedPalette}">
+                              Margin="15"
+                              ItemsSource="{Binding Palettes}" 
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Index"
+                              SelectedValue="{Binding Path=SelectedPalette}">
                         <i:Interaction.Behaviors>
                             <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
                         </i:Interaction.Behaviors>
                     </ComboBox>
                     <local:PaletteViewer PaletteIndex="0" 
-                                         Padding="0,10,10,10"
-                                         x:Name="palette"
-                                         Grid.Column="1"/>
+                                            Padding="0,10,10,10"
+                                            x:Name="palette"
+                                            Grid.Column="1"/>
                     <StackPanel Grid.Column="2">
                         <Label Content="Palette Index:" 
-                               HorizontalAlignment="Left" 
-                               VerticalAlignment="Top"/>
+                                HorizontalAlignment="Left" 
+                                VerticalAlignment="Top"/>
                         <ComboBox HorizontalAlignment="Left" 
-                                  VerticalAlignment="Center"
-                                  ItemsSource="{Binding Indices}"
-                                  Width="120" 
-                                  SelectedValue="{Binding Path=SelectedIndex}"/>
-                    </StackPanel>                    
+                                    VerticalAlignment="Center"
+                                    ItemsSource="{Binding Indices}"
+                                    Width="120" 
+                                    SelectedValue="{Binding Path=SelectedIndex}"/>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Scene position" Margin="5,0,10,10" Grid.Column="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label VerticalAlignment="Center" Margin="15,15,0,15" Grid.Column="0">RelativeOrigin:</Label>
+                    <TextBox VerticalAlignment="Center" 
+                             Width="25" 
+                             Grid.Column="1"
+                             Text="{Binding RelativeOriginX, Mode=TwoWay}"
+                             PreviewTextInput="NumberValidationTextBox"
+                             MaxLength="3"
+                             HorizontalAlignment="Left"
+                             TextWrapping="NoWrap"
+                             b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                    <TextBox VerticalAlignment="Center" 
+                             Width="25" 
+                             Grid.Column="2"
+                             Text="{Binding RelativeOriginY, Mode=TwoWay}"
+                             PreviewTextInput="NumberValidationTextBox"
+                             MaxLength="3"
+                             HorizontalAlignment="Left"
+                             TextWrapping="NoWrap"
+                             b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                    <Label VerticalAlignment="Center" Margin="10,0,0,0" Grid.Column="3">Vertical Axis:</Label>
+                    <TextBox VerticalAlignment="Center" 
+                             Width="25" 
+                             Grid.Column="4"
+                             Text="{Binding VerticalAxis, Mode=TwoWay}"
+                             PreviewTextInput="NumberValidationTextBox"
+                             MaxLength="3"
+                             HorizontalAlignment="Left"
+                             TextWrapping="NoWrap"
+                             b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
                 </Grid>
             </GroupBox>
         </Grid>

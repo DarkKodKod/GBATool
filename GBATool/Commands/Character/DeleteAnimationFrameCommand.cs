@@ -38,7 +38,7 @@ public class DeleteAnimationFrameCommand : Command
 
             if (animation.Frames.Remove(frameID))
             {
-                SignalManager.Get<DeleteAnimationFrameSignal>().Dispatch(frameIndex);
+                SignalManager.Get<DeleteAnimationFrameSignal>().Dispatch(animationID, frameIndex);
 
                 fileHandler.Save();
             }

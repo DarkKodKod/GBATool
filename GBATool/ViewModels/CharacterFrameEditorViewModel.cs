@@ -25,9 +25,6 @@ public class CharacterFrameEditorViewModel : ViewModel
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
     private string _selectedFrameSprite = string.Empty;
-    private int _relativeOriginX;
-    private int _relativeOriginY;
-    private int _verticalAxis;
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
     private bool _dontSave = false;
@@ -46,45 +43,6 @@ public class CharacterFrameEditorViewModel : ViewModel
             _selectedFrameSprite = value;
 
             OnPropertyChanged(nameof(SelectedFrameSprite));
-        }
-    }
-
-    public int RelativeOriginX
-    {
-        get => _relativeOriginX;
-        set
-        {
-            _relativeOriginX = value;
-
-            OnPropertyChanged(nameof(RelativeOriginX));
-
-            UpdateOriginPosition(value, RelativeOriginY);
-        }
-    }
-
-    public int RelativeOriginY
-    {
-        get => _relativeOriginY;
-        set
-        {
-            _relativeOriginY = value;
-
-            OnPropertyChanged(nameof(RelativeOriginY));
-
-            UpdateOriginPosition(RelativeOriginX, value);
-        }
-    }
-
-    public int VerticalAxis
-    {
-        get => _verticalAxis;
-        set
-        {
-            _verticalAxis = value;
-
-            OnPropertyChanged(nameof(VerticalAxis));
-
-            UpdateVerticalAxis(value);
         }
     }
 
@@ -260,11 +218,8 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         _dontSave = true;
 
-        VerticalAxis = animation.VerticalAxis;
-        Point origin = animation.RelativeOrigin;
-
-        RelativeOriginX = (int)origin.X;
-        RelativeOriginY = (int)origin.Y;
+        SignalManager.Get<UpdateOriginPositionSignal>().Dispatch((int)model.RelativeOrigin.X, (int)model.RelativeOrigin.Y);
+        SignalManager.Get<UpdateVerticalAxisSignal>().Dispatch(model.VerticalAxis);
 
         (_, List<SpriteControlVO>? previousSprites, _) = LoadSpritesFromFrame(animation, PreviousFrameID);
 
@@ -485,55 +440,5 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         SignalManager.Get<SelectImageControlInFrameViewSignal>().Dispatch(point);
-    }
-
-    private void UpdateOriginPosition(int posX, int posY)
-    {
-        SignalManager.Get<UpdateOriginPositionSignal>().Dispatch(posX, posY);
-
-        var model = CharacterModel;
-
-        if (model == null)
-        {
-            return;
-        }
-
-        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
-        {
-            return;
-        }
-
-        Point newPos = new(posX, posY);
-
-        animation.RelativeOrigin = newPos;
-
-        if (_dontSave)
-            return;
-
-        FileHandler?.Save();
-    }
-
-    private void UpdateVerticalAxis(int value)
-    {
-        SignalManager.Get<UpdateVerticalAxisSignal>().Dispatch(value);
-
-        var model = CharacterModel;
-
-        if (model == null)
-        {
-            return;
-        }
-
-        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
-        {
-            return;
-        }
-
-        animation.VerticalAxis = value;
-
-        if (_dontSave)
-            return;
-
-        FileHandler?.Save();
     }
 }

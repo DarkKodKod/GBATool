@@ -7,7 +7,6 @@ using GBATool.ViewModels;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -529,14 +528,4 @@ public partial class CharacterFrameEditorView : UserControl
             image.Opacity = enabledOnionSkin ? _onionSkinOpacity : 0.0;
         }
     }
-
-    private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-    {
-        Regex _regex = IsAllNumbersRegex();
-
-        e.Handled = _regex.IsMatch(e.Text);
-    }
-
-    [GeneratedRegex("[^0-9.-]+")]
-    private static partial Regex IsAllNumbersRegex();
 }

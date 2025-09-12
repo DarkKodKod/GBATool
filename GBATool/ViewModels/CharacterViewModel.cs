@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Data;
 
 namespace GBATool.ViewModels;
@@ -18,11 +19,14 @@ namespace GBATool.ViewModels;
 public class CharacterViewModel : ItemViewModel
 {
     private ObservableCollection<ActionTabItem>? _tabs;
-    private bool _doNotSavePalettes = false;
+    private bool _doNotSave = false;
     private FileModelVO[]? _palettes;
     private int _selectedPalette = -1;
     private int _selectedIndex = 0;
     private int[] _indices = new int[16];
+    private int _relativeOriginX;
+    private int _relativeOriginY;
+    private int _verticalAxis;
 
     #region Commands
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
@@ -43,6 +47,45 @@ public class CharacterViewModel : ItemViewModel
             }
 
             return _tabs;
+        }
+    }
+
+    public int RelativeOriginX
+    {
+        get => _relativeOriginX;
+        set
+        {
+            _relativeOriginX = value;
+
+            OnPropertyChanged(nameof(RelativeOriginX));
+
+            UpdateOriginPosition(value, RelativeOriginY);
+        }
+    }
+
+    public int RelativeOriginY
+    {
+        get => _relativeOriginY;
+        set
+        {
+            _relativeOriginY = value;
+
+            OnPropertyChanged(nameof(RelativeOriginY));
+
+            UpdateOriginPosition(RelativeOriginX, value);
+        }
+    }
+
+    public int VerticalAxis
+    {
+        get => _verticalAxis;
+        set
+        {
+            _verticalAxis = value;
+
+            OnPropertyChanged(nameof(VerticalAxis));
+
+            UpdateVerticalAxis(value);
         }
     }
 
@@ -132,18 +175,24 @@ public class CharacterViewModel : ItemViewModel
         PopulateTabs();
         ActivateTabs();
 
-        _doNotSavePalettes = true;
+        _doNotSave = true;
 
         CharacterModel? model = GetModel();
 
         if (model == null)
             return;
 
+        VerticalAxis = model.VerticalAxis;
+        Point origin = model.RelativeOrigin;
+
+        RelativeOriginX = (int)origin.X;
+        RelativeOriginY = (int)origin.Y;
+
         SelectedIndex = model.PaletteIndex;
 
         LoadPalette(model);
 
-        _doNotSavePalettes = false;
+        _doNotSave = false;
     }
 
     public override void OnDeactivate()
@@ -199,7 +248,7 @@ public class CharacterViewModel : ItemViewModel
             return;
         }
 
-        if (_doNotSavePalettes)
+        if (_doNotSave)
         {
             return;
         }
@@ -270,6 +319,46 @@ public class CharacterViewModel : ItemViewModel
                 return;
             }
         }
+    }
+
+    private void UpdateOriginPosition(int posX, int posY)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        SignalManager.Get<UpdateOriginPositionSignal>().Dispatch(posX, posY);
+
+        Point newPos = new(posX, posY);
+
+        model.RelativeOrigin = newPos;
+
+        if (_doNotSave)
+            return;
+
+        Save();
+    }
+
+    private void UpdateVerticalAxis(int value)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        SignalManager.Get<UpdateVerticalAxisSignal>().Dispatch(value);
+
+        model.VerticalAxis = value;
+
+        if (_doNotSave)
+            return;
+
+        Save();
     }
 
     private void Save()
@@ -440,7 +529,7 @@ public class CharacterViewModel : ItemViewModel
 
         model.PaletteIndex = newValue;
 
-        if (!_doNotSavePalettes)
+        if (!_doNotSave)
         {
             ProjectItem?.FileHandler?.Save();
         }
@@ -481,7 +570,7 @@ public class CharacterViewModel : ItemViewModel
             SetPaletteEmpty();
         }
 
-        if (!_doNotSavePalettes)
+        if (!_doNotSave)
         {
             ProjectItem?.FileHandler?.Save();
         }

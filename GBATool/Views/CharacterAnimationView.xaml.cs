@@ -37,8 +37,18 @@ public partial class CharacterAnimationView : UserControl
         spFrames.Children.RemoveRange(0, spFrames.Children.Count - 1);
     }
 
-    private void OnDeleteAnimationFrame(int frameIndex)
+    private void OnDeleteAnimationFrame(string animationID, int frameIndex)
     {
+        if (DataContext is not CharacterAnimationViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.TabID != animationID)
+        {
+            return;
+        }
+
         spFrames.Children.RemoveAt(frameIndex);
 
         foreach (CharacterFrameView frame in FrameViewList)

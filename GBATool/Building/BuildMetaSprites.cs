@@ -129,8 +129,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
                 {
                     CharacterSprite sprite = tileItem.Value;
 
-                    await WriteFrameAttribute0(sprite, outputFile, bankModel, animation);
-                    await WriteFrameAttribute1(sprite, outputFile, animation);
+                    await WriteFrameAttribute0(sprite, outputFile, bankModel, model);
+                    await WriteFrameAttribute1(sprite, outputFile, model);
                     await WriteFrameAttribute2(sprite, outputFile, bankModel, model);
                     await WriteFrameAttribute3(sprite, outputFile);
                 }
@@ -152,7 +152,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             await outputFile.WriteLineAsync($"    ; frame duration");
             await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
             await outputFile.WriteLineAsync($"    ; vertical axis");
-            await outputFile.WriteLineAsync($"    db 0x{animation.VerticalAxis:X2} ; decimal {animation.VerticalAxis}");
+            await outputFile.WriteLineAsync($"    db 0x{model.VerticalAxis:X2} ; decimal {model.VerticalAxis}");
             await outputFile.WriteLineAsync($"    ; Empty");
             await outputFile.WriteLineAsync($"    db 0x00");
             await outputFile.WriteLineAsync($"    ; pointer to the first frame");
@@ -192,9 +192,9 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         #endregion
     }
 
-    private static async Task WriteFrameAttribute0(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterAnimation animation)
+    private static async Task WriteFrameAttribute0(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)
     {
-        string yPosition = Util.ConvertShortToBits((short)(sprite.Position.Y - animation.RelativeOrigin.Y));
+        string yPosition = Util.ConvertShortToBits((short)(sprite.Position.Y - characterModel.RelativeOrigin.Y));
         yPosition += "b";
 
         string objectMode = "0000000000000000b";
@@ -256,9 +256,9 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         await outputFile.WriteAsync($"    dh ({attribute0})" + Environment.NewLine);
     }
 
-    private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile, CharacterAnimation animation)
+    private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile, CharacterModel characterModel)
     {
-        string xPosition = Util.ConvertIntToBits((int)(sprite.Position.X - animation.RelativeOrigin.X), 0x1FF);
+        string xPosition = Util.ConvertIntToBits((int)(sprite.Position.X - characterModel.RelativeOrigin.X), 0x1FF);
         xPosition += "b";
 
         SpriteShape shape = SpriteShape.Shape00;

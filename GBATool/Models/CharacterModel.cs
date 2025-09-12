@@ -49,8 +49,6 @@ public class CharacterAnimation
     public string ID { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public float Speed { get; set; }
-    public Point RelativeOrigin { get; set; }
-    public int VerticalAxis { get; set; }
     public Dictionary<string, FrameModel> Frames { get; set; } = [];
 }
 
@@ -72,6 +70,8 @@ public class CharacterModel : AFileModel
         }
     }
 
+    public Point RelativeOrigin { get; set; }
+    public int VerticalAxis { get; set; }
     public string PaletteID { get; set; } = string.Empty;
     public int PaletteIndex { get; set; } = 0;
     public Dictionary<string, CharacterAnimation> Animations { get; set; } = [];

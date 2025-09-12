@@ -284,11 +284,11 @@ public class CharacterAnimationViewModel : ViewModel
 
         if (firstFrameWithImage != null)
         {
-            SendInformationToTheViewAboutTheMetaSprite(animation, firstFrameWithImage.Width, firstFrameWithImage.Height, minAspectRation);
+            SendInformationToTheViewAboutTheMetaSprite(model, animation, firstFrameWithImage.Width, firstFrameWithImage.Height, minAspectRation);
         }
     }
 
-    private void SendInformationToTheViewAboutTheMetaSprite(CharacterAnimation animation, double imageWidth, double imageHeight, double scale)
+    private void SendInformationToTheViewAboutTheMetaSprite(CharacterModel model, CharacterAnimation animation, double imageWidth, double imageHeight, double scale)
     {
         double offsetX = 0;
         double offsetY = 0;
@@ -297,16 +297,16 @@ public class CharacterAnimationViewModel : ViewModel
 
         foreach (KeyValuePair<string, CharacterSprite> item in frameModel.Tiles)
         {
-            if (item.Value.Position.X < animation.RelativeOrigin.X &&
-                (animation.RelativeOrigin.X - item.Value.Position.X) > offsetX)
+            if (item.Value.Position.X < model.RelativeOrigin.X &&
+                (model.RelativeOrigin.X - item.Value.Position.X) > offsetX)
             {
-                offsetX = animation.RelativeOrigin.X - item.Value.Position.X;
+                offsetX = model.RelativeOrigin.X - item.Value.Position.X;
             }
 
-            if (item.Value.Position.Y < animation.RelativeOrigin.Y &&
-                (animation.RelativeOrigin.Y - item.Value.Position.Y) > offsetY)
+            if (item.Value.Position.Y < model.RelativeOrigin.Y &&
+                (model.RelativeOrigin.Y - item.Value.Position.Y) > offsetY)
             {
-                offsetY = animation.RelativeOrigin.Y - item.Value.Position.Y;
+                offsetY = model.RelativeOrigin.Y - item.Value.Position.Y;
             }
         }
 
