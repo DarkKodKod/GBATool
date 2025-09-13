@@ -102,8 +102,8 @@ public class UpdateOriginPositionSignal : Signal<int, int> { }
 public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite, string> { }
-public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
-public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>> { }
+public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
+public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
 public class DeleteSpriteFromCharacterFrameSignal : Signal<string> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }
 

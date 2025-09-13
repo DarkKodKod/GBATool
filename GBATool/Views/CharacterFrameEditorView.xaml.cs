@@ -56,6 +56,13 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UserControl_Unloaded(object sender, RoutedEventArgs e)
     {
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        frameViewView.Canvas.Children.Clear();
+
         bankViewer.OnDeactivate();
         frameView.OnDeactivate();
 
@@ -223,8 +230,18 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList)
+    private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList, string frameID)
     {
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.FrameID != frameID)
+        {
+            return;
+        }
+
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
@@ -240,8 +257,18 @@ public partial class CharacterFrameEditorView : UserControl
         UnselectAllImagesInFrameView();
     }
 
-    private void OnFillWithPreviousFrameSpriteControls(List<SpriteControlVO> spriteVOList)
+    private void OnFillWithPreviousFrameSpriteControls(List<SpriteControlVO> spriteVOList, string animationID)
     {
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.AnimationID != animationID)
+        {
+            return;
+        }
+
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;

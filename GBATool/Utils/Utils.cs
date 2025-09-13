@@ -265,9 +265,11 @@ public static class Util
         b = b.And(mask);
 
         char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
-        Array.Reverse(bits);
+        char[] bitsShortSize = [.. bits.Take(16)];
 
-        return new(bits);
+        Array.Reverse(bitsShortSize);
+
+        return new(bitsShortSize);
     }
 
     public static double BankRowsRound(double value)

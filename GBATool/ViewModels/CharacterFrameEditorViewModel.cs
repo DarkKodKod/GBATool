@@ -225,7 +225,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         if (previousSprites?.Count > 0)
         {
-            SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Dispatch(previousSprites);
+            SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Dispatch(previousSprites, AnimationID);
         }
 
         (BankImageMetaData? metaData, List<SpriteControlVO>? sprites, string bankID) = LoadSpritesFromFrame(animation, FrameID);
@@ -236,7 +236,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
             if (sprites?.Count > 0)
             {
-                SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites);
+                SignalManager.Get<FillWithSpriteControlsSignal>().Dispatch(sprites, FrameID);
 
                 SelectBank(bankID);
             }
