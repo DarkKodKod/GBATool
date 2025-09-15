@@ -109,7 +109,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
                 int nextFrameIndex = frameIndex + 1 < animation.Frames.Count ? frameIndex + 1 : 0;
 
-                await outputFile.WriteLineAsync("    align 2");
+                await outputFile.WriteLineAsync("    align 4");
                 await outputFile.WriteLineAsync($"{frameNames.Last()}:");
 
                 await outputFile.WriteLineAsync($"    ; number of sprites");
@@ -151,10 +151,8 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2} ; decimal {frameNames.Count}");
             await outputFile.WriteLineAsync($"    ; frame duration");
             await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
-            await outputFile.WriteLineAsync($"    ; vertical axis");
-            await outputFile.WriteLineAsync($"    db 0x{model.VerticalAxis:X2} ; decimal {model.VerticalAxis}");
             await outputFile.WriteLineAsync($"    ; Empty");
-            await outputFile.WriteLineAsync($"    db 0x00");
+            await outputFile.WriteLineAsync($"    db 0x00, 0x00");
             await outputFile.WriteLineAsync($"    ; pointer to the first frame");
             await outputFile.WriteLineAsync($"    dw {frameNames.First()}");
 
@@ -258,13 +256,21 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
     private static async Task WriteFrameAttribute1(CharacterSprite sprite, StreamWriter outputFile, CharacterModel characterModel)
     {
-        string xPosition = Util.ConvertIntToBits((int)(sprite.Position.X - characterModel.RelativeOrigin.X), 0x1FF);
+        int spritePos = (int)(sprite.Position.X - characterModel.RelativeOrigin.X);
+
+        string xPosition = Util.ConvertIntToBits(spritePos, 0x1FF);
         xPosition += "b";
 
         SpriteShape shape = SpriteShape.Shape00;
         SpriteSize size = SpriteSize.Size00;
 
         SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
+
+        int verticalAxis = characterModel.VerticalAxis - (int)characterModel.RelativeOrigin.X;
+        int flippedSpritePos = verticalAxis - (spritePos - verticalAxis) - sprite.Width;
+
+        string xPositionFlipped = Util.ConvertIntToBits(flippedSpritePos, 0x1FF);
+        xPositionFlipped += "b";
 
         string spriteSize = "ATTR_1_SPRITE_SIZE_00";
 
@@ -285,6 +291,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         }
 
         string attribute1;
+        string attribute1Flipped;
 
         if (!sprite.AffineIsEnabled)
         {
@@ -292,15 +299,19 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             string verticalFlip = sprite.FlipVertical ? "ATTR_1_FLIP_VERTICAL" : "0000000000000000b";
 
             attribute1 = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPosition}";
+            attribute1Flipped = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPositionFlipped}";
         }
         else
         {
             string affineIndex = "0000000000000000b";
 
             attribute1 = $"{spriteSize} or {affineIndex} or {xPosition}";
+            attribute1Flipped = $"{spriteSize} or {affineIndex} or {xPosition}";
         }
 
         await outputFile.WriteAsync($"    dh ({attribute1})" + Environment.NewLine);
+        // duplicated attribute 1 just to have the position of the sprites in flipped position
+        await outputFile.WriteAsync($"    dh ({attribute1Flipped})" + Environment.NewLine);
     }
 
     private async Task WriteFrameAttribute2(CharacterSprite sprite, StreamWriter outputFile, BankModel bankModel, CharacterModel characterModel)

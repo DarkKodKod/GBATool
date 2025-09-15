@@ -5,7 +5,9 @@ using GBATool.Building;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GBATool.Commands.Project;
@@ -143,17 +145,73 @@ public class BuildProjectCommand : Command
 
     private static void OutputError(string[] messages)
     {
+        Dictionary<int, (string, int)> filteredMessages = [];
+
         for (int i = 0; i < messages.Length; i++)
         {
-            OutputError(messages[i]);
+            string message = messages[i];
+
+            int hash = message.GetHashCode();
+
+            // filtering the messages when there are too many with the same message
+            if (!filteredMessages.TryGetValue(hash, out (string, int) obj))
+            {
+                filteredMessages.Add(hash, (message, 0));
+            }
+            else
+            {
+                obj.Item2++;
+                filteredMessages[hash] = obj;
+            }
+        }
+
+        foreach (var item in filteredMessages)
+        {
+            StringBuilder sb = new();
+            _ = sb.Append(item.Value.Item1);
+
+            if (item.Value.Item2 > 0)
+            {
+                _ = sb.Append($" ({item.Value.Item2} times)");
+            }
+
+            OutputError(sb.ToString());
         }
     }
 
     private static void OutputWarnings(string[] messages)
     {
+        Dictionary<int, (string, int)> filteredMessages = [];
+
         for (int i = 0; i < messages.Length; i++)
         {
-            OutputWarning(messages[i]);
+            string message = messages[i];
+
+            int hash = message.GetHashCode();
+
+            // filtering the messages when there are too many with the same message
+            if (!filteredMessages.TryGetValue(hash, out (string, int) obj))
+            {
+                filteredMessages.Add(hash, (message, 0));
+            }
+            else
+            {
+                obj.Item2++;
+                filteredMessages[hash] = obj;
+            }
+        }
+
+        foreach (var item in filteredMessages)
+        {
+            StringBuilder sb = new();
+            _ = sb.Append(item.Value.Item1);
+
+            if (item.Value.Item2 > 0)
+            {
+                _ = sb.Append($" ({item.Value.Item2} times)");
+            }
+
+            OutputWarning(sb.ToString());
         }
     }
 }
