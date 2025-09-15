@@ -330,11 +330,11 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
         string tileIndex = Util.ConvertShortToBits((short)index);
         tileIndex += "b";
 
-        string priority = sprite.Priority switch
+        string priority = characterModel.Priority switch
         {
-            Priority.Highest => "0000110000000000b",
-            Priority.High => "0000100000000000b",
-            Priority.Low => "0000010000000000b",
+            Priority.Lowest => "0000110000000000b",
+            Priority.Low => "0000100000000000b",
+            Priority.High => "0000010000000000b",
             _ => "0000000000000000b",
         };
 

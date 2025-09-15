@@ -6,12 +6,14 @@
              xmlns:local="clr-namespace:GBATool.Views"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              xmlns:slt="clr-namespace:ArchitectureLibrary.WPF.Selectors;assembly=ArchitectureLibrary"
+             xmlns:ex="clr-namespace:ArchitectureLibrary.WPF.Extensions;assembly=ArchitectureLibrary"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:enum="clr-namespace:GBATool.Enums"
              xmlns:b="clr-namespace:GBATool.Utils"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="720" d:DesignWidth="1250">
+             d:DesignHeight="720" d:DesignWidth="1350">
     <UserControl.DataContext>
         <vm:CharacterViewModel x:Name="vmCharacterModel"/>
     </UserControl.DataContext>
@@ -102,6 +104,7 @@
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <GroupBox Header="Palette" Margin="10,0,0,10" Grid.Column="0">
@@ -130,10 +133,11 @@
                                 HorizontalAlignment="Left" 
                                 VerticalAlignment="Top"/>
                         <ComboBox HorizontalAlignment="Left" 
-                                    VerticalAlignment="Center"
-                                    ItemsSource="{Binding Indices}"
-                                    Width="120" 
-                                    SelectedValue="{Binding Path=SelectedIndex}"/>
+                                  VerticalAlignment="Center"
+                                  ItemsSource="{Binding Indices}"
+                                  Width="120" 
+                                  Margin="0,0,10,0"
+                                  SelectedValue="{Binding Path=SelectedIndex}"/>
                     </StackPanel>
                 </Grid>
             </GroupBox>
@@ -146,7 +150,7 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <Label VerticalAlignment="Center" Margin="15,15,0,15" Grid.Column="0">RelativeOrigin:</Label>
+                    <Label VerticalAlignment="Center" Margin="5,15,0,15" Grid.Column="0">RelativeOrigin:</Label>
                     <TextBox VerticalAlignment="Center" 
                              Width="25" 
                              Grid.Column="1"
@@ -169,6 +173,7 @@
                     <TextBox VerticalAlignment="Center" 
                              Width="25" 
                              Grid.Column="4"
+                             Margin="0,0,10,0"
                              Text="{Binding VerticalAxis, Mode=TwoWay}"
                              PreviewTextInput="NumberValidationTextBox"
                              MaxLength="3"
@@ -176,6 +181,15 @@
                              TextWrapping="NoWrap"
                              b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
                 </Grid>
+            </GroupBox>
+            <GroupBox Header="Priority" Margin="5,0,10,10" Grid.Column="2">
+                <ComboBox Width="100"
+                          Margin="15"
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:Priority}}}"
+                          SelectedValue="{Binding Path=SelectedPriority}"
+                          SelectedValuePath="Value">
+                </ComboBox>
             </GroupBox>
         </Grid>
     </Grid>

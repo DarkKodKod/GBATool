@@ -1,4 +1,6 @@
-﻿namespace GBATool.Enums;
+﻿using System.ComponentModel;
+
+namespace GBATool.Enums;
 
 //shape\size  00	01	    10	    11
 //   00	      8x8	16x16	32x32	64x64
@@ -33,8 +35,12 @@ public enum BitsPerPixel
 
 public enum Priority
 {
-    Lowest = 0,
-    Low = 1,
-    High = 2,
-    Highest = 3,
+    [Description("Highest")]
+    Highest = 0,
+    [Description("High")]
+    High = 1,
+    [Description("Low")]
+    Low = 2,
+    [Description("Lowest")]
+    Lowest = 3
 }

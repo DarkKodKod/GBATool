@@ -2,6 +2,7 @@
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
@@ -23,6 +24,7 @@ public class CharacterViewModel : ItemViewModel
     private FileModelVO[]? _palettes;
     private int _selectedPalette = -1;
     private int _selectedIndex = 0;
+    private Priority _selectedPriority = Priority.Highest;
     private int[] _indices = new int[16];
     private int _relativeOriginX;
     private int _relativeOriginY;
@@ -97,6 +99,22 @@ public class CharacterViewModel : ItemViewModel
             _indices = value;
 
             OnPropertyChanged(nameof(Indices));
+        }
+    }
+
+    public Priority SelectedPriority
+    {
+        get { return _selectedPriority; }
+        set
+        {
+            if (_selectedPriority != value)
+            {
+                _selectedPriority = value;
+
+                UpdateAndSavePriority(value);
+            }
+
+            OnPropertyChanged(nameof(SelectedPriority));
         }
     }
 
@@ -189,6 +207,7 @@ public class CharacterViewModel : ItemViewModel
         RelativeOriginY = (int)origin.Y;
 
         SelectedIndex = model.PaletteIndex;
+        SelectedPriority = model.Priority;
 
         LoadPalette(model);
 
@@ -517,6 +536,21 @@ public class CharacterViewModel : ItemViewModel
                     break;
                 }
             }
+        }
+    }
+
+    private void UpdateAndSavePriority(Priority newValue)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+            return;
+
+        model.Priority = newValue;
+
+        if (!_doNotSave)
+        {
+            ProjectItem?.FileHandler?.Save();
         }
     }
 

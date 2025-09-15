@@ -32,7 +32,6 @@ public class CharacterSprite
     public bool AffineIsEnabled { get; set; }
     public bool IsHidden { get; set; }
     public bool IsDoubleSized { get; set; }
-    public Priority Priority { get; set; }
 }
 
 public class FrameModel
@@ -74,5 +73,6 @@ public class CharacterModel : AFileModel
     public int VerticalAxis { get; set; }
     public string PaletteID { get; set; } = string.Empty;
     public int PaletteIndex { get; set; } = 0;
+    public Priority Priority { get; set; } = Priority.Highest;
     public Dictionary<string, CharacterAnimation> Animations { get; set; } = [];
 }
