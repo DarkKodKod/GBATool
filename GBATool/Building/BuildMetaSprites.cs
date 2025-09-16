@@ -342,7 +342,7 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 
         if (!bankModel.Use256Colors)
         {
-            paletteIndex = Util.ConvertShortToBits((short)characterModel.PaletteIndex);
+            paletteIndex = Util.ConvertShortToBits((short)characterModel.PaletteIndex, 12);
             paletteIndex += "b";
         }
 

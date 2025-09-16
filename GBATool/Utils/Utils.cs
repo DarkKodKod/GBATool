@@ -248,9 +248,11 @@ public static class Util
         return (color.R << 16) | (color.G << 8) | (color.B);
     }
 
-    public static string ConvertShortToBits(short value)
+    public static string ConvertShortToBits(short value, int leftShifting = 0)
     {
         BitArray b = new(BitConverter.GetBytes(value));
+        b = b.LeftShift(leftShifting);
+
         char[] bits = [.. b.Cast<bool>().Select(bit => bit ? '1' : '0')];
         Array.Reverse(bits);
 

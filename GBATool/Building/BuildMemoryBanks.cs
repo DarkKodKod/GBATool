@@ -187,7 +187,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
         await outputFile.WriteAsync(Environment.NewLine);
 
-        await outputFile.WriteLineAsync("    align 32");
+        await outputFile.WriteLineAsync("    align 4");
 
         foreach (string bankName in _bankNames)
         {
