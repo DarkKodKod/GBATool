@@ -28,3 +28,9 @@ public enum SpritePattern
     [Description("2D")]
     Format2D = 1
 }
+
+public enum OutputFormat
+{
+    [Description("FASMARM")]
+    Fasmarm = 0
+}

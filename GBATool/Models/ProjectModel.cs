@@ -36,6 +36,7 @@ public class ProjectModel : ISingletonModel
     [TomlIgnore] public string ProjectPath { get; set; } = string.Empty;
     public BuildConfig Build { get; set; } = new();
     public SpritePattern SpritePatternFormat { get; set; } = SpritePattern.Format1D;
+    public OutputFormat OutputFormat { get; set; } = OutputFormat.Fasmarm;
 
     public ProjectModel()
     {
@@ -51,6 +52,7 @@ public class ProjectModel : ISingletonModel
         DeveloperId = string.Empty;
         SoftwareVersion = 0;
         SpritePatternFormat = SpritePattern.Format1D;
+        OutputFormat = OutputFormat.Fasmarm;
         Build.Reset();
     }
 
@@ -64,6 +66,7 @@ public class ProjectModel : ISingletonModel
         Name = copy.Name;
         Version = copy.Version;
         SpritePatternFormat = copy.SpritePatternFormat;
+        OutputFormat = copy.OutputFormat;
         ProjectTitle = copy.ProjectTitle;
         ProjectInitials = copy.ProjectInitials;
         SoftwareVersion = copy.SoftwareVersion;

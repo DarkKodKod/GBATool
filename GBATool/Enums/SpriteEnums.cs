@@ -35,12 +35,12 @@ public enum BitsPerPixel
 
 public enum Priority
 {
-    [Description("Highest")]
+    [Description("0")]
     Highest = 0,
-    [Description("High")]
+    [Description("1")]
     High = 1,
-    [Description("Low")]
+    [Description("2")]
     Low = 2,
-    [Description("Lowest")]
+    [Description("3")]
     Lowest = 3
 }

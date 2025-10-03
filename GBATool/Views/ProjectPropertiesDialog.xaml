@@ -11,7 +11,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:enum="clr-namespace:GBATool.Enums"
         mc:Ignorable="d"
-        Title="Project properties" Height="271" Width="500"
+        Title="Project properties" Height="330" Width="500"
         ShowInTaskbar="False"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Window.DataContext>
@@ -28,86 +28,99 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
-            <RowDefinition Height="180"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Label Content="Project Title:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <TextBox Grid.Column="1" 
-                     Name="tbProjectTitle"
-                     Grid.Row="0" 
-                     MaxLength="12"
-                     Width="120"
-                     HorizontalAlignment="Left"
-                     TextWrapping="NoWrap"
-                     CharacterCasing="Upper"
-                     VerticalContentAlignment="Center"
-                     Text="{Binding ProjectTitle}"
-                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-            <Label Content="Project Initials:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <TextBox Grid.Column="1" 
-                     Name="tbProjectInitials"
-                     Grid.Row="1" 
-                     Width="40"
-                     MaxLength="2"
-                     VerticalContentAlignment="Center"
-                     HorizontalAlignment="Left"
-                     TextWrapping="NoWrap"
-                     CharacterCasing="Upper"
-                     Text="{Binding ProjectInitials}"
-                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-            <Label Content="Software Version:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <TextBox Grid.Column="1" 
-                     Name="tbSoftwareVersion"
-                     Grid.Row="2" 
-                     Width="40"
-                     VerticalContentAlignment="Center"
-                     PreviewTextInput="NumberValidationTextBox"
-                     MaxLength="3"
-                     HorizontalAlignment="Left"
-                     TextWrapping="NoWrap"
-                     Text="{Binding SoftwareVersion}"
-                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-            <Label Content="Sprite Pattern Format:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <ComboBox Grid.Column="1" 
-                      Grid.Row="3" 
-                      HorizontalAlignment="Left" VerticalAlignment="Center" 
-                      Width="120" 
-                      DisplayMemberPath="Description"
-                      ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:SpritePattern}}}"
-                      SelectedValue="{Binding Path=SelectedSpriteFormat}"
-                      SelectedValuePath="Value"/>
-            <Label Content="Developer Id:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <TextBox Grid.Column="1" 
-                     Name="tbDeveloperId"
-                     Grid.Row="4" 
-                     Width="40"
-                     MaxLength="2"
-                     VerticalContentAlignment="Center"
-                     HorizontalAlignment="Left"
-                     TextWrapping="NoWrap"
-                     CharacterCasing="Upper"
-                     Text="{Binding DeveloperId}"
-                     b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
-        </Grid>
-        <Button Grid.Row="2" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
+        <GroupBox Grid.Row="1" Header="Global configuration" Margin="5" Padding="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Output files format:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ComboBox Grid.Column="1" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" 
+                          Width="120" 
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
+                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValuePath="Value"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Grid.Row="2" Header="Game properties" Margin="5" Padding="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Label Content="Project Title:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Grid.Column="1" 
+                            Name="tbProjectTitle"
+                            Grid.Row="0" 
+                            MaxLength="12"
+                            Width="120"
+                            HorizontalAlignment="Left"
+                            TextWrapping="NoWrap"
+                            CharacterCasing="Upper"
+                            VerticalContentAlignment="Center"
+                            Text="{Binding ProjectTitle}"
+                            b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                <Label Content="Project Initials:" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Grid.Column="1" 
+                            Name="tbProjectInitials"
+                            Grid.Row="1" 
+                            Width="40"
+                            MaxLength="2"
+                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left"
+                            TextWrapping="NoWrap"
+                            CharacterCasing="Upper"
+                            Text="{Binding ProjectInitials}"
+                            b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                <Label Content="Software Version:" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Grid.Column="1" 
+                            Name="tbSoftwareVersion"
+                            Grid.Row="2" 
+                            Width="40"
+                            VerticalContentAlignment="Center"
+                            PreviewTextInput="NumberValidationTextBox"
+                            MaxLength="3"
+                            HorizontalAlignment="Left"
+                            TextWrapping="NoWrap"
+                            Text="{Binding SoftwareVersion}"
+                            b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                <Label Content="Sprite Pattern Format:" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ComboBox Grid.Column="1" 
+                            Grid.Row="3" 
+                            HorizontalAlignment="Left" VerticalAlignment="Center" 
+                            Width="120" 
+                            DisplayMemberPath="Description"
+                            ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:SpritePattern}}}"
+                            SelectedValue="{Binding Path=SelectedSpriteFormat}"
+                            SelectedValuePath="Value"/>
+                <Label Content="Developer Id:" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox Grid.Column="1" 
+                            Name="tbDeveloperId"
+                            Grid.Row="4" 
+                            Width="40"
+                            MaxLength="2"
+                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Left"
+                            TextWrapping="NoWrap"
+                            CharacterCasing="Upper"
+                            Text="{Binding DeveloperId}"
+                            b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+            </Grid>
+        </GroupBox>
+        <Button Grid.Row="3" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
     </Grid>
 </Window>
