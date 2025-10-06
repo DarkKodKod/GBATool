@@ -59,6 +59,6 @@ public class CreateFolderCommand : ItemSelectedCommand
 
         SignalManager.Get<CreateNewElementSignal>().Dispatch(newFolder);
 
-        ProjectItemFileSystem.CreateFileElement(newFolder, path, name);
+        ProjectItemFileSystem.CreateElement(newFolder, path, name);
     }
 }

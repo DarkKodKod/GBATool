@@ -329,13 +329,13 @@ public class MainWindowViewModel : ViewModel
     private void OnMouseLeftButtonDown(Point point)
     {
         _startPoint = point;
-
         _isDragging = false;
     }
 
     private void OnMouseLeftButtonUp()
     {
         _isDragging = false;
+        _startPoint = null;
     }
 
     private void OnMouseMove(MouseMoveVO vo)
@@ -494,7 +494,7 @@ public class MainWindowViewModel : ViewModel
         }
     }
 
-    private void OnTryCreatePaletteElement(string name, List<Color> colorArray, BitsPerPixel bitsPerPixel)
+    private void OnTryCreatePaletteElement(string name, List<Color> colorArray)
     {
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
@@ -504,36 +504,109 @@ public class MainWindowViewModel : ViewModel
 
         name = ProjectItemFileSystem.GetValidFileName(path, name, Util.GetExtensionByType(ProjectItemType.Palette));
 
-        ProjectItem newElement = new()
+        if (colorArray.Count <= PaletteModel.MaxColor)
         {
-            DisplayName = name,
-            IsFolder = false,
-            IsRoot = false,
-            Type = ProjectItemType.Palette
-        };
+            // 4bpp case
 
-        SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new CreateNewElementHistoryAction(newElement));
-
-        SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
-
-        ProjectItemFileSystem.CreateFileElement(newElement, path, name);
-
-        if (newElement.FileHandler?.FileModel is PaletteModel paletteModel)
-        {
-            int[] colorList = paletteModel.Colors;
-
-            int colorIndex = 0;
-            foreach (Color color in colorArray)
+            ProjectItem newElement = new()
             {
-                colorList[colorIndex] = PaletteUtils.ConvertColorToInt(color);
-                colorIndex++;
+                DisplayName = name,
+                IsFolder = false,
+                IsRoot = false,
+                Type = ProjectItemType.Palette
+            };
+
+            CreateNewPaletteElement(newElement, path, colorArray);
+        }
+        else
+        {
+            // 8bpp case
+
+            ProjectItem newElement = new()
+            {
+                DisplayName = name,
+                IsFolder = true,
+                IsRoot = false,
+                Type = ProjectItemType.Palette
+            };
+
+            int numberOfPalettes = (int)Math.Ceiling(colorArray.Count / (float)PaletteModel.MaxColor);
+
+            for (int i = 0; i < numberOfPalettes; i++)
+            {
+                newElement.Items.Add(new ProjectItem()
+                {
+                    DisplayName = $"palette_{i:D2}",
+                    IsFolder = false,
+                    IsRoot = false,
+                    Type = ProjectItemType.Palette
+                });
             }
 
-            paletteModel.Colors = colorList;
+            CreateNewPaletteElement(newElement, path, colorArray);
+        }
+    }
 
-            newElement.FileHandler?.Save();
+    private static void CreateNewPaletteElement(ProjectItem newElement, string path, List<Color> arrayOfColors)
+    {
+        // create elements
+        {
+            SignalManager.Get<RegisterHistoryActionSignal>().Dispatch(new CreateNewElementHistoryAction(newElement));
 
-            SignalManager.Get<PaletteCreatedSuccessfullySignal>().Dispatch(paletteModel);
+            SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
+
+            ProjectItemFileSystem.CreateElement(newElement, path, newElement.DisplayName);
+        }
+
+        // Fill the models with data
+        {
+            void SaveToPaletteModel(PaletteModel paletteModel, List<Color> colors)
+            {
+                int[] colorList = paletteModel.Colors;
+
+                int colorIndex = 0;
+                foreach (Color color in colors)
+                {
+                    colorList[colorIndex] = PaletteUtils.ConvertColorToInt(color);
+                    colorIndex++;
+                }
+
+                paletteModel.Colors = colorList;
+            }
+
+            if (!newElement.IsFolder)
+            {
+                if (newElement.FileHandler?.FileModel is PaletteModel paletteModel)
+                {
+                    SaveToPaletteModel(paletteModel, arrayOfColors);
+
+                    newElement.FileHandler?.Save();
+                }
+            }
+            else
+            {
+                int colorRangeIndex = 0;
+                int numberOfColors = PaletteModel.MaxColor;
+
+                foreach (ProjectItem item in newElement.Items)
+                {
+                    if (item.FileHandler?.FileModel is PaletteModel paletteModel)
+                    {
+                        SaveToPaletteModel(paletteModel, arrayOfColors.GetRange(colorRangeIndex, numberOfColors));
+
+                        item.FileHandler?.Save();
+
+                        colorRangeIndex += PaletteModel.MaxColor;
+
+                        // in case the array of colors is less than the next 16 colors for the next palette,
+                        // then only pick the rest of the colors instead of the 16
+                        if (colorRangeIndex + PaletteModel.MaxColor > arrayOfColors.Count)
+                        {
+                            numberOfColors = arrayOfColors.Count - colorRangeIndex;
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -133,7 +133,7 @@ public class ProjectItem : ViewModel, IClipboardable
         {
             if (_displayName != value)
             {
-                bool changedName = !string.IsNullOrEmpty(_displayName);
+                bool isNameChanged = !string.IsNullOrEmpty(_displayName);
 
                 string oldName = _displayName;
 
@@ -141,7 +141,7 @@ public class ProjectItem : ViewModel, IClipboardable
 
                 OnPropertyChanged(nameof(DisplayName));
 
-                if (changedName)
+                if (isNameChanged)
                 {
                     if (!RenamedFromAction)
                     {

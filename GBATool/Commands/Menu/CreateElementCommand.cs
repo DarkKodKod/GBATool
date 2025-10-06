@@ -51,6 +51,6 @@ public class CreateElementCommand : Command
 
         SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
 
-        ProjectItemFileSystem.CreateFileElement(newElement, element.Path, name);
+        ProjectItemFileSystem.CreateElement(newElement, element.Path, name);
     }
 }

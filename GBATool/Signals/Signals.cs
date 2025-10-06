@@ -128,8 +128,7 @@ public class RemoveSpriteSelectionFromBank : Signal { }
 public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
 public class ReturnTransparentColorFromBankSignal : Signal<Color> { }
-public class TryCreatePaletteElementSignal : Signal<string, List<Color>, BitsPerPixel> { }
-public class PaletteCreatedSuccessfullySignal : Signal<PaletteModel> { }
+public class TryCreatePaletteElementSignal : Signal<string, List<Color>> { }
 
 // Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }

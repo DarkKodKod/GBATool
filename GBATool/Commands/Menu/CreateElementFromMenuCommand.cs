@@ -63,6 +63,6 @@ public class CreateElementFromMenuCommand : ItemSelectedCommand
 
         SignalManager.Get<CreateNewElementSignal>().Dispatch(newElement);
 
-        ProjectItemFileSystem.CreateFileElement(newElement, path, name);
+        ProjectItemFileSystem.CreateElement(newElement, path, name);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Nett;
+﻿using GBATool.Enums;
+using Nett;
 using System.Linq;
 using System.Windows;
 
@@ -7,6 +8,8 @@ namespace GBATool.Models;
 public class PaletteModel : AFileModel
 {
     private const string _extensionKey = "extensionPalettes";
+
+    public static int MaxColor = BitsPerPixel.f4bpp.GetNumberOfColors();
 
     [TomlIgnore]
     public override string FileExtension
@@ -22,5 +25,5 @@ public class PaletteModel : AFileModel
         }
     }
 
-    public int[] Colors { get; set; } = [.. Enumerable.Repeat(0, 16)];
+    public int[] Colors { get; set; } = [.. Enumerable.Repeat(0, MaxColor)];
 }

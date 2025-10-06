@@ -764,7 +764,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         {
             if (!string.IsNullOrEmpty(name))
             {
-                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray, bitPerPixel);
+                SignalManager.Get<TryCreatePaletteElementSignal>().Dispatch(name, colorArray);
             }
         }
     }

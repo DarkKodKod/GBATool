@@ -465,7 +465,7 @@
             </Grid.ColumnDefinitions>
             <TreeView Name="tvProjectItems" Grid.Column="1" ItemsSource="{Binding ProjectItems}" PreviewMouseRightButtonDown="TreeView_PreviewMouseRightButtonDown" AllowDrop="True">
                 <i:Interaction.Behaviors>
-                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseLeftButtonDownCommand}" Event="PreviewMouseLeftButtonDown"  PassArguments="True"/>
+                    <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseLeftButtonDownCommand}" Event="PreviewMouseLeftButtonDown" PassArguments="True"/>
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseLeftButtonUpCommand}" Event="PreviewMouseLeftButtonUp" PassArguments="True" />
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand, Mode=OneWay}" Event="PreviewMouseMove" PassArguments="True" />
                     <behaviors:EventToCommandBehavior Command="{Binding DropCommand}" Event="PreviewDrop" PassArguments="True" />

@@ -14,7 +14,7 @@ public class PreviewMouseLeftButtonDownCommand : Command
     {
         if (parameter is MouseButtonEventArgs mouseEvent)
         {
-            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)mouseEvent.OriginalSource);
+            TreeViewItem? treeViewItem = Util.FindAncestor<TreeViewItem>((DependencyObject)mouseEvent.Source);
 
             Point position = mouseEvent.GetPosition(treeViewItem);
 

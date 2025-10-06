@@ -22,7 +22,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
 
     #region get/set
     public OutputFormat SelectedOutputFormat
-    { 
+    {
         get { return _selectedOutputFormat; }
         set
         {

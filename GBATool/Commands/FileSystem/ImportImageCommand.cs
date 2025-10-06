@@ -134,7 +134,7 @@ public class ImportImageCommand : Command
 
         SignalManager.Get<FindAndCreateElementSignal>().Dispatch(newElement);
 
-        ProjectItemFileSystem.CreateFileElement(newElement, path, name);
+        ProjectItemFileSystem.CreateElement(newElement, path, name);
 
         return newElement;
     }

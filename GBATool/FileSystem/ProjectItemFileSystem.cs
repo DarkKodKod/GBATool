@@ -188,36 +188,27 @@ public static class ProjectItemFileSystem
 
     public static void CreateElement(ProjectItem item, string path, string name)
     {
-        if (item.IsFolder)
+        if (item.Items.Count > 0)
         {
-            CreateFolderElement(item, path, name);
-        }
-        else
-        {
-            CreateFileElement(item, path, name);
-        }
-    }
+            string folderPath = Path.Combine(path, name);
 
-    private static void CreateFolderElement(ProjectItem item, string path, string name)
-    {
-        string folderPath = Path.Combine(path, name);
-
-        foreach (ProjectItem itm in item.Items)
-        {
-            if (itm.IsFolder)
+            foreach (ProjectItem itm in item.Items)
             {
-                CreateFolderElement(itm, folderPath, itm.DisplayName);
-            }
-            else
-            {
-                CreateFileElement(itm, folderPath, itm.DisplayName);
+                if (itm.IsFolder)
+                {
+                    CreateElement(itm, folderPath, itm.DisplayName);
+                }
+                else
+                {
+                    CreateFileElement(itm, folderPath, itm.DisplayName);
+                }
             }
         }
 
         CreateFileElement(item, path, name);
     }
 
-    public static void CreateFileElement(ProjectItem item, string path, string name)
+    private static void CreateFileElement(ProjectItem item, string path, string name)
     {
         item.FileHandler = new FileHandler() { Name = name, Path = path };
 
