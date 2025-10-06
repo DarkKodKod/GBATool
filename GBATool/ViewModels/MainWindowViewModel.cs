@@ -560,7 +560,7 @@ public class MainWindowViewModel : ViewModel
 
         // Fill the models with data
         {
-            void SaveToPaletteModel(PaletteModel paletteModel, List<Color> colors)
+            static void SaveToPaletteModel(PaletteModel paletteModel, List<Color> colors)
             {
                 int[] colorList = paletteModel.Colors;
 

@@ -9,7 +9,7 @@ public class PaletteModel : AFileModel
 {
     private const string _extensionKey = "extensionPalettes";
 
-    public static int MaxColor = BitsPerPixel.f4bpp.GetNumberOfColors();
+    public static readonly int MaxColor = BitsPerPixel.f4bpp.GetNumberOfColors();
 
     [TomlIgnore]
     public override string FileExtension
