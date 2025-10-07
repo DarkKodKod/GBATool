@@ -57,8 +57,6 @@ public sealed class BuildPalettes : Building<BuildPalettes>
                 continue;
             }
 
-            string name;
-
             string[] array = vo.Path.Split(Path.DirectorySeparatorChar);
             int index = Array.IndexOf(array, folderPalettes);
 
@@ -69,7 +67,7 @@ public sealed class BuildPalettes : Building<BuildPalettes>
                 sb.Append('_');
             }
 
-            name = $"palette_{sb}{vo.Name.Replace(' ', '_').ToLower()}";
+            string name = $"palette_{sb}{vo.Name.Replace(' ', '_').ToLower()}";
 
             pals.Add(name, model.Colors);
 
