@@ -57,7 +57,7 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
             if (!ret)
             {
-                AddError($"No palette configure for bank {vo.Name}");
+                AddWarning($"No palette configure for bank [{vo.Name}], is going to be skipped");
                 continue;
             }
 
