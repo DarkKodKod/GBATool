@@ -1,4 +1,5 @@
 ﻿using GBATool.Models;
+using GBATool.Utils;
 using GBATool.VOs;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -24,7 +25,8 @@ public static class ProjectFiles
                     Index = index++,
                     Name = pair.Value.Name,
                     Path = pair.Value.Path,
-                    Model = model
+                    Model = model,
+                    Type = Util.GetItemType(pair.Value.FileModel?.FileExtension)
                 });
             }
         }
@@ -67,7 +69,8 @@ public static class ProjectFiles
                     Index = 0,
                     Name = pair.Value.Name,
                     Path = pair.Value.Path,
-                    Model = pair.Value.FileModel
+                    Model = pair.Value.FileModel,
+                    Type = Util.GetItemType(pair.Value.FileModel?.FileExtension)
                 };
             }
         }

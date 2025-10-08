@@ -117,7 +117,7 @@
                     <ComboBox Width="150" Grid.Row="0"
                               Margin="15"
                               ItemsSource="{Binding Palettes}" 
-                              DisplayMemberPath="Name"
+                              DisplayMemberPath="FullName"
                               SelectedValuePath="Index"
                               SelectedValue="{Binding Path=SelectedPalette}">
                         <i:Interaction.Behaviors>

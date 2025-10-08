@@ -47,8 +47,36 @@ public static class Util
         };
     }
 
-    public static ProjectItemType GetItemType(string extension)
+    public static string? GetFolderByType(ProjectItemType? type)
     {
+        string folderBanks = (string)Application.Current.FindResource(_folderBanksKey);
+        string folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
+        string folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
+        string folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
+        string folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
+        string folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
+        string folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
+
+        return type switch
+        {
+            ProjectItemType.Bank => folderBanks,
+            ProjectItemType.Character => folderCharacters,
+            ProjectItemType.Map => folderMaps,
+            ProjectItemType.TileSet => folderTileSets,
+            ProjectItemType.Palette => folderPalettes,
+            ProjectItemType.World => folderWorlds,
+            ProjectItemType.Entity => folderEntities,
+            _ => null,
+        };
+    }
+
+    public static ProjectItemType GetItemType(string? extension)
+    {
+        if (string.IsNullOrEmpty(extension))
+        {
+            return ProjectItemType.None;
+        }
+
         string extensionBanks = (string)Application.Current.FindResource(_extensionBanksKey);
         string extensionCharacters = (string)Application.Current.FindResource(_extensionCharactersKey);
         string extensionMaps = (string)Application.Current.FindResource(_extensionMapsKey);
