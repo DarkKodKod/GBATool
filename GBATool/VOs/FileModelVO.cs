@@ -14,7 +14,7 @@ public class FileModelVO : INotifyPropertyChanged
     public string? Path { get; set; }
     public string? Name
     {
-        get { return _name; }
+        get => _name;
         set
         {
             if (_name != value)

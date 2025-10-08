@@ -1,5 +1,6 @@
 ﻿using GBATool.Enums;
 using Nett;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
@@ -26,4 +27,5 @@ public class PaletteModel : AFileModel
     }
 
     public int[] Colors { get; set; } = [.. Enumerable.Repeat(0, MaxColor)];
+    public List<string> LinkedPalettes { get; set; } = [];
 }

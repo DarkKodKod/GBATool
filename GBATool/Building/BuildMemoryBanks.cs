@@ -53,7 +53,9 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
                 continue;
             }
 
-            bool ret = GetPaletteIfExistInCharacters(bank, out List<Color> palette);
+            List<Color> palette = [];
+
+            bool ret = GetPaletteIfExistInCharacters(bank, ref palette);
 
             if (!ret)
             {
@@ -111,9 +113,15 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
         return GetErrors().Length == 0;
     }
 
-    private static bool GetPaletteIfExistInCharacters(BankModel bank, out List<Color> palette)
+    private static bool GetPaletteIfExistInCharacters(BankModel bank, ref List<Color> palette)
     {
-        palette = [];
+        static void FillColorsFromPaletteModel(PaletteModel model, ref List<Color> palette)
+        {
+            for (int i = 0; i < model.Colors.Length; i++)
+            {
+                palette.Add(PaletteUtils.GetColorFromInt(model.Colors[i]));
+            }
+        }
 
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 
@@ -139,9 +147,21 @@ public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 
                         if (paletteModel != null)
                         {
-                            for (int i = 0; i < paletteModel.Colors.Length; i++)
+                            if (paletteModel.LinkedPalettes.Count > 0)
                             {
-                                palette.Add(PaletteUtils.GetColorFromInt(paletteModel.Colors[i]));
+                                foreach (string id in paletteModel.LinkedPalettes)
+                                {
+                                    PaletteModel? model = ProjectFiles.GetModel<PaletteModel>(id);
+
+                                    if (model != null)
+                                    {
+                                        FillColorsFromPaletteModel(model, ref palette);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                FillColorsFromPaletteModel(paletteModel, ref palette);
                             }
 
                             return true;

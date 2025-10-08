@@ -585,6 +585,19 @@ public class MainWindowViewModel : ViewModel
             }
             else
             {
+                List<string> palettesInGroup = [];
+
+                // get all of the palettes in this group
+                foreach (ProjectItem item in newElement.Items)
+                {
+                    string? id = item.FileHandler?.FileModel?.GUID;
+
+                    if (id != null)
+                    {
+                        palettesInGroup.Add(id);
+                    }
+                }
+
                 int colorRangeIndex = 0;
                 int numberOfColors = PaletteModel.MaxColor;
 
@@ -592,6 +605,8 @@ public class MainWindowViewModel : ViewModel
                 {
                     if (item.FileHandler?.FileModel is PaletteModel paletteModel)
                     {
+                        paletteModel.LinkedPalettes = palettesInGroup;
+
                         SaveToPaletteModel(paletteModel, arrayOfColors.GetRange(colorRangeIndex, numberOfColors));
 
                         item.FileHandler?.Save();

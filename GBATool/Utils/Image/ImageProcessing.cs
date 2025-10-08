@@ -99,5 +99,6 @@ public static class ImageProcessing
 
     private static void Set8BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
+        output[pixelIndex] = (byte)colorIndex;
     }
 }
