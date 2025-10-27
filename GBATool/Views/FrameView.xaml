@@ -49,6 +49,11 @@
                 X2="{Binding VerticalLineXPos}" Y2="152"
                 Stroke="Red"
                 StrokeThickness="0.5" />
+            <Line
+                X1="0" Y1="{Binding SpriteBase}"
+                X2="152" Y2="{Binding SpriteBase}"
+                Stroke="Green"
+                StrokeThickness="0.5" />
             <Path 
                 Data="{Binding CrossData}" 
                 Stroke="Black"

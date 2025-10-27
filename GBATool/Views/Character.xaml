@@ -13,7 +13,7 @@
              xmlns:b="clr-namespace:GBATool.Utils"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
-             d:DesignHeight="720" d:DesignWidth="1350">
+             d:DesignHeight="720" d:DesignWidth="1400">
     <UserControl.DataContext>
         <vm:CharacterViewModel x:Name="vmCharacterModel"/>
     </UserControl.DataContext>
@@ -149,6 +149,8 @@
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
                     <Label VerticalAlignment="Center" Margin="5,15,0,15" Grid.Column="0">RelativeOrigin:</Label>
                     <TextBox VerticalAlignment="Center" 
@@ -175,6 +177,17 @@
                              Grid.Column="4"
                              Margin="0,0,10,0"
                              Text="{Binding VerticalAxis, Mode=TwoWay}"
+                             PreviewTextInput="NumberValidationTextBox"
+                             MaxLength="3"
+                             HorizontalAlignment="Left"
+                             TextWrapping="NoWrap"
+                             b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
+                    <Label VerticalAlignment="Center" Margin="10,0,0,0" Grid.Column="5">Base:</Label>
+                    <TextBox VerticalAlignment="Center" 
+                             Width="25" 
+                             Grid.Column="6"
+                             Margin="0,0,10,0"
+                             Text="{Binding SpriteBase, Mode=TwoWay}"
                              PreviewTextInput="NumberValidationTextBox"
                              MaxLength="3"
                              HorizontalAlignment="Left"

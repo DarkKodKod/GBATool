@@ -220,6 +220,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         SignalManager.Get<UpdateOriginPositionSignal>().Dispatch((int)model.RelativeOrigin.X, (int)model.RelativeOrigin.Y);
         SignalManager.Get<UpdateVerticalAxisSignal>().Dispatch(model.VerticalAxis);
+        SignalManager.Get<UpdateSpriteBaseSignal>().Dispatch(model.SpriteBase);
 
         (_, List<SpriteControlVO>? previousSprites, _) = LoadSpritesFromFrame(animation, PreviousFrameID);
 

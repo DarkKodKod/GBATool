@@ -151,8 +151,10 @@ public sealed class BuildMetaSprites : Building<BuildMetaSprites>
             await outputFile.WriteLineAsync($"    db 0x{frameNames.Count:X2} ; decimal {frameNames.Count}");
             await outputFile.WriteLineAsync($"    ; frame duration");
             await outputFile.WriteLineAsync($"    db 0x{frameDuration:X2} ; decimal {frameDuration}");
-            await outputFile.WriteLineAsync($"    ; Empty");
-            await outputFile.WriteLineAsync($"    db 0x00, 0x00");
+            await outputFile.WriteLineAsync($"    ; base position");
+            await outputFile.WriteLineAsync($"    db 0x{model.SpriteBase:X2} ; decimal {model.SpriteBase}");
+            await outputFile.WriteLineAsync($"    ; padding");
+            await outputFile.WriteLineAsync($"    db 0x00");
             await outputFile.WriteLineAsync($"    ; pointer to the first frame");
             await outputFile.WriteLineAsync($"    dw {frameNames.First()}");
 

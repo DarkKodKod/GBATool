@@ -71,8 +71,9 @@ public class CharacterModel : AFileModel
 
     public Point RelativeOrigin { get; set; }
     public int VerticalAxis { get; set; }
+    public int SpriteBase { get; set; }
     public string PaletteID { get; set; } = string.Empty;
-    public int PaletteIndex { get; set; } = 0;
+    public int PaletteIndex { get; set; }
     public Priority Priority { get; set; } = Priority.Highest;
     public Dictionary<string, CharacterAnimation> Animations { get; set; } = [];
 }

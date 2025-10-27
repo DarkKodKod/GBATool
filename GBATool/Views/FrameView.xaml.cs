@@ -11,7 +11,8 @@ namespace GBATool.Views;
 /// </summary>
 public partial class FrameView : UserControl, INotifyPropertyChanged
 {
-    private int _verticalLineXPos = 0;
+    private int _verticalLineXPos;
+    private int _spriteBase;
     private string _crossData = string.Empty;
     private string _originGuide = string.Empty;
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -45,6 +46,17 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         }
     }
 
+    public int SpriteBase
+    {
+        get => _spriteBase;
+        set
+        {
+            _spriteBase = value;
+
+            OnPropertyChanged(nameof(SpriteBase));
+        }
+    }
+
     public int VerticalLineXPos
     {
         get => _verticalLineXPos;
@@ -67,6 +79,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         #region Signals
         SignalManager.Get<UpdateVerticalAxisSignal>().Listener += OnUpdateVerticalAxis;
         SignalManager.Get<UpdateOriginPositionSignal>().Listener += OnUpdateOriginPosition;
+        SignalManager.Get<UpdateSpriteBaseSignal>().Listener += OnUpdateSpriteBase;
         #endregion
 
         SetCrossPosition(0, 0);
@@ -77,6 +90,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         #region Signals
         SignalManager.Get<UpdateVerticalAxisSignal>().Listener -= OnUpdateVerticalAxis;
         SignalManager.Get<UpdateOriginPositionSignal>().Listener -= OnUpdateOriginPosition;
+        SignalManager.Get<UpdateSpriteBaseSignal>().Listener -= OnUpdateSpriteBase;
         #endregion
     }
 
@@ -101,6 +115,11 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     private void OnUpdateVerticalAxis(int value)
     {
         VerticalLineXPos = value;
+    }
+
+    private void OnUpdateSpriteBase(int value)
+    {
+        SpriteBase = value;
     }
 
     private void OnUpdateOriginPosition(int posX, int posY)

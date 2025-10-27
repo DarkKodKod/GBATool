@@ -28,6 +28,7 @@ public class CharacterViewModel : ItemViewModel
     private int[] _indices = new int[16];
     private int _relativeOriginX;
     private int _relativeOriginY;
+    private int _spriteBase;
     private int _verticalAxis;
 
     #region Commands
@@ -75,6 +76,19 @@ public class CharacterViewModel : ItemViewModel
             OnPropertyChanged(nameof(RelativeOriginY));
 
             UpdateOriginPosition(RelativeOriginX, value);
+        }
+    }
+
+    public int SpriteBase
+    {
+        get => _spriteBase;
+        set
+        {
+            _spriteBase = value;
+
+            OnPropertyChanged(nameof(SpriteBase));
+
+            UpdateSpriteBase(value);
         }
     }
 
@@ -354,6 +368,25 @@ public class CharacterViewModel : ItemViewModel
         Point newPos = new(posX, posY);
 
         model.RelativeOrigin = newPos;
+
+        if (_doNotSave)
+            return;
+
+        Save();
+    }
+
+    private void UpdateSpriteBase(int value)
+    {
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        SignalManager.Get<UpdateSpriteBaseSignal>().Dispatch(value);
+
+        model.SpriteBase = value;
 
         if (_doNotSave)
             return;
