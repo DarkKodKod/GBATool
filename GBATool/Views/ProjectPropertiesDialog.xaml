@@ -11,7 +11,7 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:enum="clr-namespace:GBATool.Enums"
         mc:Ignorable="d"
-        Title="Project properties" Height="330" Width="500"
+        Title="Project properties" Height="420" Width="450"
         ShowInTaskbar="False"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Window.DataContext>
@@ -29,26 +29,66 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="1" Header="Global configuration" Margin="5" Padding="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Output file formats:" Margin="5" Padding="5">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label Content="Output files format:" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <Label Content="Header:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <ComboBox Grid.Column="1" 
+                          Grid.Row="0"
                           HorizontalAlignment="Left" VerticalAlignment="Center" 
                           Width="120" 
                           DisplayMemberPath="Description"
                           ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
                           SelectedValue="{Binding Path=SelectedOutputFormat}"
                           SelectedValuePath="Value"/>
+                <Label Content="Palettes:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ComboBox Grid.Column="1" 
+                          Grid.Row="1"
+                          HorizontalAlignment="Left" VerticalAlignment="Center" 
+                          Width="120" 
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
+                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValuePath="Value"/>
+                <Label Content="Characters:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ComboBox Grid.Column="1" 
+                          Grid.Row="2"
+                          HorizontalAlignment="Left" VerticalAlignment="Center" 
+                          Width="120" 
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
+                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValuePath="Value"/>
+                <Label Content="Screenblock :" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <ComboBox Grid.Column="1" 
+                          Grid.Row="3"
+                          HorizontalAlignment="Left" VerticalAlignment="Center" 
+                          Width="120" 
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormatScreenBlock}}}"
+                          SelectedValue="{Binding Path=SelectedOutputFormatScreenBlock}"
+                          SelectedValuePath="Value"/>
             </Grid>
         </GroupBox>
-        <GroupBox Grid.Row="2" Header="Game properties" Margin="5" Padding="5">
+        <GroupBox Grid.Row="3" Grid.Column="1" Header="Game properties" Margin="5" Padding="5">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
@@ -121,6 +161,6 @@
                             b:TextInputBindingManager.UpdatePropertySourceWhenEnterPressed="TextBox.Text"/>
             </Grid>
         </GroupBox>
-        <Button Grid.Row="3" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
+        <Button Grid.Row="4" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
     </Grid>
 </Window>

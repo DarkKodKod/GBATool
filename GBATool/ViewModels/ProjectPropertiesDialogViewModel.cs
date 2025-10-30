@@ -15,6 +15,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
     private bool _changed = false;
     private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
     private OutputFormat _selectedOutputFormat = OutputFormat.Fasmarm;
+    private OutputFormatScreenBlock _selectedOutputFormatScreenBlock = OutputFormatScreenBlock.Binary;
     private string _projectTitle = string.Empty;
     private int _softwareVersion = 0;
     private string _projectInitials = string.Empty;
@@ -28,6 +29,18 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         {
             _selectedOutputFormat = value;
             OnPropertyChanged(nameof(SelectedOutputFormat));
+
+            _changed = true;
+        }
+    }
+
+    public OutputFormatScreenBlock SelectedOutputFormatScreenBlock
+    {
+        get { return _selectedOutputFormatScreenBlock; }
+        set
+        {
+            _selectedOutputFormatScreenBlock = value;
+            OnPropertyChanged(nameof(SelectedOutputFormatScreenBlock));
 
             _changed = true;
         }

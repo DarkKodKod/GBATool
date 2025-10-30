@@ -34,3 +34,9 @@ public enum OutputFormat
     [Description("FASMARM")]
     Fasmarm = 0
 }
+
+public enum OutputFormatScreenBlock
+{
+    [Description("Binary")]
+    Binary = 0
+}
