@@ -218,7 +218,7 @@ public partial class CharacterFrameEditorView : UserControl
         {
             if (_spritesInFrames.TryGetValue(sprite.Image, out SpriteControlVO? spriteControl))
             {
-                SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Dispatch(spriteControl.ID);
+                SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Dispatch([spriteControl.ID]);
 
                 _ = _spritesInFrames.Remove(sprite.Image);
             }
@@ -610,72 +610,85 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (viewModel.SelectedFrameSprite.Length > 0)
         {
-            List<Image> images = GetSelectionMouseOver(frameViewView.canvas, positionInCanvas);
+            DragImages(frameViewView.canvas, positionInCanvas, viewModel.SelectedFrameSprite, (DependencyObject)e.Source);
+        }
+        else
+        {
+            UpdateMouseSelectionArea(frameViewView, positionInCanvas);
+        }
+    }
 
-            if (images.Count > 0)
+    private void DragImages(Canvas canvas, Point positionInCanvas, string[] selectedFrameSprites, DependencyObject dragSource)
+    {
+        List<Image> images = GetSelectionMouseOver(canvas, positionInCanvas);
+
+        if (images.Count == 0)
+        {
+            return;
+        }
+
+        if (!_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? leadControl))
+        {
+            return;
+        }
+
+        if (leadControl == null)
+        {
+            return;
+        }
+
+        if (selectedFrameSprites.Length == 1)
+        {
+            DataObject data = new(leadControl);
+
+            double imagePosX = Canvas.GetLeft(leadControl.Image);
+            double imagePosY = Canvas.GetTop(leadControl.Image);
+
+            _spriteOffsetX = positionInCanvas.X - imagePosX;
+            _spriteOffsetY = positionInCanvas.Y - imagePosY;
+
+            DragDropEffects result = DragDrop.DoDragDrop(dragSource, data, DragDropEffects.Move);
+
+            if (result == DragDropEffects.None)
             {
-                if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
-                {
-                    if (spriteControl != null)
-                    {
-                        if (viewModel.SelectedFrameSprite.Length == 1)
-                        {
-                            DataObject data = new(spriteControl);
+                SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Dispatch([leadControl.ID]);
 
-                            double imagePosX = Canvas.GetLeft(spriteControl.Image);
-                            double imagePosY = Canvas.GetTop(spriteControl.Image);
-
-                            _spriteOffsetX = positionInCanvas.X - imagePosX;
-                            _spriteOffsetY = positionInCanvas.Y - imagePosY;
-
-                            DragDropEffects result = DragDrop.DoDragDrop((DependencyObject)e.Source, data, DragDropEffects.Move);
-
-                            if (result == DragDropEffects.None)
-                            {
-                                SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Dispatch(spriteControl.ID);
-
-                                if (spriteControl.Image != null)
-                                {
-                                    _ = _spritesInFrames.Remove(images.First());
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Move when there are move than one selected
-                        }
-                    }
-                }
+                _ = _spritesInFrames.Remove(images.First());
             }
         }
         else
         {
-            if (frameViewView.MouseSelectionActive == Visibility.Hidden)
-            {
-                frameViewView.MouseSelectionActive = Visibility.Visible;
-            }
+            // Move when there are move than one selected
+        }
+    }
 
-            if (_initialMousePositionInCanvas.X < positionInCanvas.X)
-            {
-                frameViewView.MouseSelectionOriginX = (int)_initialMousePositionInCanvas.X;
-                frameViewView.MouseSelectionWidth = (int)(positionInCanvas.X - _initialMousePositionInCanvas.X);
-            }
-            else
-            {
-                frameViewView.MouseSelectionOriginX = (int)positionInCanvas.X;
-                frameViewView.MouseSelectionWidth = (int)(_initialMousePositionInCanvas.X - positionInCanvas.X);
-            }
+    private void UpdateMouseSelectionArea(FrameView frameViewView, Point positionInCanvas)
+    {
+        if (frameViewView.MouseSelectionActive == Visibility.Hidden)
+        {
+            frameViewView.MouseSelectionActive = Visibility.Visible;
+        }
 
-            if (_initialMousePositionInCanvas.Y < positionInCanvas.Y)
-            {
-                frameViewView.MouseSelectionOriginY = (int)(_initialMousePositionInCanvas.Y);
-                frameViewView.MouseSelectionHeight = (int)(positionInCanvas.Y - _initialMousePositionInCanvas.Y);
-            }
-            else
-            {
-                frameViewView.MouseSelectionOriginY = (int)(positionInCanvas.Y);
-                frameViewView.MouseSelectionHeight = (int)(_initialMousePositionInCanvas.Y - positionInCanvas.Y);
-            }
+        if (_initialMousePositionInCanvas.X < positionInCanvas.X)
+        {
+            frameViewView.MouseSelectionOriginX = (int)_initialMousePositionInCanvas.X;
+            frameViewView.MouseSelectionWidth = (int)(positionInCanvas.X - _initialMousePositionInCanvas.X);
+        }
+        else
+        {
+            frameViewView.MouseSelectionOriginX = (int)positionInCanvas.X;
+            frameViewView.MouseSelectionWidth = (int)(_initialMousePositionInCanvas.X - positionInCanvas.X);
+        }
+
+        if (_initialMousePositionInCanvas.Y < positionInCanvas.Y)
+        {
+            frameViewView.MouseSelectionOriginY = (int)(_initialMousePositionInCanvas.Y);
+            frameViewView.MouseSelectionHeight = (int)(positionInCanvas.Y - _initialMousePositionInCanvas.Y);
+        }
+        else
+        {
+            frameViewView.MouseSelectionOriginY = (int)(positionInCanvas.Y);
+            frameViewView.MouseSelectionHeight = (int)(_initialMousePositionInCanvas.Y - positionInCanvas.Y);
         }
     }
 

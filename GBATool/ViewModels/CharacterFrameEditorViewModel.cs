@@ -191,7 +191,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<SelectFrameSpritesSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         #endregion
 
@@ -329,7 +329,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<SelectFrameSpritesSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         #endregion
     }
@@ -377,7 +377,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         FileHandler?.Save();
     }
 
-    private void OnDeleteSpriteFromCharacterFrame(string spriteID)
+    private void OnDeleteSpriteFromCharacterFrame(string[] spriteIDs)
     {
         var model = CharacterModel;
 
@@ -398,7 +398,17 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
 
-        if (frame.Tiles.Remove(spriteID))
+        bool anyDeletion = false;
+
+        for (int i = 0; i < spriteIDs.Length; i++)
+        {
+            if (frame.Tiles.Remove(spriteIDs[i]))
+            {
+                anyDeletion = true;
+            }
+        }
+
+        if (anyDeletion)
         {
             FileHandler?.Save();
         }
