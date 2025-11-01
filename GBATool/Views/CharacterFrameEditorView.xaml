@@ -94,10 +94,10 @@
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <CheckBox IsChecked="{Binding FlipX, Mode=TwoWay}" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
-                            <CheckBox IsChecked="{Binding FlipY, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
+                            <CheckBox IsChecked="false" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
+                            <CheckBox IsChecked="false" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
                         </StackPanel>
-                        <CheckBox IsChecked="{Binding BackBackground, Mode=TwoWay}" HorizontalAlignment="Left" Grid.Row="2">Back background</CheckBox>
+                        <CheckBox IsChecked="false" HorizontalAlignment="Left" Grid.Row="2">Back background</CheckBox>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" Padding="10">
