@@ -24,7 +24,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private int _frameIndex;
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
-    private string _selectedFrameSprite = string.Empty;
+    private string[] _selectedFrameSprite = [];
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
     private bool _dontSave = false;
@@ -35,7 +35,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     #endregion
 
     #region get/set
-    public string SelectedFrameSprite
+    public string[] SelectedFrameSprite
     {
         get => _selectedFrameSprite;
         set
@@ -190,10 +190,9 @@ public class CharacterFrameEditorViewModel : ViewModel
         base.OnActivate();
 
         #region Signals
-        SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
-        SignalManager.Get<SelectFrameSpriteSignal>().Listener += OnSelectFrameSprite;
+        SignalManager.Get<SelectFrameSpritesSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
@@ -313,9 +312,16 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
     }
 
-    private void OnSelectFrameSprite(SpriteControlVO sprite)
+    private void OnSelectFrameSprites(SpriteControlVO[] sprites)
     {
-        SelectedFrameSprite = sprite.ID;
+        List<string> spritesIDs = [];
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            spritesIDs.Add(sprites[i].ID);
+        }
+
+        SelectedFrameSprite = [.. spritesIDs];
     }
 
     public override void OnDeactivate()
@@ -323,10 +329,9 @@ public class CharacterFrameEditorViewModel : ViewModel
         base.OnDeactivate();
 
         #region Signals
-        SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
-        SignalManager.Get<SelectFrameSpriteSignal>().Listener -= OnSelectFrameSprite;
+        SignalManager.Get<SelectFrameSpritesSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpriteFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
@@ -401,11 +406,6 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             FileHandler?.Save();
         }
-    }
-
-    private void OnUpdateCharacterImage()
-    {
-        // todo
     }
 
     private void OnFileModelVOSelectionChanged(FileModelVO fileModel)

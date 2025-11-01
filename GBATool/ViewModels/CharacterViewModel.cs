@@ -217,6 +217,8 @@ public class CharacterViewModel : ItemViewModel
         VerticalAxis = model.VerticalAxis;
         Point origin = model.RelativeOrigin;
 
+        SpriteBase = model.SpriteBase;
+
         RelativeOriginX = (int)origin.X;
         RelativeOriginY = (int)origin.Y;
 

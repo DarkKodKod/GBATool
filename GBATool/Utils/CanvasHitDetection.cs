@@ -5,35 +5,38 @@ using System.Windows.Media;
 
 namespace GBATool.Utils;
 
-public class CanvasHitDetection<Element>(EllipseGeometry hitArea, Canvas canvas) where Element : DependencyObject, new()
+public class CanvasHitDetection<TElement, TGeometry>(TGeometry hitArea, Canvas canvas)
+    where TElement : DependencyObject, new()
+    where TGeometry : Geometry, new()
 {
-    private readonly EllipseGeometry _hitArea = hitArea;
+    private readonly TGeometry _hitArea = hitArea;
     private readonly Canvas _canvas = canvas;
 
-    public List<Element> HitTest()
+    public List<TElement> HitTest()
     {
-        List<Element> hitList = [];
+        List<TElement> hitList = [];
 
         VisualTreeHelper.HitTest(_canvas,
                 new HitTestFilterCallback(o =>
                 {
-                    if (o.GetType() == typeof(Element))
+                    if (o.GetType() == typeof(TElement))
                         return HitTestFilterBehavior.ContinueSkipChildren;
                     else
                         return HitTestFilterBehavior.Continue;
                 }),
                 new HitTestResultCallback(result =>
                 {
-                    if (result?.VisualHit is Element)
+                    if (result?.VisualHit is TElement)
                     {
                         IntersectionDetail intersectionDetail = ((GeometryHitTestResult)result).IntersectionDetail;
-                        if (intersectionDetail == IntersectionDetail.FullyContains)
+                        if (intersectionDetail == IntersectionDetail.FullyContains ||
+                            intersectionDetail == IntersectionDetail.FullyInside ||
+                            intersectionDetail == IntersectionDetail.Intersects)
                         {
-                            hitList.Add((Element)result.VisualHit);
+                            hitList.Add((TElement)result.VisualHit);
                             return HitTestResultBehavior.Continue;
                         }
-                        else if (intersectionDetail != IntersectionDetail.Intersects &&
-                            intersectionDetail != IntersectionDetail.FullyInside)
+                        else
                         {
                             return HitTestResultBehavior.Stop;
                         }

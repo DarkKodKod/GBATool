@@ -2,6 +2,7 @@
 using GBATool.Commands.Utils;
 using GBATool.Signals;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GBATool.Views;
@@ -15,6 +16,11 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     private int _spriteBase;
     private string _crossData = string.Empty;
     private string _originGuide = string.Empty;
+    private Visibility _mouseSelectionActive;
+    private int _mouseSelectionOriginX;
+    private int _mouseSelectionOriginY;
+    private int _mouseSelectionWidth;
+    private int _mouseSelectionHeight;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #region Commands
@@ -23,6 +29,61 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
 
     #region get/set
     public Canvas Canvas { get => canvas; }
+
+    public Visibility MouseSelectionActive
+    {
+        get => _mouseSelectionActive;
+        set
+        {
+            _mouseSelectionActive = value;
+
+            OnPropertyChanged(nameof(MouseSelectionActive));
+        }
+    }
+
+    public int MouseSelectionOriginX
+    {
+        get => _mouseSelectionOriginX;
+        set
+        {
+            _mouseSelectionOriginX = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginX));
+        }
+    }
+
+    public int MouseSelectionOriginY
+    {
+        get => _mouseSelectionOriginY;
+        set
+        {
+            _mouseSelectionOriginY = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginY));
+        }
+    }
+
+    public int MouseSelectionWidth
+    {
+        get => _mouseSelectionWidth;
+        set
+        {
+            _mouseSelectionWidth = value;
+
+            OnPropertyChanged(nameof(MouseSelectionWidth));
+        }
+    }
+
+    public int MouseSelectionHeight
+    {
+        get => _mouseSelectionHeight;
+        set
+        {
+            _mouseSelectionHeight = value;
+
+            OnPropertyChanged(nameof(MouseSelectionHeight));
+        }
+    }
 
     public string OriginGuide
     {
@@ -83,6 +144,8 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         #endregion
 
         SetCrossPosition(0, 0);
+
+        MouseSelectionActive = Visibility.Hidden;
     }
 
     public void OnDeactivate()
@@ -92,6 +155,8 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<UpdateOriginPositionSignal>().Listener -= OnUpdateOriginPosition;
         SignalManager.Get<UpdateSpriteBaseSignal>().Listener -= OnUpdateSpriteBase;
         #endregion
+
+        MouseSelectionActive = Visibility.Hidden;
     }
 
     private void SetCrossPosition(int centerPosX, int centerPosY)

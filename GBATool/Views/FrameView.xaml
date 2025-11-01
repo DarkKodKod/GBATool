@@ -14,14 +14,13 @@
         <Canvas Width="232" Height="152" 
 		        Background="DarkGray"
                 RenderOptions.BitmapScalingMode="NearestNeighbor"
-                RenderOptions.EdgeMode="Aliased"
                 RenderTransform="4 0 0 4 -355 -230">
             <Image Width="232"
 	               Height="152"
                    Name="imgFrame"
 	               Stretch="UniformToFill">
                 <i:Interaction.Behaviors>
-                    <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True"  />
+                    <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
                 </i:Interaction.Behaviors>
             </Image>
             <Border>
@@ -48,20 +47,35 @@
                 X1="{Binding VerticalLineXPos}" Y1="0"
                 X2="{Binding VerticalLineXPos}" Y2="152"
                 Stroke="Red"
+                IsHitTestVisible="False"
                 StrokeThickness="0.5" />
             <Line
                 X1="0" Y1="{Binding SpriteBase}"
                 X2="152" Y2="{Binding SpriteBase}"
                 Stroke="Green"
+                IsHitTestVisible="False"
                 StrokeThickness="0.5" />
             <Path 
                 Data="{Binding CrossData}" 
                 Stroke="Black"
+                IsHitTestVisible="False"
                 StrokeThickness="0.5"/>
             <Path 
                 Data="{Binding OriginGuide}"
                 Stroke="Yellow"
+                IsHitTestVisible="False"
                 StrokeThickness="0.3"/>
+            <Rectangle
+                x:Name="recSelectedArea"
+                Visibility="{Binding MouseSelectionActive}"
+                Width="{Binding MouseSelectionWidth}"
+                Height="{Binding MouseSelectionHeight}"
+                Stroke="White"
+                IsHitTestVisible="False"
+                Canvas.Left="{Binding MouseSelectionOriginX}"
+                Canvas.Top="{Binding MouseSelectionOriginY}"
+                StrokeThickness="0.4"
+                StrokeDashArray="2,1" />
         </Canvas>
     </Grid>
 </UserControl>
