@@ -15,7 +15,7 @@ namespace GBATool.Views
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            Visibility = Visibility.Hidden;
+            Visibility = Visibility.Collapsed;
             e.Cancel = true;
         }
     }

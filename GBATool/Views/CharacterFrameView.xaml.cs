@@ -149,7 +149,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
             return;
         }
 
-        ImageVisibility = CharacterModel.Animations[AnimationID].Frames[FrameID].IsHeldFrame ? Visibility.Hidden : Visibility.Visible;
+        ImageVisibility = CharacterModel.Animations[AnimationID].Frames[FrameID].IsHeldFrame ? Visibility.Collapsed : Visibility.Visible;
 
         WriteableBitmap? image = CharacterUtils.GetFrameImageFromCache(CharacterModel, AnimationID, FrameID);
 

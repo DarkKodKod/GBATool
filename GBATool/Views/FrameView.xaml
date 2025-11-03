@@ -6,24 +6,22 @@
              xmlns:local="clr-namespace:GBATool.Views"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              mc:Ignorable="d" 
              d:DesignHeight="605" d:DesignWidth="925">
+    <UserControl.Resources>
+        <system:Double x:Key="canvasWidth">232</system:Double>
+        <system:Double x:Key="canvasHeight">152</system:Double>
+    </UserControl.Resources>
     <Grid>
-        <Canvas Width="232" Height="152" 
+        <Canvas Width="{StaticResource canvasWidth}" 
+                Height="{StaticResource canvasHeight}" 
 		        Background="DarkGray"
                 RenderOptions.BitmapScalingMode="NearestNeighbor"
                 RenderTransform="4 0 0 4 -355 -230">
-            <Image Width="232"
-	               Height="152"
-                   Name="imgFrame"
-	               Stretch="UniformToFill">
-                <i:Interaction.Behaviors>
-                    <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
-                </i:Interaction.Behaviors>
-            </Image>
-            <Border>
+            <Border IsHitTestVisible="False">
                 <Border.Background>
                     <VisualBrush TileMode="Tile"
 					             Viewport="0,0,8,8" ViewportUnits="Absolute" 
@@ -34,13 +32,10 @@
                     </VisualBrush>
                 </Border.Background>
                 <Canvas 
-                    Width="232" 
-                    Height="152" 
-                    x:Name="canvas"
+                    Width="{StaticResource canvasWidth}" 
+                    Height="{StaticResource canvasHeight}" 
+                    x:Name="canvasGrid"
                     Background="Transparent">
-                    <i:Interaction.Behaviors>
-                        <behaviors:RedirectRoutedEventBehavior RoutedEvent="UIElement.MouseDown" RedirectTarget="{Binding ElementName=imgFrame}"/>
-                    </i:Interaction.Behaviors>
                 </Canvas>
             </Border>
             <Line
@@ -76,6 +71,10 @@
                 Canvas.Top="{Binding MouseSelectionOriginY}"
                 StrokeThickness="0.4"
                 StrokeDashArray="2,1" />
+            <Canvas x:Name="parentOfSelectedSprites"
+                    Width="{StaticResource canvasWidth}" 
+                    Height="{StaticResource canvasHeight}" 
+                    Background="Transparent"/>
         </Canvas>
     </Grid>
 </UserControl>

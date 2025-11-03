@@ -23,7 +23,6 @@ public partial class CharacterFrameEditorView : UserControl
     private double _spriteOffsetX;
     private double _spriteOffsetY;
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
-    private readonly Thickness SelectionThickness = new(0.3, 0.1, 0.1, 0.3);
     private readonly List<Image> _onionSkinImages = [];
     private const double _onionSkinOpacity = 0.25;
     private Point _initialMousePositionInCanvas;
@@ -36,7 +35,7 @@ public partial class CharacterFrameEditorView : UserControl
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         #region Signals
-        SignalManager.Get<FillWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
+        SignalManager.Get<LoadWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener += OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
         #endregion
@@ -49,7 +48,7 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        frameView.canvas.Children.Clear();
+        frameView.Canvas.Children.Clear();
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(viewModel.BankModel);
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Dispatch();
@@ -72,7 +71,7 @@ public partial class CharacterFrameEditorView : UserControl
         _spriteOffsetY = 0;
 
         #region Signals
-        SignalManager.Get<FillWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
+        SignalManager.Get<LoadWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener -= OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener -= OnOptionOnionSkin;
         #endregion
@@ -176,8 +175,11 @@ public partial class CharacterFrameEditorView : UserControl
             _ = bankViewerView.Canvas.Children.Add(sprite.Image);
         }
 
-        Canvas.SetLeft(sprite.Image, elementPosition.X - _spriteOffsetX);
-        Canvas.SetTop(sprite.Image, elementPosition.Y - _spriteOffsetY);
+        int exactPosX = (int)(elementPosition.X - _spriteOffsetX);
+        int exactPosY = (int)(elementPosition.Y - _spriteOffsetY);
+
+        Canvas.SetLeft(sprite.Image, exactPosX);
+        Canvas.SetTop(sprite.Image, exactPosY);
     }
 
     private void BankViewer_DragLeave(object sender, DragEventArgs e)
@@ -442,32 +444,15 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        frameViewView.canvas.CaptureMouse();
+        _initialMousePositionInCanvas = e.GetPosition(frameViewView.Canvas);
 
-        _initialMousePositionInCanvas = e.GetPosition(frameViewView.canvas);
+        SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
 
-        frameViewView.MouseSelectionActive = Visibility.Hidden;
-        frameViewView.MouseSelectionOriginX = (int)_initialMousePositionInCanvas.X;
-        frameViewView.MouseSelectionOriginY = (int)_initialMousePositionInCanvas.Y;
-        frameViewView.MouseSelectionWidth = 0;
-        frameViewView.MouseSelectionHeight = 0;
+        List<SpriteControlVO> selectedSprites = [];
 
-        List<SpriteControlVO> spriteControls = [];
+        GetListSpriteControlSelected(frameViewView.Canvas, _initialMousePositionInCanvas, ref selectedSprites);
 
-        List<Image> images = GetSelectionMouseOver(frameViewView.canvas, _initialMousePositionInCanvas);
-
-        if (images.Count > 0)
-        {
-            if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
-            {
-                if (spriteControl != null)
-                {
-                    spriteControls.Add(spriteControl);
-                }
-            }
-        }
-
-        SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. spriteControls]);
+        SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
     }
 
     private void FrameView_MouseUp(object sender, MouseButtonEventArgs e)
@@ -477,53 +462,49 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        if (DataContext is not CharacterFrameEditorViewModel viewModel)
-        {
-            return;
-        }
-
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
         }
 
-        List<SpriteControlVO> selectedSprites = [];
+        if (frameViewView.Canvas.IsMouseCaptured)
+        {
+            frameViewView.Canvas.ReleaseMouseCapture();
+        }
 
-        frameViewView.canvas.ReleaseMouseCapture();
+        List<SpriteControlVO> selectedSprites = [];
 
         if (frameViewView.MouseSelectionActive == Visibility.Visible)
         {
             selectedSprites = CheckMouseAreaSelected(frameViewView);
         }
 
-        frameViewView.MouseSelectionActive = Visibility.Hidden;
-        frameViewView.MouseSelectionWidth = 0;
-        frameViewView.MouseSelectionHeight = 0;
+        Point pos = e.GetPosition(frameViewView.Canvas);
+
+        SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(pos);
 
         if (selectedSprites.Count == 0)
         {
-            // Check if there is a selected image
-
-            CanvasHitDetection<Image, EllipseGeometry> hitDetection = new(new(e.GetPosition(frameViewView.canvas), 1.0, 1.0), frameViewView.canvas);
-            List<Image> hitList = hitDetection.HitTest();
-
-            if (hitList.Count > 0)
-            {
-                // Clicking on only one image
-
-                if (_spritesInFrames.TryGetValue(hitList.First(), out SpriteControlVO? sprite))
-                {
-                    string? foundID = Array.Find(viewModel.SelectedFrameSprite, e => e == sprite.ID);
-
-                    if (string.IsNullOrEmpty(foundID))
-                    {
-                        selectedSprites.Add(sprite);
-                    }
-                }
-            }
+            GetListSpriteControlSelected(frameViewView.Canvas, pos, ref selectedSprites);
         }
 
         SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
+    }
+
+    private void GetListSpriteControlSelected(Canvas canvas, Point position, ref List<SpriteControlVO> selectedSprites)
+    {
+        List<Image> images = GetSelectionMouseOver(canvas, position);
+
+        if (images.Count > 0)
+        {
+            if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
+            {
+                if (spriteControl != null)
+                {
+                    selectedSprites.Add(spriteControl);
+                }
+            }
+        }
     }
 
     private static List<Image> GetSelectionMouseOver(Canvas canvas, Point positionInCanvas)
@@ -550,7 +531,7 @@ public partial class CharacterFrameEditorView : UserControl
             frameViewView.MouseSelectionWidth,
             frameViewView.MouseSelectionHeight);
 
-        CanvasHitDetection<Image, RectangleGeometry> hitDetection = new(new(rectangle), frameViewView.canvas);
+        CanvasHitDetection<Image, RectangleGeometry> hitDetection = new(new(rectangle), frameViewView.Canvas);
         List<Image> hitList = hitDetection.HitTest();
 
         if (hitList.Count > 0)
@@ -587,6 +568,11 @@ public partial class CharacterFrameEditorView : UserControl
         {
             frameViewView.Canvas.Children.Remove(sprite.Image);
         }
+
+        if (frameViewView.Canvas.IsMouseCaptured)
+        {
+            frameViewView.Canvas.ReleaseMouseCapture();
+        }
     }
 
     private void FrameView_MouseMove(object sender, MouseEventArgs e)
@@ -606,14 +592,25 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        Point positionInCanvas = e.GetPosition(frameViewView.canvas);
+        Point positionInCanvas = e.GetPosition(frameViewView.Canvas);
+
+        if (Util.AboutEqual(positionInCanvas.X, _initialMousePositionInCanvas.X) &&
+            Util.AboutEqual(positionInCanvas.Y, _initialMousePositionInCanvas.Y))
+        {
+            return;
+        }
 
         if (viewModel.SelectedFrameSprite.Length > 0)
         {
-            DragImages(frameViewView.canvas, positionInCanvas, viewModel.SelectedFrameSprite, (DependencyObject)e.Source);
+            DragImages(frameViewView.Canvas, positionInCanvas, viewModel.SelectedFrameSprite, (DependencyObject)e.Source);
         }
         else
         {
+            if (!frameViewView.Canvas.IsMouseCaptured)
+            {
+                frameViewView.Canvas.CaptureMouse();
+            }   
+
             UpdateMouseSelectionArea(frameViewView, positionInCanvas);
         }
     }
@@ -652,7 +649,7 @@ public partial class CharacterFrameEditorView : UserControl
             if (result == DragDropEffects.None)
             {
                 SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Dispatch([leadControl.ID]);
-
+                
                 _ = _spritesInFrames.Remove(images.First());
             }
         }
@@ -664,7 +661,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UpdateMouseSelectionArea(FrameView frameViewView, Point positionInCanvas)
     {
-        if (frameViewView.MouseSelectionActive == Visibility.Hidden)
+        if (frameViewView.MouseSelectionActive == Visibility.Collapsed)
         {
             frameViewView.MouseSelectionActive = Visibility.Visible;
         }

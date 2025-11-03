@@ -24,17 +24,17 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 {
     private float _scale = 2.0f;
     private ImageSource? _bankImage;
-    private Visibility _spriteRectVisibility = Visibility.Hidden;
+    private Visibility _spriteRectVisibility = Visibility.Collapsed;
     private double _spriteRectLeft;
     private double _spriteRectWidth;
     private double _spriteRectHeight;
     private double _spriteRectTop;
-    private Visibility _spriteRectVisibility2 = Visibility.Hidden;
+    private Visibility _spriteRectVisibility2 = Visibility.Collapsed;
     private double _spriteRectLeft2;
     private double _spriteRectWidth2;
     private double _spriteRectHeight2;
     private double _spriteRectTop2;
-    private Visibility _spriteRectVisibility3 = Visibility.Hidden;
+    private Visibility _spriteRectVisibility3 = Visibility.Collapsed;
     private double _spriteRectLeft3;
     private double _spriteRectWidth3;
     private double _spriteRectHeight3;
@@ -411,9 +411,9 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void HideRectangleSelection()
     {
-        SpriteRectVisibility = Visibility.Hidden;
-        SpriteRectVisibility2 = Visibility.Hidden;
-        SpriteRectVisibility3 = Visibility.Hidden;
+        SpriteRectVisibility = Visibility.Collapsed;
+        SpriteRectVisibility2 = Visibility.Collapsed;
+        SpriteRectVisibility3 = Visibility.Collapsed;
     }
 
     private void OnMouseImageSelected(Image image, Point point)

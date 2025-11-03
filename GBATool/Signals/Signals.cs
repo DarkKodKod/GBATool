@@ -93,6 +93,7 @@ public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string> { }
 public class DeleteAnimationFrameSignal : Signal<string, int> { }
 public class SelectFrameSpritesSignal : Signal<SpriteControlVO[]> { }
+public class ResetFrameSpritesSelectionAreaSignal : Signal<Point> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
@@ -102,7 +103,7 @@ public class UpdateOriginPositionSignal : Signal<int, int> { }
 public class StopCharacterAnimationSignal : Signal<string> { }
 public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite, string> { }
-public class FillWithSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
+public class LoadWithSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
 public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
 public class DeleteSpritesFromCharacterFrameSignal : Signal<string[]> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }

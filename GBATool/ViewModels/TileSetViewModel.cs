@@ -28,8 +28,8 @@ public class TileSetViewModel : ItemViewModel
     private SpriteSize _size = SpriteSize.Size00;
     private string _imageScale = "100%";
     private int _originalWidth;
-    private Visibility _gridVisibility = Visibility.Hidden;
-    private Visibility _selectionRectVisibility = Visibility.Hidden;
+    private Visibility _gridVisibility = Visibility.Collapsed;
+    private Visibility _selectionRectVisibility = Visibility.Collapsed;
     private double _selectionRectLeft;
     private double _selectionRectWidth;
     private double _selectionRectHeight;
@@ -285,7 +285,7 @@ public class TileSetViewModel : ItemViewModel
 
     private void OnMouseLeave(MouseLeaveVO vo)
     {
-        SelectionRectVisibility = Visibility.Hidden;
+        SelectionRectVisibility = Visibility.Collapsed;
     }
 
     private void OnMouseMove(MouseMoveVO vo)
@@ -348,7 +348,7 @@ public class TileSetViewModel : ItemViewModel
 
         ImageScale = scale.ToString() + "%";
 
-        GridVisibility = scale >= GridVisibilityThreshold ? Visibility.Visible : Visibility.Hidden;
+        GridVisibility = scale >= GridVisibilityThreshold ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public override void OnActivate()
@@ -685,7 +685,7 @@ public class TileSetViewModel : ItemViewModel
         Shape = SpriteShape.Shape00;
         Size = SpriteSize.Size00;
 
-        SelectionRectVisibility = Visibility.Hidden;
+        SelectionRectVisibility = Visibility.Collapsed;
     }
 
     private void OnSpriteSize16x16()
