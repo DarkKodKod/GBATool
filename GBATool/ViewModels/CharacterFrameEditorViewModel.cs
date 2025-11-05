@@ -22,7 +22,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private int _frameIndex;
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
-    private string[] _selectedFrameSprite = [];
+    private string[] _selectedFrameSprites = [];
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
     private bool _dontSave = false;
@@ -33,14 +33,14 @@ public class CharacterFrameEditorViewModel : ViewModel
     #endregion
 
     #region get/set
-    public string[] SelectedFrameSprite
+    public string[] SelectedFrameSprites
     {
-        get => _selectedFrameSprite;
+        get => _selectedFrameSprites;
         set
         {
-            _selectedFrameSprite = value;
+            _selectedFrameSprites = value;
 
-            OnPropertyChanged(nameof(SelectedFrameSprite));
+            OnPropertyChanged(nameof(SelectedFrameSprites));
         }
     }
 
@@ -318,7 +318,7 @@ public class CharacterFrameEditorViewModel : ViewModel
             spritesIDs.Add(sprites[i].ID);
         }
 
-        SelectedFrameSprite = [.. spritesIDs];
+        SelectedFrameSprites = [.. spritesIDs];
     }
 
     public override void OnDeactivate()

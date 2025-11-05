@@ -150,7 +150,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SetCrossPosition(0, 0);
 
         MouseSelectionActive = Visibility.Collapsed;
-        
+
         parentOfSelectedSprites.Children.Clear();
         _selectedRectangles.Clear();
     }
