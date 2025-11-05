@@ -482,7 +482,7 @@ public partial class CharacterFrameEditorView : UserControl
             }
         }
 
-        if (viewModel.SelectedFrameSprites.Length == 0 || 
+        if (viewModel.SelectedFrameSprites.Length == 0 ||
             !isOneOfThePreviouslySelected)
         {
             SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
@@ -678,6 +678,8 @@ public partial class CharacterFrameEditorView : UserControl
 
         DataObject data = new(characterDragObjects);
 
+        SignalManager.Get<SpriteFrameHideSelectionSignal>().Dispatch();
+
         DragDropEffects result = DragDrop.DoDragDrop(dragSource, data, DragDropEffects.Move);
 
         if (result == DragDropEffects.None)
@@ -690,7 +692,7 @@ public partial class CharacterFrameEditorView : UserControl
 
             foreach (KeyValuePair<Image, SpriteControlVO> item in _spritesInFrames)
             {
-                if (ids.Contains(item.Value.ID))
+                if (!ids.Contains(item.Value.ID))
                 {
                     spritesInFramesTmp.Add(item.Key, item.Value);
                 }
@@ -702,6 +704,10 @@ public partial class CharacterFrameEditorView : UserControl
             {
                 _spritesInFrames.Add(item.Key, item.Value);
             }
+        }
+        else
+        {
+            SignalManager.Get<SpriteFrameShowSelectionSignal>().Dispatch([.. characterDragObjects]);
         }
     }
 

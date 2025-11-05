@@ -145,6 +145,8 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<SelectFrameSpritesSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener += OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener += OnSpriteFrameHideSelection;
+        SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener += OnSpriteFrameShowSelection;
         #endregion
 
         SetCrossPosition(0, 0);
@@ -164,6 +166,8 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<SelectFrameSpritesSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener -= OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener -= OnSpriteFrameHideSelection;
+        SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener -= OnSpriteFrameShowSelection;
         #endregion
 
         MouseSelectionActive = Visibility.Collapsed;
@@ -199,6 +203,31 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
 
                     _selectedRectangles.Remove(spriteIDs[i]);
                 }
+            }
+        }
+    }
+
+    private void OnSpriteFrameHideSelection()
+    {
+        foreach (KeyValuePair<string, Rectangle> item in _selectedRectangles)
+        {
+            item.Value.Visibility = Visibility.Collapsed;
+        }
+    }
+
+    private void OnSpriteFrameShowSelection(CharacterDragObjectVO[] sprites)
+    {
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (_selectedRectangles.TryGetValue(sprites[i].SpriteControl.ID, out Rectangle? rectangle))
+            {
+                rectangle.Visibility = Visibility.Visible;
+
+                int imagePosY = (int)Canvas.GetTop(sprites[i].SpriteControl.Image);
+                int imagePosX = (int)Canvas.GetLeft(sprites[i].SpriteControl.Image);
+
+                Canvas.SetTop(rectangle, imagePosY);
+                Canvas.SetLeft(rectangle, imagePosX);
             }
         }
     }
