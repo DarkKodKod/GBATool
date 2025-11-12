@@ -2,17 +2,17 @@
 Tool written in C# and WPF using the MVVM design pattern to create and manage asset for a Game Boy Advance game by Felipe Reinaud. Resources files are in TOML format, [https://github.com/toml-lang/toml](https://github.com/toml-lang/toml). 
 
 ### Table of Content  
-[1. Overview](#Overview)
-[1.1. Menu](#Menu)
-[1.2. Toolbar](#Toolbar)
-[2. Getting started](#Gettingstarted)
-[2.1 Create project elements](#CreateElements)
-[3. Managing resources](#ManagingResources)
-[3.1. Tile Sets](#TileSets)
-[3.2. Banks](#Banks)
-[3.3. Characters](#Characters)
-[3.4. Palettes](#Palettes)
-[4. Building the project](#Buildingtheproject)
+[1. Overview](#Overview)   
+[1.1. Menu](#Menu)   
+[1.2. Toolbar](#Toolbar)   
+[2. Getting started](#Gettingstarted)   
+[2.1 Create project elements](#CreateElements)   
+[3. Managing resources](#ManagingResources)   
+[3.1. Tile Sets](#TileSets)   
+[3.2. Banks](#Banks)   
+[3.3. Characters](#Characters)   
+[3.4. Palettes](#Palettes)   
+[4. Building the project](#Buildingtheproject)   
 
 <a name="Overview"/>
 
