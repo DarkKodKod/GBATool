@@ -18,9 +18,9 @@ Tool written in C# and WPF using the MVVM design pattern to create and manage as
 
 ## 1. Overview
 
-I created this tool while developing Montezuma's Revenge for the NES. Here is the kickstarter page, https://www.kickstarter.com/projects/348297293/nes-montezumas-revenge. The idea was to create a tool game agnostic but I failed when it generates the character and map data. The plan was to use scripting for that using Python for example but it was to difficult to embed the scripting into the tool. I want a single file that creates what it needs to run and it doesn't depend on external files to function. With this tool is possible to import sprite sheets and organize the imgames to form a pattern table. With the help of these pattern tables you can create Characters, animate them and also maps and add characters to them.
+The purpose of this tool is to provide a way to create and manage Game Boy Advance assets that is game agnostic. This means that the tool will not restrict what can be created with the original hardware. Assets can have any configuration, and the software/game will add the necessary limitations for them to run properly. Another goal is to have a single executable file that runs without depending on external files, like DLLs. This executable is self-contained, which is why it is so large. With this tool, you can import sprite sheets and organize images to create character blocks, palettes, character animations, and more. For now, the current features are all I need for my game, but if you would like to contribute to expanding its capabilities to export different file formats, please let me know.
 
-![](/Images/nestool.png)
+![](/Images/gbatool.png)
 
 <a name="Menu"/>
 
