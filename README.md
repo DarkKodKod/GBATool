@@ -20,7 +20,7 @@ Tool written in C# and WPF using the MVVM design pattern to create and manage as
 
 The purpose of this tool is to provide a way to create and manage Game Boy Advance assets that is game agnostic. This means that the tool will not restrict what can be created with the original hardware. Assets can have any configuration, and the software/game will add the necessary limitations for them to run properly. Another goal is to have a single executable file that runs without depending on external files, like DLLs. This executable is self-contained, which is why it is so large. With this tool, you can import sprite sheets and organize images to create character blocks, palettes, character animations, and more. For now, the current features are all I need for my game, but if you would like to contribute to expanding its capabilities to export different file formats, please let me know.
 
-![](/Images/gbatool.png)
+![](/Images/image1.png)
 
 <a name="Menu"/>
 
