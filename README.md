@@ -115,91 +115,46 @@ To start creating assets for the Game Boy Advance, the very first thing to creat
 
 ### 3.1 Tile Sets
 
-Tile Sets are the basic element to start constructing NES assets but they are not exported directly, they are only used to build [Banks](#Banks), those are exported. This is explained more in depth in the [Building the project](#Buildingtheproject) section. Tile Sets are images from these formats: *.png, .bmp, .gif, .jpg, .jpeg, .jpe, .jfif, .tif, .tiff, .tga*. The image will reduce the colors with a Palette Quantizer algorithm to match the number of colors the NES can reproduce. Once is imported, it is possible to use each 8x8 or 8x16 pixels of the image as sprites to construct a character meta sprite including its animation or a map.
+Tile Sets are the basic element to start constructing Game Boy Advance assets but they are not exported directly, they are only used to build [Banks](#Banks), those can be exported from this tool. This is explained more in depth in the [Building the project](#Buildingtheproject) section. Tile Sets are images from these formats: *.png, .bmp, .gif, .jpg, .jpeg, .jpe, .jfif, .tif, .tiff, .tga*. Once is imported, it is possible to define sprite areas in all supported sizes like 8x8, 16x16, 32x32, 64x64, 16x8, 32x8, 32x16, 64x32, 8x16, 8x32, 16x32 and 32x64. This sprites are later used to construct a character meta sprite including its animation.
 
-![](/Images/pedro.png)
+![](/Images/Alx.png)
 
-Let´s pick up this image or sprite sheet from Montezuma's Revenge.
+Let´s use this image from Final Fight One as an example for later steps.
 
-![](/Images/importimage2.png)
+![](/Images/importimage.png)
 
 There are two ways to import a new image to a *Tile Set* element, first one is to use File > Import > Image... (Ctrl + I). This will create a *Tile Set* element with the name of the image. The second way to import an image is to create a *Tile Set* element, explained the the [Getting started](#Gettingstarted) section and then click over the new element and then click the *tree dots* button on the top part of the element window to browse your computer for an image.
 
 All images after being imported will create if it doesn't exist already a folder name **Images** in the project root directory and I will copy the new imported image there with the extension *.bmp*.
 
-![](/Images/importedimage2.png)
+![](/Images/importedimage.png)
 
-After the image is imported it is possible to zoom in/out with the mouse's scroll wheel and it will appear a new toobar button to hide or show the 8x8/8x16 grid.
+After the image is imported it is possible to zoom in/out with the mouse's scroll wheel and you can pick one of the crop sizes to select what part of the entire image you want to create a sprite of that. Then an sprite will appear in the box to the right. There is possible to delete it if not needed.
 
-![](/Images/changingcolors2.png)
+![](/Images/sprites_alias.png)
 
-Clicking any 8x8 cell in the image will show it in the zoon in quadrant at the left where is possible to change the colors. It is important to press the button save to apply the changes.
-
-> ⚠️**WARNING**: Each 8x8/8x16 cell must be 4 colors maximum. Transparent color counts as one color leaving 3 colors left. This tool does not check if a cell has more than 4 colors.
-
-The field **Pseudonym** is to give a name to any 8x8 cell. This is helpful when the proyect is exported, it will create a .asm file with all the cells used by the [Banks](#Banks) with this pseudonym as a constant value so you dont have to hardcode the actual tile index in the code. The value is taken from the [Bank](#Banks) itself. To know more about the generated files read the [Building the project](#Buildingtheproject) section.
+The field **Alias** is assigned automatically to any new sprite created. The alias can be changed to any string value. This is later used by the [Banks](#Banks) to ideantify the sprites if is needed.
 
 <a name="Banks"/>
 
 ### 3.2 Banks
 
-Banks are tiles grouped together. Is possible to have banks in different sizes (1kb, 2kb, 4kb). **Pattern Tables** are 4kb banks used as the main source for NES graphics. Pattern Tables can be either background or sprites. Banks are constructed from [Tile Sets](#TileSets). This will form a link inside the banks to each Tile Set used. If a Tile Set changes its tiles, it is renamed or removed, it will automatically update the bank. The field **Group** is to group tiles to share the same color order. By default each cell has its own group index but if one or more cells share the same group index then the colors they share, they will have the exact same order of appearance. The **Use** dropdown button is just to categorize the bank, later when you are creating a [Character](#Characters) for example, it will display only banks with type **Characters**.
-
-When building the project, see: [Building the project](#Buildingtheproject), it will generate bank files for each bank object in the project.
-
-![](/Images/bank2.png)
-
-In the image above, we can have a bank for the sprites with 2kb of size. Then later in the code we can for example use this 2kb of a bank along side with music in the CHR Rom chip. Like this example using CA65:
-
-```
-.segment "CHARS"
-    .incbin "../assets/sprites.bin"       ; 2kb for the sprites bank
-    .include "sound/musicData.asm"        ; 2kb for music data
-    .incbin "../assets/background.bin"    ; 4kb for bankground bank
-```
-Then it will look like this:
-
-![](/Images/charsmemory.png)
+todo
 
 <a name="Characters"/>
 
 ### 3.3 Characters
 
-Characters are created by using banks. The tiles from this bank will be stored as a link to them, if one of those banks changes, it is renamed or deleted it will automatically updates the character.
-
-If the bank is set to pattern table for background tiles, it won't appear as an option for character creation.
-
-![](/Images/emptyCharacter.png)
-
-Press the plus button in the tab to create a new animation.
-
-![](/Images/emptyFrame2.png)
-
-From here it is possible to create frames for the animation. Clicking the plus button will create a new frame of the animation. When there is more than one frame, the play button, stop, pause, previous frame and next frame are available.
-
-Here is also possible to set the animation speed. This value is in seconds per frame and this is also used when building the project to be used in the assembly. More details explained in [Building the project](#Buildingtheproject) section.
-
-![](/Images/editframe2.png)
+todo
 
 <a name="Palettes"/>
 
 ### 3.4 Palettes
 
-Here it is just simply, one four color palette where is possible to pick colors. This palettes are referenced by name for the [Characters](#Characters) and [Maps](#Maps).
-
-![](/Images/palette.png)
+todo
 
 <a name="Buildingtheproject"/>
 
 ## 4. Building the project
 
-![](/Images/build3.png)
-
-Building the project will create a bunch of files in the output directory:
-
-+ For each [Bank](#Banks) element, it will generate a .bin file.
-+ A .s file for each [Map](#Maps) element. This will use the field **Use RLE on maps** to compress or not the maps.
-+ A .s file containing all the [Palette](#Palettes) elements called **palettes.s**.
-+ A .s file containing all the tiles used by the banks called **tile_definition.s**.
-+ Undo, Redo is not working inside each element.
-+ After an image is imported, the source image is not released.
+todo
