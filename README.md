@@ -20,7 +20,7 @@ Tool written in C# and WPF using the MVVM design pattern to create and manage as
 
 The purpose of this tool is to provide a way to create and manage Game Boy Advance assets that is game agnostic. This means that the tool will not restrict what can be created with the original hardware. Assets can have any configuration, and the software/game will add the necessary limitations for them to run properly. Another goal is to have a single executable file that runs without depending on external files, like DLLs. This executable is self-contained, which is why it is so large. With this tool, you can import sprite sheets and organize images to create character blocks, palettes, character animations, and more. For now, the current features are all I need for my game, but if you would like to contribute to expanding its capabilities to export different file formats, please let me know.
 
-![](/Images/image1.png)
+![](/Images/gbatool.png)
 
 <a name="Menu"/>
 
@@ -33,7 +33,7 @@ The purpose of this tool is to provide a way to create and manage Game Boy Advan
 
 From File is possible to create a new project or a new element like a [Tile Sets](#TileSets) or a [Character](#Characters).
 
-* A new project will have the extension **.proj** which is internaly a [TOML](https://github.com/toml-lang/toml) format and the name is given by the user. It will also create the folders **Banks**, **Palettes**, **Characters**, **Maps** and **TileSets**. 
+* A new project will have the extension **.proj** which is internaly a [TOML](https://github.com/toml-lang/toml) format and the name is given by the user. It will also create the folders **Banks**, **Palettes**, **Characters** and **TileSets**. 
 
 * You can open an existing project, where the **.proj** file exist.
 
@@ -82,7 +82,7 @@ Once the project is created, NESTool will always open the last opened project.
 
 At any time is possible to change the project configurations from the menu Project > Project Properties...
 
-![](/Images/projectproperties2.png)
+![](/Images/projectproperties.png)
 
 From Project properties is possible to change the Mapper type, PRG size, CHR size, mirroring. For now Battery is listed here as a possible future feature. The whole idea is maybe the tool can generate a header file based on this information.
 
@@ -156,17 +156,9 @@ Then it will look like this:
 
 ![](/Images/charsmemory.png)
 
-<a name="Palettes"/>
-
-### 3.3 Palettes
-
-Here it is just simply, one four color palette where is possible to pick colors. This palettes are referenced by name for the [Characters](#Characters) and [Maps](#Maps).
-
-![](/Images/palette.png)
-
 <a name="Characters"/>
 
-### 3.4 Characters
+### 3.3 Characters
 
 Characters are created by using banks. The tiles from this bank will be stored as a link to them, if one of those banks changes, it is renamed or deleted it will automatically updates the character.
 
@@ -184,29 +176,16 @@ Here is also possible to set the animation speed. This value is in seconds per f
 
 ![](/Images/editframe2.png)
 
-<a name="Entities"/>
+<a name="Palettes"/>
 
-### 3.5 Entities
+### 3.4 Palettes
 
-Entities are here to add sprites or dynamic elements to each map. Each entity will have by default an X and Y coordinate property and this can be adjusted when this entity is added to a map (read the [Maps](#Maps) section for how to add entities in a map). The second thing is to give it a distintic numeric Id for further identification.
+Here it is just simply, one four color palette where is possible to pick colors. This palettes are referenced by name for the [Characters](#Characters) and [Maps](#Maps).
 
-An entity can be a meta sprite or a bunch of tiles from the background. That's why the first thing to do is to select the **Source** of the entity. This can be from a **Bank** or from a **Character**.
-
-From a Bank, you can just add tiles from the selected bank on the right.
-
-![](/Images/entities.png)
-
-From a Character, you can select any already created character from the list under Characters and a different pose from the list of animation this character might have.
-
-![](/Images/entities_2.png)
-
-To finish the entity configuration, you can add properties to each entity that are needed for your particular game. X and Y coordinates are already the defaults for each entity but here by pressing the **Add** button, you can add for example the level where this entity is going to appear or extra attributes that might use.
-
-![](/Images/add_property.png)
-
-Once the entity is created, it will appear as an option under **Map elements** once you press the button **Add**.
+![](/Images/palette.png)
 
 <a name="Buildingtheproject"/>
+
 ## 4. Building the project
 
 ![](/Images/build3.png)
