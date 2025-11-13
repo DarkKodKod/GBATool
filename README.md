@@ -46,7 +46,7 @@ From File is possible to create a new project or a new element like a [Tile Sets
 #### Edit
 ![](/Images/edit_menu.png)
 
-Undo/Redo, Copy, Paste, Duplicate and Delete only affects the project's elements like a [Character](#Characters) element although the fucntionality is not complete yet so it is better not to use them.
+Undo/Redo, Copy, Paste, Duplicate and Delete only affects the project's elements like a [Character](#Characters) element.
 
 #### Project
 ![](/Images/project_menu.png)
@@ -72,13 +72,13 @@ Toolbar Has the option to create a new project (explained in [Getting started](#
 
 ## 2. Getting started
 
-Once NESTool is opened for the first time, it will create in the root of the executable, the file **mappers.toml** and **config.toml** . Only the last one if some of the configuration of the tool changes like the window size. **Mappers.toml** contains the information of all mappers configuration and the idea is that if an especific mapper is selected, it will reconfigure what the tool is capable of doing and exporting. So far, only mapper 0 or NROM is available.
+Once GBATool is opened for the first time, it will create in the root of the executable, the file **config.toml**, but only if some of the configuration of the tool changes like the window size.
 
 ![](/Images/newproject.png)
 
-To craete a new project click File > New > New Project (Ctrl + Shift + N) or ![](/Images/newproject_toolbar.png) in the toolbar. From there is possible to name the project and a location. Selecting the mapper will change the options available for PRG size and CHR size. Right now is only possible to select no mapper (NROM). After that press the button *Create project* and this will create in the specified location the file *name of the project*.proj in [TOML](https://github.com/toml-lang/toml) format, and the folders *Banks*, *Characters*, *Maps*, *TileSets*.
+To craete a new project click File > New > New Project (Ctrl + Shift + N) or ![](/Images/newproject_toolbar.png) in the toolbar. From there is possible to name the project and a location. After the button *Create project* is pressed it will create at the specified location the file *name of the project*.proj in [TOML](https://github.com/toml-lang/toml) format, and the folders *Banks*, *Characters*, *TileSets*.
 
-Once the project is created, NESTool will always open the last opened project. 
+GBATool will always open the last opened project. 
 
 At any time is possible to change the project configurations from the menu Project > Project Properties...
 
