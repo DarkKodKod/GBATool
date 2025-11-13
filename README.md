@@ -117,7 +117,7 @@ To start creating assets for the Game Boy Advance, the very first thing to creat
 
 Tile Sets are the basic element to start constructing Game Boy Advance assets but they are not exported directly, they are only used to build [Banks](#Banks), those can be exported from this tool. This is explained more in depth in the [Building the project](#Buildingtheproject) section. Tile Sets are images from these formats: *.png, .bmp, .gif, .jpg, .jpeg, .jpe, .jfif, .tif, .tiff, .tga*. Once is imported, it is possible to define sprite areas in all supported sizes like 8x8, 16x16, 32x32, 64x64, 16x8, 32x8, 32x16, 64x32, 8x16, 8x32, 16x32 and 32x64. This sprites are later used to construct a character meta sprite including its animation.
 
-![](/Images/Alx.png)
+![](/Images/Axl.png)
 
 Let´s use this image from Final Fight One as an example for later steps.
 
