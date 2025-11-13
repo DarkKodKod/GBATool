@@ -6,7 +6,8 @@ Tool written in C# and WPF using the MVVM design pattern to create and manage as
 [1.1. Menu](#Menu)   
 [1.2. Toolbar](#Toolbar)   
 [2. Getting started](#Gettingstarted)   
-[2.1 Create project elements](#CreateElements)   
+[2.1 Project Properties](#ProjectProperties)   
+[2.2 Create project elements](#CreateElements)   
 [3. Managing resources](#ManagingResources)   
 [3.1. Tile Sets](#TileSets)   
 [3.2. Banks](#Banks)   
@@ -80,27 +81,31 @@ To craete a new project click File > New > New Project (Ctrl + Shift + N) or ![]
 
 GBATool will always open the last opened project. 
 
+<a name="ProjectProperties"/>
+
+### 2.1 Project Properties
+
 At any time is possible to change the project configurations from the menu Project > Project Properties...
 
 ![](/Images/projectproperties.png)
 
-From Project properties is possible to change the Mapper type, PRG size, CHR size, mirroring. For now Battery is listed here as a possible future feature. The whole idea is maybe the tool can generate a header file based on this information.
+From Project properties it is possibled to set up the output format for each type of asset. The Game Boy Advance header can exported in assembly language, same as the palettes and the character's animation data. The Screen Blocks are exported in binary format for example. The *Game Properties* is the information that is used to generate the Game Boy Advance header. The *Sprite Pattern Format* can be 1D or 2D. This is how the internal character blocks are arranged when exported.
 
 <a name="CreateElements"/>
 
-### 2.1 Create project elements
+### 2.2 Create project elements
 
 ![](/Images/newelement.png)
 
 Creating elements is possible from the menu File > New > New Element (Ctrl + N) or right click on any root folder to open the context menu and select *Create New Element*.
 
-There are only five type of elements to create, [Tile Sets](#TileSets), where you can import a new image and change its pixels, [Banks](#Banks), where you can create banks of any size or NES pattern tables using the [Tile Sets](#TileSets) as input, [Palettes](#Palettes), are the actual colors for any sprite used by the caracteres, [Characters](#Characters), is an element created by [Banks](#Banks) as its input and there, it is possible to create meta sprites and animations, and finally, [Maps](#Maps), also uses [Banks](#Banks) as its input. It is really important to understand that all of the links between elements are just references to each other. For example: the bank pattern table could use different tile sets but if one of those tile sets changes something it will also change the tile inside the pattern table and immediately in the character or map that is using that specific bank.
+There are only four type of elements to create, [Tile Sets](#TileSets), where you can import a new image and change its pixels, [Banks](#Banks), where you can create banks of any size or NES pattern tables using the [Tile Sets](#TileSets) as input, [Palettes](#Palettes), are the actual colors for any sprite used by the caracteres, [Characters](#Characters), is an element created by [Banks](#Banks) as its input and there, it is possible to create meta sprites and animations. It is really important to understand that all of the links between elements are just references to each other. For example: the bank pattern table could use different tile sets but if one of those tile sets changes something it will also change the tile inside the pattern table and immediately in the character or map that is using that specific bank.
 
 ![](/Images/tree.png)
 
 Is possible to create folders inside each root folder and move elements of the same type to any sub folder by just dragging the element. Each element including folders has a context menu with the right click.
 
-To start creating assets for the NES, the very first thing to create is the Tile Set explained in the section below.
+To start creating assets for the Game Boy Advance, the very first thing to create is the Tile Set explained in the section below.
 
 <a name="ManagingResources"/>
 
