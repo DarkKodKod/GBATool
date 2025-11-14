@@ -477,6 +477,8 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void LoadImage(BankModel model)
     {
+        SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
+
         _metaData = BankUtils.CreateImage(model, Force2DView);
 
         if (_metaData == null)

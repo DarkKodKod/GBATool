@@ -16,9 +16,12 @@ public static class TileSetUtils
     {
         (bool foundInCache, WriteableBitmap? bitmap) = GetSourceBitmapFromCache(model);
 
-        if (!foundInCache)
+        if (foundInCache)
         {
-            metaData.UniqueTileSet.Add(model.GUID);
+            if (!metaData.UniqueTileSet.Exists(x => x == model.GUID))
+            {
+                metaData.UniqueTileSet.Add(model.GUID);
+            }
         }
 
         return bitmap;
