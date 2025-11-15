@@ -167,6 +167,10 @@ Scene position area is just for export the correct position only, **Relative Ori
 
 > ⚠️Collisions are not yet implemented.
 
+Demo of the sprites in motion from Mesen's Sprite Viewer.
+
+![](/Images/demo1.gif)
+
 <a name="Palettes"/>
 
 ### 3.4 Palettes
