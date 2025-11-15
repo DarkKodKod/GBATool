@@ -139,7 +139,11 @@ The field **Alias** is assigned automatically to any new sprite created. The ali
 
 ### 3.2 Banks
 
-todo
+Banks are tiles grouped together. Is possible to have banks arraged in 1D or 2D (When the checkbox **Is Background** is checked then it will always be 1D arragement). These charblocks can be used either for background or sprites. The source of these banks are constructed from [Tile Sets](#TileSets). This will form a link inside the banks to each **Tile Set** used. If a Tile Set changes its tiles, it is renamed or removed, it will automatically update the bank. From here is possible to generate a [Palette](#Palette) object but these are not linked together. The link is done in the [Character](#Character) object. If your bank is using more than 16 colors then it is important to check the checkbox 256 colors, then when a palette is constructed, it will create palettes objects as much as needed up to 16 palette objects. To have the first color of the palette with the transparency color, click on any sprite region here and by pressing the button **Obtain Transparent Color** it will store the very first pixel of that sprite region.
+
+![](/Images/bank.png)
+
+When building the project, see: [Building the project](#Buildingtheproject), it will generate bank files for each bank object in the project.
 
 <a name="Characters"/>
 
@@ -147,14 +151,24 @@ todo
 
 todo
 
+![](/Images/emptyCharacter.png)
+
+![](/Images/character.png)
+
+![](/Images/edit_frame.png)
+
 <a name="Palettes"/>
 
 ### 3.4 Palettes
 
 todo
 
+![](/Images/palette.png)
+
 <a name="Buildingtheproject"/>
 
 ## 4. Building the project
 
 todo
+
+![](/Images/build.png)
