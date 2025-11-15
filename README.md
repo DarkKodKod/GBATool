@@ -149,19 +149,29 @@ When building the project, see: [Building the project](#Buildingtheproject), it 
 
 ### 3.3 Characters
 
-todo
+Characters are created by using banks. The tiles from this bank will be stored as a link to them, if one of those banks changes, it is renamed or deleted it will automatically updates the character.
 
 ![](/Images/emptyCharacter.png)
 
+Press the plus button in the tab to create a new animation.
+
 ![](/Images/character.png)
 
+From here it is possible to create frames for the animation. Clicking the plus button will create a new frame of the animation. When there is more than one frame, the play button, stop, pause, previous frame and next frame are available.
+
+Here is also possible to set the animation speed. This value is in seconds per frame and this is also used when building the project to be used in the output file. More details explained in [Building the project](#Buildingtheproject) section.
+
 ![](/Images/edit_frame.png)
+
+Scene position area is just for export the correct position only, **Relative Origin** are the yellow lines, this is used to calculate the origin where every x and y position is calculated so it is used as the 0,0 where the lines are. **Vertical Axis** is the red line and it is used as the center of the sprite. It is used to calculate the flip position of all the sprites and **Base** it is the position for the feets. This is the only one that it is exported because it could be used as a visual feet position for somme collisions or z sorting for example.
+
+> ⚠️Collisions are not yet implemented.
 
 <a name="Palettes"/>
 
 ### 3.4 Palettes
 
-todo
+Here it is just simply, a 16 colors palette where is possible to pick and change the colors. This palettes are referenced by name for the [Characters](#Characters). It is required to link the palette with a character so the character can be exported.
 
 ![](/Images/palette.png)
 
@@ -169,6 +179,26 @@ todo
 
 ## 4. Building the project
 
-todo
-
 ![](/Images/build.png)
+
+Building the project will create a bunch of files in the output directory:
+
++ For each [Bank](#Banks) element, it will generate a .bin file.
++ An .asm file containing all the [Palette](#Palettes) elements called **palettes.asm**.
+
+Example of the assembly output file for Palettes:
+```
+; This file is auto generated!
+
+; Color format: RGB555 0BBBBBGGGGGRRRRR
+
+    align 32
+palette_axl:
+    db 0xF7,0x67,0xAD,0x04,0x1A,0x3E,0x33,0x25,0xDF,0x56,0x6E,0x0C,0x12,0x0D,0xAD,0x31,0x29,0x21,0xA5,0x10,0x28,0x04,0xFF,0x56,0x9C,0x63,0x73,0x46,0xF7,0x56,0x00,0x00
+palette_guy:
+    db 0x00,0x42,0x31,0x04,0x1D,0x00,0x35,0x04,0x29,0x04,0xCD,0x04,0xBF,0x07,0x93,0x19,0x5E,0x02,0xF7,0x7A,0xFF,0x7F,0x17,0x2A,0x7E,0x2E,0xFF,0x36,0x7F,0x01,0x00,0x00
+```
+ 
++ A header file.
++ Character files for their animations.
+  
