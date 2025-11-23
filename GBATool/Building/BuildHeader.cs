@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.Models;
 using System.IO;
 using System.Text;
@@ -36,6 +37,7 @@ public sealed class BuildHeader : Building<BuildHeader>
     private static readonly int HeaderSizeForChecksum = 29;
 
     protected override string FileName { get; } = "header.asm";
+    protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
 
     private static readonly int[] GBANintendoLogo = {
         0x24, 0xFF, 0xAE, 0x51, 0x69, 0x9A, 0xA2, 0x21, 0x3D, 0x84, 0x82, 0x0A, 0x84, 0xE4, 0x09, 0xAD, 0x11, 0x24,

@@ -14,27 +14,53 @@ public class ProjectPropertiesDialogViewModel : ViewModel
 
     private bool _changed = false;
     private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
-    private OutputFormat _selectedOutputFormat = OutputFormat.Fasmarm;
-    private OutputFormatScreenBlock _selectedOutputFormatScreenBlock = OutputFormatScreenBlock.Binary;
+    private OutputFormat _selectedOutputFormatHeader = OutputFormat.Fasmarm;
+    private OutputFormat _selectedOutputFormatPalettes = OutputFormat.Fasmarm;
+    private OutputFormat _selectedOutputFormatCharacters = OutputFormat.Fasmarm;
+    private OutputFormat _selectedOutputFormatScreenBlock = OutputFormat.Binary;
     private string _projectTitle = string.Empty;
     private int _softwareVersion = 0;
     private string _projectInitials = string.Empty;
     private string _developerId = string.Empty;
 
     #region get/set
-    public OutputFormat SelectedOutputFormat
+    public OutputFormat SelectedOutputFormatHeader
     {
-        get { return _selectedOutputFormat; }
+        get { return _selectedOutputFormatHeader; }
         set
         {
-            _selectedOutputFormat = value;
-            OnPropertyChanged(nameof(SelectedOutputFormat));
+            _selectedOutputFormatHeader = value;
+            OnPropertyChanged(nameof(SelectedOutputFormatHeader));
 
             _changed = true;
         }
     }
 
-    public OutputFormatScreenBlock SelectedOutputFormatScreenBlock
+    public OutputFormat SelectedOutputFormatPalettes
+    {
+        get { return _selectedOutputFormatPalettes; }
+        set
+        {
+            _selectedOutputFormatPalettes = value;
+            OnPropertyChanged(nameof(SelectedOutputFormatPalettes));
+
+            _changed = true;
+        }
+    }
+
+    public OutputFormat SelectedOutputFormatCharacters
+    {
+        get { return _selectedOutputFormatCharacters; }
+        set
+        {
+            _selectedOutputFormatCharacters = value;
+            OnPropertyChanged(nameof(SelectedOutputFormatCharacters));
+
+            _changed = true;
+        }
+    }
+
+    public OutputFormat SelectedOutputFormatScreenBlock
     {
         get { return _selectedOutputFormatScreenBlock; }
         set
@@ -130,7 +156,11 @@ public class ProjectPropertiesDialogViewModel : ViewModel
                 SignalManager.Get<ReloadBankImageSignal>().Dispatch();
             }
 
-            project.OutputFormat = SelectedOutputFormat;
+            project.Build.OutputFormatHeader = SelectedOutputFormatHeader;
+            project.Build.OutputFormatPalettes = SelectedOutputFormatPalettes;
+            project.Build.OutputFormatCharacters = SelectedOutputFormatCharacters;
+            project.Build.OutputFormatScreenBlock = SelectedOutputFormatScreenBlock;
+
             project.ProjectTitle = ProjectTitle;
             project.SoftwareVersion = (byte)SoftwareVersion;
             project.ProjectInitials = ProjectInitials;
@@ -151,6 +181,10 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         SoftwareVersion = project.SoftwareVersion;
         ProjectInitials = project.ProjectInitials;
         DeveloperId = project.DeveloperId;
-        SelectedOutputFormat = project.OutputFormat;
+
+        SelectedOutputFormatHeader = project.Build.OutputFormatHeader;
+        SelectedOutputFormatPalettes = project.Build.OutputFormatPalettes;
+        SelectedOutputFormatCharacters = project.Build.OutputFormatCharacters;
+        SelectedOutputFormatScreenBlock = project.Build.OutputFormatScreenBlock;
     }
 }

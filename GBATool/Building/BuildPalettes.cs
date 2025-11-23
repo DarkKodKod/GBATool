@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Utils;
@@ -15,6 +16,7 @@ namespace GBATool.Building;
 public sealed class BuildPalettes : Building<BuildPalettes>
 {
     protected override string FileName { get; } = "palettes.asm";
+    protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
 
     protected override async Task<bool> DoGenerate(string filePath)
     {

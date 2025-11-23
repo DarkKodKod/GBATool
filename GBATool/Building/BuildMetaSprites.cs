@@ -19,6 +19,7 @@ namespace GBATool.Building;
 public sealed class BuildMetaSprites : Building<BuildMetaSprites>
 {
     protected override string FileName { get; } = string.Empty;
+    protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
 
     private const float FrameRate = 59.727500569606f;
 

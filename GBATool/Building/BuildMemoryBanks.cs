@@ -19,6 +19,7 @@ using TileBlocks = (int width, int height, int numberOfTiles);
 public sealed class BuildMemoryBanks : Building<BuildMemoryBanks>
 {
     protected override string FileName { get; } = string.Empty;
+    protected override OutputFormat OutputFormat { get; } = OutputFormat.Binary;
 
     private readonly List<string> _bankNames = [];
 

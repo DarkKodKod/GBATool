@@ -12,6 +12,10 @@ public class ProjectModel : ISingletonModel
     {
         public string GeneratedSourcePath { get; set; } = string.Empty;
         public string GeneratedAssetsPath { get; set; } = string.Empty;
+        public OutputFormat OutputFormatHeader { get; set; } = OutputFormat.Fasmarm;
+        public OutputFormat OutputFormatPalettes { get; set; } = OutputFormat.Fasmarm;
+        public OutputFormat OutputFormatCharacters { get; set; } = OutputFormat.Fasmarm;
+        public OutputFormat OutputFormatScreenBlock { get; set; } = OutputFormat.Binary;
 
         public BuildConfig()
         {
@@ -22,6 +26,10 @@ public class ProjectModel : ISingletonModel
         {
             GeneratedSourcePath = string.Empty;
             GeneratedAssetsPath = string.Empty;
+            OutputFormatHeader = OutputFormat.Fasmarm;
+            OutputFormatPalettes = OutputFormat.Fasmarm;
+            OutputFormatCharacters = OutputFormat.Fasmarm;
+            OutputFormatScreenBlock = OutputFormat.Binary;
         }
     }
 
@@ -36,7 +44,6 @@ public class ProjectModel : ISingletonModel
     [TomlIgnore] public string ProjectPath { get; set; } = string.Empty;
     public BuildConfig Build { get; set; } = new();
     public SpritePattern SpritePatternFormat { get; set; } = SpritePattern.Format1D;
-    public OutputFormat OutputFormat { get; set; } = OutputFormat.Fasmarm;
 
     public ProjectModel()
     {
@@ -52,7 +59,7 @@ public class ProjectModel : ISingletonModel
         DeveloperId = string.Empty;
         SoftwareVersion = 0;
         SpritePatternFormat = SpritePattern.Format1D;
-        OutputFormat = OutputFormat.Fasmarm;
+
         Build.Reset();
     }
 
@@ -66,7 +73,6 @@ public class ProjectModel : ISingletonModel
         Name = copy.Name;
         Version = copy.Version;
         SpritePatternFormat = copy.SpritePatternFormat;
-        OutputFormat = copy.OutputFormat;
         ProjectTitle = copy.ProjectTitle;
         ProjectInitials = copy.ProjectInitials;
         SoftwareVersion = copy.SoftwareVersion;
@@ -74,6 +80,10 @@ public class ProjectModel : ISingletonModel
 
         Build.GeneratedSourcePath = copy.Build.GeneratedSourcePath;
         Build.GeneratedAssetsPath = copy.Build.GeneratedAssetsPath;
+        Build.OutputFormatHeader = copy.Build.OutputFormatHeader;
+        Build.OutputFormatPalettes = copy.Build.OutputFormatPalettes;
+        Build.OutputFormatCharacters = copy.Build.OutputFormatCharacters;
+        Build.OutputFormatScreenBlock = copy.Build.OutputFormatScreenBlock;
     }
 
     public void Load(string path, string filePath)

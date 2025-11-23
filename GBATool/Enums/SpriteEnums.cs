@@ -21,12 +21,6 @@ public enum SpriteSize
     Size11 = 3
 }
 
-public enum ColorMode
-{
-    Mode4bpp = 0,
-    Mode8bpp = 1
-}
-
 public enum BitsPerPixel
 {
     f1bpp = 1,

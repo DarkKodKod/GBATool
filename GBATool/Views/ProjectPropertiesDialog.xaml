@@ -142,7 +142,7 @@
                           Width="120" 
                           DisplayMemberPath="Description"
                           ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
-                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValue="{Binding Path=SelectedOutputFormatHeader}"
                           SelectedValuePath="Value"/>
                 <Label Content="Palettes:" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <ComboBox Grid.Column="1" 
@@ -151,7 +151,7 @@
                           Width="120" 
                           DisplayMemberPath="Description"
                           ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
-                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValue="{Binding Path=SelectedOutputFormatPalettes}"
                           SelectedValuePath="Value"/>
                 <Label Content="Characters:" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <ComboBox Grid.Column="1" 
@@ -160,7 +160,7 @@
                           Width="120" 
                           DisplayMemberPath="Description"
                           ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
-                          SelectedValue="{Binding Path=SelectedOutputFormat}"
+                          SelectedValue="{Binding Path=SelectedOutputFormatCharacters}"
                           SelectedValuePath="Value"/>
                 <Label Content="Screenblock :" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <ComboBox Grid.Column="1" 
@@ -168,7 +168,7 @@
                           HorizontalAlignment="Left" VerticalAlignment="Center" 
                           Width="120" 
                           DisplayMemberPath="Description"
-                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormatScreenBlock}}}"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
                           SelectedValue="{Binding Path=SelectedOutputFormatScreenBlock}"
                           SelectedValuePath="Value"/>
             </Grid>
