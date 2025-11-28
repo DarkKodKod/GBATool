@@ -1,23 +1,27 @@
 ﻿using GBATool.Enums;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace GBATool.Building;
 
-public abstract class Building<TBuilder>
+public interface IBuilding
+{
+    Task<bool> Generate(string outputPath);
+    string[] GetErrors();
+    string[] GetWarnings();
+}
+
+public abstract class Building<TBuilder> : IBuilding
     where TBuilder : class, new()
 {
     private readonly List<string> _errors = [];
     private readonly List<string> _warnings = [];
 
-    private static readonly Lazy<TBuilder> instance = new(() => new TBuilder());
-
     protected abstract string FileName { get; }
     protected abstract OutputFormat OutputFormat { get; }
 
-    public static TBuilder Instance => instance.Value;
+    public static TBuilder Instance { get; } = new();
 
     public async Task<bool> Generate(string outputPath)
     {

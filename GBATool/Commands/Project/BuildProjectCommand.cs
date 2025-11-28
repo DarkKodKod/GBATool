@@ -46,15 +46,17 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Build started");
 
+        IBuilding header = BuildHeader.Get(projectModel.Build.OutputFormatHeader);
+
         OutputInfo("Generate header...");
-        bool ok = await BuildHeader.Instance.Generate(projectModel.Build.GeneratedSourcePath);
+        bool ok = await header.Generate(projectModel.Build.GeneratedSourcePath);
         if (ok == false)
         {
             OutputError("Problems generating header");
-            OutputError(BuildHeader.Instance.GetErrors());
+            OutputError(header.GetErrors());
             goto finish;
         }
-        OutputWarnings(BuildHeader.Instance.GetWarnings());
+        OutputWarnings(header.GetWarnings());
 
         OutputInfo("Building banks...");
         ok = await BuildMemoryBanks.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
