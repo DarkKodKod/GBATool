@@ -3,6 +3,7 @@ using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
@@ -25,7 +26,12 @@ public class CharacterFrameEditorViewModel : ViewModel
     private string[] _selectedFrameSprites = [];
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
-    private bool _dontSave = false;
+    private bool _dontSave;
+    private bool _isFlippedHorizontal;
+    private bool _isFlippedVertical;
+    private bool _enableSpriteProperties;
+    private ObjectMode _objectMode = ObjectMode.Normal;
+    private GraphicMode _graphicMode = GraphicMode.Normal;
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -33,6 +39,61 @@ public class CharacterFrameEditorViewModel : ViewModel
     #endregion
 
     #region get/set
+    public bool EnableSpriteProperties
+    {
+        get => _enableSpriteProperties;
+        set
+        {
+            _enableSpriteProperties = value;
+
+            OnPropertyChanged(nameof(EnableSpriteProperties));
+        }
+    }
+
+    public ObjectMode ObjectMode
+    {
+        get => _objectMode;
+        set
+        {
+            _objectMode = value;
+
+            OnPropertyChanged(nameof(ObjectMode));
+        }
+    }
+
+    public GraphicMode GraphicMode
+    {
+        get => _graphicMode;
+        set
+        {
+            _graphicMode = value;
+
+            OnPropertyChanged(nameof(GraphicMode));
+        }
+    }
+
+    public bool IsFlippedHorizontal
+    {
+        get => _isFlippedHorizontal;
+        set
+        {
+            _isFlippedHorizontal = value;
+
+            OnPropertyChanged(nameof(IsFlippedHorizontal));
+        }
+    }
+
+    public bool IsFlippedVertical
+    {
+        get => _isFlippedVertical;
+        set
+        {
+            _isFlippedVertical = value;
+
+            OnPropertyChanged(nameof(IsFlippedVertical));
+        }
+    }
+
     public string[] SelectedFrameSprites
     {
         get => _selectedFrameSprites;
@@ -318,6 +379,13 @@ public class CharacterFrameEditorViewModel : ViewModel
             spritesIDs.Add(sprites[i].ID);
         }
 
+        EnableSpriteProperties = sprites.Length == 1;
+
+        if (EnableSpriteProperties)
+        {
+            UpdateSpriteProperties(sprites[0].ID);
+        }
+
         SelectedFrameSprites = [.. spritesIDs];
     }
 
@@ -375,6 +443,41 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
 
         FileHandler?.Save();
+    }
+
+    private void UpdateSpriteProperties(string spriteID)
+    {
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (frame.Tiles.TryGetValue(spriteID, out CharacterSprite? sprite))
+        {
+            return;
+        }
+
+        if (sprite == null)
+        {
+            return;
+        }
+
+        IsFlippedHorizontal = sprite.FlipHorizontal;
+        IsFlippedVertical = sprite.FlipVertical;
+        GraphicMode = sprite.GraphicMode;
+        ObjectMode = sprite.ObjectMode;
     }
 
     private void OnDeleteSpriteFromCharacterFrame(string[] spriteIDs)

@@ -250,10 +250,10 @@
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <ComboBox Width="200"
-                            ItemsSource="{Binding TileSets}" 
-                            DisplayMemberPath="Name"
-                            SelectedValuePath="Index"
-                            SelectedValue="{Binding Path=SelectedTileSet}">
+                          ItemsSource="{Binding TileSets}" 
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Index"
+                          SelectedValue="{Binding Path=SelectedTileSet}">
                     <i:Interaction.Behaviors>
                         <behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
                     </i:Interaction.Behaviors>

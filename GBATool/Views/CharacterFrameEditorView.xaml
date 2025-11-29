@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:GBATool.Views"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:ex="clr-namespace:ArchitectureLibrary.WPF.Extensions;assembly=ArchitectureLibrary"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
+             xmlns:enum="clr-namespace:GBATool.Enums"
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              Unloaded="UserControl_Unloaded"
@@ -86,18 +88,47 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <GroupBox Header="Sprite Configuration" Grid.Row="0" Margin="10,0,10,0" Padding="10">
+                <GroupBox 
+                    Header="Sprite Configuration" 
+                    Grid.Row="0" 
+                    Margin="10,0,10,0" 
+                    Padding="10" 
+                    IsEnabled="{Binding EnableSpriteProperties}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto" />
-                            <RowDefinition Height="10" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="5" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="5" />
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <CheckBox IsChecked="false" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
-                            <CheckBox IsChecked="false" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
+                            <CheckBox IsChecked="{Binding IsFlippedHorizontal, Mode=TwoWay}" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
+                            <CheckBox IsChecked="{Binding IsFlippedVertical, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
                         </StackPanel>
-                        <CheckBox IsChecked="false" HorizontalAlignment="Left" Grid.Row="2">Back background</CheckBox>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2">
+                            <CheckBox IsChecked="{Binding IsFlippedHorizontal, Mode=TwoWay}" HorizontalAlignment="Left">Enable Mosaic</CheckBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="4">
+                            <Label>Object Mode:</Label>
+                            <ComboBox DisplayMemberPath="Description"
+                                      HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                      ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:ObjectMode}}}"
+                                      SelectedValue="{Binding Path=ObjectMode}"
+                                      SelectedValuePath="Value">
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="6">
+                            <Label>Graphic Mode:</Label>
+                            <ComboBox DisplayMemberPath="Description"
+                                      HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                      ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:GraphicMode}}}"
+                                      SelectedValue="{Binding Path=GraphicMode}"
+                                      SelectedValuePath="Value">
+                            </ComboBox>
+                        </StackPanel>
                     </Grid>
                 </GroupBox>
                 <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" Padding="10">

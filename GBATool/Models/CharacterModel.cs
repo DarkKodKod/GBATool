@@ -27,11 +27,8 @@ public class CharacterSprite
     public int Width { get; set; }
     public int Height { get; set; }
     public bool EnableMosaic { get; set; }
-    public bool IsMask { get; set; }
-    public bool EnableAlphaBlending { get; set; }
-    public bool AffineIsEnabled { get; set; }
-    public bool IsHidden { get; set; }
-    public bool IsDoubleSized { get; set; }
+    public GraphicMode GraphicMode { get; set; }
+    public ObjectMode ObjectMode { get; set; }
 }
 
 public class FrameModel

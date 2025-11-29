@@ -39,3 +39,25 @@ public enum Priority
     [Description("3")]
     Lowest = 3
 }
+
+public enum GraphicMode
+{
+    [Description("Normal")]
+    Normal = 0,
+    [Description("Alpha Blending")]
+    AlphaBlending = 1,
+    [Description("Mask")]
+    Mask = 2
+}
+
+public enum ObjectMode
+{
+    [Description("Normal")]
+    Normal = 0,
+    [Description("Afine")]
+    Affine = 1,
+    [Description("Hidden")]
+    Hidden = 2,
+    [Description("Affine Double Size")]
+    AffineDouleSize = 3
+}

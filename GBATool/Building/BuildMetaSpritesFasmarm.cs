@@ -200,33 +200,29 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
 
         string objectMode = "0000000000000000b";
 
-        if (sprite.AffineIsEnabled)
+        switch (sprite.ObjectMode)
         {
-            objectMode = "ATTR_0_ROTATION_SCALING";
-
-            if (sprite.IsHidden)
-            {
-                objectMode += "or ATTR_0_HIDE";
-            }
-            else if (sprite.IsDoubleSized)
-            {
-                objectMode += "or ATTR_0_DOUBLE_SIZED";
-            }
+            case ObjectMode.Affine:
+                objectMode = "ATTR_0_ROTATION_SCALING";
+                break;
+            case ObjectMode.Hidden:
+                objectMode = "ATTR_0_HIDE";
+                break;
+            case ObjectMode.AffineDouleSize:
+                objectMode = "ATTR_0_DOUBLE_SIZED";
+                break;
         }
 
         string gfxMode = "0000000000000000b";
 
-        if (sprite.EnableAlphaBlending && sprite.IsMask)
+        switch (sprite.GraphicMode)
         {
-            gfxMode = "ATTR_0_SEMI_TRANSPARENT or ATTR_0_TRANSPARENT_WIND";
-        }
-        else if (sprite.IsMask)
-        {
-            gfxMode = "ATTR_0_TRANSPARENT_WIND";
-        }
-        else if (sprite.EnableAlphaBlending)
-        {
-            gfxMode = "ATTR_0_SEMI_TRANSPARENT";
+            case GraphicMode.AlphaBlending:
+                gfxMode = "ATTR_0_SEMI_TRANSPARENT";
+                break;
+            case GraphicMode.Mask:
+                gfxMode = "ATTR_0_TRANSPARENT_WIND";
+                break;
         }
 
         string mosaic = sprite.EnableMosaic ? "ATTR_0_MOSAIC" : "0000000000000000b";
@@ -296,7 +292,8 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         string attribute1;
         string attribute1Flipped;
 
-        if (!sprite.AffineIsEnabled)
+        if (sprite.ObjectMode == ObjectMode.Normal ||
+            sprite.ObjectMode == ObjectMode.Hidden)
         {
             string horizontalFlip = sprite.FlipHorizontal ? "ATTR_1_FLIP_HORIZONTAL" : "0000000000000000b";
             string verticalFlip = sprite.FlipVertical ? "ATTR_1_FLIP_VERTICAL" : "0000000000000000b";
@@ -358,7 +355,8 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
     {
         string attribute3 = "0000000000000000b";
 
-        if (sprite.AffineIsEnabled)
+        if (sprite.ObjectMode == ObjectMode.Affine ||
+            sprite.ObjectMode == ObjectMode.AffineDouleSize)
         {
             string fraction = "0000000000000000b";
             string integer = "0000000000000000b";
