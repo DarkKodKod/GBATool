@@ -50,7 +50,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Generate header...");
         bool ok = await header.Generate(projectModel.Build.GeneratedSourcePath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating header");
             OutputError(header.GetErrors());
@@ -62,7 +62,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Building banks...");
         ok = await banks.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating banks");
             OutputError(banks.GetErrors());
@@ -72,7 +72,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Building tiles definitions...");
         ok = await BuildTilesDefinitions.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating tiles definitions");
             OutputError(BuildTilesDefinitions.Instance.GetErrors());
@@ -82,7 +82,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Building backgrounds...");
         ok = await BuildBackgrounds.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating backgrounds");
             OutputError(BuildBackgrounds.Instance.GetErrors());
@@ -94,7 +94,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Building meta sprites...");
         ok = await metaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating meta sprites");
             OutputError(metaSprites.GetErrors());
@@ -106,7 +106,7 @@ public class BuildProjectCommand : Command
 
         OutputInfo("Building palettes...");
         ok = await palettes.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (ok == false)
+        if (!ok)
         {
             OutputError("Problems generating palettes");
             OutputError(palettes.GetErrors());
