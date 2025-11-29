@@ -58,15 +58,17 @@ public class BuildProjectCommand : Command
         }
         OutputWarnings(header.GetWarnings());
 
+        IBuilding banks = BuildMemoryBanks.Get(projectModel.Build.OutputFormatScreenBlock);
+
         OutputInfo("Building banks...");
-        ok = await BuildMemoryBanks.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await banks.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating banks");
-            OutputError(BuildMemoryBanks.Instance.GetErrors());
+            OutputError(banks.GetErrors());
             goto finish;
         }
-        OutputWarnings(BuildMemoryBanks.Instance.GetWarnings());
+        OutputWarnings(banks.GetWarnings());
 
         OutputInfo("Building tiles definitions...");
         ok = await BuildTilesDefinitions.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
@@ -88,25 +90,29 @@ public class BuildProjectCommand : Command
         }
         OutputWarnings(BuildBackgrounds.Instance.GetWarnings());
 
+        IBuilding metaSprites = BuildMetaSprites.Get(projectModel.Build.OutputFormatCharacters);
+
         OutputInfo("Building meta sprites...");
-        ok = await BuildMetaSprites.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await metaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating meta sprites");
-            OutputError(BuildMetaSprites.Instance.GetErrors());
+            OutputError(metaSprites.GetErrors());
             goto finish;
         }
-        OutputWarnings(BuildMetaSprites.Instance.GetWarnings());
+        OutputWarnings(metaSprites.GetWarnings());
+
+        IBuilding palettes = BuildPalettes.Get(projectModel.Build.OutputFormatPalettes);
 
         OutputInfo("Building palettes...");
-        ok = await BuildPalettes.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await palettes.Generate(projectModel.Build.GeneratedAssetsPath);
         if (ok == false)
         {
             OutputError("Problems generating palettes");
-            OutputError(BuildPalettes.Instance.GetErrors());
+            OutputError(palettes.GetErrors());
             goto finish;
         }
-        OutputWarnings(BuildPalettes.Instance.GetWarnings());
+        OutputWarnings(palettes.GetWarnings());
 
         OutputInfo("Build completed", "Green");
 
