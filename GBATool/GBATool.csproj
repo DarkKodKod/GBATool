@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <None Remove="icon.ico" />
+    <None Remove="Resources\add.png" />
     <None Remove="Resources\build.png" />
     <None Remove="Resources\character.png" />
     <None Remove="Resources\closed_folder.png" />
@@ -98,6 +99,9 @@
 
   <ItemGroup>
     <Resource Include="icon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\add.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\build.png">

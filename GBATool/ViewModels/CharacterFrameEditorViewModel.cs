@@ -33,13 +33,27 @@ public class CharacterFrameEditorViewModel : ViewModel
     private bool _enableSpriteProperties;
     private ObjectMode _objectMode = ObjectMode.Normal;
     private GraphicMode _graphicMode = GraphicMode.Normal;
+    private CharacterCollision? _characterCollision = null;
+
+    public List<CharacterCollision?> CharacterCollisions { get; set; } = [];
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
+    public AddNewCollisionIntoSpriteFrameCommand AddNewCollisionIntoSpriteFrameCommand { get; } = new();
     #endregion
 
     #region get/set
+    public CharacterCollision? SelectedCollision
+    {
+        get => _characterCollision;
+        set
+        {
+            _characterCollision = value;
+            OnPropertyChanged(nameof(SelectedCollision));
+        }
+    }
+
     public bool EnableSpriteProperties
     {
         get => _enableSpriteProperties;
@@ -279,6 +293,10 @@ public class CharacterFrameEditorViewModel : ViewModel
 
             index++;
         }
+
+        CharacterCollisions.Add(new CharacterCollision());
+        CharacterCollisions.Add(new CharacterCollision());
+        CharacterCollisions.Add(new CharacterCollision());
     }
 
     public override void OnActivate()

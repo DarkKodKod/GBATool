@@ -6,14 +6,15 @@ using System.Windows.Media;
 
 namespace GBATool.Models;
 
-public class CollisionInfo
+public class CharacterCollision
 {
     public string ID { get; set; } = string.Empty;
-    public int Width { get; set; } = 0;
-    public int Height { get; set; } = 0;
-    public int OffsetX { get; set; } = 0;
-    public int OffsetY { get; set; } = 0;
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int OffsetX { get; set; }
+    public int OffsetY { get; set; }
     public Color Color { get; set; }
+    public int Mask { get; set; }
 }
 
 public class CharacterSprite
@@ -36,7 +37,7 @@ public class FrameModel
     public string ID { get; set; } = string.Empty;
     public Dictionary<string, CharacterSprite> Tiles { get; set; } = [];
     public string BankID { get; set; } = string.Empty;
-    public Dictionary<string, CollisionInfo> CollisionInfo { get; set; } = [];
+    public Dictionary<string, CharacterCollision?> CollisionInfo { get; set; } = [];
     public bool IsHeldFrame { get; set; } = false;
 }
 

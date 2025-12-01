@@ -131,32 +131,59 @@
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" Padding="10">
+                <GroupBox Header="Collisions" Grid.Row="1" Margin="10,10,10,0" >
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="5"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <Grid Grid.Row="0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="10" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Column="0" Grid.Row="1">Width:</TextBlock>
-                            <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
-                            <TextBlock Grid.Column="0" Grid.Row="2">Height:</TextBlock>
-                            <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
-                            <TextBlock Grid.Column="0" Grid.Row="3">Offset X:</TextBlock>
-                            <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
-                            <TextBlock Grid.Column="0" Grid.Row="4">Offset Y:</TextBlock>
-                            <TextBox Grid.Column="1" Grid.Row="4" Height="18" Width="50" TextAlignment="Right"/>
-                        </Grid>
+                        <ListView Grid.Row="0"
+                                  HorizontalAlignment="Stretch" 
+                                  VerticalAlignment="Stretch" 
+                                  SelectionMode="Single"
+                                  SelectedValue="{Binding SelectedCollision}"
+                                  ItemsSource="{Binding CharacterCollisions}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="Black" BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Grid.Column="0" Grid.Row="0">Width:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="0" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="1">Height:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="2">Offset X:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="3">Offset Y:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Button 
+                            Grid.Row="2" 
+                            Width="50"
+                            Command="{Binding AddNewCollisionIntoSpriteFrameCommand}"
+                            ToolTip="Add a new collision"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center">
+                            <Image Width="16" Height="16" 
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Source="/resources/add.png">
+                            </Image>
+                        </Button>
                     </Grid>
                 </GroupBox>
             </Grid>
