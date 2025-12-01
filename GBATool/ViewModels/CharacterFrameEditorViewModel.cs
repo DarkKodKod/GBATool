@@ -29,6 +29,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private bool _dontSave;
     private bool _isFlippedHorizontal;
     private bool _isFlippedVertical;
+    private bool _isEnableMosaic;
     private bool _enableSpriteProperties;
     private ObjectMode _objectMode = ObjectMode.Normal;
     private GraphicMode _graphicMode = GraphicMode.Normal;
@@ -55,7 +56,12 @@ public class CharacterFrameEditorViewModel : ViewModel
         get => _objectMode;
         set
         {
-            _objectMode = value;
+            if (_objectMode != value)
+            {
+                _objectMode = value;
+
+                SaveSpriteProperties();
+            }
 
             OnPropertyChanged(nameof(ObjectMode));
         }
@@ -66,7 +72,12 @@ public class CharacterFrameEditorViewModel : ViewModel
         get => _graphicMode;
         set
         {
-            _graphicMode = value;
+            if (_graphicMode != value)
+            {
+                _graphicMode = value;
+
+                SaveSpriteProperties();
+            }
 
             OnPropertyChanged(nameof(GraphicMode));
         }
@@ -77,7 +88,12 @@ public class CharacterFrameEditorViewModel : ViewModel
         get => _isFlippedHorizontal;
         set
         {
-            _isFlippedHorizontal = value;
+            if (_isFlippedHorizontal != value)
+            {
+                _isFlippedHorizontal = value;
+
+                SaveSpriteProperties();
+            }
 
             OnPropertyChanged(nameof(IsFlippedHorizontal));
         }
@@ -88,9 +104,30 @@ public class CharacterFrameEditorViewModel : ViewModel
         get => _isFlippedVertical;
         set
         {
-            _isFlippedVertical = value;
+            if (_isFlippedVertical != value)
+            {
+                _isFlippedVertical = value;
+
+                SaveSpriteProperties();
+            }
 
             OnPropertyChanged(nameof(IsFlippedVertical));
+        }
+    }
+
+    public bool IsEnableMosaic
+    {
+        get => _isEnableMosaic;
+        set
+        {
+            if (_isEnableMosaic != value)
+            {
+                _isEnableMosaic = value;
+
+                SaveSpriteProperties();
+            }
+
+            OnPropertyChanged(nameof(IsEnableMosaic));
         }
     }
 
@@ -464,7 +501,7 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        if (frame.Tiles.TryGetValue(spriteID, out CharacterSprite? sprite))
+        if (!frame.Tiles.TryGetValue(spriteID, out CharacterSprite? sprite))
         {
             return;
         }
@@ -474,10 +511,63 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
+        _dontSave = true;
+
         IsFlippedHorizontal = sprite.FlipHorizontal;
         IsFlippedVertical = sprite.FlipVertical;
         GraphicMode = sprite.GraphicMode;
         ObjectMode = sprite.ObjectMode;
+        IsEnableMosaic = sprite.EnableMosaic;
+
+        _dontSave = false;
+    }
+
+    private void SaveSpriteProperties()
+    {
+        if (_dontSave)
+            return;
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (SelectedFrameSprites.Length > 1)
+        {
+            return;
+        }
+
+        if (!frame.Tiles.TryGetValue(SelectedFrameSprites[0], out CharacterSprite? sprite))
+        {
+            return;
+        }
+
+        if (sprite == null)
+        {
+            return;
+        }
+
+        CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
+
+        sprite.FlipHorizontal = IsFlippedHorizontal;
+        sprite.FlipVertical = IsFlippedVertical;
+        sprite.GraphicMode = GraphicMode;
+        sprite.ObjectMode = ObjectMode;
+        sprite.EnableMosaic = IsEnableMosaic;
+
+        FileHandler?.Save();
     }
 
     private void OnDeleteSpriteFromCharacterFrame(string[] spriteIDs)

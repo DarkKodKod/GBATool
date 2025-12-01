@@ -109,7 +109,7 @@
                             <CheckBox IsChecked="{Binding IsFlippedVertical, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="2">
-                            <CheckBox IsChecked="{Binding IsFlippedHorizontal, Mode=TwoWay}" HorizontalAlignment="Left">Enable Mosaic</CheckBox>
+                            <CheckBox IsChecked="{Binding IsEnableMosaic, Mode=TwoWay}" HorizontalAlignment="Left">Enable Mosaic</CheckBox>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Grid.Row="4">
                             <Label>Object Mode:</Label>
