@@ -165,8 +165,6 @@ Here is also possible to set the animation speed. This value is in seconds per f
 
 Scene position area is just for export the correct position only, **Relative Origin** are the yellow lines, this is used to calculate the origin where every x and y position is calculated so it is used as the 0,0 where the lines are. **Vertical Axis** is the red line and it is used as the center of the sprite. It is used to calculate the flip position of all the sprites and **Base** it is the position for the feets. This is the only one that it is exported because it could be used as a visual feet position for somme collisions or z sorting for example.
 
-> ⚠️Collisions are not yet implemented.
-
 Demo of the sprites in motion from Mesen's Sprite Viewer.
 
 ![](/Images/demo1.gif)
