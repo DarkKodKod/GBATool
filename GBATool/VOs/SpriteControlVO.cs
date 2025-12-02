@@ -15,5 +15,7 @@ public record SpriteControlVO
     public int OffsetY { get; init; }
     public int PositionX { get; init; }
     public int PositionY { get; init; }
+    public bool FlipHorizontal { get; set; }
+    public bool FlipVertical { get; set; }
 }
 

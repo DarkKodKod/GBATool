@@ -36,6 +36,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<LoadWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener += OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
+        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener += OnUpdateSpriteVisualProperties;
         #endregion
 
         frameView.OnActivate();
@@ -70,6 +71,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<LoadWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener -= OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener -= OnOptionOnionSkin;
+        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener -= OnUpdateSpriteVisualProperties;
         #endregion
     }
 
@@ -262,11 +264,35 @@ public partial class CharacterFrameEditorView : UserControl
         {
             SpriteControlVO? sprite = AddSpriteToFrameView(vo.ID, vo, vo.PositionX, vo.PositionY, vo.Image);
 
-            if (sprite != null)
+            if (sprite != null && sprite.Image != null)
             {
+                TransformImage(sprite.Image, vo.FlipHorizontal, vo.FlipVertical);
+
                 _ = frameViewView.Canvas.Children.Add(sprite.Image);
             }
         }
+    }
+
+    private static void TransformImage(Image? image, bool flipHorizontal, bool flipVertical)
+    {
+        if (image == null)
+            return;
+
+        image.RenderTransformOrigin = new Point(0.5, 0.5);
+
+        ScaleTransform flipTrans = new();
+
+        if (flipHorizontal)
+        {
+            flipTrans.ScaleX = -1;
+        }
+
+        if (flipVertical)
+        {
+            flipTrans.ScaleY = -1;
+        }
+
+        image.RenderTransform = flipTrans;
     }
 
     private void OnFillWithPreviousFrameSpriteControls(List<SpriteControlVO> spriteVOList, string animationID)
@@ -337,6 +363,8 @@ public partial class CharacterFrameEditorView : UserControl
 
                 if (sprite != null)
                 {
+                    TransformImage(sprite.Image, item.SpriteControl.FlipHorizontal, item.SpriteControl.FlipVertical);
+
                     _ = frameViewView.Canvas.Children.Add(sprite.Image);
                 }
 
@@ -352,6 +380,40 @@ public partial class CharacterFrameEditorView : UserControl
                 frameViewView.Canvas.Children.Remove(item.SpriteControl.Image);
 
                 SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), item.SpriteControl.BankID);
+            }
+        }
+    }
+
+    private void OnUpdateSpriteVisualProperties(string spriteID, bool horizontalFlip, bool verticalFlip)
+    {
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<Image, SpriteControlVO> item in _spritesInFrames)
+        {
+            if (item.Value.SpriteID != spriteID)
+            {
+                continue;
+            }
+
+            foreach (object child in frameViewView.Canvas.Children)
+            {
+                if (child is not Image image)
+                {
+                    continue;
+                }
+
+                if (image == item.Key)
+                {
+                    TransformImage(image, horizontalFlip, verticalFlip);
+
+                    _spritesInFrames[image].FlipHorizontal = horizontalFlip;
+                    _spritesInFrames[image].FlipVertical = verticalFlip;
+
+                    return;
+                }
             }
         }
     }
@@ -373,7 +435,9 @@ public partial class CharacterFrameEditorView : UserControl
             Width = draggingSprite.Width,
             Height = draggingSprite.Height,
             OffsetX = draggingSprite.OffsetX,
-            OffsetY = draggingSprite.OffsetY
+            OffsetY = draggingSprite.OffsetY,
+            FlipHorizontal = draggingSprite.FlipHorizontal,
+            FlipVertical = draggingSprite.FlipVertical
         };
 
         Canvas.SetLeft(sprite.Image, exactPosX);
@@ -401,8 +465,8 @@ public partial class CharacterFrameEditorView : UserControl
         {
             ID = sprite.ID,
             Position = position,
-            FlipHorizontal = false,
-            FlipVertical = false,
+            FlipHorizontal = sprite.FlipHorizontal,
+            FlipVertical = sprite.FlipVertical,
             SpriteID = sprite.SpriteID,
             TileSetID = sprite.TileSetID,
             Width = sprite.Width,

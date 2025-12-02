@@ -399,7 +399,9 @@ public class CharacterFrameEditorViewModel : ViewModel
                 OffsetX = spriteInfo.OffsetX,
                 OffsetY = spriteInfo.OffsetY,
                 PositionX = (int)item.Value.Position.X,
-                PositionY = (int)item.Value.Position.Y
+                PositionY = (int)item.Value.Position.Y,
+                FlipHorizontal = item.Value.FlipHorizontal,
+                FlipVertical = item.Value.FlipVertical
             };
 
             sprites.Add(sprite);
@@ -584,6 +586,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         sprite.GraphicMode = GraphicMode;
         sprite.ObjectMode = ObjectMode;
         sprite.EnableMosaic = IsEnableMosaic;
+
+        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Dispatch(sprite.SpriteID, sprite.FlipHorizontal, sprite.FlipVertical);
 
         FileHandler?.Save();
     }

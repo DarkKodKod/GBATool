@@ -109,6 +109,7 @@ public class DeleteSpritesFromCharacterFrameSignal : Signal<string[]> { }
 public class SpriteFrameHideSelectionSignal : Signal { }
 public class SpriteFrameShowSelectionSignal : Signal<CharacterDragObjectVO[]> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }
+public class UpdateSpriteVisualPropertiesSignal : Signal<string, bool, bool> { }
 
 // Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
