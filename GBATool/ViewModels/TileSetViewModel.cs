@@ -9,6 +9,7 @@ using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.VOs;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -310,7 +311,7 @@ public class TileSetViewModel : ItemViewModel
         int width = 0;
         int height = 0;
 
-        System.Windows.Point pos = Mouse.GetPosition(canvas);
+        Point pos = Mouse.GetPosition(canvas);
 
         int x = (int)Math.Round(pos.X);
         int y = (int)Math.Round(pos.Y);
@@ -386,20 +387,27 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener += ConfirmSpriteDeletion;
         #endregion
 
+        bool imageUpdated = false;
+
         if (!string.IsNullOrEmpty(model.ImagePath))
         {
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-            string path = System.IO.Path.Combine(projectModel.ProjectPath, model.ImagePath);
+            string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
 
             ImagePath = path;
+
+            imageUpdated = true;
         }
 
         ActualWidth = model.ImageWidth;
         ActualHeight = model.ImageHeight;
         _originalWidth = model.ImageWidth;
 
-        UpdateImage();
+        if (!imageUpdated)
+        {
+            UpdateImage();
+        }
 
         LoadSprites();
     }
@@ -841,6 +849,15 @@ public class TileSetViewModel : ItemViewModel
             return;
         }
 
-        ImgSource = TileSetModel.LoadBitmap(model, forceRedraw);
+        WriteableBitmap? image = TileSetModel.LoadBitmap(model, forceRedraw);
+
+        if (image == null)
+        {
+            ImgSource = null;
+        }
+        else
+        {
+            ImgSource = TileSetUtils.CreateResizedImage(image, image.PixelWidth, image.PixelHeight);
+        }
     }
 }
