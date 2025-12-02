@@ -324,6 +324,8 @@ public partial class CharacterFrameEditorView : UserControl
             Canvas.SetLeft(vo.Image, vo.PositionX);
             Canvas.SetTop(vo.Image, vo.PositionY);
 
+            TransformImage(vo.Image, vo.FlipHorizontal, vo.FlipVertical);
+
             _ = frameViewView.Canvas.Children.Add(vo.Image);
 
             _onionSkinImages.Add(vo.Image);
