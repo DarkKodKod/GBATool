@@ -144,28 +144,42 @@
                                   SelectionMode="Single"
                                   SelectedValue="{Binding SelectedCollision}"
                                   ItemsSource="{Binding CharacterCollisions}">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="Black" BorderThickness="1">
+                                    <Border BorderBrush="Black" BorderThickness="1" Background="Orange">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="auto"/>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Column="0" Grid.Row="0">Width:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="0" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBox Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="1">Height:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="1" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBox Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="2">Offset X:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="2" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBox Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="3">Offset Y:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="3" Height="18" Width="50" TextAlignment="Right"/>
+                                            <TextBox Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
+                                            <Image Width="16" Height="16" Source="/resources/delete.png"
+                                                   Grid.Column="2"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="4" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
+                                            <TextBox Grid.Column="1" Grid.Row="5" TextAlignment="Right"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

@@ -851,13 +851,6 @@ public class TileSetViewModel : ItemViewModel
 
         WriteableBitmap? image = TileSetModel.LoadBitmap(model, forceRedraw);
 
-        if (image == null)
-        {
-            ImgSource = null;
-        }
-        else
-        {
-            ImgSource = TileSetUtils.CreateResizedImage(image, image.PixelWidth, image.PixelHeight);
-        }
+        ImgSource = image == null ? null : TileSetUtils.CreateResizedImage(image, image.PixelWidth, image.PixelHeight);
     }
 }
