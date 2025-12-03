@@ -34,5 +34,7 @@ public enum OutputFormat
     [Description("Binary")]
     Binary = 0,
     [Description("FASMARM")]
-    Fasmarm = 1
+    Fasmarm = 1,
+    [Description("Butano")]
+    Butano = 2
 }
