@@ -184,8 +184,17 @@
 												</i:Interaction.Behaviors>
 											</Image>
 											<TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
-											<Button Grid.Column="1" Grid.Row="4" Background="{Binding Color}" BorderThickness="1" Command="{Binding ChangeCollisionColorCommand}"/>
-											<TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
+                                            <Button Grid.Column="1" Grid.Row="4" 
+                                                    Background="{Binding Color, Mode=OneWay}" 
+                                                    BorderThickness="1" 
+                                                    Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.ChangeCollisionColorCommand}">
+                                                <Button.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                                                        <Binding RelativeSource="{RelativeSource Mode=Self}" Path="Background" />
+                                                    </MultiBinding>
+                                                </Button.CommandParameter>
+                                            </Button>
+                                            <TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
 											<TextBox Text="{Binding Mask}" Grid.Column="1" Grid.Row="5" TextAlignment="Right"/>
                                         </Grid>
                                     </Border>

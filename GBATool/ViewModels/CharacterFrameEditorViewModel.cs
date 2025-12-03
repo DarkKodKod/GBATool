@@ -12,6 +12,7 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media;
 
 namespace GBATool.ViewModels;
 
@@ -33,9 +34,9 @@ public class CharacterFrameEditorViewModel : ViewModel
     private bool _enableSpriteProperties;
     private ObjectMode _objectMode = ObjectMode.Normal;
     private GraphicMode _graphicMode = GraphicMode.Normal;
-    private CharacterCollision? _characterCollision = null;
+    private SpriteCollisionVO? _characterCollision = null;
 
-    public List<CharacterCollision?> CharacterCollisions { get; set; } = [];
+    public List<SpriteCollisionVO?> CharacterCollisions { get; set; } = [];
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -46,7 +47,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     #endregion
 
     #region get/set
-    public CharacterCollision? SelectedCollision
+    public SpriteCollisionVO? SelectedCollision
     {
         get => _characterCollision;
         set
@@ -296,9 +297,9 @@ public class CharacterFrameEditorViewModel : ViewModel
             index++;
         }
 
-        CharacterCollisions.Add(new CharacterCollision());
-        CharacterCollisions.Add(new CharacterCollision());
-        CharacterCollisions.Add(new CharacterCollision());
+        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
     }
 
     public override void OnActivate()
