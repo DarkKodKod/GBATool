@@ -1,9 +1,15 @@
 ﻿using GBATool.Enums;
+using System;
 
 namespace GBATool.Building;
 
-public sealed class BuildBackgrounds : Building<BuildBackgrounds>
+public static class BuildBackgrounds
 {
-    protected override string FileName { get; } = "backgrounds.asm";
-    protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
+    public static IBuilding Get(OutputFormat outputFormat)
+    {
+        return outputFormat switch
+        {
+            _ => throw new NotImplementedException("Format not implemented")
+        };
+    }
 }

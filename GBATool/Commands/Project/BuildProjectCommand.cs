@@ -70,26 +70,6 @@ public class BuildProjectCommand : Command
         }
         OutputWarnings(banks.GetWarnings());
 
-        OutputInfo("Building tiles definitions...");
-        ok = await BuildTilesDefinitions.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (!ok)
-        {
-            OutputError("Problems generating tiles definitions");
-            OutputError(BuildTilesDefinitions.Instance.GetErrors());
-            goto finish;
-        }
-        OutputWarnings(BuildTilesDefinitions.Instance.GetWarnings());
-
-        OutputInfo("Building backgrounds...");
-        ok = await BuildBackgrounds.Instance.Generate(projectModel.Build.GeneratedAssetsPath);
-        if (!ok)
-        {
-            OutputError("Problems generating backgrounds");
-            OutputError(BuildBackgrounds.Instance.GetErrors());
-            goto finish;
-        }
-        OutputWarnings(BuildBackgrounds.Instance.GetWarnings());
-
         IBuilding metaSprites = BuildMetaSprites.Get(projectModel.Build.OutputFormatCharacters);
 
         OutputInfo("Building meta sprites...");

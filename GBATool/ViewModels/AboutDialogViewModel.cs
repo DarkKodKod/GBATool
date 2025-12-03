@@ -2,12 +2,37 @@
 using GBATool.Commands.Utils;
 using System;
 using System.Reflection;
+using System.Windows;
 
 namespace GBATool.ViewModels;
 
 public class AboutDialogViewModel : ViewModel
 {
-    public OpenLinkCommand OpenLinkCommand { get; } = new();
+    private const string _projectNameKey = "applicationTitle";
+    private string _appTitle = string.Empty;
+    private string _version = string.Empty;
+    private string _modalTitle = string.Empty;
+
+    #region get/set
+    public string AppTitle
+    {
+        get => _appTitle;
+        set
+        {
+            _appTitle = value;
+            OnPropertyChanged(nameof(AppTitle));
+        }
+    }
+
+    public string ModalTitle
+    {
+        get => _modalTitle;
+        set
+        {
+            _modalTitle = value;
+            OnPropertyChanged(nameof(ModalTitle));
+        }
+    }
 
     public string Version
     {
@@ -18,13 +43,17 @@ public class AboutDialogViewModel : ViewModel
             OnPropertyChanged(nameof(Version));
         }
     }
+    #endregion
 
-    private string _version = "";
+    public OpenLinkCommand OpenLinkCommand { get; } = new();
 
     public AboutDialogViewModel()
     {
         Assembly assembly = Assembly.GetExecutingAssembly();
         Version? version = assembly.GetName().Version;
+
+        AppTitle = (string)Application.Current.FindResource(_projectNameKey);
+        ModalTitle = "About " + AppTitle;
 
         if (version != null)
         {

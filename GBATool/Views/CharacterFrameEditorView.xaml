@@ -151,7 +151,7 @@
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="Black" BorderThickness="1" Background="Orange">
+                                    <Border BorderBrush="Black" BorderThickness="1" Background="{Binding Color}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="50"/>
@@ -167,19 +167,26 @@
                                                 <RowDefinition Height="auto" />
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Column="0" Grid.Row="0">Width:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding Width}" Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="1">Height:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
+											<TextBox Text="{Binding Height}" Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="2">Offset X:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
+											<TextBox Text="{Binding OffsetX}" Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="3">Offset Y:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
-                                            <Image Width="16" Height="16" Source="/resources/delete.png"
-                                                   Grid.Column="2"/>
-                                            <TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="4" TextAlignment="Right"/>
-                                            <TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
-                                            <TextBox Grid.Column="1" Grid.Row="5" TextAlignment="Right"/>
+											<TextBox Text="{Binding OffsetY}" Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
+											<Image Width="16" 
+												   Height="16" 
+												   Source="/resources/delete.png"
+												   ToolTip="Delete collision"
+                                                   Grid.Column="2">
+												<i:Interaction.Behaviors>
+													<behaviors:EventToCommandBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.DeleteCollisionCommand}" Event="MouseUp" PassArguments="True" />
+												</i:Interaction.Behaviors>
+											</Image>
+											<TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
+											<Button Grid.Column="1" Grid.Row="4" Background="{Binding Color}" BorderThickness="1" Command="{Binding ChangeCollisionColorCommand}"/>
+											<TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
+											<TextBox Text="{Binding Mask}" Grid.Column="1" Grid.Row="5" TextAlignment="Right"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

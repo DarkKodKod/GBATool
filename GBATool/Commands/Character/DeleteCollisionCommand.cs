@@ -1,17 +1,17 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
+using GBATool.Models;
 using GBATool.Signals;
-using GBATool.VOs;
 using System.Windows;
 using System.Windows.Input;
 
-namespace GBATool.Commands.TileSet;
+namespace GBATool.Commands.Character;
 
-public class DeleteSpriteCommand : Command
+public class DeleteCollisionCommand : Command
 {
     public override void Execute(object? parameter)
     {
-        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete the sprite?", "Delete", MessageBoxButton.YesNo);
+        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this collision?", "Delete", MessageBoxButton.YesNo);
 
         if (result == MessageBoxResult.Yes)
         {
@@ -19,9 +19,9 @@ public class DeleteSpriteCommand : Command
 
             FrameworkElement? source = args?.OriginalSource as FrameworkElement;
 
-            if (source?.DataContext is SpriteVO sprite)
+            if (source?.DataContext is CharacterCollision collision)
             {
-                SignalManager.Get<DeletingSpriteSignal>().Dispatch(sprite);
+                SignalManager.Get<DeleteCollisionSignal>().Dispatch(collision);
             }
         }
     }

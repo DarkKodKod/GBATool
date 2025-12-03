@@ -28,6 +28,14 @@ public enum BitsPerPixel
     f8bpp = 8
 }
 
+public enum SpritePattern
+{
+    [Description("1D")]
+    Format1D = 0,
+    [Description("2D")]
+    Format2D = 1
+}
+
 public enum Priority
 {
     [Description("0")]

@@ -98,6 +98,7 @@ public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
+public class DeleteCollisionSignal : Signal<CharacterCollision> { }
 public class UpdateSpriteBaseSignal : Signal<int> { }
 public class UpdateOriginPositionSignal : Signal<int, int> { }
 public class StopCharacterAnimationSignal : Signal<string> { }

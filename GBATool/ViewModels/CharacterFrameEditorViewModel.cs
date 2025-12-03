@@ -41,6 +41,8 @@ public class CharacterFrameEditorViewModel : ViewModel
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
     public AddNewCollisionIntoSpriteFrameCommand AddNewCollisionIntoSpriteFrameCommand { get; } = new();
+    public DeleteCollisionCommand DeleteCollisionCommand { get; } = new();
+    public ChangeCollisionColorCommand ChangeCollisionColorCommand { get; } = new();
     #endregion
 
     #region get/set

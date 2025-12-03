@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:GBATool.Views"
         mc:Ignorable="d"
         ShowInTaskbar="False"
-        Title="About GBATool" Height="272.16" Width="372.868"
+        Title="{Binding ModalTitle}" Height="272.16" Width="372.868"
 		ResizeMode="NoResize"
 		WindowStartupLocation="CenterOwner">
     <Window.DataContext>
@@ -26,7 +26,7 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="1" Grid.Row="1" Width="auto">
-            <Label FontSize="48" FontWeight="Bold" HorizontalAlignment="Center">GBATool</Label>
+            <Label Content="{Binding AppTitle}" FontSize="48" FontWeight="Bold" HorizontalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type TextBlock}">
