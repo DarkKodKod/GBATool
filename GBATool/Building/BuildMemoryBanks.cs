@@ -9,6 +9,7 @@ public static class BuildMemoryBanks
     {
         return outputFormat switch
         {
+            OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Binary => BuildMemoryBanksBinary.Instance,
             _ => throw new NotImplementedException("Format not implemented")
         };

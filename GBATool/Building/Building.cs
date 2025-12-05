@@ -10,6 +10,16 @@ public interface IBuilding
     Task<bool> Generate(string outputPath);
     string[] GetErrors();
     string[] GetWarnings();
+    abstract OutputFormat GetFormat();
+}
+
+public sealed class EmptyBuilder : IBuilding
+{
+    public static EmptyBuilder Instance { get; } = new();
+    public Task<bool> Generate(string outputPath) { return Task.FromResult(true); }
+    public string[] GetErrors() { return []; }
+    public string[] GetWarnings() { return []; }
+    public OutputFormat GetFormat() { return OutputFormat.None; }
 }
 
 public abstract class Building<TBuilder> : IBuilding
@@ -22,6 +32,8 @@ public abstract class Building<TBuilder> : IBuilding
     protected abstract OutputFormat OutputFormat { get; }
 
     public static TBuilder Instance { get; } = new();
+
+    public OutputFormat GetFormat() { return OutputFormat; }
 
     public async Task<bool> Generate(string outputPath)
     {

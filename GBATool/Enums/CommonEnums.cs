@@ -23,10 +23,12 @@ public enum OutputMessageType
 
 public enum OutputFormat
 {
+    [Description("None")]
+    None = 0,
     [Description("Binary")]
-    Binary = 0,
+    Binary = 1,
     [Description("FASMARM")]
-    Fasmarm = 1,
+    Fasmarm = 2,
     [Description("Butano")]
-    Butano = 2
+    Butano = 3
 }

@@ -9,6 +9,7 @@ public static class BuildBackgrounds
     {
         return outputFormat switch
         {
+            OutputFormat.None => EmptyBuilder.Instance,
             _ => throw new NotImplementedException("Format not implemented")
         };
     }

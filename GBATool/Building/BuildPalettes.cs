@@ -9,6 +9,7 @@ public static class BuildPalettes
     {
         return outputFormat switch
         {
+            OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildPalettesFasmarm.Instance,
             _ => throw new NotImplementedException("Format not implemented")
         };

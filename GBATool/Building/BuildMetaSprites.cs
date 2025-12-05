@@ -9,6 +9,7 @@ public static class BuildMetaSprites
     {
         return outputFormat switch
         {
+            OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildMetaSpritesFasmarm.Instance,
             _ => throw new NotImplementedException("Format not implemented")
         };
