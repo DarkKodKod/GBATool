@@ -49,7 +49,9 @@ public class BuildProjectCommand : Command
         IBuilding header = BuildHeader.Get(projectModel.Build.OutputFormatHeader);
 
         if (header.GetFormat() != OutputFormat.None)
+        {
             OutputInfo("Generate header...");
+        }
 
         bool ok = await header.Generate(projectModel.Build.GeneratedSourcePath);
         if (!ok)
@@ -63,7 +65,9 @@ public class BuildProjectCommand : Command
         IBuilding banks = BuildMemoryBanks.Get(projectModel.Build.OutputFormatScreenBlock);
 
         if (banks.GetFormat() != OutputFormat.None)
+        {
             OutputInfo("Building banks...");
+        }
 
         ok = await banks.Generate(projectModel.Build.GeneratedAssetsPath);
         if (!ok)
@@ -77,7 +81,9 @@ public class BuildProjectCommand : Command
         IBuilding metaSprites = BuildMetaSprites.Get(projectModel.Build.OutputFormatCharacters);
 
         if (metaSprites.GetFormat() != OutputFormat.None)
+        {
             OutputInfo("Building meta sprites...");
+        }
 
         ok = await metaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
         if (!ok)
@@ -91,7 +97,9 @@ public class BuildProjectCommand : Command
         IBuilding palettes = BuildPalettes.Get(projectModel.Build.OutputFormatPalettes);
 
         if (palettes.GetFormat() != OutputFormat.None)
+        {
             OutputInfo("Building palettes...");
+        }
 
         ok = await palettes.Generate(projectModel.Build.GeneratedAssetsPath);
         if (!ok)
