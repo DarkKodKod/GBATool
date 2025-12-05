@@ -1,5 +1,4 @@
 ﻿using GBATool.Enums;
-using System;
 
 namespace GBATool.Building;
 
@@ -10,7 +9,7 @@ public static class BuildBackgrounds
         return outputFormat switch
         {
             OutputFormat.None => EmptyBuilder.Instance,
-            _ => throw new NotImplementedException("Format not implemented")
+            _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Backgrounds")
         };
     }
 }

@@ -1,5 +1,4 @@
 ﻿using GBATool.Enums;
-using System;
 
 namespace GBATool.Building;
 
@@ -11,7 +10,7 @@ public static class BuildMetaSprites
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildMetaSpritesFasmarm.Instance,
-            _ => throw new NotImplementedException("Format not implemented")
+            _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Meta Sprites")
         };
     }
 }

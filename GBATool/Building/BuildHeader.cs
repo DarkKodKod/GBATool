@@ -1,5 +1,4 @@
 ﻿using GBATool.Enums;
-using System;
 
 namespace GBATool.Building;
 
@@ -11,7 +10,7 @@ public static class BuildHeader
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildHeaderFasmarm.Instance,
-            _ => throw new NotImplementedException("Format not implemented")
+            _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Headers")
         };
     }
 }

@@ -191,6 +191,11 @@ public class BuildProjectCommand : Command
         {
             string message = messages[i];
 
+            if (string.IsNullOrEmpty(message))
+            {
+                continue;
+            }
+
             int hash = message.GetHashCode();
 
             // filtering the messages when there are too many with the same message

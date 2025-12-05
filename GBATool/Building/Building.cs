@@ -18,8 +18,15 @@ public sealed class EmptyBuilder : IBuilding
     public static EmptyBuilder Instance { get; } = new();
     public Task<bool> Generate(string outputPath) { return Task.FromResult(true); }
     public string[] GetErrors() { return []; }
-    public string[] GetWarnings() { return []; }
+    public string[] GetWarnings() { return _warnings.Count > 0 ? [.. _warnings] : []; }
     public OutputFormat GetFormat() { return OutputFormat.None; }
+    public static EmptyBuilder Warning(string warning)
+    {
+        EmptyBuilder builder = new();
+        builder._warnings.Add(warning);
+        return builder;
+    }
+    private readonly List<string> _warnings = [];
 }
 
 public abstract class Building<TBuilder> : IBuilding

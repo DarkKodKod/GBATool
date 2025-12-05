@@ -1,5 +1,4 @@
 ﻿using GBATool.Enums;
-using System;
 
 namespace GBATool.Building;
 
@@ -11,7 +10,7 @@ public static class BuildMemoryBanks
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Binary => BuildMemoryBanksBinary.Instance,
-            _ => throw new NotImplementedException("Format not implemented")
+            _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Memory Banks")
         };
     }
 }
