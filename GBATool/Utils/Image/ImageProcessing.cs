@@ -31,7 +31,9 @@ public static class ImageProcessing
             for (int i = 0; i < cellsCount.width; ++i)
             {
                 if (countingTiles >= cellsCount.numberOfTiles)
+                {
                     goto done;
+                }
 
                 // read pixels in the 8x8 quadrant
                 for (int y = currentY; y < currentY + 8; ++y)

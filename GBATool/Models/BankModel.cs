@@ -47,40 +47,50 @@ public class BankModel : AFileModel
     {
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-        bool is1DImage = IsBackground || (projectModel.SpritePatternFormat == SpritePattern.Format1D);
+        bool is1DPattern = IsBackground || (projectModel.SpritePatternFormat == SpritePattern.Format1D);
 
-        if (is1DImage)
+        foreach (SpriteRef sprite in Sprites)
         {
-            foreach (SpriteRef sprite in Sprites)
+            if (string.IsNullOrEmpty(sprite.TileSetID))
             {
-                if (string.IsNullOrEmpty(sprite.TileSetID))
-                {
-                    continue;
-                }
-
-                if (sprite.SpriteID == spriteID)
-                {
-                    return true;
-                }
-
-                TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
-                if (tileSetModel != null)
-                {
-                    SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == sprite.SpriteID);
-
-                    if (sm != null)
-                    {
-                        index += SpriteUtils.Count8x8Tiles(sm.Shape, sm.Size);
-                    }
-                }
+                continue;
             }
 
-            throw new InvalidOperationException("No sprite found in the bank");
+            if (sprite.SpriteID == spriteID)
+            {
+                return true;
+            }
+
+            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
+            
+            if (tileSetModel == null)
+            {
+                continue;
+            }
+
+            SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == sprite.SpriteID);
+
+            if (sm == null)
+            {
+                continue;
+            }
+
+            if (is1DPattern)
+            {
+                // iterate over all the sprites and it counts how many tiles each sprite has
+                // and when the spriteID is found, it returns the amount of tiles accumulated
+                // until that very sprite
+
+                index += SpriteUtils.Count8x8Tiles(sm.Shape, sm.Size);
+            }
+            // 2D pattern
+            else
+            {
+                index = 0;
+            }
         }
-        else
-        {
-            throw new InvalidOperationException("Get the index for 2D Mapping is not implemented");
-        }
+
+        throw new InvalidOperationException("No sprite found in the bank");
     }
 
     public (bool, string) RegisterSprite(SpriteModel sprite)
@@ -219,11 +229,18 @@ public class BankModel : AFileModel
             tilesHeight += acuHeight;
         }
 
-        if (countTiles > 0)
+        if (is1DImage)
         {
+            // 1D is a continous array of tiles and if this array is bigger than the max texture size
+            // then it will add in height as much it is required to fill it with all the tiles
+
             tilesWidth = countTiles < BankUtils.MaxTextureCellsWidth ? countTiles : BankUtils.MaxTextureCellsWidth;
 
             tilesHeight = (int)Util.BankRowsRound(countTiles / (double)BankUtils.MaxTextureCellsWidth);
+        }
+        else
+        {
+            countTiles = tilesWidth * tilesHeight;
         }
 
         return (tilesWidth, tilesHeight, countTiles);

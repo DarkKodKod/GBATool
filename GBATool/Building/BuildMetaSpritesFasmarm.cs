@@ -58,7 +58,6 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
 
                 _configTables.Clear();
             }
-
         }
 
         return GetErrors().Length == 0;
