@@ -139,6 +139,7 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <ListView Grid.Row="0"
+                                  x:Name="lvFrameCollisions"
                                   VirtualizingPanel.ScrollUnit="Pixel"
                                   HorizontalAlignment="Stretch" 
                                   VerticalAlignment="Stretch" 

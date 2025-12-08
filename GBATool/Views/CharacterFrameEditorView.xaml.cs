@@ -37,6 +37,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener += OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener += OnUpdateSpriteVisualProperties;
+        SignalManager.Get<UpdateCollisionViewSignal>().Listener += OnUpdateCollisionView;
         #endregion
 
         frameView.OnActivate();
@@ -72,6 +73,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener -= OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener -= OnOptionOnionSkin;
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener -= OnUpdateSpriteVisualProperties;
+        SignalManager.Get<UpdateCollisionViewSignal>().Listener -= OnUpdateCollisionView;
         #endregion
     }
 
@@ -241,6 +243,11 @@ public partial class CharacterFrameEditorView : UserControl
                 bankViewerView.Canvas.Children.Remove(item.SpriteControl.Image);
             }
         }
+    }
+
+    private void OnUpdateCollisionView()
+    {
+        lvFrameCollisions.Items.Refresh();
     }
 
     private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList, string frameID)

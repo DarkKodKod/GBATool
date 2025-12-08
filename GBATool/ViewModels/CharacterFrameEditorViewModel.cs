@@ -36,8 +36,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private ObjectMode _objectMode = ObjectMode.Normal;
     private GraphicMode _graphicMode = GraphicMode.Normal;
     private SpriteCollisionVO? _characterCollision = null;
-
-    public List<SpriteCollisionVO?> CharacterCollisions { get; set; } = [];
+    private List<SpriteCollisionVO> _characterCollisions = [];
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -55,6 +54,17 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             _characterCollision = value;
             OnPropertyChanged(nameof(SelectedCollision));
+        }
+    }
+
+    public List<SpriteCollisionVO> CharacterCollisions
+    {
+        get => _characterCollisions;
+        set
+        {
+            _characterCollisions = value;
+
+            OnPropertyChanged(nameof(CharacterCollisions));
         }
     }
 
@@ -476,7 +486,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private void OnNewCollisionIntoSprite()
     {
         SpriteCollisionVO collisionVO = new(
-            Guid.NewGuid().ToString(), 
+            Guid.NewGuid().ToString(),
             0, 
             0, 
             0, 
@@ -485,11 +495,15 @@ public class CharacterFrameEditorViewModel : ViewModel
             0);
 
         CharacterCollisions.Add(collisionVO);
+
+        SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
     }
 
     private void OnDeleteCollision(SpriteCollisionVO collisionVO)
     {
         _ = CharacterCollisions.Remove(collisionVO);
+
+        SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
     }
 
     private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite, string bankID)
