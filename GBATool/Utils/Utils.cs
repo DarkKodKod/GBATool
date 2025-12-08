@@ -345,4 +345,9 @@ public static class Util
                 return value;
         }
     }
+
+    public static bool InDesignMode()
+    {
+        return Application.Current is not App;
+    }
 }

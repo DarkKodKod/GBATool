@@ -139,6 +139,7 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <ListView Grid.Row="0"
+                                  VirtualizingPanel.ScrollUnit="Pixel"
                                   HorizontalAlignment="Stretch" 
                                   VerticalAlignment="Stretch" 
                                   SelectionMode="Single"

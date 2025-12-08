@@ -98,6 +98,7 @@ public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
+public class NewCollisionIntoSpriteSignal: Signal { }
 public class CollisionColorSelectedSignal : Signal<Color> { }
 public class DeleteCollisionSignal : Signal<SpriteCollisionVO> { }
 public class UpdateSpriteBaseSignal : Signal<int> { }

@@ -3,6 +3,7 @@ using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
+using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
@@ -41,7 +42,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
-    public AddNewCollisionIntoSpriteFrameCommand AddNewCollisionIntoSpriteFrameCommand { get; } = new();
+    public DispatchSignalCommand<NewCollisionIntoSpriteSignal> AddNewCollisionIntoSpriteFrameCommand { get; } = new();
     public DeleteCollisionCommand DeleteCollisionCommand { get; } = new();
     public ChangeCollisionColorCommand ChangeCollisionColorCommand { get; } = new();
     #endregion
@@ -297,9 +298,10 @@ public class CharacterFrameEditorViewModel : ViewModel
             index++;
         }
 
-        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
-        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
-        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        if (Util.InDesignMode())
+        {
+            CharacterCollisions.Add(new SpriteCollisionVO("dummy", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        }
     }
 
     public override void OnActivate()
@@ -313,6 +315,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
+        SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
@@ -461,12 +464,27 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
+        SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
         #endregion
     }
 
     private void OnCharacterFrameEditorViewLoaded()
     {
         LoadFrameSprites();
+    }
+
+    private void OnNewCollisionIntoSprite()
+    {
+        SpriteCollisionVO collisionVO = new(
+            Guid.NewGuid().ToString(), 
+            0, 
+            0, 
+            0, 
+            0, 
+            new SolidColorBrush(Color.FromArgb(50, 255, 0, 0)),
+            0);
+
+        CharacterCollisions.Add(collisionVO);
     }
 
     private void OnDeleteCollision(SpriteCollisionVO collisionVO)
