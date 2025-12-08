@@ -17,10 +17,8 @@ public class ChangeCollisionColorCommand : Command
 
         object[] values = (object[])parameter;
 
-        if (values[0] is not SolidColorBrush color)
-        {
-            return;
-        }
+        string collisionID = (string)values[0];
+        SolidColorBrush oldColor = (SolidColorBrush)values[1];
 
         ColorDialog colorDialog = new()
         {
@@ -28,14 +26,19 @@ public class ChangeCollisionColorCommand : Command
             SolidColorOnly = true,
             AllowFullOpen = true,
             FullOpen = true,
-            Color = System.Drawing.Color.FromArgb(color.Color.R, color.Color.G, color.Color.B)
+            Color = System.Drawing.Color.FromArgb(oldColor.Color.R, oldColor.Color.G, oldColor.Color.B)
         };
 
         if (colorDialog.ShowDialog() == DialogResult.OK)
         {
             Color colorBrush = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
 
-            SignalManager.Get<CollisionColorSelectedSignal>().Dispatch(colorBrush);
+            if (oldColor.Color == colorBrush)
+            {
+                return;
+            }
+
+            SignalManager.Get<CollisionColorSelectedSignal>().Dispatch(collisionID, colorBrush);
         }
     }
 }

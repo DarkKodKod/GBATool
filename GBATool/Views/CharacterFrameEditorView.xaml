@@ -192,7 +192,8 @@
                                                     Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.ChangeCollisionColorCommand}">
                                                 <Button.CommandParameter>
                                                     <MultiBinding Converter="{StaticResource parametersConverter}">
-                                                        <Binding RelativeSource="{RelativeSource Mode=Self}" Path="Background" />
+                                                        <Binding Path="ID" />
+                                                        <Binding Path="Color" />
                                                     </MultiBinding>
                                                 </Button.CommandParameter>
                                             </Button>

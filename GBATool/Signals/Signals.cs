@@ -100,7 +100,7 @@ public class UpdateCollisionViewSignal : Signal { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
 public class NewCollisionIntoSpriteSignal: Signal { }
-public class CollisionColorSelectedSignal : Signal<Color> { }
+public class CollisionColorSelectedSignal : Signal<string, Color> { }
 public class DeleteCollisionSignal : Signal<SpriteCollisionVO> { }
 public class UpdateSpriteBaseSignal : Signal<int> { }
 public class UpdateOriginPositionSignal : Signal<int, int> { }

@@ -310,7 +310,16 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         if (Util.InDesignMode())
         {
-            CharacterCollisions.Add(new SpriteCollisionVO("dummy", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+            CharacterCollisions.Add(new()
+            {
+                ID = "dummy", 
+                Width = 0,
+                Height = 0,
+                OffsetX = 0, 
+                OffsetY = 0, 
+                Color = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
+                Mask = 0
+            });
         }
     }
 
@@ -326,6 +335,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
+        SignalManager.Get<CollisionColorSelectedSignal>().Listener += OnCollisionColorSelected;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
@@ -475,6 +485,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
+        SignalManager.Get<CollisionColorSelectedSignal>().Listener -= OnCollisionColorSelected;
         #endregion
     }
 
@@ -483,16 +494,31 @@ public class CharacterFrameEditorViewModel : ViewModel
         LoadFrameSprites();
     }
 
+    private void OnCollisionColorSelected(string collisionID, Color newColor)
+    {
+        foreach (SpriteCollisionVO item in CharacterCollisions)
+        {
+            if (item.ID == collisionID)
+            {
+                item.Color = new SolidColorBrush(newColor);
+                break;
+            }
+        }
+
+        SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
+    }
+
     private void OnNewCollisionIntoSprite()
     {
-        SpriteCollisionVO collisionVO = new(
-            Guid.NewGuid().ToString(),
-            0, 
-            0, 
-            0, 
-            0, 
-            new SolidColorBrush(Color.FromArgb(50, 255, 0, 0)),
-            0);
+        SpriteCollisionVO collisionVO = new() {
+            ID = Guid.NewGuid().ToString(),
+            Width = 0,
+            Height = 0,
+            OffsetX = 0,
+            OffsetY = 0,
+            Color = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0)),
+            Mask = 0
+        };
 
         CharacterCollisions.Add(collisionVO);
 
