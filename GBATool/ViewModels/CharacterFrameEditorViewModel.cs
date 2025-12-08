@@ -297,9 +297,9 @@ public class CharacterFrameEditorViewModel : ViewModel
             index++;
         }
 
-        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
-        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
-        CharacterCollisions.Add(new SpriteCollisionVO("", 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
+        CharacterCollisions.Add(new SpriteCollisionVO(Guid.NewGuid().ToString(), 0, 0, 0, 0, new SolidColorBrush(Color.FromRgb(255, 255, 255)), 0));
     }
 
     public override void OnActivate()
@@ -312,6 +312,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
+        SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
@@ -459,12 +460,18 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
+        SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
         #endregion
     }
 
     private void OnCharacterFrameEditorViewLoaded()
     {
         LoadFrameSprites();
+    }
+
+    private void OnDeleteCollision(SpriteCollisionVO collisionVO)
+    {
+        _ = CharacterCollisions.Remove(collisionVO);
     }
 
     private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite, string bankID)

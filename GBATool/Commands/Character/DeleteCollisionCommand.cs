@@ -2,6 +2,7 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.VOs;
 using System.Windows;
 using System.Windows.Input;
 
@@ -13,16 +14,18 @@ public class DeleteCollisionCommand : Command
     {
         MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this collision?", "Delete", MessageBoxButton.YesNo);
 
-        if (result == MessageBoxResult.Yes)
+        if (result != MessageBoxResult.Yes)
         {
-            MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
+            return;
+        }
 
-            FrameworkElement? source = args?.OriginalSource as FrameworkElement;
-
-            if (source?.DataContext is CharacterCollision collision)
-            {
-                SignalManager.Get<DeleteCollisionSignal>().Dispatch(collision);
-            }
+        MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
+        
+        FrameworkElement? source = args?.OriginalSource as FrameworkElement;
+        
+        if (source?.DataContext is SpriteCollisionVO collision)
+        {
+            SignalManager.Get<DeleteCollisionSignal>().Dispatch(collision);
         }
     }
 }
