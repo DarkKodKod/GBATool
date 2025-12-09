@@ -312,11 +312,11 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             CharacterCollisions.Add(new()
             {
-                ID = "dummy", 
+                ID = "dummy",
                 Width = 0,
                 Height = 0,
-                OffsetX = 0, 
-                OffsetY = 0, 
+                OffsetX = 0,
+                OffsetY = 0,
                 Color = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
                 Mask = 0
             });
@@ -510,7 +510,8 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     private void OnNewCollisionIntoSprite()
     {
-        SpriteCollisionVO collisionVO = new() {
+        SpriteCollisionVO collisionVO = new()
+        {
             ID = Guid.NewGuid().ToString(),
             Width = 0,
             Height = 0,

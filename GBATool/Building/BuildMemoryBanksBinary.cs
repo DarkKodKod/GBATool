@@ -44,8 +44,8 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
-            int imageWidth = cellsCount.width * 8;
-            int imageHeight = cellsCount.height * 8;
+            int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
+            int imageHeight = cellsCount.height * BankUtils.SizeOfCellInPixels;
 
             BankImageMetaData metaData = BankUtils.CreateImage(bank, false, imageWidth, imageHeight);
 

@@ -49,6 +49,10 @@ public class BankModel : AFileModel
 
         bool is1DPattern = IsBackground || (projectModel.SpritePatternFormat == SpritePattern.Format1D);
 
+        int tilesHeight = 1;
+        int acuWidth = 0;
+        int acuHeight = 0;
+
         foreach (SpriteRef sprite in Sprites)
         {
             if (string.IsNullOrEmpty(sprite.TileSetID))
@@ -62,7 +66,7 @@ public class BankModel : AFileModel
             }
 
             TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
-            
+
             if (tileSetModel == null)
             {
                 continue;
@@ -86,7 +90,33 @@ public class BankModel : AFileModel
             // 2D pattern
             else
             {
-                index = 0;
+                int width = 0;
+                int height = 0;
+                SpriteUtils.ConvertToWidthHeight(sm.Shape, sm.Size, ref width, ref height);
+
+                width /= BankUtils.SizeOfCellInPixels;
+                height /= BankUtils.SizeOfCellInPixels;
+
+                calculate:
+                if (acuWidth + width <= BankUtils.MaxTextureCellsWidth)
+                {
+                    acuWidth += width;
+
+                    if (acuHeight < height)
+                    {
+                        acuHeight = height;
+                    }
+                }
+                else
+                {
+                    tilesHeight += acuHeight;
+                    acuWidth = 0;
+                    acuHeight = 0;
+
+                    goto calculate;
+                }
+
+                index = acuWidth * tilesHeight;
             }
         }
 
@@ -163,8 +193,8 @@ public class BankModel : AFileModel
 
         bool is1DImage = IsBackground || projectModel.SpritePatternFormat == SpritePattern.Format1D;
 
-        int tilesWidth = 0;
-        int tilesHeight = 0;
+        int tilesWidth = 1;
+        int tilesHeight = 1;
         int countTiles = 0;
         int acuWidth = 0;
         int acuHeight = 0;

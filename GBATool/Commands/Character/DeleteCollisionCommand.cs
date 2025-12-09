@@ -1,6 +1,5 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
-using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows;
@@ -20,9 +19,9 @@ public class DeleteCollisionCommand : Command
         }
 
         MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
-        
+
         FrameworkElement? source = args?.OriginalSource as FrameworkElement;
-        
+
         if (source?.DataContext is SpriteCollisionVO collision)
         {
             SignalManager.Get<DeleteCollisionSignal>().Dispatch(collision);

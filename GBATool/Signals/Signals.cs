@@ -99,7 +99,7 @@ public class PauseCharacterAnimationSignal : Signal<string> { }
 public class UpdateCollisionViewSignal : Signal { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
-public class NewCollisionIntoSpriteSignal: Signal { }
+public class NewCollisionIntoSpriteSignal : Signal { }
 public class CollisionColorSelectedSignal : Signal<string, Color> { }
 public class DeleteCollisionSignal : Signal<SpriteCollisionVO> { }
 public class UpdateSpriteBaseSignal : Signal<int> { }
