@@ -2,8 +2,10 @@
 using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
+using GBATool.ViewModels;
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -21,6 +23,7 @@ namespace GBATool.Views
 
             #region Signals
             SignalManager.Get<WriteBuildOutputSignal>().Listener += OnWriteBuildOutput;
+            SignalManager.Get<ProjectBuildCompleteSignal>().Listener += OnProjectBuildComplete;
             #endregion
         }
 
@@ -59,12 +62,42 @@ namespace GBATool.Views
         {
             #region Signals
             SignalManager.Get<WriteBuildOutputSignal>().Listener -= OnWriteBuildOutput;
+            SignalManager.Get<ProjectBuildCompleteSignal>().Listener -= OnProjectBuildComplete;
             #endregion
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             CleanUp();
+        }
+
+        private void Window_Activated(object sender, EventArgs e)
+        {
+            if (DataContext is not BuildProjectDialogViewModel viewModel)
+            {
+                return;
+            }
+
+            if (viewModel.BuildProjectCommand.CanExecute(null))
+            {
+                viewModel.BuildProjectCommand.Execute(null);
+            }
+        }
+
+        private void OnProjectBuildComplete()
+        {
+            if (DataContext is not BuildProjectDialogViewModel viewModel)
+            {
+                return;
+            }
+
+            SynchronizationContext.Current?.Post(TimeSpan.FromSeconds(1), () =>
+            {
+                if (!viewModel.KeepWindowOpen)
+                {
+                    Close();
+                }
+            });
         }
     }
 }

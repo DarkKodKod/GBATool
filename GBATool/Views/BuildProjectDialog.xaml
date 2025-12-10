@@ -7,14 +7,11 @@
         xmlns:local="clr-namespace:GBATool.Views"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         mc:Ignorable="d"
-        xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
         ShowInTaskbar="False"
         Title="Build" Height="500" Width="700"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+		Activated="Window_Activated"
         Closing="Window_Closing">
-    <Window.Resources>
-        <cv:ParametersConverter x:Key="parametersConverter"/>
-    </Window.Resources>
     <Window.DataContext>
         <vm:BuildProjectDialogViewModel />
     </Window.DataContext>
@@ -25,57 +22,15 @@
     </i:Interaction.Triggers>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10"/>
-        </Grid.ColumnDefinitions>
-        <GroupBox Grid.Row="1" Grid.Column="1" Header="Configuration" Margin="5" Padding="5">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="1" Content="Source code output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
-                    <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
-					        VerticalAlignment="Center" Width="30" Content="..." 
-					        Command="{Binding BrowseFolderCommand}" x:Name="btnSourcePath">
-                        <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource parametersConverter}">
-                                <Binding RelativeSource="{RelativeSource Self}"/>
-                                <Binding Path="Text" ElementName="tbSourcePath"/>
-                            </MultiBinding>
-                        </Button.CommandParameter>
-                    </Button>
-                    <TextBox Name="tbSourcePath" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
-					         TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
-                </DockPanel>
-                <Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
-                    <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
-				            VerticalAlignment="Center" Width="30" Content="..." 
-				            Command="{Binding BrowseFolderCommand}" x:Name="btnAssetsPath">
-                        <Button.CommandParameter>
-                            <MultiBinding Converter="{StaticResource parametersConverter}">
-                                <Binding RelativeSource="{RelativeSource Self}"/>
-                                <Binding Path="Text" ElementName="tbAssetsPath"/>
-                            </MultiBinding>
-                        </Button.CommandParameter>
-                    </Button>
-                    <TextBox Name="tbAssetsPath" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
-				             TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
-                </DockPanel>
-            </Grid>
-        </GroupBox>
-        <GroupBox Grid.Row="2" Grid.Column="1" Header="Output" Margin="5" Padding="5">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="10"/>
+		</Grid.ColumnDefinitions>
+		<GroupBox Grid.Row="0" Grid.Column="1" Header="Output" Margin="5" Padding="5">
             <RichTextBox
                 ScrollViewer.HorizontalScrollBarVisibility="Visible"
                 ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -95,7 +50,11 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="10" Content="Close" 
+			<CheckBox 
+				Grid.Column="0" 
+				Margin="10"
+				IsChecked="{Binding KeepWindowOpen}">Keep window open</CheckBox>
+			<Button Grid.Column="1" Margin="10" Content="Close" 
 					HorizontalAlignment="center" VerticalAlignment="center" Width="75" 
 					IsCancel="True"/>
             <Button Grid.Column="2" Content="Build" 

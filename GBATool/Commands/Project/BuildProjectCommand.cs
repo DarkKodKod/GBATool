@@ -116,6 +116,8 @@ public class BuildProjectCommand : Command
         _building = false;
 
         RaiseCanExecuteChanged();
+
+        SignalManager.Get<ProjectBuildCompleteSignal>().Dispatch();
     }
 
     private static bool CheckValidFolder(string path)

@@ -17,6 +17,7 @@ public class GBAToolConfigurationModel : ISingletonModel
     public bool FullScreen { get; set; } = false;
     public string[] RecentProjects { get; set; }
     public bool EnableOnionSkin { get; set; } = false;
+    public bool KeepBuildDialogOpen { get; set; } = false;
 
     private const string _configfileNameKey = "configurationFileName";
     private readonly string _configFileName = "";
@@ -44,6 +45,7 @@ public class GBAToolConfigurationModel : ISingletonModel
         WindowSizeY = copy.WindowSizeY;
         FullScreen = copy.FullScreen;
         EnableOnionSkin = copy.EnableOnionSkin;
+        KeepBuildDialogOpen = copy.KeepBuildDialogOpen;
     }
 
     public void Load()

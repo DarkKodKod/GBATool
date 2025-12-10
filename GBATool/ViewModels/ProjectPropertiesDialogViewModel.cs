@@ -1,29 +1,56 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
+using GBATool.Commands.FileSystem;
 using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
+using System.Windows.Controls;
 
 namespace GBATool.ViewModels;
 
 public class ProjectPropertiesDialogViewModel : ViewModel
 {
+    #region Commands
+    public BrowseFolderCommand BrowseFolderCommand { get; } = new();
     public DispatchSignalCommand<CloseDialogSignal> CloseDialogCommand { get; } = new();
+    #endregion
 
     private bool _changed = false;
     private SpritePattern _selectedSpriteFormat = SpritePattern.Format1D;
-    private OutputFormat _selectedOutputFormatHeader = OutputFormat.Fasmarm;
-    private OutputFormat _selectedOutputFormatPalettes = OutputFormat.Fasmarm;
-    private OutputFormat _selectedOutputFormatCharacters = OutputFormat.Fasmarm;
-    private OutputFormat _selectedOutputFormatScreenBlock = OutputFormat.Binary;
+    private OutputFormat _selectedOutputFormatHeader = OutputFormat.None;
+    private OutputFormat _selectedOutputFormatPalettes = OutputFormat.None;
+    private OutputFormat _selectedOutputFormatCharacters = OutputFormat.None;
+    private OutputFormat _selectedOutputFormatScreenBlock = OutputFormat.None;
     private string _projectTitle = string.Empty;
     private int _softwareVersion = 0;
     private string _projectInitials = string.Empty;
     private string _developerId = string.Empty;
+    private string _folderSourcePath = string.Empty;
+    private string _folderAssetsPath = string.Empty;
 
     #region get/set
+    public string FolderSourcePath
+    {
+        get => _folderSourcePath;
+        set
+        {
+            _folderSourcePath = value;
+            OnPropertyChanged(nameof(FolderSourcePath));
+        }
+    }
+
+    public string FolderAssetsPath
+    {
+        get => _folderAssetsPath;
+        set
+        {
+            _folderAssetsPath = value;
+            OnPropertyChanged(nameof(FolderAssetsPath));
+        }
+    }
+
     public OutputFormat SelectedOutputFormatHeader
     {
         get { return _selectedOutputFormatHeader; }
@@ -137,7 +164,15 @@ public class ProjectPropertiesDialogViewModel : ViewModel
     {
         ReadProjectData();
 
+        #region Signals
+        SignalManager.Get<BrowseFolderSuccessSignal>().Listener += BrowseFolderSuccess;
         SignalManager.Get<CloseDialogSignal>().Listener += OnCloseDialog;
+        #endregion
+
+        ProjectModel project = ModelManager.Get<ProjectModel>();
+
+        FolderSourcePath = project.Build.GeneratedSourcePath;
+        FolderAssetsPath = project.Build.GeneratedAssetsPath;
 
         _changed = false;
     }
@@ -169,7 +204,36 @@ public class ProjectPropertiesDialogViewModel : ViewModel
             project.Save();
         }
 
+        #region Signals
         SignalManager.Get<CloseDialogSignal>().Listener -= OnCloseDialog;
+        SignalManager.Get<BrowseFolderSuccessSignal>().Listener -= BrowseFolderSuccess;
+        #endregion
+    }
+
+    private void BrowseFolderSuccess(Control owner, string folderPath)
+    {
+        ProjectModel project = ModelManager.Get<ProjectModel>();
+
+        if (owner.Name == "btnSourcePath")
+        {
+            if (project.Build.GeneratedSourcePath != folderPath)
+            {
+                FolderSourcePath = folderPath;
+
+                project.Build.GeneratedSourcePath = folderPath;
+            }
+        }
+        else if (owner.Name == "btnAssetsPath")
+        {
+            if (project.Build.GeneratedAssetsPath != folderPath)
+            {
+                FolderAssetsPath = folderPath;
+
+                project.Build.GeneratedAssetsPath = folderPath;
+            }
+        }
+
+        project.Save();
     }
 
     private void ReadProjectData()

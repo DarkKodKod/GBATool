@@ -11,13 +11,14 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:enum="clr-namespace:GBATool.Enums"
         mc:Ignorable="d"
-        Title="Project properties" Height="430" Width="450"
+        Title="Project properties" Height="560" Width="450"
         ShowInTaskbar="False"
 		ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
     <Window.DataContext>
         <vm:ProjectPropertiesDialogViewModel />
     </Window.DataContext>
-    <Window.Resources>
+	<Window.Resources>
+		<cv:ParametersConverter x:Key="parametersConverter"/>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
     </Window.Resources>
     <i:Interaction.Triggers>
@@ -33,7 +34,10 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="3"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+			<RowDefinition Height="3"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
@@ -173,6 +177,46 @@
                           SelectedValuePath="Value"/>
             </Grid>
         </GroupBox>
-        <Button Grid.Row="6" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
+		<GroupBox Grid.Row="7" Grid.Column="1" Header="Configuration" Padding="5">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+				</Grid.RowDefinitions>
+				<Label Grid.Row="0" Grid.Column="1" Content="Source code output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+				<DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+					<Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+			        VerticalAlignment="Center" Width="30" Content="..." 
+			        Command="{Binding BrowseFolderCommand}" x:Name="btnSourcePath">
+						<Button.CommandParameter>
+							<MultiBinding Converter="{StaticResource parametersConverter}">
+								<Binding RelativeSource="{RelativeSource Self}"/>
+								<Binding Path="Text" ElementName="tbSourcePath"/>
+							</MultiBinding>
+						</Button.CommandParameter>
+					</Button>
+					<TextBox Name="tbSourcePath" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
+			         TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+				</DockPanel>
+				<Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+				<DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
+					<Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+		            VerticalAlignment="Center" Width="30" Content="..." 
+		            Command="{Binding BrowseFolderCommand}" x:Name="btnAssetsPath">
+						<Button.CommandParameter>
+							<MultiBinding Converter="{StaticResource parametersConverter}">
+								<Binding RelativeSource="{RelativeSource Self}"/>
+								<Binding Path="Text" ElementName="tbAssetsPath"/>
+							</MultiBinding>
+						</Button.CommandParameter>
+					</Button>
+					<TextBox Name="tbAssetsPath" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
+		             TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+				</DockPanel>
+			</Grid>
+		</GroupBox>
+		<Button Grid.Row="8" Grid.Column="1" Margin="10" Content="Close" IsCancel="True" Width="100" />
     </Grid>
 </Window>
