@@ -10,6 +10,7 @@ public static class BuildMetaSprites
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildMetaSpritesFasmarm.Instance,
+            OutputFormat.Butano => BuildMetaSpritesButano.Instance,
             _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Meta Sprites")
         };
     }

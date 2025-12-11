@@ -10,6 +10,7 @@ public static class BuildMemoryBanks
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Binary => BuildMemoryBanksBinary.Instance,
+            OutputFormat.Butano => BuildMemoryBanksButano.Instance,
             _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Memory Banks")
         };
     }
