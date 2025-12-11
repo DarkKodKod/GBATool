@@ -17,6 +17,8 @@ namespace GBATool.Views
     /// </summary>
     public partial class BuildProjectDialog : Window, ICleanable
     {
+        private bool _isWindowActivated;
+
         public BuildProjectDialog()
         {
             InitializeComponent();
@@ -69,10 +71,19 @@ namespace GBATool.Views
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             CleanUp();
+
+            _isWindowActivated = false;
         }
 
         private void Window_Activated(object sender, EventArgs e)
         {
+            if (_isWindowActivated)
+            {
+                return;
+            }
+
+            _isWindowActivated = true;
+
             if (DataContext is not BuildProjectDialogViewModel viewModel)
             {
                 return;

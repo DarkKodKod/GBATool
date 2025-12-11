@@ -3,6 +3,7 @@ using GBATool.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -349,5 +350,14 @@ public static class Util
     public static bool InDesignMode()
     {
         return Application.Current is not App;
+    }
+
+    public static string ToCamelCase(this string text)
+    {
+        TextInfo _textInfo = CultureInfo.InvariantCulture.TextInfo;
+
+        char[] _camelCase = _textInfo.ToTitleCase(text).Replace(" ", "").ToCharArray();
+
+        return new string(_camelCase);
     }
 }
