@@ -3,11 +3,15 @@ using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Utils;
+using GBATool.Utils.Image;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.Building;
 
@@ -40,64 +44,12 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
                 continue;
             }
 
-            BitsPerPixel bpp = bank.Use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
-
-            TileBlocks cellsCount = bank.GetBoundingBoxSize();
-
-            int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
-            int imageHeight = cellsCount.height * BankUtils.SizeOfCellInPixels;
-
-            BankImageMetaData metaData = BankUtils.CreateImage(bank, false, imageWidth, imageHeight);
-
-            if (metaData.image == null)
-            {
-                continue;
-            }
-
             string fileName = Path.Combine(outputPath, "bank_" + vo.Name.ToLower());
 
             using StreamWriter outputFile = new(Path.Combine(fileName + ".h"));
 
             await WriteHeader(outputFile, vo.Name);
-
-            //List<Color> palette = [];
-            //
-            //bool ret = GetPaletteIfExistInCharacters(bank, ref palette);
-            //
-            //if (!ret)
-            //{
-            //    AddWarning($"No palette configure for bank [{vo.Name}], is going to be skipped");
-            //    continue;
-            //}
-            //
-            //byte[]? imageData = null;
-            //
-            //using (metaData.image.GetBitmapContext())
-            //{
-            //    try
-            //    {
-            //        List<string> warnings = [];
-            //
-            //        imageData = ImageProcessing.ConvertToXbpp(bpp, in metaData.image, in cellsCount, in palette, ref warnings);
-            //
-            //        foreach (string item in warnings)
-            //        {
-            //            AddWarning($"{vo.Name}, " + item);
-            //        }
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        AddError(e.Message);
-            //        continue;
-            //    }
-            //
-            //    if (imageData == null)
-            //    {
-            //        AddError("Could not convert the image from the bank to the bit per pixel requested");
-            //        continue;
-            //    }
-            //}
-
+            await WriteFileContent(outputFile, bank, vo.Name);
             await WriteFooter(outputFile, vo.Name);
 
             processedCount++;
@@ -133,5 +85,83 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
         await outputFile.WriteAsync(Environment.NewLine);
 
         await outputFile.WriteLineAsync($"#endif // GBATOOL_SPRITE_{name.ToUpper()}");
+    }
+
+    private async Task WriteFileContent(StreamWriter outputFile, BankModel bank, string name)
+    {
+        BitsPerPixel bpp = bank.Use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
+
+        TileBlocks cellsCount = bank.GetBoundingBoxSize();
+
+        int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
+        int imageHeight = cellsCount.height * BankUtils.SizeOfCellInPixels;
+
+        BankImageMetaData metaData = BankUtils.CreateImage(bank, false, imageWidth, imageHeight);
+
+        if (metaData.image == null)
+        {
+            return;
+        }
+
+        List<Color> palette = [];
+
+        bool ret = BankUtils.GetPaletteIfExistInCharacters(bank, ref palette);
+
+        if (!ret)
+        {
+            AddWarning($"No palette configure for bank [{name}], is going to be skipped");
+            return;
+        }
+
+        foreach (SpriteRef spriteRef in bank.Sprites)
+        {
+            if (string.IsNullOrEmpty(spriteRef.SpriteID) || string.IsNullOrEmpty(spriteRef.TileSetID))
+            {
+                continue;
+            }
+
+            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteRef.TileSetID);
+
+            if (tileSetModel == null)
+            {
+                continue;
+            }
+
+            SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
+
+            if (string.IsNullOrEmpty(sprite?.ID))
+            {
+                continue;
+            }
+
+            KeyValuePair<string, SpriteInfo> spriteInfo = metaData.Sprites.First(x => x.Key == sprite.ID);
+
+            if (spriteInfo.Value.BitmapSource == null)
+            {
+                continue;
+            }
+            
+            byte[]? imageData = null;
+            WriteableBitmap spriteBitmap = new (spriteInfo.Value.BitmapSource);
+
+            try
+            {
+                List<string> warnings = [];
+
+                imageData = ImageProcessing.ConvertToXbpp(bpp, in spriteBitmap, in cellsCount, in palette, ref warnings);
+
+                foreach (string item in warnings)
+                {
+                    AddWarning($"{name}, " + item);
+                }
+            }
+            catch (Exception e)
+            {
+                AddError(e.Message);
+                continue;
+            }
+
+            await outputFile.WriteAsync("");
+        }
     }
 }

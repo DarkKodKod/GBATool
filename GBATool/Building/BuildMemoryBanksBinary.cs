@@ -56,7 +56,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
             List<Color> palette = [];
 
-            bool ret = GetPaletteIfExistInCharacters(bank, ref palette);
+            bool ret = BankUtils.GetPaletteIfExistInCharacters(bank, ref palette);
 
             if (!ret)
             {
@@ -112,67 +112,6 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         }
 
         return GetErrors().Length == 0;
-    }
-
-    private static bool GetPaletteIfExistInCharacters(BankModel bank, ref List<Color> palette)
-    {
-        static void FillColorsFromPaletteModel(PaletteModel model, ref List<Color> palette)
-        {
-            for (int i = 0; i < model.Colors.Length; i++)
-            {
-                palette.Add(PaletteUtils.GetColorFromInt(model.Colors[i]));
-            }
-        }
-
-        List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
-
-        foreach (FileModelVO fileModel in models)
-        {
-            if (fileModel.Model is not CharacterModel character)
-            {
-                continue;
-            }
-
-            if (string.IsNullOrEmpty(character.PaletteID))
-            {
-                continue;
-            }
-
-            foreach (KeyValuePair<string, CharacterAnimation> animation in character.Animations)
-            {
-                foreach (KeyValuePair<string, FrameModel> frame in animation.Value.Frames)
-                {
-                    if (frame.Value.BankID == bank.GUID)
-                    {
-                        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(character.PaletteID);
-
-                        if (paletteModel != null)
-                        {
-                            if (paletteModel.LinkedPalettes.Count > 0)
-                            {
-                                foreach (string id in paletteModel.LinkedPalettes)
-                                {
-                                    PaletteModel? model = ProjectFiles.GetModel<PaletteModel>(id);
-
-                                    if (model != null)
-                                    {
-                                        FillColorsFromPaletteModel(model, ref palette);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                FillColorsFromPaletteModel(paletteModel, ref palette);
-                            }
-
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     private async Task WriteBlocksMetaData()

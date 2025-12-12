@@ -1,8 +1,10 @@
 ﻿using GBATool.Enums;
+using GBATool.Utils;
 using Nett;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 
 namespace GBATool.Models;
 
@@ -28,4 +30,12 @@ public class PaletteModel : AFileModel
 
     public int[] Colors { get; set; } = [.. Enumerable.Repeat(0, MaxColor)];
     public List<string> LinkedPalettes { get; set; } = [];
+
+    public void GetColors(ref List<Color> colors)
+    {
+        for (int i = 0; i < Colors.Length; i++)
+        {
+            colors.Add(PaletteUtils.GetColorFromInt(Colors[i]));
+        }
+    }
 }

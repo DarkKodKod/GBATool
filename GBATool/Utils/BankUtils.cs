@@ -2,7 +2,10 @@
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
+using GBATool.VOs;
+using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
@@ -182,5 +185,55 @@ public static class BankUtils
         metaData.image = bankBitmap;
 
         return metaData;
+    }
+
+    public static bool GetPaletteIfExistInCharacters(BankModel bankModel, ref List<Color> palette)
+    {
+        List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
+
+        foreach (FileModelVO fileModel in models)
+        {
+            if (fileModel.Model is not CharacterModel character)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(character.PaletteID))
+            {
+                continue;
+            }
+
+            foreach (KeyValuePair<string, CharacterAnimation> animation in character.Animations)
+            {
+                foreach (KeyValuePair<string, FrameModel> frame in animation.Value.Frames)
+                {
+                    if (frame.Value.BankID == bankModel.GUID)
+                    {
+                        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(character.PaletteID);
+
+                        if (paletteModel != null)
+                        {
+                            if (paletteModel.LinkedPalettes.Count > 0)
+                            {
+                                foreach (string id in paletteModel.LinkedPalettes)
+                                {
+                                    PaletteModel? model = ProjectFiles.GetModel<PaletteModel>(id);
+
+                                    model?.GetColors(ref palette);
+                                }
+                            }
+                            else
+                            {
+                                paletteModel.GetColors(ref palette);
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
