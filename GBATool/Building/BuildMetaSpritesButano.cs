@@ -161,7 +161,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
                     string alias = spriteModel.Alias.Replace('-', '_');
 
-                    int tileSizeNumber = (characterSprite.Width * characterSprite.Height * (bankModel.IsBackground ? 8 : 4) / 32);
+                    int tileSizeNumber = (characterSprite.Width / 8) * (characterSprite.Height / 8);
 
                     string spriteName = $"{bankName}_{alias}";
                     string tiles = $"{bankName}_{alias}Tiles";
@@ -264,9 +264,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("       const bn::camera_ptr& camera) :");
         await outputFile.WriteLineAsync("       _position(position)");
         await outputFile.WriteLineAsync("   {");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::gato, 20, 50, camera));");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::gato, 30, 30, camera));");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::gato, 4, 15, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 20, 50, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 30, 30, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 4, 15, camera));");
         await outputFile.WriteLineAsync("   }");
         await outputFile.WriteLineAsync("   void set_position(int x, int y)");
         await outputFile.WriteLineAsync("   {");
