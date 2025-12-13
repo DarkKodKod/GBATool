@@ -18,14 +18,14 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public string SpriteName;
         public string SpriteShape;
         public string SpriteSize;
+        public string Tiles;
+        public string TilesSize;
     }
 
     private struct AnimationDetails
     {
         public string Name;
         public string BankName;
-        public string Tiles;
-        public string TilesSize;
         public string BppMode;
         public string Palette;
         public string PaletteSize;
@@ -136,8 +136,6 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
                 string bppMode = bankModel.Use256Colors ? "bpp_mode::BPP_8" : "bpp_mode::BPP_4";
 
-                string tiles = "tank_base_bn_gfxTiles";
-                string tilesSize = "144";
                 string palette = "tank_base_bn_gfxPal";
                 string paletteSize = bankModel.Use256Colors ? "256" : "16";
 
@@ -163,7 +161,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
                     string alias = spriteModel.Alias.Replace('-', '_');
 
+                    int tileSizeNumber = (characterSprite.Width * characterSprite.Height * (bankModel.IsBackground ? 8 : 4) / 32);
+
                     string spriteName = $"{bankName}_{alias}";
+                    string tiles = $"{bankName}_{alias}Tiles";
+                    string tilesSize = $"{tileSizeNumber}";
 
                     SpriteShape shape = SpriteShape.Shape00;
                     SpriteSize size = SpriteSize.Size00;
@@ -193,7 +195,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     {
                         SpriteName = spriteName,
                         SpriteShape = spriteShape,
-                        SpriteSize = spriteSize
+                        SpriteSize = spriteSize,
+                        Tiles = tiles,
+                        TilesSize = tilesSize,
                     });
                 }
 
@@ -202,8 +206,6 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     Name = animation.Name,
                     BankName = bankName,
                     Animations = spriteDetails,
-                    Tiles = tiles,
-                    TilesSize = tilesSize,
                     BppMode = bppMode,
                     Palette = palette,
                     PaletteSize = paletteSize
@@ -230,7 +232,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
             foreach (SpriteDetails item in animation.Animations)
             {
                 await outputFile.WriteLineAsync($"    constexpr inline sprite_item {item.SpriteName}(sprite_shape_size({item.SpriteShape}, {item.SpriteSize}),");
-                await outputFile.WriteLineAsync($"           sprite_tiles_item(span<const tile>({animation.Tiles}, {animation.TilesSize}), {animation.BppMode}, compression_type::NONE, 1),");
+                await outputFile.WriteLineAsync($"           sprite_tiles_item(span<const tile>({item.Tiles}, {item.TilesSize}), {animation.BppMode}, compression_type::NONE, 1),");
                 await outputFile.WriteLineAsync($"           sprite_palette_item(span<const color>({animation.Palette}, {animation.PaletteSize}), {animation.BppMode}, compression_type::NONE));");
             }
 

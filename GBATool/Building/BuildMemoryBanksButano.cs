@@ -78,12 +78,14 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
         await outputFile.WriteLineAsync($"#define GBATOOL_SPRITE_{name.ToUpper()}");
 
         await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("#include \"bn_sprite_item.h\"");
+
+        await outputFile.WriteAsync(Environment.NewLine);
     }
 
     private static async Task WriteFooter(StreamWriter outputFile, string name)
     {
-        await outputFile.WriteAsync(Environment.NewLine);
-
         await outputFile.WriteLineAsync($"#endif // GBATOOL_SPRITE_{name.ToUpper()}");
     }
 
@@ -113,42 +115,36 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
             return;
         }
 
-        foreach (SpriteRef spriteRef in bank.Sprites)
+        foreach (SpriteModel sprite in metaData.bankSprites)
         {
-            if (string.IsNullOrEmpty(spriteRef.SpriteID) || string.IsNullOrEmpty(spriteRef.TileSetID))
-            {
-                continue;
-            }
-
-            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(spriteRef.TileSetID);
-
-            if (tileSetModel == null)
-            {
-                continue;
-            }
-
-            SpriteModel? sprite = tileSetModel.Sprites.Find((item) => item.ID == spriteRef.SpriteID);
-
-            if (string.IsNullOrEmpty(sprite?.ID))
-            {
-                continue;
-            }
-
             KeyValuePair<string, SpriteInfo> spriteInfo = metaData.Sprites.First(x => x.Key == sprite.ID);
 
             if (spriteInfo.Value.BitmapSource == null)
             {
                 continue;
             }
-            
+
+            int width = 0;
+            int height = 0;
+            SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+            List<(int, string, string)> indices = metaData.SpriteIndices.FindAll(x => x.Item2 == sprite.ID);
+
+            TileBlocks tileBlicks = new()
+            {
+                numberOfTiles = indices.Count,
+                width = width / 8,
+                height = height / 8,
+            };
+
             byte[]? imageData = null;
-            WriteableBitmap spriteBitmap = new (spriteInfo.Value.BitmapSource);
+            WriteableBitmap spriteBitmap = new(spriteInfo.Value.BitmapSource);
 
             try
             {
                 List<string> warnings = [];
 
-                imageData = ImageProcessing.ConvertToXbpp(bpp, in spriteBitmap, in cellsCount, in palette, ref warnings);
+                imageData = ImageProcessing.ConvertToXbpp(bpp, in spriteBitmap, in tileBlicks, in palette, ref warnings);
 
                 foreach (string item in warnings)
                 {
@@ -161,7 +157,64 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
                 continue;
             }
 
-            await outputFile.WriteAsync("");
+            if (imageData == null)
+            {
+                continue;
+            }
+
+            List<int> dataWords = [];
+
+            using MemoryStream ms = new(imageData);
+            using BinaryReader br = new(ms);
+
+            br.BaseStream.Position = 0;
+            while (br.BaseStream.Position < br.BaseStream.Length)
+            {
+                dataWords.Add(br.ReadInt32());
+            }
+
+            string alias = sprite.Alias.Replace('-', '_');
+            string tileName = $"{name}_{alias}";
+
+            await outputFile.WriteLineAsync($"#define {tileName}TilesLen {dataWords.Count * (int)bpp}");
+            await outputFile.WriteLineAsync($"const bn::tile {tileName}Tiles[{dataWords.Count / 8}] =");
+            await outputFile.WriteLineAsync("{");
+
+            int count = 0;
+            int countLines = 0;
+
+            foreach (int data in dataWords)
+            {
+                if (count % 8 == 0)
+                {
+                    await outputFile.WriteAsync("    ");
+                }
+
+                await outputFile.WriteAsync($"0x{data:X8}");
+
+                if (count < dataWords.Count - 1)
+                {
+                    await outputFile.WriteAsync(", ");
+                }
+
+                count++;
+
+                if (count % 8 == 0)
+                {
+                    await outputFile.WriteAsync(Environment.NewLine);
+
+                    countLines++;
+                }
+
+                if (countLines == 8 && count < dataWords.Count - 1)
+                {
+                    await outputFile.WriteAsync(Environment.NewLine);
+                    countLines = 0;
+                }
+            }
+
+            await outputFile.WriteLineAsync("};");
+            await outputFile.WriteAsync(Environment.NewLine);
         }
     }
 }

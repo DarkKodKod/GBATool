@@ -1,4 +1,6 @@
 ﻿using GBATool.Enums;
+using System.IO;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
 
@@ -146,5 +148,18 @@ public static class SpriteUtils
         }
 
         return 0;
+    }
+
+    public static void SaveImage(BitmapSource image, string path)
+    {
+        if (path == string.Empty)
+        {
+            return;
+        }
+
+        using FileStream stream = new(path, FileMode.Create);
+        PngBitmapEncoder encoder = new();
+        encoder.Frames.Add(BitmapFrame.Create(image));
+        encoder.Save(stream);
     }
 }

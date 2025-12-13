@@ -3,7 +3,6 @@ using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.VOs;
-using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -110,6 +109,16 @@ public static class BankUtils
             int posX = sprite.PosX;
             int posY = sprite.PosY;
 
+            // Keep the sprite as a separated image in a cache
+            metaData.Sprites.Add(
+                sprite.ID,
+                new()
+                {
+                    BitmapSource = sourceBitmap.Crop(posX, posY, width, height),
+                    OffsetX = widthNextPosition,
+                    OffsetY = heightNextPosition
+                });
+
             if (is1DImage)
             {
                 for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
@@ -137,16 +146,6 @@ public static class BankUtils
             else
             {
                 index = (MaxTextureCellsWidth * (heightNextPosition / SizeOfCellInPixels)) + (widthNextPosition / SizeOfCellInPixels);
-
-                // Keep the sprite as a separated image in a cache
-                metaData.Sprites.Add(
-                    sprite.ID,
-                    new()
-                    {
-                        BitmapSource = sourceBitmap.Crop(posX, posY, width, height),
-                        OffsetX = widthNextPosition,
-                        OffsetY = heightNextPosition
-                    });
 
                 // 2D
                 for (int j = 0; j < (height / SizeOfCellInPixels); ++j)
