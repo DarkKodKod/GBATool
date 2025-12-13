@@ -136,7 +136,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
                 string bppMode = bankModel.Use256Colors ? "bpp_mode::BPP_8" : "bpp_mode::BPP_4";
 
-                string palette = "tank_base_bn_gfxPal";
+                string palette = "palette_guyPal";
                 string paletteSize = bankModel.Use256Colors ? "256" : "16";
 
                 List<SpriteDetails> spriteDetails = [];
@@ -220,6 +220,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         await outputFile.WriteAsync(Environment.NewLine);
 
+        await outputFile.WriteLineAsync("#include \"palette_guy.h\"");
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
         await outputFile.WriteLineAsync("namespace bn::sprite_items");
         await outputFile.WriteLineAsync("{");
 
@@ -264,9 +268,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("       const bn::camera_ptr& camera) :");
         await outputFile.WriteLineAsync("       _position(position)");
         await outputFile.WriteLineAsync("   {");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 20, 50, camera));");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 30, 30, camera));");
-        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8Tiles, 4, 15, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8, 20, 50, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8, 30, 30, camera));");
+        await outputFile.WriteLineAsync("       _sprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8, 4, 15, camera));");
         await outputFile.WriteLineAsync("   }");
         await outputFile.WriteLineAsync("   void set_position(int x, int y)");
         await outputFile.WriteLineAsync("   {");

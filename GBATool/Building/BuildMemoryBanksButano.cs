@@ -74,8 +74,8 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 
         await outputFile.WriteAsync(Environment.NewLine);
 
-        await outputFile.WriteLineAsync($"#ifndef GBATOOL_SPRITE_{name.ToUpper()}");
-        await outputFile.WriteLineAsync($"#define GBATOOL_SPRITE_{name.ToUpper()}");
+        await outputFile.WriteLineAsync($"#ifndef GBATOOL_BANK_{name.ToUpper()}");
+        await outputFile.WriteLineAsync($"#define GBATOOL_BANK_{name.ToUpper()}");
 
         await outputFile.WriteAsync(Environment.NewLine);
 
@@ -86,7 +86,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 
     private static async Task WriteFooter(StreamWriter outputFile, string name)
     {
-        await outputFile.WriteLineAsync($"#endif // GBATOOL_SPRITE_{name.ToUpper()}");
+        await outputFile.WriteLineAsync($"#endif // GBATOOL_BANK_{name.ToUpper()}");
     }
 
     private async Task WriteFileContent(StreamWriter outputFile, BankModel bank, string name)

@@ -1,5 +1,4 @@
-﻿using ArchitectureLibrary.Model;
-using GBATool.Enums;
+﻿using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Utils;
@@ -20,8 +19,6 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
 
     protected override async Task<bool> DoGenerate(string filePath)
     {
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
         using StreamWriter outputFile = new(filePath);
 
         List<FileModelVO> paletteModelVOs = ProjectFiles.GetModels<PaletteModel>();
@@ -97,7 +94,7 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
         outputFile.Write(Environment.NewLine);
         _ = outputFile.WriteLineAsync("    align 32");
 
-        foreach (var palette in pals)
+        foreach (KeyValuePair<string, int[]> palette in pals)
         {
             int cont = 0;
 

@@ -10,6 +10,7 @@ public static class BuildPalettes
         {
             OutputFormat.None => EmptyBuilder.Instance,
             OutputFormat.Fasmarm => BuildPalettesFasmarm.Instance,
+            OutputFormat.Butano => BuildPalettesButano.Instance,
             _ => EmptyBuilder.Warning($"Format ({outputFormat}) not implemented for Palettes")
         };
     }
