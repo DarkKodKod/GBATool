@@ -148,4 +148,21 @@ public static class CharacterUtils
 
         return bankBitmap;
     }
+
+    public static PaletteModel? GetPaletteUsedByCharacter(CharacterModel characterModel)
+    {
+        if (string.IsNullOrEmpty(characterModel.PaletteID))
+        {
+            return null;
+        }
+
+        PaletteModel? paletteModel = ProjectFiles.GetModel<PaletteModel>(characterModel.PaletteID);
+
+        if (paletteModel == null)
+        {
+            return null;
+        }
+
+        return paletteModel;
+    }
 }

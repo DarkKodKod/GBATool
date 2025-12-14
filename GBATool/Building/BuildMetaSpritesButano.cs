@@ -34,7 +34,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
     protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
-
+    
     protected override async Task<bool> DoGenerate()
     {
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
@@ -106,6 +106,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
     {
         List<AnimationDetails> declarations = [];
 
+        string paletteName = string.Empty;
+
         foreach (KeyValuePair<string, CharacterAnimation> animationItem in model.Animations)
         {
             CharacterAnimation animation = animationItem.Value;
@@ -130,6 +132,17 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 if (fileModelBankVO == null)
                 {
                     continue;
+                }
+
+                PaletteModel? paletteModel = CharacterUtils.GetPaletteUsedByCharacter(model);
+
+                if (paletteModel != null)
+                {
+                    FileModelVO? fileModelPaletteVO = ProjectFiles.GetFileModel(paletteModel.GUID);
+                    if (fileModelPaletteVO != null && string.IsNullOrEmpty(paletteName))
+                    {
+                        paletteName = PaletteUtils.GetPaletteName(fileModelPaletteVO) ?? string.Empty;
+                    }
                 }
 
                 string bankName = fileModelBankVO.Name ?? "";
@@ -220,7 +233,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         await outputFile.WriteAsync(Environment.NewLine);
 
-        await outputFile.WriteLineAsync("#include \"palette_guy.h\"");
+        await outputFile.WriteLineAsync($"#include \"{paletteName}.h\"");
 
         await outputFile.WriteAsync(Environment.NewLine);
 

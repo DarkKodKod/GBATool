@@ -6,9 +6,7 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace GBATool.Building;
 
@@ -35,9 +33,6 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
 
         int processedCount = 0;
 
-        string folderPalettesKey = "folderPalettes";
-        string folderPalettes = (string)Application.Current.FindResource(folderPalettesKey);
-
         foreach (FileModelVO vo in paletteModelVOs)
         {
             if (vo.Model is not PaletteModel model)
@@ -50,27 +45,12 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
                 continue;
             }
 
-            if (string.IsNullOrEmpty(vo.Name))
+            string? name = PaletteUtils.GetPaletteName(vo);
+
+            if (string.IsNullOrEmpty(name))
             {
                 continue;
             }
-
-            if (string.IsNullOrEmpty(vo.Path))
-            {
-                continue;
-            }
-
-            string[] array = vo.Path.Split(Path.DirectorySeparatorChar);
-            int index = Array.IndexOf(array, folderPalettes);
-
-            StringBuilder sb = new();
-            for (int i = index + 1; i < array.Length; i++)
-            {
-                sb.Append(array[i]);
-                sb.Append('_');
-            }
-
-            string name = $"palette_{sb}{vo.Name.Replace(' ', '_').ToLower()}";
 
             pals.Add(name, model.Colors);
 
