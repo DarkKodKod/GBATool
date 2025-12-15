@@ -17,13 +17,19 @@ public sealed class BuildPalettesButano : Building<BuildPalettesButano>
 {
     protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedAssetsPath;
+        }
+    }
     private readonly List<string> _palettesAlreadyWritten = [];
 
     protected override async Task<bool> DoGenerate()
     {
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-        string outputPath = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
+        string outputPath = Path.GetFullPath(OutputPath);
 
         List<FileModelVO> paletteModelVOs = ProjectFiles.GetModels<PaletteModel>();
 

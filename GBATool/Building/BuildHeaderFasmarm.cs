@@ -40,6 +40,14 @@ public sealed class BuildHeaderFasmarm : Building<BuildHeaderFasmarm>
 
     protected override string FileName { get; } = "header.asm";
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedSourcePath;
+        }
+    }
 
     private static readonly int[] GBANintendoLogo = {
         0x24, 0xFF, 0xAE, 0x51, 0x69, 0x9A, 0xA2, 0x21, 0x3D, 0x84, 0x82, 0x0A, 0x84, 0xE4, 0x09, 0xAD, 0x11, 0x24,

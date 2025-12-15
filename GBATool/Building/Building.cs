@@ -7,7 +7,7 @@ namespace GBATool.Building;
 
 public interface IBuilding
 {
-    Task<bool> Generate(string outputPath);
+    Task<bool> Generate();
     string[] GetErrors();
     string[] GetWarnings();
     abstract OutputFormat GetFormat();
@@ -16,7 +16,7 @@ public interface IBuilding
 public sealed class EmptyBuilder : IBuilding
 {
     public static EmptyBuilder Instance { get; } = new();
-    public Task<bool> Generate(string outputPath) { return Task.FromResult(true); }
+    public Task<bool> Generate() { return Task.FromResult(true); }
     public string[] GetErrors() { return []; }
     public string[] GetWarnings() { return _warnings.Count > 0 ? [.. _warnings] : []; }
     public OutputFormat GetFormat() { return OutputFormat.None; }
@@ -37,18 +37,25 @@ public abstract class Building<TBuilder> : IBuilding
 
     protected abstract string FileName { get; }
     protected abstract OutputFormat OutputFormat { get; }
+    protected abstract string OutputPath { get; }
 
     public static TBuilder Instance { get; } = new();
 
     public OutputFormat GetFormat() { return OutputFormat; }
 
-    public async Task<bool> Generate(string outputPath)
+    public async Task<bool> Generate()
     {
+        if (!CheckValidFolder(OutputPath))
+        {
+            AddError($"Invalid path: {OutputPath}");
+            return false;
+        }
+
         PrepareGenerate();
 
         if (!string.IsNullOrEmpty(FileName))
         {
-            string filePath = Path.Combine(outputPath, FileName);
+            string filePath = Path.Combine(OutputPath, FileName);
 
             try
             {
@@ -86,6 +93,20 @@ public abstract class Building<TBuilder> : IBuilding
     protected void AddWarning(string warning)
     {
         _warnings.Add(warning);
+    }
+
+    private static bool CheckValidFolder(string path)
+    {
+        try
+        {
+            string result = Path.GetFullPath(path);
+
+            return Directory.Exists(result);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public string[] GetErrors()

@@ -1,4 +1,5 @@
-﻿using GBATool.Enums;
+﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Utils;
@@ -14,6 +15,14 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
 {
     protected override string FileName { get; } = "palettes.asm";
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedAssetsPath;
+        }
+    }
 
     protected override async Task<bool> DoGenerate(string filePath)
     {

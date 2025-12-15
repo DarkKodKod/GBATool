@@ -153,8 +153,8 @@
                                     </MultiBinding>
                                 </Button.CommandParameter>
                             </Button>
-                            <TextBox Name="tbSourcePath" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
-                                     TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+                            <TextBox Name="tbSourcePath" IsReadOnly="True" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
+                                     TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
                         </DockPanel>
                         <Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
@@ -168,8 +168,8 @@
                                     </MultiBinding>
                                 </Button.CommandParameter>
                             </Button>
-                            <TextBox Name="tbAssetsPath" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
-                                     TextWrapping="NoWrap" VerticalAlignment="Center" Width="auto"/>
+                            <TextBox Name="tbAssetsPath" IsReadOnly="True" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
+                                     TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
                         </DockPanel>
                     </Grid>
                 </GroupBox>

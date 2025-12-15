@@ -6,7 +6,6 @@ using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,18 +31,6 @@ public class BuildProjectCommand : Command
 
         ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-        if (!CheckValidFolder(projectModel.Build.GeneratedSourcePath))
-        {
-            OutputError("Invalid source folder");
-            goto finish;
-        }
-
-        if (!CheckValidFolder(projectModel.Build.GeneratedAssetsPath))
-        {
-            OutputError("Invalid assets folder");
-            goto finish;
-        }
-
         OutputInfo("Build started");
 
         IBuilding header = BuildHeader.Get(projectModel.Build.OutputFormatHeader);
@@ -53,7 +40,7 @@ public class BuildProjectCommand : Command
             OutputInfo("Generate header...");
         }
 
-        bool ok = await header.Generate(projectModel.Build.GeneratedSourcePath);
+        bool ok = await header.Generate();
         if (!ok)
         {
             OutputError("Problems generating header");
@@ -69,7 +56,7 @@ public class BuildProjectCommand : Command
             OutputInfo("Building banks...");
         }
 
-        ok = await banks.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await banks.Generate();
         if (!ok)
         {
             OutputError("Problems generating banks");
@@ -85,7 +72,7 @@ public class BuildProjectCommand : Command
             OutputInfo("Building meta sprites...");
         }
 
-        ok = await metaSprites.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await metaSprites.Generate();
         if (!ok)
         {
             OutputError("Problems generating meta sprites");
@@ -101,7 +88,7 @@ public class BuildProjectCommand : Command
             OutputInfo("Building palettes...");
         }
 
-        ok = await palettes.Generate(projectModel.Build.GeneratedAssetsPath);
+        ok = await palettes.Generate();
         if (!ok)
         {
             OutputError("Problems generating palettes");
@@ -118,20 +105,6 @@ public class BuildProjectCommand : Command
         RaiseCanExecuteChanged();
 
         SignalManager.Get<ProjectBuildCompleteSignal>().Dispatch();
-    }
-
-    private static bool CheckValidFolder(string path)
-    {
-        try
-        {
-            string result = Path.GetFullPath(path);
-
-            return Directory.Exists(result);
-        }
-        catch
-        {
-            return false;
-        }
     }
 
     private static void OutputInfo(string message, string color = "")

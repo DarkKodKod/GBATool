@@ -34,11 +34,17 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
     protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
-    
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedAssetsPath;
+        }
+    }
+
     protected override async Task<bool> DoGenerate()
     {
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 
         foreach (FileModelVO item in models)
@@ -53,7 +59,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 continue;
             }
 
-            string parentFolder = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
+            string parentFolder = Path.GetFullPath(OutputPath);
 
             using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".h"));
 

@@ -20,14 +20,20 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 {
     protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Binary;
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedAssetsPath;
+        }
+    }
 
     private readonly List<string> _bankNames = [];
 
     protected override async Task<bool> DoGenerate()
     {
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-        string outputPath = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
+        string outputPath = Path.GetFullPath(OutputPath);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 

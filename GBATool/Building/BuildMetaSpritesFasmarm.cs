@@ -22,6 +22,14 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
 {
     protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
+    protected override string OutputPath
+    {
+        get
+        {
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            return projectModel.Build.GeneratedAssetsPath;
+        }
+    }
 
     private const float FrameRate = 59.727500569606f;
 
@@ -45,7 +53,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
                 continue;
             }
 
-            string parentFolder = Path.GetFullPath(projectModel.Build.GeneratedAssetsPath);
+            string parentFolder = Path.GetFullPath(OutputPath);
 
             using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".asm"));
 
