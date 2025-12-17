@@ -30,7 +30,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
                 _outputPaths = new string[2];
 
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-                
+
                 _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
                 _outputPaths[1] = projectModel.Build.GeneratedSourcePath;
             }
@@ -177,7 +177,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         {
             await outputFile.WriteLineAsync($"block_{bankName.ToLower()}:");
 
-            await outputFile.WriteLineAsync($"    file \"{ Path.Combine(outputAssetsPath, bankName.ToLower() + ".bin")}\"");
+            await outputFile.WriteLineAsync($"    file \"{Path.Combine(outputAssetsPath, bankName.ToLower() + ".bin")}\"");
 
             await outputFile.WriteLineAsync($"__block_{bankName.ToLower()}:");
         }
