@@ -27,9 +27,12 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         {
             if (_outputPaths == null)
             {
-                _outputPaths = new string[1];
+                _outputPaths = new string[2];
+
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                
                 _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+                _outputPaths[1] = projectModel.Build.GeneratedSourcePath;
             }
 
             return _outputPaths;
@@ -40,7 +43,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
     protected override async Task<bool> DoGenerate()
     {
-        string outputPath = Path.GetFullPath(OutputPaths[0]);
+        string outputAssetsPath = Path.GetFullPath(OutputPaths[0]);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 
@@ -109,7 +112,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             {
                 _bankNames.Add(vo.Name);
 
-                string fileName = Path.Combine(outputPath, vo.Name.ToLower());
+                string fileName = Path.Combine(outputAssetsPath, vo.Name.ToLower());
 
                 await File.WriteAllBytesAsync(fileName + ".bin", imageData).ConfigureAwait(false);
             }
@@ -134,9 +137,10 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             return;
         }
 
-        ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+        string outputAssetsPath = Path.GetFullPath(OutputPaths[0]);
+        string outputSourceCodePath = Path.GetFullPath(OutputPaths[1]);
 
-        string fullPath = Path.Combine(Path.GetFullPath(projectModel.Build.GeneratedAssetsPath), "blocks_metadata.asm");
+        string fullPath = Path.Combine(outputSourceCodePath, "blocks_metadata.asm");
 
         using StreamWriter outputFile = new(fullPath);
 
@@ -173,7 +177,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         {
             await outputFile.WriteLineAsync($"block_{bankName.ToLower()}:");
 
-            await outputFile.WriteLineAsync($"    file \"{bankName.ToLower() + ".bin"}\"");
+            await outputFile.WriteLineAsync($"    file \"{ Path.Combine(outputAssetsPath, bankName.ToLower() + ".bin")}\"");
 
             await outputFile.WriteLineAsync($"__block_{bankName.ToLower()}:");
         }
