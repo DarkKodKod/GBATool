@@ -12,6 +12,8 @@ public class ProjectModel : ISingletonModel
     {
         public string GeneratedSourcePath { get; set; } = string.Empty;
         public string GeneratedAssetsPath { get; set; } = string.Empty;
+        public string GeneratedHeadersPath { get; set; } = string.Empty;
+        public string GeneratedCPPsPath { get; set; } = string.Empty;
         public OutputFormat OutputFormatHeader { get; set; } = OutputFormat.Fasmarm;
         public OutputFormat OutputFormatPalettes { get; set; } = OutputFormat.Fasmarm;
         public OutputFormat OutputFormatCharacters { get; set; } = OutputFormat.Fasmarm;
@@ -26,6 +28,8 @@ public class ProjectModel : ISingletonModel
         {
             GeneratedSourcePath = string.Empty;
             GeneratedAssetsPath = string.Empty;
+            GeneratedHeadersPath = string.Empty;
+            GeneratedCPPsPath = string.Empty;
             OutputFormatHeader = OutputFormat.Fasmarm;
             OutputFormatPalettes = OutputFormat.Fasmarm;
             OutputFormatCharacters = OutputFormat.Fasmarm;
@@ -84,6 +88,8 @@ public class ProjectModel : ISingletonModel
         Build.OutputFormatPalettes = copy.Build.OutputFormatPalettes;
         Build.OutputFormatCharacters = copy.Build.OutputFormatCharacters;
         Build.OutputFormatScreenBlock = copy.Build.OutputFormatScreenBlock;
+        Build.GeneratedHeadersPath = copy.Build.GeneratedHeadersPath;
+        Build.GeneratedCPPsPath = copy.Build.GeneratedCPPsPath;
     }
 
     public void Load(string path, string filePath)

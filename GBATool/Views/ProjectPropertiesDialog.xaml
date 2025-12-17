@@ -133,16 +133,20 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <GroupBox Header="Paths" Padding="5" Grid.Row="0">
+                <GroupBox Header="Paths" Padding="5" Grid.Row="0" Visibility="{Binding VisibilityPaths}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Grid.Column="1" Content="Source code output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True">
+                        <Label Grid.Row="0" Grid.Column="1" Content="Source code output directory" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding VisibilitySourceCode}"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="True" Visibility="{Binding VisibilitySourceCode}">
                             <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
                                     VerticalAlignment="Center" Width="30" Content="..." 
                                     Command="{Binding BrowseFolderCommand}" x:Name="btnSourcePath">
@@ -156,8 +160,8 @@
                             <TextBox Name="tbSourcePath" IsReadOnly="True" Height="23" Text="{Binding FolderSourcePath, UpdateSourceTrigger=PropertyChanged}" 
                                      TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
                         </DockPanel>
-                        <Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                        <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True">
+                        <Label Grid.Row="2" Grid.Column="1" Content="Assets output directory" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding VisibilityAssets}"/>
+                        <DockPanel Grid.Row="3" Grid.Column="1" LastChildFill="True" Visibility="{Binding VisibilityAssets}">
                             <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
                                     VerticalAlignment="Center" Width="30" Content="..." 
                                     Command="{Binding BrowseFolderCommand}" x:Name="btnAssetsPath">
@@ -169,6 +173,36 @@
                                 </Button.CommandParameter>
                             </Button>
                             <TextBox Name="tbAssetsPath" IsReadOnly="True" Height="23" Text="{Binding FolderAssetsPath, UpdateSourceTrigger=PropertyChanged}" 
+                                     TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
+                        </DockPanel>
+                        <Label Grid.Row="4" Grid.Column="1" Content="Headers output directory" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding VisibilityHeaders}"/>
+                        <DockPanel Grid.Row="5" Grid.Column="1" LastChildFill="True" Visibility="{Binding VisibilityHeaders}">
+                            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+                                    VerticalAlignment="Center" Width="30" Content="..." 
+                                    Command="{Binding BrowseFolderCommand}" x:Name="btnHeadersPath">
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                                        <Binding RelativeSource="{RelativeSource Self}"/>
+                                        <Binding Path="Text" ElementName="tbHeadersPath"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                            <TextBox Name="tbHeadersPath" IsReadOnly="True" Height="23" Text="{Binding FolderHeadersPath, UpdateSourceTrigger=PropertyChanged}" 
+                                     TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
+                        </DockPanel>
+                        <Label Grid.Row="6" Grid.Column="1" Content="Cpp output directory" HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="{Binding VisibilityCPPs}"/>
+                        <DockPanel Grid.Row="7" Grid.Column="1" LastChildFill="True" Visibility="{Binding VisibilityCPPs}">
+                            <Button DockPanel.Dock="Right" HorizontalAlignment="Right" 
+                                    VerticalAlignment="Center" Width="30" Content="..." 
+                                    Command="{Binding BrowseFolderCommand}" x:Name="btnCppPath">
+                                <Button.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                                        <Binding RelativeSource="{RelativeSource Self}"/>
+                                        <Binding Path="Text" ElementName="tbCppPath"/>
+                                    </MultiBinding>
+                                </Button.CommandParameter>
+                            </Button>
+                            <TextBox Name="tbCppPath" IsReadOnly="True" Height="23" Text="{Binding FolderCPPsPaths, UpdateSourceTrigger=PropertyChanged}" 
                                      TextWrapping="NoWrap" VerticalContentAlignment="Center" VerticalAlignment="Center" Width="auto"/>
                         </DockPanel>
                     </Grid>

@@ -6,6 +6,7 @@ using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.Models;
 using GBATool.Signals;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GBATool.ViewModels;
@@ -29,8 +30,65 @@ public class ProjectPropertiesDialogViewModel : ViewModel
     private string _developerId = string.Empty;
     private string _folderSourcePath = string.Empty;
     private string _folderAssetsPath = string.Empty;
+    private string _folderHeadersPath = string.Empty;
+    private string _folderCPPsPath = string.Empty;
+    private Visibility _visibilityCPPs = Visibility.Visible;
+    private Visibility _visibilityHeaders = Visibility.Visible;
+    private Visibility _visibilitySourceCode = Visibility.Visible;
+    private Visibility _visibilityAssets = Visibility.Visible;
+    private Visibility _visibilityPaths = Visibility.Visible;
 
     #region get/set
+    public Visibility VisibilityPaths
+    {
+        get => _visibilityPaths;
+        set
+        {
+            _visibilityPaths = value;
+            OnPropertyChanged(nameof(VisibilityPaths));
+        }
+    }
+
+    public Visibility VisibilityCPPs
+    {
+        get => _visibilityCPPs;
+        set
+        {
+            _visibilityCPPs = value;
+            OnPropertyChanged(nameof(VisibilityCPPs));
+        }
+    }
+
+    public Visibility VisibilityHeaders
+    {
+        get => _visibilityHeaders;
+        set
+        {
+            _visibilityHeaders = value;
+            OnPropertyChanged(nameof(VisibilityHeaders));
+        }
+    }
+
+    public Visibility VisibilityAssets
+    {
+        get => _visibilityAssets;
+        set
+        {
+            _visibilityAssets = value;
+            OnPropertyChanged(nameof(VisibilityAssets));
+        }
+    }
+
+    public Visibility VisibilitySourceCode
+    {
+        get => _visibilitySourceCode;
+        set
+        {
+            _visibilitySourceCode = value;
+            OnPropertyChanged(nameof(VisibilitySourceCode));
+        }
+    }
+
     public string FolderSourcePath
     {
         get => _folderSourcePath;
@@ -51,6 +109,26 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         }
     }
 
+    public string FolderHeadersPath
+    {
+        get => _folderHeadersPath;
+        set
+        {
+            _folderHeadersPath = value;
+            OnPropertyChanged(nameof(FolderHeadersPath));
+        }
+    }
+
+    public string FolderCPPsPaths
+    {
+        get => _folderCPPsPath;
+        set
+        {
+            _folderCPPsPath = value;
+            OnPropertyChanged(nameof(FolderCPPsPaths));
+        }
+    }
+
     public OutputFormat SelectedOutputFormatHeader
     {
         get { return _selectedOutputFormatHeader; }
@@ -58,6 +136,8 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         {
             _selectedOutputFormatHeader = value;
             OnPropertyChanged(nameof(SelectedOutputFormatHeader));
+
+            UpdateVisibility();
 
             _changed = true;
         }
@@ -71,6 +151,8 @@ public class ProjectPropertiesDialogViewModel : ViewModel
             _selectedOutputFormatPalettes = value;
             OnPropertyChanged(nameof(SelectedOutputFormatPalettes));
 
+            UpdateVisibility();
+
             _changed = true;
         }
     }
@@ -83,6 +165,8 @@ public class ProjectPropertiesDialogViewModel : ViewModel
             _selectedOutputFormatCharacters = value;
             OnPropertyChanged(nameof(SelectedOutputFormatCharacters));
 
+            UpdateVisibility();
+
             _changed = true;
         }
     }
@@ -94,6 +178,8 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         {
             _selectedOutputFormatScreenBlock = value;
             OnPropertyChanged(nameof(SelectedOutputFormatScreenBlock));
+
+            UpdateVisibility();
 
             _changed = true;
         }
@@ -173,8 +259,12 @@ public class ProjectPropertiesDialogViewModel : ViewModel
 
         FolderSourcePath = project.Build.GeneratedSourcePath;
         FolderAssetsPath = project.Build.GeneratedAssetsPath;
+        FolderHeadersPath = project.Build.GeneratedHeadersPath;
+        FolderCPPsPaths = project.Build.GeneratedCPPsPath;
 
         _changed = false;
+
+        UpdateVisibility();
     }
 
     private void OnCloseDialog()
@@ -232,8 +322,40 @@ public class ProjectPropertiesDialogViewModel : ViewModel
                 project.Build.GeneratedAssetsPath = folderPath;
             }
         }
+        else if (owner.Name == "btnHeadersPath")
+        {
+            if (project.Build.GeneratedHeadersPath != folderPath)
+            {
+                FolderHeadersPath = folderPath;
+
+                project.Build.GeneratedHeadersPath = folderPath;
+            }
+        }
+        else if (owner.Name == "btnCppPath")
+        {
+            if (project.Build.GeneratedCPPsPath != folderPath)
+            {
+                FolderCPPsPaths = folderPath;
+
+                project.Build.GeneratedCPPsPath = folderPath;
+            }
+        }
 
         project.Save();
+    }
+
+    private void UpdateVisibility()
+    {
+        bool shouldShowCPPPahts = SelectedOutputFormatPalettes == OutputFormat.Butano || SelectedOutputFormatCharacters == OutputFormat.Butano || SelectedOutputFormatScreenBlock == OutputFormat.Butano;
+        bool shouldShowAssetPaths = SelectedOutputFormatScreenBlock == OutputFormat.Binary;
+        bool shouldShowSourceCodePaths = SelectedOutputFormatHeader == OutputFormat.Fasmarm || SelectedOutputFormatCharacters == OutputFormat.Fasmarm || SelectedOutputFormatPalettes == OutputFormat.Fasmarm || SelectedOutputFormatScreenBlock == OutputFormat.Binary;
+
+        VisibilityCPPs = shouldShowCPPPahts ? Visibility.Visible : Visibility.Collapsed;
+        VisibilityHeaders = shouldShowCPPPahts ? Visibility.Visible : Visibility.Collapsed;
+        VisibilitySourceCode = shouldShowSourceCodePaths ? Visibility.Visible : Visibility.Collapsed;
+        VisibilityAssets = shouldShowAssetPaths ? Visibility.Visible : Visibility.Collapsed;
+
+        VisibilityPaths = shouldShowCPPPahts || shouldShowAssetPaths || shouldShowSourceCodePaths ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void ReadProjectData()
