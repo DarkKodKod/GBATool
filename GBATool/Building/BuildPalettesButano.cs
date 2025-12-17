@@ -25,7 +25,7 @@ public sealed class BuildPalettesButano : Building<BuildPalettesButano>
             {
                 _outputPaths = new string[1];
                 ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+                _outputPaths[0] = projectModel.Build.GeneratedHeadersPath;
             }
 
             return _outputPaths;
