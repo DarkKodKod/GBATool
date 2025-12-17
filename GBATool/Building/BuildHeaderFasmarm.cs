@@ -37,15 +37,24 @@ public sealed class BuildHeaderFasmarm : Building<BuildHeaderFasmarm>
 
     private static readonly int HeaderSize = 224;
     private static readonly int HeaderSizeForChecksum = 29;
+    private static readonly string FileName = "header.asm";
 
-    protected override string FileName { get; } = "header.asm";
+    private string[]? _outputPaths;
+
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
-    protected override string OutputPath
+    protected override string[] OutputPaths
     {
         get
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-            return projectModel.Build.GeneratedSourcePath;
+            if (_outputPaths == null)
+            {
+                _outputPaths = new string[1];
+
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
+            }
+
+            return _outputPaths;
         }
     }
 
@@ -63,7 +72,7 @@ public sealed class BuildHeaderFasmarm : Building<BuildHeaderFasmarm>
 
     private static readonly byte[] _arrayOfBytesForCheckSum = new byte[HeaderSizeForChecksum];
 
-    protected override async Task<bool> DoGenerate(string filePath)
+    protected override async Task<bool> DoGenerate()
     {
         try
         {
@@ -73,6 +82,8 @@ public sealed class BuildHeaderFasmarm : Building<BuildHeaderFasmarm>
             }
 
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+
+            string filePath = Path.Combine(OutputPaths[0], FileName);
 
             using (FileStream sourceStream = new(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true))
             {

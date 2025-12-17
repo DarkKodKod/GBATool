@@ -13,19 +13,29 @@ namespace GBATool.Building;
 
 public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
 {
-    protected override string FileName { get; } = "palettes.asm";
+    private static readonly string FileName = "palettes.asm";
+    private string[]? _outputPaths;
+
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
-    protected override string OutputPath
+    protected override string[] OutputPaths
     {
         get
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-            return projectModel.Build.GeneratedAssetsPath;
+            if (_outputPaths == null)
+            {
+                _outputPaths = new string[1];
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+            }
+
+            return _outputPaths;
         }
     }
 
-    protected override async Task<bool> DoGenerate(string filePath)
+    protected override async Task<bool> DoGenerate()
     {
+        string filePath = Path.Combine(OutputPaths[0], FileName);
+
         using StreamWriter outputFile = new(filePath);
 
         List<FileModelVO> paletteModelVOs = ProjectFiles.GetModels<PaletteModel>();

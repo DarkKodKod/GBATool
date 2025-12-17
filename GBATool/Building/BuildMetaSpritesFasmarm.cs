@@ -20,14 +20,20 @@ using TileBlocks = (int width, int height, int numberOfTiles);
 
 public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
 {
-    protected override string FileName { get; } = string.Empty;
+    private string[]? _outputPaths;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
-    protected override string OutputPath
+    protected override string[] OutputPaths
     {
         get
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-            return projectModel.Build.GeneratedAssetsPath;
+            if (_outputPaths == null)
+            {
+                _outputPaths = new string[1];
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+            }
+
+            return _outputPaths;
         }
     }
 
@@ -53,7 +59,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
                 continue;
             }
 
-            string parentFolder = Path.GetFullPath(OutputPath);
+            string parentFolder = Path.GetFullPath(OutputPaths[0]);
 
             using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".asm"));
 

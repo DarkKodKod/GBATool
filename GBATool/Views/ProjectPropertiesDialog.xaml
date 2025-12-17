@@ -133,7 +133,7 @@
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                <GroupBox Header="Path" Padding="5" Grid.Row="0">
+                <GroupBox Header="Paths" Padding="5" Grid.Row="0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>

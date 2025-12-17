@@ -35,9 +35,8 @@ public abstract class Building<TBuilder> : IBuilding
     private readonly List<string> _errors = [];
     private readonly List<string> _warnings = [];
 
-    protected abstract string FileName { get; }
     protected abstract OutputFormat OutputFormat { get; }
-    protected abstract string OutputPath { get; }
+    protected abstract string[] OutputPaths { get; }
 
     public static TBuilder Instance { get; } = new();
 
@@ -45,39 +44,18 @@ public abstract class Building<TBuilder> : IBuilding
 
     public async Task<bool> Generate()
     {
-        if (!CheckValidFolder(OutputPath))
+        for (int i = 0; i < OutputPaths.Length; i++)
         {
-            AddError($"Invalid path: {OutputPath}");
-            return false;
+            if (!CheckValidFolder(OutputPaths[i]))
+            {
+                AddError($"Invalid path: {OutputPaths[i]}");
+                return false;
+            }
         }
 
         PrepareGenerate();
 
-        if (!string.IsNullOrEmpty(FileName))
-        {
-            string filePath = Path.Combine(OutputPath, FileName);
-
-            try
-            {
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-            }
-            catch
-            {
-                return false;
-            }
-
-            return await DoGenerate(filePath).ConfigureAwait(false);
-        }
-
         return await DoGenerate().ConfigureAwait(false);
-    }
-
-    protected virtual async Task<bool> DoGenerate(string filePath)
-    {
-        return await Task.FromResult(true);
     }
 
     protected virtual async Task<bool> DoGenerate()

@@ -32,14 +32,21 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public List<SpriteDetails> Animations;
     }
 
-    protected override string FileName { get; } = string.Empty;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
-    protected override string OutputPath
+    private string[]? _outputPaths;
+
+    protected override string[] OutputPaths
     {
         get
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-            return projectModel.Build.GeneratedAssetsPath;
+            if (_outputPaths == null)
+            {
+                _outputPaths = new string[1];
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+            }
+
+            return _outputPaths;
         }
     }
 
@@ -59,7 +66,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 continue;
             }
 
-            string parentFolder = Path.GetFullPath(OutputPath);
+            string parentFolder = Path.GetFullPath(OutputPaths[0]);
 
             using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".h"));
 

@@ -19,20 +19,26 @@ using TileBlocks = (int width, int height, int numberOfTiles);
 
 public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 {
-    protected override string FileName { get; } = string.Empty;
+    private string[]? _outputPaths;
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
-    protected override string OutputPath
+    protected override string[] OutputPaths
     {
         get
         {
-            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-            return projectModel.Build.GeneratedAssetsPath;
+            if (_outputPaths == null)
+            {
+                _outputPaths = new string[1];
+                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+            }
+
+            return _outputPaths;
         }
     }
 
     protected override async Task<bool> DoGenerate()
     {
-        string outputPath = Path.GetFullPath(OutputPath);
+        string outputPath = Path.GetFullPath(OutputPaths[0]);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 
