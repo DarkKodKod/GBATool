@@ -33,7 +33,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
     }
 
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
+    
     private string[]? _outputPaths;
+    private readonly List<string> _animationIndices = [];
 
     protected override string[] OutputPaths
     {
@@ -55,6 +57,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
     protected override async Task<bool> DoGenerate()
     {
+        string headerFolder = Path.GetFullPath(OutputPaths[0]);
+        string cppFolder = Path.GetFullPath(OutputPaths[1]);
+
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 
         foreach (FileModelVO item in models)
@@ -69,8 +74,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 continue;
             }
 
-            string headerFolder = Path.GetFullPath(OutputPaths[0]);
-            string cppFolder = Path.GetFullPath(OutputPaths[1]);
+            _animationIndices.Clear();
 
             using StreamWriter outputFileHeader = new(Path.Combine(headerFolder, item.Name + ".h"));
 
@@ -84,7 +88,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         return GetErrors().Length == 0;
     }
 
-    private static async Task WriteSpriteFileHeader(StreamWriter outputFile, CharacterModel model, string name)
+    private async Task WriteSpriteFileHeader(StreamWriter outputFile, CharacterModel model, string name)
     {
         await WriteHeader(outputFile, name);
         await WriteSpritesDeclarations(outputFile, model);
@@ -138,7 +142,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
     }
 
-    private static async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel model)
+    private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel model)
     {
         List<AnimationDetails> declarations = [];
 
@@ -152,6 +156,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
             {
                 continue;
             }
+
+            _animationIndices.Add($"{animation.Name}");
 
             foreach (KeyValuePair<string, FrameModel> frameItem in animation.Frames)
             {
@@ -310,7 +316,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
     }
 
-    private static async Task WriteClassDeclarations(StreamWriter outputFile, CharacterModel model, string name)
+    private async Task WriteClassDeclarations(StreamWriter outputFile, CharacterModel model, string name)
     {
         string className = name.ToCamelCase();
 
@@ -325,8 +331,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    enum class AnimationID");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        NONE = -1");
-        await outputFile.WriteLineAsync("        ,IDLE = 0");
-        await outputFile.WriteLineAsync("        ,WALKING = 1");
+
+        for (int i = 0; i < _animationIndices.Count; ++i)
+        {
+            await outputFile.WriteLineAsync($"        , {_animationIndices[i].ToUpper()} = {i}");
+        }
+
         await outputFile.WriteLineAsync("    };");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    struct Animation");
@@ -392,10 +402,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    _currentFrameSprites.clear();");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (animation == AnimationID::IDLE)");
-        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("    //if (animation == AnimationID::IDLE)");
+        await outputFile.WriteLineAsync("    //{");
         await outputFile.WriteLineAsync("        //_currentFrameSprites.push_back(create_sprite(bn::sprite_items::guy_standing_frame_1_9326f669_f356_4cde_bc6d_d123013224e8, 20, 50, 2));");
-        await outputFile.WriteLineAsync("    }");
+        await outputFile.WriteLineAsync("    //}");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"void {className}::update()");
