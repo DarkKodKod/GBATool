@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace GBATool.Building;
 
+using SpriteDetail = (string spriteName, int xpos, int ypos);
+
 public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 {
     private struct SpriteDetails
@@ -20,6 +22,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public string SpriteSize;
         public string Tiles;
         public string TilesSize;
+        public int posX;
+        public int posY;
     }
 
     private struct FrameDetails
@@ -142,6 +146,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         await outputFile.WriteAsync(Environment.NewLine);
 
+        await outputFile.WriteLineAsync("#include <type_traits>");
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
         await outputFile.WriteLineAsync("#include \"bn_sprite_item.h\"");
         await outputFile.WriteLineAsync("#include \"bn_array.h\"");
         await outputFile.WriteLineAsync("#include \"bn_vector.h\"");
@@ -238,6 +246,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     string tiles = $"{bankName}_{alias}Tiles";
                     string tilesSize = $"{tileSizeNumber}";
 
+                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X);
+                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y);
+
                     SpriteShape shape = SpriteShape.Shape00;
                     SpriteSize size = SpriteSize.Size00;
 
@@ -269,6 +280,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                         SpriteSize = spriteSize,
                         Tiles = tiles,
                         TilesSize = tilesSize,
+                        posX = posX,
+                        posY = posY
                     });
                 }
 
@@ -355,6 +368,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("        NONE = -1");
 
         int numberMaxSpritesPerFrame = 0;
+        int countSpritesTotal = 0;
 
         for (int i = 0; i < _animationDetails.Count; ++i)
         {
@@ -366,6 +380,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 {
                     numberMaxSpritesPerFrame = frame.Sprites.Count;
                 }
+
+                countSpritesTotal += frame.Sprites.Count;
             }
         }
 
@@ -384,9 +400,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    struct Sprite");
         await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        Sprite(bn::sprite_item* item, int x, int y)");
+        await outputFile.WriteLineAsync("        Sprite(const bn::sprite_item* item, int x, int y)");
         await outputFile.WriteLineAsync("        {");
-        await outputFile.WriteLineAsync("            sprite_item = item;");
+        await outputFile.WriteLineAsync("            sprite_item = std::remove_const_t<bn::sprite_item*>(item);");
         await outputFile.WriteLineAsync("            pos_x = y;");
         await outputFile.WriteLineAsync("            pos_y = x;");
         await outputFile.WriteLineAsync("        }");
@@ -417,12 +433,26 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    [[nodiscard]] bn::sprite_ptr create_sprite(const bn::sprite_item& spriteItem, bn::fixed x, bn::fixed y, int bg_priority);");
         await outputFile.WriteLineAsync("    void load_next_frame();");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"    static const Animation _animation[{_animationDetails.Count}];");
+        await outputFile.WriteLineAsync($"    static const Animation _animations[{_animationDetails.Count}];");
+        await outputFile.WriteLineAsync($"    static const Sprite _sprites[{countSpritesTotal}];");
         await outputFile.WriteLineAsync("};");
     }
 
     private async Task WriteClassDefinitions(StreamWriter outputFile, string name)
     {
+        List<SpriteDetail> sprites = [];
+
+        foreach (AnimationDetails animationDetail in _animationDetails)
+        {
+            foreach (FrameDetails frame in animationDetail.Frames)
+            {
+                foreach (SpriteDetails sprite in frame.Sprites)
+                {
+                    sprites.Add((sprite.SpriteName, sprite.posX, sprite.posY));
+                }
+            }
+        }
+
         string className = name.ToCamelCase();
 
         await outputFile.WriteLineAsync($"#include \"{name}.h\"");
@@ -430,8 +460,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("namespace gbatool");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteAsync(Environment.NewLine);
-        
-        await outputFile.WriteAsync($"const {className}::Animation {className}::_animation[{_animationDetails.Count}] = ");
+
+        await outputFile.WriteAsync($"const {className}::Animation {className}::_animations[{_animationDetails.Count}] = ");
 
         await outputFile.WriteAsync("{");
 
@@ -444,6 +474,21 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
             if (i < _animationDetails.Count - 1)
                 await outputFile.WriteAsync(", ");
+        }
+
+        await outputFile.WriteLineAsync("};");
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync($"const {className}::Sprite {className}::_sprites[{sprites.Count}] = {{");
+
+        for (int i = 0; i < sprites.Count; ++i)
+        {
+            await outputFile.WriteAsync($"    {{ &bn::sprite_items::{sprites[i].spriteName}, {sprites[i].xpos}, {sprites[i].ypos} }}");
+
+            if (i < sprites.Count - 1)
+                await outputFile.WriteAsync(",");
+
+            await outputFile.WriteAsync(Environment.NewLine);
         }
 
         await outputFile.WriteLineAsync("};");
@@ -477,12 +522,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    if ((int)_currentAnimation < 0)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (_animation[(int)_currentAnimation].totalFrames <= 1)");
+        await outputFile.WriteLineAsync("    if (_animations[(int)_currentAnimation].totalFrames <= 1)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    _frameCounter++;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (_animation[(int)_currentAnimation].frameDuration != _frameCounter)");
+        await outputFile.WriteLineAsync("    if (_animations[(int)_currentAnimation].frameDuration != _frameCounter)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    load_next_frame();");
@@ -517,6 +562,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"void {className}::set_priority(const int priority)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _priority = priority;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    for (bn::sprite_ptr & sprite : _currentFrameSprites)");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        sprite.set_bg_priority(priority);");
+        await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"bn::sprite_ptr {className}::create_sprite(const bn::sprite_item& spriteItem, bn::fixed x, bn::fixed y, int bg_priority)");
