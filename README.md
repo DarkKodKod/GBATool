@@ -217,7 +217,7 @@ Set the cpp and header folder to the correct place on your folder and then after
 
 This will generate cpp and header files with classes to handle meta sprites and its animations.
 
-Here as an example the exported class is called **gbatool::Guy**, This one is a class that act as a meta sprite with its own sprite that can all be animated by calling the method, **load_animation**. The animation IDs are defined inside the class and those comes from the **GBATool** itself when you create **Characters**.
+Here as an example the exported class is called **gbatool::Guy**, This one is a class that act as a meta sprite with its own sprite that can all be animated by calling the method, **load_animation**. The animation IDs are defined inside the class and those comes from the **GBATool** itself when you create [Characters](#Characters).
 
 Header file example:
 ```
