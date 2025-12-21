@@ -243,8 +243,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     string tiles = $"{bankName}_{alias}Tiles";
                     string tilesSize = $"{tileSizeNumber}";
 
-                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X);
-                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y);
+                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X) + (characterSprite.Width / 2);
+                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y) + (characterSprite.Height / 2);
 
                     SpriteShape shape = SpriteShape.Shape00;
                     SpriteSize size = SpriteSize.Size00;
@@ -588,7 +588,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("            int starts = _frames[frameCount + _frameIndex].spriteStarts;");
         await outputFile.WriteLineAsync("            int ends = _frames[frameCount + _frameIndex].spriteEnds;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("            for (int j = starts; j < ends; ++j)");
+        await outputFile.WriteLineAsync("            for (int j = starts; j <= ends; ++j)");
         await outputFile.WriteLineAsync("            {");
         await outputFile.WriteLineAsync("                _currentFrameSprites.push_back(create_sprite(j));");
         await outputFile.WriteLineAsync("            }");
@@ -642,7 +642,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"bn::sprite_ptr {className}::create_sprite(unsigned int spriteIndex)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    bn::sprite_builder builder(*_sprites[spriteIndex].sprite_item, 0);");
-        await outputFile.WriteLineAsync("    builder.set_position(_sprites[spriteIndex].position);");
+        await outputFile.WriteLineAsync("    builder.set_position(_position + _sprites[spriteIndex].position);");
         await outputFile.WriteLineAsync("    builder.set_bg_priority(_priority);");
         await outputFile.WriteLineAsync("    if (_camera.has_value())");
         await outputFile.WriteLineAsync("    {");
