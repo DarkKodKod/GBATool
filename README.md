@@ -14,6 +14,7 @@ Tool written in C# and WPF using the MVVM design pattern to create and manage as
 [3.3. Characters](#Characters)   
 [3.4. Palettes](#Palettes)   
 [4. Building the project](#Buildingtheproject)   
+[4.1. Building for Butano](#Buildingforbutano)   
 
 <a name="Overview"/>
 
@@ -203,4 +204,46 @@ palette_guy:
  
 + A header file.
 + Character files for their animations.
-  
+
+<a name="Buildingforbutano"/>
+
+### 4.1. Building for Butano
+
+Go to project properties from the menu or by pressing Ctrl+P to open the Project Properties dialog and set Butano for **Palettes**, **Characters**, **Screenblock**. For **Header** set it to None.
+
+![](/Images/projectproperties.png)
+
+Set the cpp and header folder to the correct place on your folder and then after building the project by pressing F5 or clicking Build Project from the menu.
+
+This will generate cpp and header files with classes to handle meta sprites and its animations.
+
+Header file example:
+```
+class title : public scene
+{
+public:
+    title(bn::camera_ptr camera);
+    void update();
+
+private:
+    bn::unique_ptr<gbatool::Guy> _player;
+}
+```
+
+cpp file example:
+```
+title::title(bn::camera_ptr camera)
+{
+    _player.reset(new gbatool::Guy());
+    _player->set_camera(camera);
+    _player->load_animation(gbatool::Guy::AnimationID::WALKING);
+    _player->set_position(bn::fixed_point(0, 0));
+}
+
+void title::update()
+{
+    _player->update_animation();
+}
+```
+
+
