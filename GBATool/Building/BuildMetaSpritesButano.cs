@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace GBATool.Building;
 
 using FrameDetail = (int starts, int ends);
-using SpriteDetail = (string spriteName, int xpos, int ypos);
+using SpriteDetail = (string spriteName, int xpos, int ypos, int flippedX);
 
 public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 {
@@ -25,6 +25,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public string TilesSize;
         public int posX;
         public int posY;
+        public int FlippedPosX;
     }
 
     private struct FrameDetails
@@ -243,8 +244,16 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     string tiles = $"{bankName}_{alias}Tiles";
                     string tilesSize = $"{tileSizeNumber}";
 
-                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X) + (characterSprite.Width / 2);
-                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y) + (characterSprite.Height / 2);
+                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X);
+                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y);
+
+                    int verticalAxis = model.VerticalAxis - (int)model.RelativeOrigin.X;
+                    int flippedXPos = verticalAxis - (posX - verticalAxis) - characterSprite.Width;
+
+                    // correct the origin of the metasprite
+                    posX += (characterSprite.Width / 2);
+                    posY += (characterSprite.Height / 2);
+                    flippedXPos += (characterSprite.Width / 2);
 
                     SpriteShape shape = SpriteShape.Shape00;
                     SpriteSize size = SpriteSize.Size00;
@@ -278,7 +287,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                         Tiles = tiles,
                         TilesSize = tilesSize,
                         posX = posX,
-                        posY = posY
+                        posY = posY,
+                        FlippedPosX = flippedXPos
                     });
                 }
 
@@ -410,13 +420,15 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    struct Sprite");
         await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        Sprite(const bn::sprite_item* item, int x, int y)");
+        await outputFile.WriteLineAsync("        Sprite(const bn::sprite_item* item, int x, int y, int xFlipped)");
         await outputFile.WriteLineAsync("        {");
         await outputFile.WriteLineAsync("            sprite_item = item;");
         await outputFile.WriteLineAsync("            position = bn::fixed_point(x, y);");
+        await outputFile.WriteLineAsync("            position_horizontal_flipped = bn::fixed_point(xFlipped, y);");
         await outputFile.WriteLineAsync("        }");
         await outputFile.WriteLineAsync("        const bn::sprite_item* sprite_item;");
         await outputFile.WriteLineAsync("        bn::fixed_point position;");
+        await outputFile.WriteLineAsync("        bn::fixed_point position_horizontal_flipped;");
         await outputFile.WriteLineAsync("    };");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"    {className}();");
@@ -426,6 +438,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    void set_position(const bn::fixed_point& position);");
         await outputFile.WriteLineAsync("    void set_camera(const bn::camera_ptr& camera);");
         await outputFile.WriteLineAsync("    void set_priority(const int priority);");
+        await outputFile.WriteLineAsync("    void set_facing_right(bool facingRight);");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_right() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] const bn::fixed_point& position() const;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("protected:");
@@ -441,6 +456,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("private:");
         await outputFile.WriteLineAsync("    [[nodiscard]] bn::sprite_ptr create_sprite(unsigned int spriteIndex);");
         await outputFile.WriteLineAsync("    void load_next_frame();");
+        await outputFile.WriteLineAsync("    int _current_sprite_start_index;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"    static const Animation _animations[{_animationDetails.Count}];");
         await outputFile.WriteLineAsync($"    static const Frame _frames[{countFramesTotal}];");
@@ -461,7 +477,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
             {
                 foreach (SpriteDetails sprite in frame.Sprites)
                 {
-                    sprites.Add((sprite.SpriteName, sprite.posX, sprite.posY));
+                    sprites.Add((sprite.SpriteName, sprite.posX, sprite.posY, sprite.FlippedPosX));
 
                     acumSprites++;
                 }
@@ -514,7 +530,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         for (int i = 0; i < sprites.Count; ++i)
         {
-            await outputFile.WriteAsync($"    {{ &bn::sprite_items::{sprites[i].spriteName}, {sprites[i].xpos}, {sprites[i].ypos} }}");
+            await outputFile.WriteAsync($"    {{ &bn::sprite_items::{sprites[i].spriteName}, {sprites[i].xpos}, {sprites[i].ypos}, {sprites[i].flippedX} }}");
 
             if (i < sprites.Count - 1)
                 await outputFile.WriteAsync(",");
@@ -588,10 +604,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("            int starts = _frames[frameCount + _frameIndex].spriteStarts;");
         await outputFile.WriteLineAsync("            int ends = _frames[frameCount + _frameIndex].spriteEnds;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("            for (int j = starts; j <= ends; ++j)");
+        await outputFile.WriteLineAsync("            for (int i = starts; i <= ends; ++i)");
         await outputFile.WriteLineAsync("            {");
-        await outputFile.WriteLineAsync("                _currentFrameSprites.push_back(create_sprite(j));");
+        await outputFile.WriteLineAsync("                _currentFrameSprites.push_back(create_sprite(i));");
         await outputFile.WriteLineAsync("            }");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("            _current_sprite_start_index = starts;");
         await outputFile.WriteLineAsync("        }");
         await outputFile.WriteLineAsync("        else");
         await outputFile.WriteLineAsync("        {");
@@ -622,6 +640,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"void {className}::set_camera(const bn::camera_ptr& camera)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _camera = camera;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    for (bn::sprite_ptr & sprite : _currentFrameSprites)");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        sprite.set_camera(camera);");
+        await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"const bn::fixed_point& {className}::position() const");
@@ -639,15 +662,53 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"bool {className}::is_facing_right() const");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    return _facingRight;");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"bool {className}::is_facing_left() const");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    return !_facingRight;");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"void {className}::set_facing_right(bool facingRight)");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    if (_facingRight == facingRight)");
+        await outputFile.WriteLineAsync("        return;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    _facingRight = facingRight;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    int spriteCount = 0;");
+        await outputFile.WriteLineAsync("    for (bn::sprite_ptr& sprite : _currentFrameSprites)");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        sprite.set_horizontal_flip(!_facingRight);");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("        if (_facingRight)");
+        await outputFile.WriteLineAsync("            sprite.set_position(_position + _sprites[_current_sprite_start_index + spriteCount].position);");
+        await outputFile.WriteLineAsync("        else");
+        await outputFile.WriteLineAsync("            sprite.set_position(_position + _sprites[_current_sprite_start_index + spriteCount].position_horizontal_flipped);");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("        spriteCount++;");
+        await outputFile.WriteLineAsync("    }");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"bn::sprite_ptr {className}::create_sprite(unsigned int spriteIndex)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    bn::sprite_builder builder(*_sprites[spriteIndex].sprite_item, 0);");
-        await outputFile.WriteLineAsync("    builder.set_position(_position + _sprites[spriteIndex].position);");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    if (_facingRight)");
+        await outputFile.WriteLineAsync("        builder.set_position(_position + _sprites[spriteIndex].position);");
+        await outputFile.WriteLineAsync("    else");
+        await outputFile.WriteLineAsync("        builder.set_position(_position + _sprites[spriteIndex].position_horizontal_flipped);");
+        await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    builder.set_bg_priority(_priority);");
         await outputFile.WriteLineAsync("    if (_camera.has_value())");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        builder.set_camera(_camera.value());");
         await outputFile.WriteLineAsync("    }");
+        await outputFile.WriteLineAsync("    builder.set_horizontal_flip(!_facingRight);");
+        await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    return builder.release_build();");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
