@@ -179,7 +179,7 @@ public class CharacterAnimationViewModel : ViewModel
             {
                 foreach (var item in animation.Frames)
                 {
-                    SignalManager.Get<NewAnimationFrameSignal>().Dispatch(animation.ID, item.Value.ID, -1);
+                    SignalManager.Get<NewAnimationFrameSignal>().Dispatch(animation.ID, item.Value.ID, -1, item.Value.IsHeldFrame);
                 }
 
                 _animationID = animation.ID;

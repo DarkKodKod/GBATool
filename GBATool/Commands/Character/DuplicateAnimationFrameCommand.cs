@@ -28,6 +28,7 @@ public class DuplicateAnimationFrameCommand : Command
 
         Dictionary<string, FrameModel> newFrames = [];
         string newFrameID = string.Empty;
+        bool isNewFrameHeldFrame = false;
 
         if (model.Animations.TryGetValue(animationID, out CharacterAnimation? animation))
         {
@@ -54,6 +55,8 @@ public class DuplicateAnimationFrameCommand : Command
                         Tiles = new Dictionary<string, CharacterSprite>(item.Value.Tiles)
                     };
 
+                    isNewFrameHeldFrame = item.Value.IsHeldFrame;
+
                     newFrames.Add(newFrameID, frame);
                 }
 
@@ -66,7 +69,7 @@ public class DuplicateAnimationFrameCommand : Command
 
                 fileHandler.Save();
 
-                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(animation.ID, newFrameID, whereIsNewFrame);
+                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(animation.ID, newFrameID, whereIsNewFrame, isNewFrameHeldFrame);
             }
         }
     }

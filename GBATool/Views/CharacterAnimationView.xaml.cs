@@ -72,7 +72,7 @@ public partial class CharacterAnimationView : UserControl
         }
     }
 
-    private void OnNewAnimationFrame(string animationID, string frameID, int newIndex)
+    private void OnNewAnimationFrame(string animationID, string frameID, int newIndex, bool isHeldFrame)
     {
         if (DataContext is not CharacterAnimationViewModel viewModel)
         {
@@ -91,7 +91,7 @@ public partial class CharacterAnimationView : UserControl
             return;
         }
 
-        CharacterFrameView frame = new(animationID, frameID, spFrames.Children.Count - 1, viewModel.FileHandler, model);
+        CharacterFrameView frame = new(animationID, frameID, spFrames.Children.Count - 1, viewModel.FileHandler, model, isHeldFrame);
 
         // Insert last
         if (newIndex == -1)

@@ -18,6 +18,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
     private string _animationID = string.Empty;
     private string _frameID = string.Empty;
     private int _frameIndex;
+    private bool _isHeldFrame;
     private ImageSource? _frameImage;
     private CharacterModel? _characterModel;
     private Visibility _imageVisibility = Visibility.Visible;
@@ -81,6 +82,17 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         }
     }
 
+    public bool IsHeldFrame
+    {
+        get { return _isHeldFrame; }
+        set
+        {
+            _isHeldFrame = value;
+
+            OnPropertyChanged(nameof(IsHeldFrame));
+        }
+    }
+
     public ImageSource? FrameImage
     {
         get
@@ -121,7 +133,7 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
     }
 
-    public CharacterFrameView(string animationID, string frameID, int frameIndex, FileHandler fileHandler, CharacterModel model)
+    public CharacterFrameView(string animationID, string frameID, int frameIndex, FileHandler fileHandler, CharacterModel model, bool isHeldFrame)
     {
         InitializeComponent();
 
@@ -130,13 +142,19 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         FrameIndex = frameIndex;
         FileHandler = fileHandler;
         CharacterModel = model;
+        IsHeldFrame = isHeldFrame;
 
         OnActivate();
     }
 
     public void OnActivate()
     {
-        LoadFrameImage();
+        ImageVisibility = IsHeldFrame ? Visibility.Collapsed : Visibility.Visible;
+
+        if (!IsHeldFrame)
+        {
+            LoadFrameImage();
+        }
     }
 
     private void LoadFrameImage()
@@ -150,13 +168,6 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
         {
             return;
         }
-
-        if (!CharacterModel.Animations[AnimationID].Frames.TryGetValue(FrameID, out FrameModel? frameModel))
-        {
-            return;
-        }
-
-        ImageVisibility = frameModel.IsHeldFrame ? Visibility.Collapsed : Visibility.Visible;
 
         WriteableBitmap? image = CharacterUtils.GetFrameImageFromCache(CharacterModel, AnimationID, FrameID);
 
