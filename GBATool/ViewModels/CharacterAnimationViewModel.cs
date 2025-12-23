@@ -241,16 +241,24 @@ public class CharacterAnimationViewModel : ViewModel
             return;
         }
 
+        bool isHeldFrame = false;
+
         int frameIndex = 0;
-        foreach (var item in animation.Frames)
+        foreach (KeyValuePair<string, FrameModel> item in animation.Frames)
         {
             if (FrameIndex == frameIndex)
             {
                 FrameID = item.Value.ID;
+                isHeldFrame = item.Value.IsHeldFrame;
                 break;
             }
 
             frameIndex++;
+        }
+
+        if (isHeldFrame)
+        {
+            return;
         }
 
         if (string.IsNullOrEmpty(FrameID))
