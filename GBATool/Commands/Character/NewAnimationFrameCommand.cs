@@ -42,7 +42,7 @@ public class NewAnimationFrameCommand : Command
 
                 fileHandler.Save();
 
-                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(tabID, frame.ID);
+                SignalManager.Get<NewAnimationFrameSignal>().Dispatch(tabID, frame.ID, -1);
 
                 return;
             }

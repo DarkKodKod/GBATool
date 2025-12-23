@@ -110,6 +110,8 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public DeleteAnimationFrameCommand DeleteAnimationFrameCommand { get; } = new();
+    public DuplicateAnimationFrameCommand DuplicateAnimationFrameCommand { get; } = new();
+    public InsertAnimationHeldFrameCommand InsertAnimationHeldFrameCommand { get; } = new();
     #endregion
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -149,7 +151,12 @@ public partial class CharacterFrameView : UserControl, INotifyPropertyChanged
             return;
         }
 
-        ImageVisibility = CharacterModel.Animations[AnimationID].Frames[FrameID].IsHeldFrame ? Visibility.Collapsed : Visibility.Visible;
+        if (!CharacterModel.Animations[AnimationID].Frames.TryGetValue(FrameID, out FrameModel? frameModel))
+        {
+            return;
+        }
+
+        ImageVisibility = frameModel.IsHeldFrame ? Visibility.Collapsed : Visibility.Visible;
 
         WriteableBitmap? image = CharacterUtils.GetFrameImageFromCache(CharacterModel, AnimationID, FrameID);
 

@@ -11,9 +11,23 @@
     <UserControl.Resources>
         <cv:ParametersConverter x:Key="parametersConverter"/>
         <ContextMenu x:Key="ButtonMenu">
-            <MenuItem Header="Duplicate Frame">
+            <MenuItem Header="Duplicate Frame" Command="{Binding DuplicateAnimationFrameCommand}">
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="AnimationID" />
+                        <Binding Path="FrameID" />
+                        <Binding Path="FileHandler" />
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
             </MenuItem>
-            <MenuItem Header="Insert a Held Frame">
+            <MenuItem Header="Insert a Held Frame" Command="{Binding InsertAnimationHeldFrameCommand}">
+                <MenuItem.CommandParameter>
+                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                        <Binding Path="AnimationID" />
+                        <Binding Path="FrameID" />
+                        <Binding Path="FileHandler" />
+                    </MultiBinding>
+                </MenuItem.CommandParameter>
             </MenuItem>
             <MenuItem Header="Delete Frame" Command="{Binding DeleteAnimationFrameCommand}">
                 <MenuItem.CommandParameter>

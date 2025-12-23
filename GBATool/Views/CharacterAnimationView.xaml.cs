@@ -72,7 +72,7 @@ public partial class CharacterAnimationView : UserControl
         }
     }
 
-    private void OnNewAnimationFrame(string animationID, string frameID)
+    private void OnNewAnimationFrame(string animationID, string frameID, int newIndex)
     {
         if (DataContext is not CharacterAnimationViewModel viewModel)
         {
@@ -93,9 +93,32 @@ public partial class CharacterAnimationView : UserControl
 
         CharacterFrameView frame = new(animationID, frameID, spFrames.Children.Count - 1, viewModel.FileHandler, model);
 
-        FrameViewList.Add(frame);
+        // Insert last
+        if (newIndex == -1)
+        {
+            FrameViewList.Add(frame);
 
-        spFrames.Children.Insert(spFrames.Children.Count - 1, frame);
+            spFrames.Children.Insert(spFrames.Children.Count - 1, frame);
+        }
+        else
+        {
+            // Insert in between
+
+            spFrames.Children.Insert(newIndex, frame);
+
+            FrameViewList.Insert(newIndex, frame);
+
+            int index = 0;
+
+            // Adjust the index for all the remaining chidren
+            foreach (object item in spFrames.Children)
+            {
+                if (item is CharacterFrameView view)
+                {
+                    view.FrameIndex = index++;
+                }
+            }
+        }
     }
 
     private void OnInformationToCorrectlyDisplayTheMetaSpriteCentered(double offsetX, double offsetY, double imageWidth, double imageHeight)
