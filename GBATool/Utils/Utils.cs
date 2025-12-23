@@ -152,7 +152,7 @@ public static class Util
         return string.Empty;
     }
 
-    public static bool ValidFileName(string fileName)
+    public static bool IsValidFileName(string fileName)
     {
         if (string.IsNullOrEmpty(fileName))
         {

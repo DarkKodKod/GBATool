@@ -502,11 +502,11 @@ public class MainWindowViewModel : ViewModel
 
         string path = Path.Combine(projectModel.ProjectPath, palette);
 
-        name = ProjectItemFileSystem.GetValidFileName(path, name, Util.GetExtensionByType(ProjectItemType.Palette));
-
         if (colorArray.Count <= PaletteModel.MaxColor)
         {
             // 4bpp case
+
+            name = ProjectItemFileSystem.GetValidFileName(path, name, Util.GetExtensionByType(ProjectItemType.Palette));
 
             ProjectItem newElement = new()
             {
@@ -521,6 +521,8 @@ public class MainWindowViewModel : ViewModel
         else
         {
             // 8bpp case
+
+            name = ProjectItemFileSystem.GetValidFolderName(path, name);
 
             ProjectItem newElement = new()
             {
@@ -539,7 +541,8 @@ public class MainWindowViewModel : ViewModel
                     DisplayName = $"palette_{i:D2}",
                     IsFolder = false,
                     IsRoot = false,
-                    Type = ProjectItemType.Palette
+                    Type = ProjectItemType.Palette,
+                    Parent = newElement
                 });
             }
 

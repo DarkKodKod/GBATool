@@ -480,7 +480,7 @@ namespace GBATool
                 previousText = tb?.Text.Replace(tb.SelectedText, string.Empty);
             }
 
-            e.Handled = !Util.ValidFileName(previousText + e.Text);
+            e.Handled = !Util.IsValidFileName(previousText + e.Text);
         }
 
         protected override void OnClosed(EventArgs e)

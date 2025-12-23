@@ -21,7 +21,7 @@ public class ProjectDialogViewModel : ViewModel
         get => _projectName;
         set
         {
-            if (!Util.ValidFileName(value))
+            if (!Util.IsValidFileName(value))
                 return;
 
             _projectName = value;
