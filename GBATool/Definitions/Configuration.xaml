@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <system:String x:Key="configurationFileName">config</system:String>
     <system:String x:Key="projectFileName">gba.proj</system:String>
-    <system:String x:Key="applicationTitle">GBA Tool</system:String>
+    <system:String x:Key="applicationTitle">GBATool</system:String>
     <system:String x:Key="folderBanks">Banks</system:String>
     <system:String x:Key="folderCharacters">Characters</system:String>
     <system:String x:Key="folderMaps">Maps</system:String>

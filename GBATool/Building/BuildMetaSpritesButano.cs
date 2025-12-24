@@ -35,6 +35,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public string BppMode;
         public string Palette;
         public string PaletteSize;
+        public bool HeldFrame;
         public List<SpriteDetails> Sprites;
     }
 
@@ -157,12 +158,30 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
     }
 
-    private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel model)
+    private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel characterModel)
     {
         string paletteName = string.Empty;
         List<string> alreadyUsedDeclaration = [];
 
-        foreach (KeyValuePair<string, CharacterAnimation> animationItem in model.Animations)
+        PaletteModel? paletteModel = CharacterUtils.GetPaletteUsedByCharacter(characterModel);
+
+        if (paletteModel != null)
+        {
+            FileModelVO? fileModelPaletteVO = ProjectFiles.GetFileModel(paletteModel.GUID);
+            if (fileModelPaletteVO != null && string.IsNullOrEmpty(paletteName))
+            {
+                paletteName = PaletteUtils.GetPaletteName(fileModelPaletteVO) ?? string.Empty;
+
+                if (paletteModel.LinkedPalettes.Count > 0)
+                {
+                    string remove = "_Palette_XX";
+
+                    paletteName = paletteName.Replace(paletteName[^remove.Length..], string.Empty); // Removes the "_Palette_XX" from the name
+                }
+            }
+        }
+
+        foreach (KeyValuePair<string, CharacterAnimation> animationItem in characterModel.Animations)
         {
             CharacterAnimation animation = animationItem.Value;
 
@@ -171,11 +190,26 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 continue;
             }
 
-            List<FrameDetails> frame = [];
+            List<FrameDetails> frames = [];
 
             foreach (KeyValuePair<string, FrameModel> frameItem in animation.Frames)
             {
                 FrameModel frameModel = frameItem.Value;
+
+                if (frameModel.IsHeldFrame)
+                {
+                    frames.Add(new FrameDetails()
+                    {
+                        Name = animation.Name,
+                        HeldFrame = true,
+                        BankName = string.Empty,
+                        Sprites = [],
+                        BppMode = string.Empty,
+                        Palette = string.Empty,
+                        PaletteSize = string.Empty
+                    });
+                    continue;
+                }
 
                 BankModel? bankModel = ProjectFiles.GetModel<BankModel>(frameModel.BankID);
 
@@ -190,28 +224,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     continue;
                 }
 
-                PaletteModel? paletteModel = CharacterUtils.GetPaletteUsedByCharacter(model);
-
-                if (paletteModel != null)
-                {
-                    FileModelVO? fileModelPaletteVO = ProjectFiles.GetFileModel(paletteModel.GUID);
-                    if (fileModelPaletteVO != null && string.IsNullOrEmpty(paletteName))
-                    {
-                        paletteName = PaletteUtils.GetPaletteName(fileModelPaletteVO) ?? string.Empty;
-
-                        if (paletteModel.LinkedPalettes.Count > 0)
-                        {
-                            string remove = "_Palette_XX";
-
-                            paletteName = paletteName.Replace(paletteName[^remove.Length..], string.Empty); // Removes the "_Palette_XX" from the name
-                        }
-                    }
-                }
-
                 string bankName = fileModelBankVO.Name ?? "";
-
                 string bppMode = bankModel.Use256Colors ? "bpp_mode::BPP_8" : "bpp_mode::BPP_4";
-
                 string palette = $"{paletteName}Pal";
                 string paletteSize = bankModel.Use256Colors ? "256" : "16";
 
@@ -245,10 +259,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     string tiles = $"{bankName}_{alias}Tiles";
                     string tilesSize = $"{tileSizeNumber}";
 
-                    int posX = (int)(characterSprite.Position.X - model.RelativeOrigin.X);
-                    int posY = (int)(characterSprite.Position.Y - model.RelativeOrigin.Y);
+                    int posX = (int)(characterSprite.Position.X - characterModel.RelativeOrigin.X);
+                    int posY = (int)(characterSprite.Position.Y - characterModel.RelativeOrigin.Y);
 
-                    int verticalAxis = model.VerticalAxis - (int)model.RelativeOrigin.X;
+                    int verticalAxis = characterModel.VerticalAxis - (int)characterModel.RelativeOrigin.X;
                     int flippedXPos = verticalAxis - (posX - verticalAxis) - characterSprite.Width;
 
                     // correct the origin of the metasprite
@@ -293,13 +307,14 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     });
                 }
 
-                frame.Add(new FrameDetails()
+                frames.Add(new FrameDetails()
                 {
                     Name = animation.Name,
                     BankName = bankName,
                     Sprites = spriteDetails,
                     BppMode = bppMode,
                     Palette = palette,
+                    HeldFrame = false,
                     PaletteSize = paletteSize
                 });
             }
@@ -308,8 +323,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 new AnimationDetails()
                 {
                     Name = $"{animation.Name}",
-                    Frames = frame,
-                    Priority = (int)model.Priority,
+                    Frames = frames,
+                    Priority = (int)characterModel.Priority,
                     Speed = animation.Speed
                 });
         }
@@ -318,6 +333,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         {
             foreach (FrameDetails item in animationDetail.Frames)
             {
+                if (item.HeldFrame)
+                    continue;
+
                 await outputFile.WriteLineAsync($"#include \"bank_{item.BankName}.h\"");
             }
         }
@@ -339,7 +357,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
             foreach (FrameDetails frame in animationDetail.Frames)
             {
-                await outputFile.WriteLineAsync($"    // {frame.Name}_frame_{frameIndex + 1}");
+                string heldFrame = frame.HeldFrame ? " - Held Frame" : string.Empty;
+
+                await outputFile.WriteLineAsync($"    // {frame.Name}_frame_{frameIndex + 1}{heldFrame}");
 
                 foreach (SpriteDetails sprite in frame.Sprites)
                 {
@@ -353,7 +373,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     }
                     else
                     {
-                        await outputFile.WriteLineAsync($"    // sprite_item {sprite.SpriteName}, already declared in a previous frame");
+                        await outputFile.WriteLineAsync($"    // sprite_item, {sprite.SpriteName}, already declared in a previous frame");
                     }
                 }
 
@@ -501,7 +521,14 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     acumSprites++;
                 }
 
-                frames.Add((acumSprites - frame.Sprites.Count, acumSprites - 1));
+                if (frame.HeldFrame)
+                {
+                    frames.Add((-1, -1));
+                }
+                else
+                {
+                    frames.Add((acumSprites - frame.Sprites.Count, acumSprites - 1));
+                }
             }
         }
 
@@ -608,10 +635,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameCounter = 0;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    _currentFrameSprites.clear();");
-        await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    if ((int)_currentAnimation < 0)");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        _currentFrameSprites.clear();");
         await outputFile.WriteLineAsync("        return;");
+        await outputFile.WriteLineAsync("    }");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        int animationCount = 0;");
@@ -623,12 +651,17 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("            int starts = _frames[frameCount + _frameIndex].spriteStarts;");
         await outputFile.WriteLineAsync("            int ends = _frames[frameCount + _frameIndex].spriteEnds;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("            for (int i = starts; i <= ends; ++i)");
+        await outputFile.WriteLineAsync("            if (starts >= 0)");
         await outputFile.WriteLineAsync("            {");
-        await outputFile.WriteLineAsync("                _currentFrameSprites.push_back(create_sprite(i));");
-        await outputFile.WriteLineAsync("            }");
+        await outputFile.WriteLineAsync("                _currentFrameSprites.clear();");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("            _current_sprite_start_index = starts;");
+        await outputFile.WriteLineAsync("                for (int i = starts; i <= ends; ++i)");
+        await outputFile.WriteLineAsync("                {");
+        await outputFile.WriteLineAsync("                    _currentFrameSprites.push_back(create_sprite(i));");
+        await outputFile.WriteLineAsync("                }");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("                _current_sprite_start_index = starts;");
+        await outputFile.WriteLineAsync("            }");
         await outputFile.WriteLineAsync("        }");
         await outputFile.WriteLineAsync("        else");
         await outputFile.WriteLineAsync("        {");
