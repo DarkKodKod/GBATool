@@ -160,6 +160,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
     private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel model)
     {
         string paletteName = string.Empty;
+        List<string> alreadyUsedDeclaration = [];
 
         foreach (KeyValuePair<string, CharacterAnimation> animationItem in model.Animations)
         {
@@ -330,27 +331,45 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("namespace bn::sprite_items");
         await outputFile.WriteLineAsync("{");
 
-        int frameIndex = 0;
+        int countAnimations = 0;
 
         foreach (AnimationDetails animationDetail in _animationDetails)
         {
+            int frameIndex = 0;
+
             foreach (FrameDetails frame in animationDetail.Frames)
             {
                 await outputFile.WriteLineAsync($"    // {frame.Name}_frame_{frameIndex + 1}");
 
                 foreach (SpriteDetails sprite in frame.Sprites)
                 {
-                    await outputFile.WriteLineAsync($"    constexpr inline sprite_item {sprite.SpriteName}(sprite_shape_size({sprite.SpriteShape}, {sprite.SpriteSize}),");
-                    await outputFile.WriteLineAsync($"           sprite_tiles_item(span<const tile>({sprite.Tiles}, {sprite.TilesSize}), {frame.BppMode}, compression_type::NONE, 1),");
-                    await outputFile.WriteLineAsync($"           sprite_palette_item(span<const color>({frame.Palette}, {frame.PaletteSize}), {frame.BppMode}, compression_type::NONE));");
-                }
+                    if (!alreadyUsedDeclaration.Exists(x => x == sprite.SpriteName))
+                    {
+                        await outputFile.WriteLineAsync($"    constexpr inline sprite_item {sprite.SpriteName}(sprite_shape_size({sprite.SpriteShape}, {sprite.SpriteSize}),");
+                        await outputFile.WriteLineAsync($"           sprite_tiles_item(span<const tile>({sprite.Tiles}, {sprite.TilesSize}), {frame.BppMode}, compression_type::NONE, 1),");
+                        await outputFile.WriteLineAsync($"           sprite_palette_item(span<const color>({frame.Palette}, {frame.PaletteSize}), {frame.BppMode}, compression_type::NONE));");
 
-                if (frameIndex < _animationDetails.Count)
-                {
-                    await outputFile.WriteAsync(Environment.NewLine);
+                        alreadyUsedDeclaration.Add(sprite.SpriteName);
+                    }
+                    else
+                    {
+                        await outputFile.WriteLineAsync($"    // sprite already declared in a previous frame");
+                    }
                 }
 
                 frameIndex++;
+
+                if (frameIndex < animationDetail.Frames.Count)
+                {
+                    await outputFile.WriteAsync(Environment.NewLine);
+                }
+            }
+
+            countAnimations++;
+
+            if (countAnimations < _animationDetails.Count)
+            {
+                await outputFile.WriteAsync(Environment.NewLine);
             }
         }
 
