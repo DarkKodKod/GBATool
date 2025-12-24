@@ -353,7 +353,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     }
                     else
                     {
-                        await outputFile.WriteLineAsync($"    // sprite already declared in a previous frame");
+                        await outputFile.WriteLineAsync($"    // sprite_item {sprite.SpriteName}, already declared in a previous frame");
                     }
                 }
 
