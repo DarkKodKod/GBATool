@@ -4,6 +4,7 @@
     <system:String x:Key="configurationFileName">config</system:String>
     <system:String x:Key="projectFileName">gba.proj</system:String>
     <system:String x:Key="applicationTitle">GBATool</system:String>
+    <system:String x:Key="modelVersion">1.0.0</system:String>
     <system:String x:Key="folderBanks">Banks</system:String>
     <system:String x:Key="folderCharacters">Characters</system:String>
     <system:String x:Key="folderMaps">Maps</system:String>

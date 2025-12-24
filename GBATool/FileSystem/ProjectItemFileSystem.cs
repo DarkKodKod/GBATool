@@ -100,14 +100,7 @@ public static class ProjectItemFileSystem
             goto end_of_function;
         }
 
-        AFileModel? model = Util.FileModelFactory(item.Type);
-
-        if (model == null)
-        {
-            goto end_of_function;
-        }
-
-        string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + model.FileExtension);
+        string itemPath = Path.Combine(fileHandler.Path, fileHandler.Name + Util.GetExtensionByType(item.Type));
 
         if (!File.Exists(itemPath))
         {
