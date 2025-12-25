@@ -121,7 +121,7 @@ public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
 public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
 public class CleanupTileSetLinksSignal : Signal { }
 public class CleanupBankSpritesSignal : Signal { }
-public class AdjustCanvasBankSizeSignal : Signal<bool> { }
+public class AdjustCanvasBankSizeSignal : Signal<BitsPerPixel> { }
 public class ReloadBankViewImageSignal : Signal { }
 public class SelectTileSetSignal : Signal<string> { }
 public class BankImageUpdatedSignal : Signal { }

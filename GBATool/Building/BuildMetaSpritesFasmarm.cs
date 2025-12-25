@@ -150,7 +150,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
                 }
                 else
                 {
-                    int bpp = bankModel.Use256Colors ? (int)BitsPerPixel.f8bpp : (int)BitsPerPixel.f4bpp;
+                    int bpp = (int)bankModel.BitsPerPixel;
 
                     TileBlocks boundingBox = bankModel.GetBoundingBoxSize();
 
@@ -266,7 +266,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         }
 
         string mosaic = sprite.EnableMosaic ? "ATTR_0_MOSAIC" : "0000000000000000b";
-        string colorMode = bankModel.Use256Colors ? "ATTR_0_COLOR_DEPTH" : "0000000000000000b";
+        string colorMode = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "ATTR_0_COLOR_DEPTH" : "0000000000000000b";
 
         SpriteShape shape = SpriteShape.Shape00;
         SpriteSize size = SpriteSize.Size00;
@@ -380,7 +380,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
 
         string paletteIndex = "0000000000000000b";
 
-        if (!bankModel.Use256Colors)
+        if (bankModel.BitsPerPixel == BitsPerPixel.f4bpp)
         {
             paletteIndex = Util.ConvertShortToBits((short)characterModel.PaletteIndex, 12);
             paletteIndex += "b";

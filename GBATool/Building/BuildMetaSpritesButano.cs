@@ -225,9 +225,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 }
 
                 string bankName = fileModelBankVO.Name ?? "";
-                string bppMode = bankModel.Use256Colors ? "bpp_mode::BPP_8" : "bpp_mode::BPP_4";
+                string bppMode = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "bpp_mode::BPP_8" : "bpp_mode::BPP_4";
                 string palette = $"{paletteName}Pal";
-                string paletteSize = bankModel.Use256Colors ? "256" : "16";
+                string paletteSize = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "256" : "16";
 
                 List<SpriteDetails> spriteDetails = [];
 
@@ -253,7 +253,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
                     int tileSizeNumber = (characterSprite.Width / 8) * (characterSprite.Height / 8);
 
-                    tileSizeNumber *= (bankModel.Use256Colors ? 2 : 1);
+                    tileSizeNumber *= (bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? 2 : 1);
 
                     string spriteName = $"{bankName}_{alias}";
                     string tiles = $"{bankName}_{alias}Tiles";

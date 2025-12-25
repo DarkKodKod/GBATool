@@ -397,9 +397,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             return;
         }
 
+        if (_bankModel?.GUID == bankModel.GUID)
+        {
+            return;
+        }
+
         _bankModel = bankModel;
 
-        AdjustCanvasHeight(_bankModel.Use256Colors);
+        AdjustCanvasHeight(_bankModel.BitsPerPixel);
 
         LoadImage(bankModel);
     }
@@ -446,14 +451,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void OnAdjustCanvasBankSize(bool use256colors)
+    private void OnAdjustCanvasBankSize(BitsPerPixel bitPerPixel)
     {
-        AdjustCanvasHeight(use256colors);
+        AdjustCanvasHeight(bitPerPixel);
     }
 
-    private void AdjustCanvasHeight(bool use256colors)
+    private void AdjustCanvasHeight(BitsPerPixel bitPerPixel)
     {
-        if (use256colors)
+        if (bitPerPixel == BitsPerPixel.f8bpp)
         {
             CanvasHeight = 128;
         }
@@ -479,7 +484,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
     {
         SignalManager.Get<CleanupTileSetLinksSignal>().Dispatch();
 
-        _metaData = BankUtils.CreateImage(model, Force2DView);
+        _metaData = BankUtils.CreateImage(model, Force2DView, CanvasWidth, CanvasHeight);
 
         if (_metaData == null)
             return;

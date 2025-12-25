@@ -30,19 +30,9 @@ public static class BankUtils
     public static readonly int SizeOfCellInPixels = 8;
     public static readonly int MaxTextureCellsWidth = 32;
 
-    public static BankImageMetaData CreateImage(BankModel bankModel, bool foce2DView = false, int canvasWidth = 0, int canvasHeight = 0)
+    public static BankImageMetaData CreateImage(BankModel bankModel, bool foce2DView, int canvasWidth, int canvasHeight)
     {
         BankImageMetaData metaData = new();
-
-        if (canvasWidth == 0)
-        {
-            canvasWidth = MaxTextureCellsWidth * SizeOfCellInPixels;
-        }
-
-        if (canvasHeight == 0)
-        {
-            canvasHeight = (bankModel.Use256Colors ? 16 : 32) * SizeOfCellInPixels;
-        }
 
         WriteableBitmap bankBitmap = BitmapFactory.New(canvasWidth, canvasHeight);
 

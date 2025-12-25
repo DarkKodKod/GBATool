@@ -23,8 +23,11 @@ public enum SpriteSize
 
 public enum BitsPerPixel
 {
+    [Description("1bpp")]
     f1bpp = 1,
+    [Description("4bpp")]
     f4bpp = 4,
+    [Description("8bpp")]
     f8bpp = 8
 }
 

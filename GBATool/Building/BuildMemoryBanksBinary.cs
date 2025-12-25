@@ -56,8 +56,6 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             if (vo.Model is not BankModel bank)
                 continue;
 
-            BitsPerPixel bpp = bank.Use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
-
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
             int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
@@ -88,7 +86,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
                 {
                     List<string> warnings = [];
 
-                    imageData = ImageProcessing.ConvertToXbpp(bpp, in metaData.image, in cellsCount, in palette, ref warnings);
+                    imageData = ImageProcessing.ConvertToXbpp(bank.BitsPerPixel, in metaData.image, in cellsCount, in palette, ref warnings);
 
                     foreach (string item in warnings)
                     {

@@ -398,7 +398,17 @@ public class CharacterFrameEditorViewModel : ViewModel
             return (null, null, string.Empty);
         }
 
-        BankImageMetaData meteaData = BankUtils.CreateImage(bankModel, true);
+        int scaledHeight = BankUtils.MaxTextureCellsWidth * BankUtils.SizeOfCellInPixels;
+        if (bankModel.BitsPerPixel == BitsPerPixel.f8bpp)
+        {
+            scaledHeight = (BankUtils.MaxTextureCellsWidth / 2) * BankUtils.SizeOfCellInPixels;
+        }
+
+        BankImageMetaData meteaData = BankUtils.CreateImage(
+            bankModel, 
+            true, 
+            BankUtils.MaxTextureCellsWidth * BankUtils.SizeOfCellInPixels,
+            scaledHeight);
 
         List<SpriteControlVO> sprites = [];
 

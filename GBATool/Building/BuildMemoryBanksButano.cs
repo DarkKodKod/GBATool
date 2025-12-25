@@ -103,8 +103,6 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 
     private async Task WriteFileContent(StreamWriter outputFile, BankModel bank, string name)
     {
-        BitsPerPixel bpp = bank.Use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
-
         TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
         int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
@@ -156,7 +154,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
             {
                 List<string> warnings = [];
 
-                imageData = ImageProcessing.ConvertToXbpp(bpp, in spriteBitmap, in tileBlicks, in palette, ref warnings);
+                imageData = ImageProcessing.ConvertToXbpp(bank.BitsPerPixel, in spriteBitmap, in tileBlicks, in palette, ref warnings);
 
                 foreach (string item in warnings)
                 {
@@ -188,7 +186,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
             string alias = sprite.Alias.Replace('-', '_');
             string tileName = $"{name}_{alias}";
 
-            await outputFile.WriteLineAsync($"#define {tileName}TilesLen {dataWords.Count * (int)bpp}");
+            await outputFile.WriteLineAsync($"#define {tileName}TilesLen {dataWords.Count * (int)bank.BitsPerPixel}");
             await outputFile.WriteLineAsync($"const bn::tile {tileName}Tiles[{dataWords.Count / 8}] =");
             await outputFile.WriteLineAsync("{");
 

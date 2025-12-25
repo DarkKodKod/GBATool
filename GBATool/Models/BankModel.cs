@@ -35,7 +35,7 @@ public class BankModel : AFileModel
         }
     }
 
-    public bool Use256Colors { get; set; }
+    public BitsPerPixel BitsPerPixel { get; set; } = BitsPerPixel.f4bpp;
     public bool IsBackground { get; set; }
     public int TransparentColor { get; set; } = 0;
     public List<SpriteRef> Sprites { get; set; } = [];

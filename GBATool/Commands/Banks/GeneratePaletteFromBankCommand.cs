@@ -51,12 +51,10 @@ public class GeneratePaletteFromBankCommand : Command
             return;
         }
 
-        if (values[3] is not bool use256Colors)
+        if (values[3] is not BitsPerPixel bpp)
         {
             return;
         }
-
-        BitsPerPixel bpp = use256Colors ? BitsPerPixel.f8bpp : BitsPerPixel.f4bpp;
 
         SignalManager.Get<GeneratePaletteFromBankSignal>().Dispatch(name, listOfSprites, transparentColor, bpp);
     }

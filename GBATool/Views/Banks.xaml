@@ -7,8 +7,10 @@
              xmlns:local="clr-namespace:GBATool.Views"
              mc:Ignorable="d" 
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
+             xmlns:ex="clr-namespace:ArchitectureLibrary.WPF.Extensions;assembly=ArchitectureLibrary"
              xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
+             xmlns:enum="clr-namespace:GBATool.Enums"
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              d:DesignHeight="900" d:DesignWidth="1200">
     <UserControl.Resources>
@@ -56,8 +58,13 @@
                             Visibility="{Binding Path=IsBackground, Converter={StaticResource BoolToVis}}"/>
                 <Label Margin="20,0,0,0">Is Background:</Label>
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=IsBackground, Mode=TwoWay}"/>
-                <Label Margin="20,0,0,0">256 colors:</Label>
-                <CheckBox VerticalAlignment="Center" IsChecked="{Binding Path=Use256Colors, Mode=TwoWay}"/>
+                <Label Margin="20,0,0,0">Color Depth:</Label>
+                <ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" 
+                          Width="120" 
+                          DisplayMemberPath="Description"
+                          ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:BitsPerPixel}}}"
+                          SelectedValue="{Binding Path=BitsPerPixel}"
+                          SelectedValuePath="Value"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="2">
                 <Label Margin="10,0,0,0">Palette Configuration:</Label>
@@ -84,7 +91,7 @@
                             <Binding Path="ModelName"/>
                             <Binding Path="BankSprites"/>
                             <Binding Path="TransparentColor"/>
-                            <Binding Path="Use256Colors"/>
+                            <Binding Path="BitsPerPixel"/>
                         </MultiBinding>
                     </Button.CommandParameter>
                 </Button>

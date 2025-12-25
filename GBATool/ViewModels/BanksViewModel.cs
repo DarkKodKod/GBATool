@@ -27,7 +27,7 @@ public class BanksViewModel : ItemViewModel
     private ObservableCollection<SpriteModel> _bankSprites = [];
     private BankModel? _bankModel = null;
     private string _modelName = string.Empty;
-    private bool _use256Colors = false;
+    private BitsPerPixel _bitsPerPixel = BitsPerPixel.f4bpp;
     private bool _isBackground = false;
     private Color _transparentColor = Color.FromRgb(0, 0, 0);
     private bool _doNotSave = false;
@@ -150,23 +150,23 @@ public class BanksViewModel : ItemViewModel
         }
     }
 
-    public bool Use256Colors
+    public BitsPerPixel BitsPerPixel
     {
-        get => _use256Colors;
+        get => _bitsPerPixel;
         set
         {
-            if (_use256Colors != value)
+            if (_bitsPerPixel != value)
             {
-                _use256Colors = value;
+                _bitsPerPixel = value;
 
                 SignalManager.Get<AdjustCanvasBankSizeSignal>().Dispatch(value);
 
-                UpdateAndSaveUse256Colors();
+                UpdateAndSaveBitsPerPixel();
 
                 SignalManager.Get<ReloadBankViewImageSignal>().Dispatch();
             }
 
-            OnPropertyChanged(nameof(Use256Colors));
+            OnPropertyChanged(nameof(BitsPerPixel));
         }
     }
 
@@ -233,8 +233,7 @@ public class BanksViewModel : ItemViewModel
 
         SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
 
-
-        Use256Colors = model.Use256Colors;
+        BitsPerPixel = model.BitsPerPixel;
         IsBackground = model.IsBackground;
         TransparentColor = PaletteUtils.GetColorFromInt(model.TransparentColor);
 
@@ -310,7 +309,7 @@ public class BanksViewModel : ItemViewModel
         ProjectItem?.FileHandler?.Save();
     }
 
-    private void UpdateAndSaveUse256Colors()
+    private void UpdateAndSaveBitsPerPixel()
     {
         if (_doNotSave)
             return;
@@ -320,7 +319,7 @@ public class BanksViewModel : ItemViewModel
             return;
         }
 
-        _bankModel.Use256Colors = Use256Colors;
+        _bankModel.BitsPerPixel = BitsPerPixel;
 
         ProjectItem?.FileHandler?.Save();
     }
@@ -332,7 +331,7 @@ public class BanksViewModel : ItemViewModel
 
         BankSprites = [.. metaData.bankSprites];
 
-        FileModelVO[] tileSets = ProjectFiles.GetModels<TileSetModel>().ToArray();
+        FileModelVO[] tileSets = [.. ProjectFiles.GetModels<TileSetModel>()];
 
         foreach (string tileSetId in metaData.UniqueTileSet)
         {
