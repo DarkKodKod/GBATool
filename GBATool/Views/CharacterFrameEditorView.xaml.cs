@@ -24,6 +24,7 @@ public partial class CharacterFrameEditorView : UserControl
     private readonly List<Image> _onionSkinImages = [];
     private const double _onionSkinOpacity = 0.25;
     private Point _initialMousePositionInCanvas;
+    private string _bankID = string.Empty;
 
     public CharacterFrameEditorView()
     {
@@ -250,7 +251,7 @@ public partial class CharacterFrameEditorView : UserControl
         lvFrameCollisions.Items.Refresh();
     }
 
-    private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList, string frameID)
+    private void OnFillWithSpriteControls(List<SpriteControlVO> spriteVOList, string frameID, string bankID)
     {
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
         {
@@ -265,6 +266,11 @@ public partial class CharacterFrameEditorView : UserControl
         if (frameView.DataContext is not FrameView frameViewView)
         {
             return;
+        }
+
+        if (spriteVOList.Count > 0)
+        {
+            _bankID = bankID;
         }
 
         foreach (SpriteControlVO vo in spriteVOList)
@@ -352,6 +358,19 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (CharacterDragObjectVO item in list)
         {
+            if (!string.IsNullOrEmpty(_bankID) && item.SpriteControl.BankID != _bankID)
+            {
+                _ = MessageBox.Show("For now it is not possible to have a frame with sprites from two or more different banks", "Error", MessageBoxButton.OK);
+
+                RemoveFromFrameViewTempImage(frameViewView, item);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(_bankID))
+            {
+                _bankID = item.SpriteControl.BankID;
+            }
+
             if (frameViewView.Canvas.Children.Contains(item.SpriteControl.Image))
             {
                 string id = item.SpriteControl.ID;
@@ -378,18 +397,30 @@ public partial class CharacterFrameEditorView : UserControl
                 }
 
                 // remove the previous instance of the Image control in the canvas now that there is a new one to replace it.
-                if (item.SpriteControl.Image != null)
-                {
-                    if (_spritesInFrames.TryGetValue(item.SpriteControl.Image, out _))
-                    {
-                        _ = _spritesInFrames.Remove(item.SpriteControl.Image);
-                    }
-                }
-
-                frameViewView.Canvas.Children.Remove(item.SpriteControl.Image);
+                RemoveFromFrameViewTempImage(frameViewView, item);
 
                 SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), item.SpriteControl.BankID);
             }
+        }
+    }
+
+    private void RemoveFromFrameViewTempImage(FrameView frameViewView, CharacterDragObjectVO item)
+    {
+        if (item.SpriteControl.Image == null)
+        {
+            return;
+        }
+
+        if (_spritesInFrames.TryGetValue(item.SpriteControl.Image, out _))
+        {
+            _ = _spritesInFrames.Remove(item.SpriteControl.Image);
+        }
+
+        frameViewView.Canvas.Children.Remove(item.SpriteControl.Image);
+
+        if (_spritesInFrames.Count == 0)
+        {
+            _bankID = string.Empty;
         }
     }
 
@@ -673,10 +704,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (CharacterDragObjectVO item in list)
         {
-            if (item.SpriteControl.Image != null)
-            {
-                frameViewView.Canvas.Children.Remove(item.SpriteControl.Image);
-            }
+            RemoveFromFrameViewTempImage(frameViewView, item);
         }
     }
 

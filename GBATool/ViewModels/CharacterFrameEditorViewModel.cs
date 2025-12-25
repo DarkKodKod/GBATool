@@ -376,7 +376,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
             if (sprites?.Count > 0)
             {
-                SignalManager.Get<LoadWithSpriteControlsSignal>().Dispatch(sprites, FrameID);
+                SignalManager.Get<LoadWithSpriteControlsSignal>().Dispatch(sprites, FrameID, bankID);
 
                 SelectBank(bankID);
             }

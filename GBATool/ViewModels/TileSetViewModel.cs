@@ -498,7 +498,7 @@ public class TileSetViewModel : ItemViewModel
 
         if (cropped.PixelWidth != width || cropped.PixelHeight != height)
         {
-            MessageBox.Show("The sprite you are trying to create is bigger than the area left from the given pixel", "Error", MessageBoxButton.OK);
+            _ = MessageBox.Show("The sprite you are trying to create is bigger than the area left from the given pixel", "Error", MessageBoxButton.OK);
             return;
         }
 
@@ -514,7 +514,7 @@ public class TileSetViewModel : ItemViewModel
 
         if (!string.IsNullOrEmpty(find?.ID))
         {
-            MessageBox.Show("The exact same sprite already exists", "Error", MessageBoxButton.OK);
+            _ = MessageBox.Show("The exact same sprite already exists", "Error", MessageBoxButton.OK);
             return;
         }
 
