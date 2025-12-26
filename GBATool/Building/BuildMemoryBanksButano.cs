@@ -56,6 +56,12 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
                 continue;
             }
 
+            if (bank.BitsPerPixel == BitsPerPixel.f1bpp)
+            {
+                AddWarning($"1BPP not supported for banks exporting at the moment.");
+                continue;
+            }
+
             string fileName = Path.Combine(outputPath, "bank_" + vo.Name.ToLower());
 
             using StreamWriter outputFile = new(Path.Combine(fileName + ".h"));

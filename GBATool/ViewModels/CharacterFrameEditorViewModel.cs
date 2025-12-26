@@ -405,8 +405,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         BankImageMetaData meteaData = BankUtils.CreateImage(
-            bankModel, 
-            true, 
+            bankModel,
+            true,
             BankUtils.MaxTextureCellsWidth * BankUtils.SizeOfCellInPixels,
             scaledHeight);
 

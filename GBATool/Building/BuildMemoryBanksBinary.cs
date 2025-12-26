@@ -56,6 +56,12 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             if (vo.Model is not BankModel bank)
                 continue;
 
+            if (bank.BitsPerPixel == BitsPerPixel.f1bpp)
+            {
+                AddWarning($"1BPP not supported for banks exporting at the moment.");
+                continue;
+            }
+
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
             int imageWidth = cellsCount.width * BankUtils.SizeOfCellInPixels;
