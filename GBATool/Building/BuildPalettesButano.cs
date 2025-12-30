@@ -138,7 +138,7 @@ public sealed class BuildPalettesButano : Building<BuildPalettesButano>
     private async Task WritePalettesToOutputFile(StreamWriter outputFile, PaletteModel model, string name, int paletteArraySize)
     {
         await outputFile.WriteLineAsync($"#define {name}Len {paletteArraySize * 2}");
-        await outputFile.WriteLineAsync($"const bn::color {name}Pal[{paletteArraySize}] =");
+        await outputFile.WriteLineAsync($"inline constexpr bn::color {name}Pal[{paletteArraySize}] =");
         await outputFile.WriteLineAsync("{");
 
         if (model.LinkedPalettes.Count > 0)
