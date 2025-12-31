@@ -478,6 +478,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    void set_camera(const bn::camera_ptr& camera);");
         await outputFile.WriteLineAsync("    void set_priority(const int priority);");
         await outputFile.WriteLineAsync("    void set_facing_right(bool facingRight);");
+        await outputFile.WriteLineAsync("    void set_frame_counter(int frameCounter);");
+        await outputFile.WriteLineAsync("    void set_frame_index(int frameIndex);");
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_right() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] const bn::fixed_point& position() const;");
@@ -724,6 +726,16 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"bool {className}::is_facing_left() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return !_facingRight;");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"void {className}::set_frame_counter(int frameCounter)");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    _frameCounter = frameCounter;");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"void {className}::set_frame_index(int frameIndex)");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    _frameIndex = frameIndex;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"void {className}::set_facing_right(bool facingRight)");
