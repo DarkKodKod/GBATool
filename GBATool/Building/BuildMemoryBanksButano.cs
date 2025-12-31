@@ -193,7 +193,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
             string tileName = $"{name}_{alias}";
 
             await outputFile.WriteLineAsync($"#define {tileName}TilesLen {dataWords.Count * (int)bank.BitsPerPixel}");
-            await outputFile.WriteLineAsync($"const bn::tile {tileName}Tiles[{dataWords.Count / 8}] =");
+            await outputFile.WriteLineAsync($"inline constexpr bn::tile {tileName}Tiles[{dataWords.Count / 8}] =");
             await outputFile.WriteLineAsync("{");
 
             int count = 0;
