@@ -351,9 +351,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
 
         await outputFile.WriteLineAsync($"#include \"{paletteName}.h\"");
-        
+
         await outputFile.WriteAsync(Environment.NewLine);
-        
+
         await outputFile.WriteLineAsync("#include \"character.h\"");
 
         await outputFile.WriteAsync(Environment.NewLine);

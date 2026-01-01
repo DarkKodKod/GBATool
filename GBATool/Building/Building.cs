@@ -1,4 +1,5 @@
 ﻿using GBATool.Enums;
+using GBATool.Utils;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -77,9 +78,19 @@ public abstract class Building<TBuilder> : IBuilding
     {
         try
         {
-            string result = Path.GetFullPath(path);
+            string fullPath = path;
 
-            return Directory.Exists(result);
+            bool isRooted = Path.IsPathRooted(fullPath);
+            bool isFullyQualified = Path.IsPathFullyQualified(fullPath);
+
+            if (!isRooted || !isFullyQualified)
+            {
+                // path is relative
+
+                fullPath = Util.GetAbsolutePathFromRelativeToProject(path);
+            }
+
+            return Directory.Exists(fullPath);
         }
         catch
         {

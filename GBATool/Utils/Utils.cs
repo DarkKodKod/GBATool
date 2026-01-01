@@ -1,9 +1,11 @@
-﻿using GBATool.Enums;
+﻿using ArchitectureLibrary.Model;
+using GBATool.Enums;
 using GBATool.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -359,5 +361,32 @@ public static class Util
         char[] _camelCase = _textInfo.ToTitleCase(text).Replace(" ", "").ToCharArray();
 
         return new string(_camelCase);
+    }
+
+    public static string GetAbsolutePathFromRelativeToProject(string path)
+    {
+        GBAToolConfigurationModel config = ModelManager.Get<GBAToolConfigurationModel>();
+
+        if (string.IsNullOrEmpty(config.DefaultProjectPath))
+        {
+            return string.Empty;
+        }
+
+        string basePath = config.DefaultProjectPath;
+        string fullPath = path;
+
+        if (!Path.IsPathRooted(path) || "\\".Equals(Path.GetPathRoot(path)))
+        {
+            if (path.StartsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                fullPath = Path.Combine(basePath, path.TrimStart(Path.DirectorySeparatorChar));
+            }
+            else
+            {
+                fullPath = Path.Combine(basePath, path);
+            }
+        }
+
+        return Path.GetFullPath(fullPath);
     }
 }
