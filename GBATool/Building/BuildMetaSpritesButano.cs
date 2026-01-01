@@ -618,6 +618,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("        bn::fixed_point position_horizontal_flipped;");
         await outputFile.WriteLineAsync("    };");
         await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    virtual ~Character() = default;");
         await outputFile.WriteLineAsync("    void update_animation();");
         await outputFile.WriteLineAsync("    void load_animation(int animation);");
         await outputFile.WriteLineAsync("    void set_position(int x, int y);");
