@@ -78,6 +78,14 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 
+        {
+            using StreamWriter outputBaseFileHeader = new(Path.Combine(cppFolder, "character.h"));
+            using StreamWriter outputBaseFileCpp = new(Path.Combine(cppFolder, "character.cpp"));
+
+            await WriteCharacterBaseClassHeader(outputBaseFileHeader);
+            await WriteCharacterBaseClassCpp(outputBaseFileCpp);
+        }
+
         foreach (FileModelVO item in models)
         {
             if (item.Model is not CharacterModel model)
@@ -343,6 +351,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
 
         await outputFile.WriteLineAsync($"#include \"{paletteName}.h\"");
+        
+        await outputFile.WriteAsync(Environment.NewLine);
+        
+        await outputFile.WriteLineAsync("#include \"character.h\"");
 
         await outputFile.WriteAsync(Environment.NewLine);
 
@@ -406,12 +418,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"    class {className};");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"class gbatool::{className}");
+        await outputFile.WriteLineAsync($"class gbatool::{className} : public Character");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("public:");
-        await outputFile.WriteLineAsync("    enum class AnimationID");
+        await outputFile.WriteLineAsync("    enum AnimationID");
         await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        NONE = -1");
+        await outputFile.WriteLineAsync("        NONE = Character::AnimationID::NONE");
 
         int numberMaxSpritesPerFrame = 0;
         int countSpritesTotal = 0;
@@ -435,70 +447,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         await outputFile.WriteLineAsync("    };");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    struct Animation");
-        await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        constexpr Animation(int total, int duration) :");
-        await outputFile.WriteLineAsync("            totalFrames(total)");
-        await outputFile.WriteLineAsync("            , frameDuration(duration)");
-        await outputFile.WriteLineAsync("        {");
-        await outputFile.WriteLineAsync("        }");
-        await outputFile.WriteLineAsync("        int totalFrames;");
-        await outputFile.WriteLineAsync("        int frameDuration;");
-        await outputFile.WriteLineAsync("    };");
-        await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    struct Frame");
-        await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        constexpr Frame(int starts, int ends) :");
-        await outputFile.WriteLineAsync("            spriteStarts(starts)");
-        await outputFile.WriteLineAsync("            , spriteEnds(ends)");
-        await outputFile.WriteLineAsync("        {");
-        await outputFile.WriteLineAsync("        }");
-        await outputFile.WriteLineAsync("        int spriteStarts;");
-        await outputFile.WriteLineAsync("        int spriteEnds;");
-        await outputFile.WriteLineAsync("    };");
-        await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    struct Sprite");
-        await outputFile.WriteLineAsync("    {");
-        await outputFile.WriteLineAsync("        constexpr Sprite(const bn::sprite_item* item, int x, int y, int xFlipped) : ");
-        await outputFile.WriteLineAsync("            sprite_item(item)");
-        await outputFile.WriteLineAsync("            , position(bn::fixed_point(x, y))");
-        await outputFile.WriteLineAsync("            , position_horizontal_flipped(bn::fixed_point(xFlipped, y))");
-        await outputFile.WriteLineAsync("        {");       
-        await outputFile.WriteLineAsync("        }");
-        await outputFile.WriteLineAsync("        const bn::sprite_item* sprite_item;");
-        await outputFile.WriteLineAsync("        bn::fixed_point position;");
-        await outputFile.WriteLineAsync("        bn::fixed_point position_horizontal_flipped;");
-        await outputFile.WriteLineAsync("    };");
-        await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"    {className}();");
-        await outputFile.WriteLineAsync("    void update_animation();");
-        await outputFile.WriteLineAsync("    void load_animation(AnimationID animation);");
-        await outputFile.WriteLineAsync("    void set_position(int x, int y);");
-        await outputFile.WriteLineAsync("    void set_position(const bn::fixed_point& position);");
-        await outputFile.WriteLineAsync("    void set_camera(const bn::camera_ptr& camera);");
-        await outputFile.WriteLineAsync("    void set_priority(const int priority);");
-        await outputFile.WriteLineAsync("    void set_facing_right(bool facingRight);");
-        await outputFile.WriteLineAsync("    void set_frame_counter(int frameCounter);");
-        await outputFile.WriteLineAsync("    void set_frame_index(int frameIndex);");
-        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_right() const;");
-        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
-        await outputFile.WriteLineAsync("    [[nodiscard]] const bn::fixed_point& position() const;");
-        await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_frame_index() const;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("protected:");
-        await outputFile.WriteLineAsync($"    bn::vector<bn::sprite_ptr, {numberMaxSpritesPerFrame}> _currentFrameSprites;");
-        await outputFile.WriteLineAsync("    bn::fixed_point _position;");
-        await outputFile.WriteLineAsync("    bn::optional<bn::camera_ptr> _camera;");
-        await outputFile.WriteLineAsync("    AnimationID _currentAnimation;");
-        await outputFile.WriteLineAsync("    int _frameCounter;");
-        await outputFile.WriteLineAsync("    int _frameIndex;");
-        await outputFile.WriteLineAsync("    bool _facingRight;");
-        await outputFile.WriteLineAsync($"    int _priority = {(int)model.Priority};");
-        await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("private:");
-        await outputFile.WriteLineAsync("    [[nodiscard]] bn::sprite_ptr create_sprite(unsigned int spriteIndex);");
-        await outputFile.WriteLineAsync("    void load_next_frame();");
-        await outputFile.WriteLineAsync("    int _current_sprite_start_index;");
+        await outputFile.WriteLineAsync($"    bn::vector<bn::sprite_ptr, {numberMaxSpritesPerFrame}> _frameSprites;");
         await outputFile.WriteLineAsync("};");
     }
 
@@ -587,14 +539,158 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync($"{className}::{className}() :");
+        await outputFile.WriteLineAsync("    Character(");
+        await outputFile.WriteLineAsync($"        bn::span<const {className}::Animation>(animations, {_animationDetails.Count}), ");
+        await outputFile.WriteLineAsync($"        bn::span<const {className}::Frame>(frames, {frames.Count}), ");
+        await outputFile.WriteLineAsync($"        bn::span<const {className}::Sprite>(sprites, {sprites.Count}),");
+        await outputFile.WriteLineAsync("        _frameSprites");
+        await outputFile.WriteLineAsync("    )");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("}");
+    }
+
+    private async static Task WriteCharacterBaseClassHeader(StreamWriter outputFile)
+    {
+        List<string> header = Util.GetAutoGeneratedHeaderInfo("//");
+
+        foreach (string item in header)
+        {
+            await outputFile.WriteLineAsync(item);
+        }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("#ifndef GBATOOL_CHARACTER");
+        await outputFile.WriteLineAsync("#define GBATOOL_CHARACTER");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("#include \"bn_sprite_item.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_array.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_vector.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_sprite_builder.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_sprite_ptr.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_span.h\"");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("namespace gbatool");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("class Character");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("public:");
+        await outputFile.WriteLineAsync("    enum AnimationID");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        NONE = -1");
+        await outputFile.WriteLineAsync("    };");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    struct Animation");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        constexpr Animation(int total, int duration) :");
+        await outputFile.WriteLineAsync("            totalFrames(total)");
+        await outputFile.WriteLineAsync("            , frameDuration(duration)");
+        await outputFile.WriteLineAsync("        {");
+        await outputFile.WriteLineAsync("        }");
+        await outputFile.WriteLineAsync("        int totalFrames;");
+        await outputFile.WriteLineAsync("        int frameDuration;");
+        await outputFile.WriteLineAsync("    };");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    struct Frame");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        constexpr Frame(int starts, int ends) :");
+        await outputFile.WriteLineAsync("            spriteStarts(starts)");
+        await outputFile.WriteLineAsync("            , spriteEnds(ends)");
+        await outputFile.WriteLineAsync("        {");
+        await outputFile.WriteLineAsync("        }");
+        await outputFile.WriteLineAsync("        int spriteStarts;");
+        await outputFile.WriteLineAsync("        int spriteEnds;");
+        await outputFile.WriteLineAsync("    };");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    struct Sprite");
+        await outputFile.WriteLineAsync("    {");
+        await outputFile.WriteLineAsync("        constexpr Sprite(const bn::sprite_item* item, int x, int y, int xFlipped) : ");
+        await outputFile.WriteLineAsync("            sprite_item(item)");
+        await outputFile.WriteLineAsync("            , position(bn::fixed_point(x, y))");
+        await outputFile.WriteLineAsync("            , position_horizontal_flipped(bn::fixed_point(xFlipped, y))");
+        await outputFile.WriteLineAsync("        {");
+        await outputFile.WriteLineAsync("        }");
+        await outputFile.WriteLineAsync("        const bn::sprite_item* sprite_item;");
+        await outputFile.WriteLineAsync("        bn::fixed_point position;");
+        await outputFile.WriteLineAsync("        bn::fixed_point position_horizontal_flipped;");
+        await outputFile.WriteLineAsync("    };");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    void update_animation();");
+        await outputFile.WriteLineAsync("    void load_animation(int animation);");
+        await outputFile.WriteLineAsync("    void set_position(int x, int y);");
+        await outputFile.WriteLineAsync("    void set_position(const bn::fixed_point& position);");
+        await outputFile.WriteLineAsync("    void set_camera(const bn::camera_ptr& camera);");
+        await outputFile.WriteLineAsync("    void set_priority(const int priority);");
+        await outputFile.WriteLineAsync("    void set_facing_right(bool facingRight);");
+        await outputFile.WriteLineAsync("    void set_frame_counter(int frameCounter);");
+        await outputFile.WriteLineAsync("    void set_frame_index(int frameIndex);");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_right() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] const bn::fixed_point& position() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_frame_index() const;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("protected:");
+        await outputFile.WriteLineAsync("    Character(const bn::span<const Animation>& animations, const bn::span<const Frame>& frames, const bn::span<const Sprite>& sprites, bn::ivector<bn::sprite_ptr>& currentFrameSprites);");
+        await outputFile.WriteLineAsync("    Character(const Character&) = delete;");
+        await outputFile.WriteLineAsync("    Character(const Character&&) = delete;");
+        await outputFile.WriteLineAsync("    bn::fixed_point _position;");
+        await outputFile.WriteLineAsync("    bn::optional<bn::camera_ptr> _camera;");
+        await outputFile.WriteLineAsync("    int _currentAnimation;");
+        await outputFile.WriteLineAsync("    int _frameCounter;");
+        await outputFile.WriteLineAsync("    int _frameIndex;");
+        await outputFile.WriteLineAsync("    bool _facingRight;");
+        await outputFile.WriteLineAsync("    int _priority = 1;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("private:");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bn::sprite_ptr create_sprite(unsigned int spriteIndex);");
+        await outputFile.WriteLineAsync("    void load_next_frame();");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    bn::span<const Animation> _animations;");
+        await outputFile.WriteLineAsync("    bn::span<const Frame> _frames;");
+        await outputFile.WriteLineAsync("    bn::span<const Sprite> _sprites;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    bn::ivector<bn::sprite_ptr>& _currentFrameSprites;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    int _current_sprite_start_index;");
+        await outputFile.WriteLineAsync("};");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("#endif // GBATOOL_CHARACTER");
+    }
+
+    private async static Task WriteCharacterBaseClassCpp(StreamWriter outputFile)
+    {
+        List<string> header = Util.GetAutoGeneratedHeaderInfo("//");
+
+        foreach (string item in header)
+        {
+            await outputFile.WriteLineAsync(item);
+        }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        await outputFile.WriteLineAsync("#include \"character.h\"");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("namespace gbatool");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("Character::Character(const bn::span<const Animation>& animations, const bn::span<const Frame>& frames, const bn::span<const Sprite>& sprites, bn::ivector<bn::sprite_ptr>& currentFrameSprites) :");
         await outputFile.WriteLineAsync("    _currentAnimation(AnimationID::NONE)");
         await outputFile.WriteLineAsync("    , _frameCounter(0)");
         await outputFile.WriteLineAsync("    , _frameIndex(0)");
         await outputFile.WriteLineAsync("    , _facingRight(true)");
+        await outputFile.WriteLineAsync("    , _animations(animations)");
+        await outputFile.WriteLineAsync("    , _frames(frames)");
+        await outputFile.WriteLineAsync("    , _sprites(sprites)");
+        await outputFile.WriteLineAsync("    , _currentFrameSprites(currentFrameSprites)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::load_animation(AnimationID animation)");
+        await outputFile.WriteLineAsync("void Character::load_animation(int animation)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    if (animation == _currentAnimation)");
         await outputFile.WriteLineAsync("    {");
@@ -608,33 +704,33 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    load_next_frame();");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::update_animation()");
+        await outputFile.WriteLineAsync("void Character::update_animation()");
         await outputFile.WriteLineAsync("{");
-        await outputFile.WriteLineAsync("    if ((int)_currentAnimation < 0)");
+        await outputFile.WriteLineAsync("    if (_currentAnimation < 0)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (animations[(int)_currentAnimation].totalFrames <= 1)");
+        await outputFile.WriteLineAsync("    if (_animations[_currentAnimation].totalFrames <= 1)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    _frameCounter++;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (animations[(int)_currentAnimation].frameDuration != _frameCounter)");
+        await outputFile.WriteLineAsync("    if (_animations[_currentAnimation].frameDuration != _frameCounter)");
         await outputFile.WriteLineAsync("        return;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    load_next_frame();");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_position(int x, int y)");
+        await outputFile.WriteLineAsync("void Character::set_position(int x, int y)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    bn::fixed_point position(x, y);");
         await outputFile.WriteLineAsync("    set_position(position);");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::load_next_frame()");
+        await outputFile.WriteLineAsync("void Character::load_next_frame()");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameCounter = 0;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if ((int)_currentAnimation < 0)");
+        await outputFile.WriteLineAsync("    if (_currentAnimation < 0)");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        _currentFrameSprites.clear();");
         await outputFile.WriteLineAsync("        return;");
@@ -645,10 +741,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("        int frameCount = 0;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("        findFrame:");
-        await outputFile.WriteLineAsync("        if (animationCount == (int)_currentAnimation)");
+        await outputFile.WriteLineAsync("        if (animationCount == _currentAnimation)");
         await outputFile.WriteLineAsync("        {");
-        await outputFile.WriteLineAsync("            int starts = frames[frameCount + _frameIndex].spriteStarts;");
-        await outputFile.WriteLineAsync("            int ends = frames[frameCount + _frameIndex].spriteEnds;");
+        await outputFile.WriteLineAsync("            int starts = _frames[frameCount + _frameIndex].spriteStarts;");
+        await outputFile.WriteLineAsync("            int ends = _frames[frameCount + _frameIndex].spriteEnds;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("            if (starts >= 0)");
         await outputFile.WriteLineAsync("            {");
@@ -664,7 +760,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("        }");
         await outputFile.WriteLineAsync("        else");
         await outputFile.WriteLineAsync("        {");
-        await outputFile.WriteLineAsync("            frameCount += animations[(int)animationCount].totalFrames;");
+        await outputFile.WriteLineAsync("            frameCount += _animations[(int)animationCount].totalFrames;");
         await outputFile.WriteLineAsync("            animationCount++;");
         await outputFile.WriteLineAsync("            goto findFrame;");
         await outputFile.WriteLineAsync("        }");
@@ -672,13 +768,13 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    _frameIndex++;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (_frameIndex >= animations[(int)_currentAnimation].totalFrames)");
+        await outputFile.WriteLineAsync("    if (_frameIndex >= _animations[_currentAnimation].totalFrames)");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        _frameIndex = 0;");
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_position(const bn::fixed_point& position)");
+        await outputFile.WriteLineAsync("void Character::set_position(const bn::fixed_point& position)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _position = position;");
         await outputFile.WriteAsync(Environment.NewLine);
@@ -688,7 +784,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_camera(const bn::camera_ptr& camera)");
+        await outputFile.WriteLineAsync("void Character::set_camera(const bn::camera_ptr& camera)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _camera = camera;");
         await outputFile.WriteAsync(Environment.NewLine);
@@ -698,12 +794,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"const bn::fixed_point& {className}::position() const");
+        await outputFile.WriteLineAsync("const bn::fixed_point& Character::position() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return _position;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_priority(const int priority)");
+        await outputFile.WriteLineAsync("void Character::set_priority(const int priority)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _priority = priority;");
         await outputFile.WriteAsync(Environment.NewLine);
@@ -713,32 +809,32 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"int {className}::current_animation_frame_index() const");
+        await outputFile.WriteLineAsync("int Character::current_animation_frame_index() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return _frameIndex;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"bool {className}::is_facing_right() const");
+        await outputFile.WriteLineAsync("bool Character::is_facing_right() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return _facingRight;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"bool {className}::is_facing_left() const");
+        await outputFile.WriteLineAsync("bool Character::is_facing_left() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return !_facingRight;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_frame_counter(int frameCounter)");
+        await outputFile.WriteLineAsync("void Character::set_frame_counter(int frameCounter)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameCounter = frameCounter;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_frame_index(int frameIndex)");
+        await outputFile.WriteLineAsync("void Character::set_frame_index(int frameIndex)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameIndex = frameIndex;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"void {className}::set_facing_right(bool facingRight)");
+        await outputFile.WriteLineAsync("void Character::set_facing_right(bool facingRight)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    if (_facingRight == facingRight)");
         await outputFile.WriteLineAsync("        return;");
@@ -751,22 +847,22 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("        sprite.set_horizontal_flip(!_facingRight);");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("        if (_facingRight)");
-        await outputFile.WriteLineAsync("            sprite.set_position(_position + sprites[_current_sprite_start_index + spriteCount].position);");
+        await outputFile.WriteLineAsync("            sprite.set_position(_position + _sprites[_current_sprite_start_index + spriteCount].position);");
         await outputFile.WriteLineAsync("        else");
-        await outputFile.WriteLineAsync("            sprite.set_position(_position + sprites[_current_sprite_start_index + spriteCount].position_horizontal_flipped);");
+        await outputFile.WriteLineAsync("            sprite.set_position(_position + _sprites[_current_sprite_start_index + spriteCount].position_horizontal_flipped);");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("        spriteCount++;");
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"bn::sprite_ptr {className}::create_sprite(unsigned int spriteIndex)");
+        await outputFile.WriteLineAsync("bn::sprite_ptr Character::create_sprite(unsigned int spriteIndex)");
         await outputFile.WriteLineAsync("{");
-        await outputFile.WriteLineAsync("    bn::sprite_builder builder(*sprites[spriteIndex].sprite_item, 0);");
+        await outputFile.WriteLineAsync("    bn::sprite_builder builder(*_sprites[spriteIndex].sprite_item, 0);");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    if (_facingRight)");
-        await outputFile.WriteLineAsync("        builder.set_position(_position + sprites[spriteIndex].position);");
+        await outputFile.WriteLineAsync("        builder.set_position(_position + _sprites[spriteIndex].position);");
         await outputFile.WriteLineAsync("    else");
-        await outputFile.WriteLineAsync("        builder.set_position(_position + sprites[spriteIndex].position_horizontal_flipped);");
+        await outputFile.WriteLineAsync("        builder.set_position(_position + _sprites[spriteIndex].position_horizontal_flipped);");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    builder.set_bg_priority(_priority);");
         await outputFile.WriteLineAsync("    if (_camera.has_value())");
