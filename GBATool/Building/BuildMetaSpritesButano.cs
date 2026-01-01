@@ -79,7 +79,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 
         {
-            using StreamWriter outputBaseFileHeader = new(Path.Combine(cppFolder, "character.h"));
+            using StreamWriter outputBaseFileHeader = new(Path.Combine(headerFolder, "character.h"));
             using StreamWriter outputBaseFileCpp = new(Path.Combine(cppFolder, "character.cpp"));
 
             await WriteCharacterBaseClassHeader(outputBaseFileHeader);
@@ -631,6 +631,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] const bn::fixed_point& position() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_frame_index() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] int current_frame_counter() const;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("protected:");
         await outputFile.WriteLineAsync("    Character(const bn::span<const Animation>& animations, const bn::span<const Frame>& frames, const bn::span<const Sprite>& sprites, bn::ivector<bn::sprite_ptr>& currentFrameSprites);");
@@ -812,6 +813,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("int Character::current_animation_frame_index() const");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    return _frameIndex;");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("int Character::current_frame_counter() const");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    return _frameCounter;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("bool Character::is_facing_right() const");
