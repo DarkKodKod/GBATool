@@ -5,6 +5,7 @@ using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using GBATool.VOs;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -24,6 +25,8 @@ namespace GBATool.Views
 
         private System.Windows.Point _previousMousePosition = new(0, 0);
         private bool _validPanningMovement = false;
+        private BitArray _buttonSelected = new(13);
+        private BitArray _tmpButtonSelected = new(13);
 
         public TileSet()
         {
@@ -212,6 +215,12 @@ namespace GBATool.Views
 
         private void OnSpriteSelectCursor()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[0] = true;
+            }
+
             tbSelect.IsChecked = true;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -229,6 +238,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize16x16()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[2] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = true;
@@ -246,6 +261,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize16x32()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[4] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -263,6 +284,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize16x8()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[5] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -280,6 +307,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize32x16()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[6] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -293,11 +326,16 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
-
         }
 
         private void OnSpriteSize32x32()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[3] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -315,6 +353,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize32x64()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[12] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -332,6 +376,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize32x8()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[7] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -349,6 +399,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize64x32()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[8] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -366,6 +422,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize64x64()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[9] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -383,6 +445,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize8x16()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[10] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -400,6 +468,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize8x32()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[11] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
             tb16x16.IsChecked = false;
@@ -417,6 +491,12 @@ namespace GBATool.Views
 
         private void OnSpriteSize8x8()
         {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[1] = true;
+            }   
+
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = true;
             tb16x16.IsChecked = false;
@@ -440,6 +520,56 @@ namespace GBATool.Views
         private void ScrollViewer_MouseEnter(object sender, MouseEventArgs e)
         {
             _validPanningMovement = true;
+        }
+
+        private void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                _tmpButtonSelected = (BitArray)_buttonSelected.Clone();
+
+                tbSelect.IsChecked = true;
+                tb8x8.IsChecked = false;
+                tb16x16.IsChecked = false;
+                tb32x32.IsChecked = false;
+                tb16x32.IsChecked = false;
+                tb16x8.IsChecked = false;
+                tb32x16.IsChecked = false;
+                tb32x8.IsChecked = false;
+                tb64x32.IsChecked = false;
+                tb64x64.IsChecked = false;
+                tb8x16.IsChecked = false;
+                tb8x32.IsChecked = false;
+                tb32x64.IsChecked = false;
+
+                e.Handled = true;
+            }
+        }
+
+        private void UserControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                _buttonSelected = (BitArray)_tmpButtonSelected.Clone();
+
+                tbSelect.IsChecked = _buttonSelected[0];
+                tb8x8.IsChecked = _buttonSelected[1];
+                tb16x16.IsChecked = _buttonSelected[2];
+                tb32x32.IsChecked = _buttonSelected[3];
+                tb16x32.IsChecked = _buttonSelected[4];
+                tb16x8.IsChecked = _buttonSelected[5];
+                tb32x16.IsChecked = _buttonSelected[6];
+                tb32x8.IsChecked = _buttonSelected[7];
+                tb64x32.IsChecked = _buttonSelected[8];
+                tb64x64.IsChecked = _buttonSelected[9];
+                tb8x16.IsChecked = _buttonSelected[10];
+                tb8x32.IsChecked = _buttonSelected[11];
+                tb32x64.IsChecked = _buttonSelected[12];
+
+                _tmpButtonSelected.SetAll(false);
+
+                e.Handled = true;
+            }
         }
     }
 }

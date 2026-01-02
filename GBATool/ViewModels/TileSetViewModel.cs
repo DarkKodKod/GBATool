@@ -384,7 +384,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
-        SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener += ConfirmSpriteDeletion;
+        SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener += OnConfirmSpriteDeletion;
         #endregion
 
         bool imageUpdated = false;
@@ -465,7 +465,7 @@ public class TileSetViewModel : ItemViewModel
         }
     }
 
-    private void ConfirmSpriteDeletion(SpriteVO sprite)
+    private void OnConfirmSpriteDeletion(SpriteVO sprite)
     {
         DeleteSprite(sprite);
     }
@@ -587,7 +587,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
-        SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener -= ConfirmSpriteDeletion;
+        SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener -= OnConfirmSpriteDeletion;
         #endregion
     }
 
