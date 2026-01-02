@@ -242,7 +242,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[2] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -265,7 +265,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[4] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -288,7 +288,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[5] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -311,7 +311,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[6] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -334,7 +334,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[3] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -357,7 +357,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[12] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -380,7 +380,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[7] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -403,7 +403,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[8] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -426,7 +426,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[9] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -449,7 +449,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[10] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -472,7 +472,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[11] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = false;
@@ -495,7 +495,7 @@ namespace GBATool.Views
             {
                 _buttonSelected.SetAll(false);
                 _buttonSelected[1] = true;
-            }   
+            }
 
             tbSelect.IsChecked = false;
             tb8x8.IsChecked = true;

@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 
@@ -202,6 +203,7 @@ public class CharacterViewModel : ItemViewModel
         SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener += OnSwitchCharacterFrameView;
         SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener += OnColorPaletteControlSelected;
         SignalManager.Get<UpdateCharacterImageSignal>().Listener += OnUpdateCharacterImage;
+        SignalManager.Get<SwapAnimationTabSignal>().Listener += OnSwapAnimationTab;
         #endregion
 
         PopulateTabs();
@@ -241,6 +243,7 @@ public class CharacterViewModel : ItemViewModel
         SignalManager.Get<SwitchCharacterFrameViewSignal>().Listener -= OnSwitchCharacterFrameView;
         SignalManager.Get<ColorPaletteControlSelectedSignal>().Listener -= OnColorPaletteControlSelected;
         SignalManager.Get<UpdateCharacterImageSignal>().Listener -= OnUpdateCharacterImage;
+        SignalManager.Get<SwapAnimationTabSignal>().Listener -= OnSwapAnimationTab;
         #endregion
 
         foreach (ActionTabItem tab in Tabs)
@@ -314,6 +317,35 @@ public class CharacterViewModel : ItemViewModel
         if (!IsActive)
         {
             return;
+        }
+
+        Save();
+    }
+
+    private void OnSwapAnimationTab(int currentTabIndex, int newTabIndex)
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        CharacterModel? model = GetModel();
+
+        if (model == null)
+            return;
+
+        Tabs.Move(currentTabIndex, newTabIndex);
+
+        KeyValuePair<string, CharacterAnimation> currentPosElement = model.Animations.ElementAt(currentTabIndex);
+
+        List<KeyValuePair<string, CharacterAnimation>> newList = model.Animations.Where(e => e.Key != currentPosElement.Key).ToList();
+        newList.Insert(newTabIndex, currentPosElement);
+
+        model.Animations.Clear();
+
+        foreach (var item in newList)
+        {
+            model.Animations.Add(item.Key, item.Value);
         }
 
         Save();

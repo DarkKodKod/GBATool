@@ -89,6 +89,7 @@ public class CleanColorPaletteControlSelectedSignal : Signal { }
 public class AnimationTabNewSignal : Signal { }
 public class RenamedAnimationTabSignal : Signal<string> { }
 public class AnimationTabDeletedSignal : Signal<ActionTabItem> { }
+public class SwapAnimationTabSignal : Signal<int, int> { }
 public class SwitchCharacterFrameViewSignal : Signal<string, string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
 public class NewAnimationFrameSignal : Signal<string, string, int, bool> { }

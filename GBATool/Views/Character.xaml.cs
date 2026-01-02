@@ -3,6 +3,8 @@ using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -161,5 +163,68 @@ namespace GBATool.Views
 
         [GeneratedRegex("[^0-9.-]+")]
         private static partial Regex IsAllNumbersRegex();
+
+        private void TabItem_PreviewMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Source is not TabItem tabItem)
+            {
+                return;
+            }
+
+            if (Mouse.PrimaryDevice.LeftButton == MouseButtonState.Pressed)
+            {
+                DragDrop.DoDragDrop(tabItem, tabItem, DragDropEffects.Move);
+            }
+        }
+
+        private void TabItem_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Source is not TabItem tabItemTarget)
+            {
+                return;
+            }
+
+            if (e.Data.GetData(typeof(TabItem)) is not TabItem tabItemSource)
+            {
+                return;
+            }
+
+            if (tabItemTarget.Equals(tabItemSource))
+            {
+                return;
+            }
+
+            DependencyObject parent = VisualTreeHelper.GetParent(tabItemTarget);
+
+            while (parent != null)
+            {
+                if (parent is TabControl)
+                {
+                    break;
+                }
+
+                parent = VisualTreeHelper.GetParent(parent);
+            }
+
+            if (parent is TabControl tabControl)
+            {
+                if (tabItemTarget.Content is not ActionTabItem actionTabItemTarget)
+                {
+                    return;
+                }
+
+                if (tabItemSource.Content is not ActionTabItem actionTabItemSource)
+                {
+                    return;
+                }
+
+                List<ActionTabItem> tabItems = [.. tabControl.ItemsSource.Cast<ActionTabItem>()];
+
+                int targetIndex = tabItems.IndexOf(actionTabItemTarget);
+                int sourceIndex = tabItems.IndexOf(actionTabItemSource);
+
+                SignalManager.Get<SwapAnimationTabSignal>().Dispatch(sourceIndex, targetIndex);
+            }
+        }
     }
 }

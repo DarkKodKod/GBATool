@@ -99,6 +99,13 @@
                         PreviewMouseDown="ActionTabs_PreviewMouseDown"
                         ItemTemplateSelector="{StaticResource headerTemplateSelector}"
                         ContentTemplateSelector="{StaticResource contentTemplateSelector}">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="AllowDrop" Value="True"/>
+                        <EventSetter Event="PreviewMouseMove" Handler="TabItem_PreviewMouseMove"/>
+                        <EventSetter Event="Drop" Handler="TabItem_Drop"/>
+                    </Style>
+                </TabControl.Resources>
             </TabControl>
         </Grid>
         <Grid Grid.Row="1" Grid.Column="0">
