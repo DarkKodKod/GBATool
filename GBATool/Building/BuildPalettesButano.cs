@@ -35,7 +35,7 @@ public sealed class BuildPalettesButano : Building<BuildPalettesButano>
 
     protected override async Task<bool> DoGenerate()
     {
-        string outputPath = Path.GetFullPath(OutputPaths[0]);
+        string outputPath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
 
         List<FileModelVO> paletteModelVOs = ProjectFiles.GetModels<PaletteModel>();
 

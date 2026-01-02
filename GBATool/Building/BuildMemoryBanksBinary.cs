@@ -43,7 +43,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
     protected override async Task<bool> DoGenerate()
     {
-        string outputAssetsPath = Path.GetFullPath(OutputPaths[0]);
+        string outputAssetsPath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 
@@ -141,8 +141,8 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             return;
         }
 
-        string outputAssetsPath = Path.GetFullPath(OutputPaths[0]);
-        string outputSourceCodePath = Path.GetFullPath(OutputPaths[1]);
+        string outputAssetsPath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
+        string outputSourceCodePath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[1]);
 
         string fullPath = Path.Combine(outputSourceCodePath, "blocks_metadata.asm");
 
