@@ -338,7 +338,7 @@ public class CharacterViewModel : ItemViewModel
 
         KeyValuePair<string, CharacterAnimation> currentPosElement = model.Animations.ElementAt(currentTabIndex);
 
-        List<KeyValuePair<string, CharacterAnimation>> newList = model.Animations.Where(e => e.Key != currentPosElement.Key).ToList();
+        List<KeyValuePair<string, CharacterAnimation>> newList = [.. model.Animations.Where(e => e.Key != currentPosElement.Key)];
         newList.Insert(newTabIndex, currentPosElement);
 
         model.Animations.Clear();
