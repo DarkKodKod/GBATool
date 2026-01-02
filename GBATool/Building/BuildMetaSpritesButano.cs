@@ -337,6 +337,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 });
         }
 
+        List<string> includeBankUsed = [];
         foreach (AnimationDetails animationDetail in _animationDetails)
         {
             foreach (FrameDetails item in animationDetail.Frames)
@@ -344,7 +345,12 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 if (item.HeldFrame)
                     continue;
 
-                await outputFile.WriteLineAsync($"#include \"bank_{item.BankName}.h\"");
+                if (!includeBankUsed.Contains(item.BankName))
+                {
+                    await outputFile.WriteLineAsync($"#include \"bank_{item.BankName}.h\"");
+
+                    includeBankUsed.Add(item.BankName);
+                }
             }
         }
 
