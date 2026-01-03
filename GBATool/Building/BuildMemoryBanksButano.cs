@@ -38,7 +38,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 
     protected override async Task<bool> DoGenerate()
     {
-        string outputPath = Path.GetFullPath(OutputPaths[0]);
+        string outputPath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
 
         List<FileModelVO> bankModelVOs = ProjectFiles.GetModels<BankModel>();
 

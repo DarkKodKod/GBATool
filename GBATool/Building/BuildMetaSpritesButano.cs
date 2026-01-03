@@ -73,8 +73,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
     protected override async Task<bool> DoGenerate()
     {
-        string headerFolder = Path.GetFullPath(OutputPaths[0]);
-        string cppFolder = Path.GetFullPath(OutputPaths[1]);
+        string headerFolder = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
+        string cppFolder = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[1]);
 
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
 

@@ -59,7 +59,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
                 continue;
             }
 
-            string parentFolder = Path.GetFullPath(OutputPaths[0]);
+            string parentFolder = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
 
             using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".asm"));
 
