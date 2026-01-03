@@ -70,6 +70,21 @@ namespace GBATool.Views
             }
         }
 
+        private void ActionTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is not TabControl tabControl)
+            {
+                return;
+            }
+
+            if (tabControl.SelectedItem is not ActionTabItem actionTabItem)
+            {
+                return;
+            }
+
+            SignalManager.Get<SwitchAnimationTabSignal>().Dispatch(actionTabItem.ID);
+        }
+
         private void ActionTabs_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             FrameworkElement source = (FrameworkElement)e.OriginalSource;

@@ -97,6 +97,7 @@
                         VerticalAlignment="Stretch"
                         Name="actionTabs"
                         PreviewMouseDown="ActionTabs_PreviewMouseDown"
+                        SelectionChanged="ActionTabs_SelectionChanged"
                         ItemTemplateSelector="{StaticResource headerTemplateSelector}"
                         ContentTemplateSelector="{StaticResource contentTemplateSelector}">
                 <TabControl.Resources>

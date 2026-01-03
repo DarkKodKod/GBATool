@@ -216,6 +216,7 @@ public class CharacterAnimationViewModel : ViewModel
         SignalManager.Get<StopCharacterAnimationSignal>().Listener += OnStopCharacterAnimation;
         SignalManager.Get<PlayCharacterAnimationSignal>().Listener += OnPlayCharacterAnimation;
         SignalManager.Get<PreviousFrameCharacterAnimationSignal>().Listener += OnPreviousFrameCharacterAnimation;
+        SignalManager.Get<SwitchAnimationTabSignal>().Listener += OnSwitchAnimationTab;
         #endregion
 
         _dontSave = true;
@@ -266,6 +267,7 @@ public class CharacterAnimationViewModel : ViewModel
         SignalManager.Get<StopCharacterAnimationSignal>().Listener -= OnStopCharacterAnimation;
         SignalManager.Get<PlayCharacterAnimationSignal>().Listener -= OnPlayCharacterAnimation;
         SignalManager.Get<PreviousFrameCharacterAnimationSignal>().Listener -= OnPreviousFrameCharacterAnimation;
+        SignalManager.Get<SwitchAnimationTabSignal>().Listener -= OnSwitchAnimationTab;
         #endregion
 
         StopAnimation();
@@ -476,6 +478,33 @@ public class CharacterAnimationViewModel : ViewModel
         if (!_dontSave)
         {
             FileHandler?.Save();
+        }
+    }
+
+    private void OnSwitchAnimationTab(string activeTab)
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        if (_dispatcherTimer == null)
+        {
+            return;
+        }
+
+        if (TabID != activeTab)
+        {
+            StopAnimation();
+
+            _dispatcherTimer.Stop();
+        }
+        else
+        {
+            if (!_dispatcherTimer.IsEnabled)
+            {
+                _dispatcherTimer.Start();
+            }
         }
     }
 

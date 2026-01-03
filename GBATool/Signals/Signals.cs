@@ -92,6 +92,7 @@ public class AnimationTabDeletedSignal : Signal<ActionTabItem> { }
 public class SwapAnimationTabSignal : Signal<int, int> { }
 public class SwitchCharacterFrameViewSignal : Signal<string, string, int> { }
 public class UpdateCharacterImageSignal : Signal { }
+public class SwitchAnimationTabSignal : Signal<string> { }
 public class NewAnimationFrameSignal : Signal<string, string, int, bool> { }
 public class DeleteAnimationFrameSignal : Signal<string, int> { }
 public class SelectFrameSpritesSignal : Signal<SpriteControlVO[]> { }
