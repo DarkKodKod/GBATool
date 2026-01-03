@@ -15,6 +15,8 @@ namespace GBATool.ViewModels;
 public class CharacterAnimationViewModel : ViewModel
 {
     private float _speed = 0.1f;
+    private int _repeat = 1;
+    private bool _looping = true;
     private string _tabID = string.Empty;
     private string _animationID = string.Empty;
     private CharacterModel? _characterModel;
@@ -24,9 +26,11 @@ public class CharacterAnimationViewModel : ViewModel
     private ImageSource? _frameImage;
     private int _frameIndex;
     private string _frameID = string.Empty;
-    private bool _dontSave = false;
+    private bool _dontSave;
     private DispatcherTimer? _dispatcherTimer;
     private float _imageAspectRatio = 1.0f;
+    private bool _repeatEnable;
+    private int _repeatCount;
 
     private const double CanvasWidth = 300.0;
     private const double CanvasHeight = 300.0;
@@ -155,6 +159,51 @@ public class CharacterAnimationViewModel : ViewModel
             }
         }
     }
+
+    public int Repeat
+    {
+        get => _repeat;
+        set
+        {
+            if (_repeat != value)
+            {
+                _repeat = value;
+
+                UpdateRepeatValue(value);
+
+                OnPropertyChanged(nameof(Repeat));
+            }
+        }
+    }
+
+    public bool RepeatEnable
+    {
+        get => _repeatEnable;
+        set
+        {
+            _repeatEnable = value;
+
+            OnPropertyChanged(nameof(RepeatEnable));
+        }
+    }
+
+    public bool Looping
+    {
+        get => _looping;
+        set
+        {
+            if (_looping != value)
+            {
+                _looping = value;
+
+                RepeatEnable = !value;
+
+                UpdateLoopingValue(value);
+
+                OnPropertyChanged(nameof(Looping));
+            }
+        }
+    }
     #endregion
 
     public override void OnActivate()
@@ -185,11 +234,14 @@ public class CharacterAnimationViewModel : ViewModel
                 _animationID = animation.ID;
 
                 Speed = animation.Speed;
+                Repeat = animation.Repeat;
+                Looping = animation.Looping;
             }
 
             IsPlaying = false;
 
             FrameIndex = 0;
+            _repeatCount = 0;
         }
 
         LoadFrameImage();
@@ -198,7 +250,7 @@ public class CharacterAnimationViewModel : ViewModel
         {
             Interval = TimeSpan.FromSeconds(Speed)
         };
-        _dispatcherTimer.Tick += Update;
+        _dispatcherTimer.Tick += (s, args) => Update();
         _dispatcherTimer.Start();
 
         _dontSave = false;
@@ -216,8 +268,7 @@ public class CharacterAnimationViewModel : ViewModel
         SignalManager.Get<PreviousFrameCharacterAnimationSignal>().Listener -= OnPreviousFrameCharacterAnimation;
         #endregion
 
-        IsPlaying = false;
-        IsPaused = false;
+        StopAnimation();
 
         _dispatcherTimer?.Stop();
     }
@@ -342,6 +393,60 @@ public class CharacterAnimationViewModel : ViewModel
         return null;
     }
 
+    private void UpdateRepeatValue(int repeat)
+    {
+        CharacterModel? model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_animationID))
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        animation.Repeat = repeat;
+
+        if (!_dontSave)
+        {
+            FileHandler?.Save();
+        }
+    }
+
+    private void UpdateLoopingValue(bool looping)
+    {
+        CharacterModel? model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_animationID))
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        animation.Looping = looping;
+
+        if (!_dontSave)
+        {
+            FileHandler?.Save();
+        }
+    }
+
     private void UpdateSpeedValue(float speed)
     {
         if (_dispatcherTimer != null)
@@ -399,6 +504,7 @@ public class CharacterAnimationViewModel : ViewModel
 
         IsPaused = true;
         IsPlaying = false;
+        _repeatCount = 0;
 
         NextFrame();
     }
@@ -410,13 +516,19 @@ public class CharacterAnimationViewModel : ViewModel
             return;
         }
 
-        IsPlaying = false;
-        IsPaused = false;
+        StopAnimation();
     }
 
     private void OnPlayCharacterAnimation(string tabId)
     {
         if (!IsActive || TabID != tabId)
+        {
+            return;
+        }
+
+        CharacterModel? model = CharacterModel;
+
+        if (model == null)
         {
             return;
         }
@@ -428,9 +540,19 @@ public class CharacterAnimationViewModel : ViewModel
 
         IsPlaying = true;
         IsPaused = false;
+
+        if (model.Animations.TryGetValue(_animationID, out CharacterAnimation? animation))
+        {
+            if (FrameIndex >= animation.Frames.Count)
+            {
+                _repeatCount = 0;
+                FrameIndex = 0;
+                LoadFrameImage();
+            }
+        }
     }
 
-    private void Update(object? sender, object e)
+    private void Update()
     {
         if (IsPlaying)
         {
@@ -447,6 +569,7 @@ public class CharacterAnimationViewModel : ViewModel
 
         IsPlaying = false;
         IsPaused = true;
+        _repeatCount = 0;
 
         PreviousFrame();
     }
@@ -466,7 +589,17 @@ public class CharacterAnimationViewModel : ViewModel
         {
             if (FrameIndex >= animation.Frames.Count)
             {
-                FrameIndex = 0;
+                _repeatCount++;
+
+                if (Looping || IsPaused || _repeatCount < Repeat)
+                {
+                    FrameIndex = 0;
+                }
+                else
+                {
+                    StopAnimation();
+                    return;
+                }
             }
 
             LoadFrameImage();
@@ -485,6 +618,11 @@ public class CharacterAnimationViewModel : ViewModel
             return;
         }
 
+        if (FrameIndex >= animation.Frames.Count)
+        {
+            FrameIndex = animation.Frames.Count - 1;
+        }
+
         FrameIndex--;
 
         if (FrameIndex < 0)
@@ -493,5 +631,12 @@ public class CharacterAnimationViewModel : ViewModel
         }
 
         LoadFrameImage();
+    }
+
+    private void StopAnimation()
+    {
+        IsPlaying = false;
+        IsPaused = false;
+        _repeatCount = 0;
     }
 }

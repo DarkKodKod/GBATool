@@ -198,14 +198,22 @@
                     </Image.Style>
                 </Image>
             </Button>
-            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
-            <TextBlock VerticalAlignment="Center">Speed:</TextBlock>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="20,0,20,0" />
+            <CheckBox IsChecked="{Binding Looping}" VerticalAlignment="Center">Looping</CheckBox>
+            <TextBlock VerticalAlignment="Center" Margin="20,0,5,0">Repeat:</TextBlock>
+            <TextBox 
+                Height="18" 
+                TextAlignment="Center" 
+                Width="50" 
+                Text="{Binding Repeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                IsEnabled="{Binding RepeatEnable}"/>
+            <TextBlock VerticalAlignment="Center" Margin="20,0,5,0">Speed:</TextBlock>
             <TextBox Height="18" TextAlignment="Center" Width="50" Text="{Binding Speed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Margin="20,0,0,0" VerticalAlignment="Center">Frame Index:</TextBlock>
+            <TextBlock Margin="20,0,5,0" VerticalAlignment="Center">Frame Index:</TextBlock>
             <Border BorderThickness="1" BorderBrush="Black" VerticalAlignment="Center">
                 <TextBlock TextAlignment="Center" Background="White" Height="18" Width="20" Text="{Binding  FrameIndex}"/>
             </Border>
-            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="20,0,20,0" />
             <CheckBox VerticalAlignment="Center">Show collision boxes</CheckBox>
         </StackPanel>
         <ScrollViewer Grid.Row="1"

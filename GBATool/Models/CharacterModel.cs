@@ -46,6 +46,8 @@ public class CharacterAnimation
     public string ID { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public float Speed { get; set; }
+    public int Repeat { get; set; } = 1;
+    public bool Looping { get; set; } = true;
     public Dictionary<string, FrameModel> Frames { get; set; } = [];
 }
 
