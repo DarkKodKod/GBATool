@@ -581,6 +581,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("#include \"bn_sprite_builder.h\"");
         await outputFile.WriteLineAsync("#include \"bn_sprite_ptr.h\"");
         await outputFile.WriteLineAsync("#include \"bn_span.h\"");
+        await outputFile.WriteLineAsync("#include \"bn_optional.h\"");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("namespace gbatool");
         await outputFile.WriteLineAsync("{");
@@ -664,7 +665,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    int _animation_repeats;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("private:");
-        await outputFile.WriteLineAsync("    [[nodiscard]] bn::sprite_ptr create_sprite(unsigned int spriteIndex);");
+        await outputFile.WriteLineAsync("    [[nodiscard]] bn::optional<bn::sprite_ptr> create_sprite(unsigned int spriteIndex);");
         await outputFile.WriteLineAsync("    void load_next_frame();");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    bn::span<const Animation> _animations;");
@@ -779,7 +780,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("                for (int i = starts; i <= ends; ++i)");
         await outputFile.WriteLineAsync("                {");
-        await outputFile.WriteLineAsync("                    _currentFrameSprites.push_back(create_sprite(i));");
+        await outputFile.WriteLineAsync("                    bn::optional<bn::sprite_ptr> sprite = create_sprite(i);");
+        await outputFile.WriteLineAsync("                    if (sprite.has_value())");
+        await outputFile.WriteLineAsync("                        _currentFrameSprites.push_back(std::move(sprite.value()));");
         await outputFile.WriteLineAsync("                }");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("                _current_sprite_start_index = starts;");
@@ -930,7 +933,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("bn::sprite_ptr Character::create_sprite(unsigned int spriteIndex)");
+        await outputFile.WriteLineAsync("bn::optional<bn::sprite_ptr> Character::create_sprite(unsigned int spriteIndex)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    bn::sprite_builder builder(*_sprites[spriteIndex].sprite_item, 0);");
         await outputFile.WriteAsync(Environment.NewLine);
@@ -946,7 +949,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    }");
         await outputFile.WriteLineAsync("    builder.set_horizontal_flip(!_facingRight);");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    return builder.release_build();");
+        await outputFile.WriteLineAsync("    return builder.release_build_optional();");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("}");
