@@ -278,6 +278,9 @@ public static class Util
                 dest_buffer[i + 3] = 255;
             }
 
+            nYDest = Math.Max(nYDest, 0);
+            nXDest = Math.Max(nXDest, 0);
+
             // copy dest buffer back to the dest WriteableBitmap
             dest.WritePixels(new Int32Rect(nXDest, nYDest, src.PixelWidth, src.PixelHeight), dest_buffer, dest_stride, 0);
         }

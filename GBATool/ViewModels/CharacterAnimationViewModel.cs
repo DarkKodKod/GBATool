@@ -351,25 +351,26 @@ public class CharacterAnimationViewModel : ViewModel
 
     private void SendInformationToTheViewAboutTheMetaSprite(CharacterModel model, CharacterAnimation animation, double imageWidth, double imageHeight, double scale)
     {
-        double offsetX = 0;
-        double offsetY = 0;
+        double? tmpOffsetX = null;
+        double? tmpOffsetY = null;
 
         FrameModel frameModel = animation.Frames[FrameID];
 
         foreach (KeyValuePair<string, CharacterSprite> item in frameModel.Tiles)
         {
-            if (item.Value.Position.X < model.RelativeOrigin.X &&
-                (model.RelativeOrigin.X - item.Value.Position.X) > offsetX)
+            if (tmpOffsetX == null || (model.RelativeOrigin.X - item.Value.Position.X) > tmpOffsetX)
             {
-                offsetX = model.RelativeOrigin.X - item.Value.Position.X;
+                tmpOffsetX = model.RelativeOrigin.X - item.Value.Position.X;
             }
 
-            if (item.Value.Position.Y < model.RelativeOrigin.Y &&
-                (model.RelativeOrigin.Y - item.Value.Position.Y) > offsetY)
+            if (tmpOffsetY == null || (model.RelativeOrigin.Y - item.Value.Position.Y) > tmpOffsetY)
             {
-                offsetY = model.RelativeOrigin.Y - item.Value.Position.Y;
+                tmpOffsetY = model.RelativeOrigin.Y - item.Value.Position.Y;
             }
         }
+
+        double offsetX = tmpOffsetX ?? 0;
+        double offsetY = tmpOffsetY ?? 0;
 
         SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Dispatch(
             offsetX * scale,
