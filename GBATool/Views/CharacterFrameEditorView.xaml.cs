@@ -849,4 +849,67 @@ public partial class CharacterFrameEditorView : UserControl
             image.Opacity = enabledOnionSkin ? ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity : 0.0;
         }
     }
+
+    private void UserControl_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        double left = e.Key == Key.Left ? -1 : e.Key == Key.Right ? 1 : 0;
+        double top = e.Key == Key.Up ? -1 : e.Key == Key.Down ? 1 : 0;
+
+        if (left == 0  && top == 0)
+        { 
+            return; 
+        }
+
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        bool updated = false;
+        List<SpriteControlVO> selectedSprites = [];
+
+        foreach (KeyValuePair<Image, SpriteControlVO> sprite in _spritesInFrames)
+        {
+            if (viewModel.SelectedFrameSprites.Contains(sprite.Value.ID))
+            {
+                if (!updated)
+                {
+                    SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
+                    updated = true;
+                }
+
+                double x = Canvas.GetLeft(sprite.Key);
+                double y = Canvas.GetTop(sprite.Key);
+
+                x += left;
+                y += top;
+
+                CharacterSprite characterSprite = new()
+                {
+                    ID = sprite.Value.ID,
+                    Position = new Point(x, y),
+                    FlipHorizontal = sprite.Value.FlipHorizontal,
+                    FlipVertical = sprite.Value.FlipVertical,
+                    SpriteID = sprite.Value.SpriteID,
+                    TileSetID = sprite.Value.TileSetID,
+                    Width = sprite.Value.Width,
+                    Height = sprite.Value.Height,
+                };
+
+                Canvas.SetLeft(sprite.Key, x);
+                Canvas.SetTop(sprite.Key, y);
+
+                SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite, sprite.Value.BankID);
+
+                selectedSprites.Add(sprite.Value);
+            }
+        }
+
+        e.Handled = updated;
+
+        if (selectedSprites.Count > 0) 
+        {
+            SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
+        }
+    }
 }

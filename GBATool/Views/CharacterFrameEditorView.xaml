@@ -12,6 +12,7 @@
              mc:Ignorable="d" 
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              Unloaded="UserControl_Unloaded"
+             PreviewKeyDown="UserControl_PreviewKeyDown"
              Loaded="UserControl_Loaded"
              d:DesignHeight="790" d:DesignWidth="1050">
     <UserControl.DataContext>
