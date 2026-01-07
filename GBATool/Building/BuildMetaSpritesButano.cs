@@ -647,6 +647,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_facing_left() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_animation_playing() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] bool is_visible() const;");
+        await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_id() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_frame_index() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] int current_frame_counter() const;");
         await outputFile.WriteLineAsync("    [[nodiscard]] int current_animation_total_frames() const;");
@@ -766,7 +767,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameCounter = 0;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (_currentAnimation < 0)");
+        await outputFile.WriteLineAsync("    if (_currentAnimation < 0 || _animations[_currentAnimation].totalFrames == 0)");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        _currentFrameSprites.clear();");
         await outputFile.WriteLineAsync("        return;");
@@ -881,6 +882,11 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        sprite.set_bg_priority(priority);");
         await outputFile.WriteLineAsync("    }");
+        await outputFile.WriteLineAsync("}");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("int Character::current_animation_id() const");
+        await outputFile.WriteLineAsync("{");
+        await outputFile.WriteLineAsync("    return _currentAnimation;");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("int Character::current_animation_frame_index() const");
