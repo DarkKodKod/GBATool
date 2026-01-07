@@ -767,7 +767,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("    _frameCounter = 0;");
         await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync("    if (_currentAnimation < 0)");
+        await outputFile.WriteLineAsync("    if (_currentAnimation < 0 || _animations[_currentAnimation].totalFrames == 0)");
         await outputFile.WriteLineAsync("    {");
         await outputFile.WriteLineAsync("        _currentFrameSprites.clear();");
         await outputFile.WriteLineAsync("        return;");
