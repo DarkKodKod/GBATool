@@ -75,6 +75,10 @@
                     Width="{StaticResource canvasWidth}" 
                     Height="{StaticResource canvasHeight}" 
                     Background="Transparent"/>
-        </Canvas>
+            <Canvas x:Name="onionSelectedSprites"
+                    Width="{StaticResource canvasWidth}" 
+                    Height="{StaticResource canvasHeight}" 
+                    Background="Transparent"/>
+            </Canvas>
     </Grid>
 </UserControl>

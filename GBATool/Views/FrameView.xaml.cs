@@ -29,7 +29,9 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #region get/set
-    public Canvas Canvas { get => canvasGrid; }
+    public Canvas Canvas => canvasGrid;
+
+    public Canvas OnionCanvas => onionSelectedSprites;
 
     public Visibility MouseSelectionActive
     {
@@ -154,6 +156,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         MouseSelectionActive = Visibility.Collapsed;
 
         parentOfSelectedSprites.Children.Clear();
+        onionSelectedSprites.Children.Clear();
         _selectedRectangles.Clear();
     }
 

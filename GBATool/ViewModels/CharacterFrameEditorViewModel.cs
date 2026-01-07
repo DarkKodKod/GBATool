@@ -33,6 +33,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private bool _isFlippedVertical;
     private bool _isEnableMosaic;
     private bool _enableSpriteProperties;
+    private double _onionSkinOpacity = 0.25;
     private ObjectMode _objectMode = ObjectMode.Normal;
     private GraphicMode _graphicMode = GraphicMode.Normal;
     private SpriteCollisionVO? _characterCollision = null;
@@ -167,6 +168,31 @@ public class CharacterFrameEditorViewModel : ViewModel
             _selectedFrameSprites = value;
 
             OnPropertyChanged(nameof(SelectedFrameSprites));
+        }
+    }
+
+    public double OnionSkinOpacity
+    {
+        get => _onionSkinOpacity;
+        set
+        {
+            double newValue = Math.Round(value, 2);
+
+            if (newValue != _onionSkinOpacity)
+            {
+                _onionSkinOpacity = newValue;
+
+                ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity = newValue;
+                ModelManager.Get<GBAToolConfigurationModel>().Save();
+
+                if (EnableOnionSkin)
+                {
+                    // this will update the opacity
+                    SignalManager.Get<OptionOnionSkinSignal>().Dispatch(EnableOnionSkin);
+                }
+            }
+
+            OnPropertyChanged(nameof(OnionSkinOpacity));
         }
     }
 
@@ -339,6 +365,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
+        OnionSkinOpacity = ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity;
     }
 
     private void LoadFrameSprites()

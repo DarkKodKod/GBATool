@@ -22,7 +22,6 @@ public partial class CharacterFrameEditorView : UserControl
 {
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
     private readonly List<Image> _onionSkinImages = [];
-    private const double _onionSkinOpacity = 0.25;
     private Point _initialMousePositionInCanvas;
     private string _bankID = string.Empty;
 
@@ -63,6 +62,7 @@ public partial class CharacterFrameEditorView : UserControl
         }
 
         frameViewView.Canvas.Children.Clear();
+        frameViewView.OnionCanvas.Children.Clear();
 
         bankViewer.OnDeactivate();
         frameView.OnDeactivate();
@@ -332,14 +332,14 @@ public partial class CharacterFrameEditorView : UserControl
                 continue;
             }
 
-            vo.Image.Opacity = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin ? _onionSkinOpacity : 0.0;
+            vo.Image.Opacity = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin ? ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity : 0.0;
 
             Canvas.SetLeft(vo.Image, vo.PositionX);
             Canvas.SetTop(vo.Image, vo.PositionY);
 
             TransformImage(vo.Image, vo.FlipHorizontal, vo.FlipVertical);
 
-            _ = frameViewView.Canvas.Children.Add(vo.Image);
+            _ = frameViewView.OnionCanvas.Children.Add(vo.Image);
 
             _onionSkinImages.Add(vo.Image);
         }
@@ -846,7 +846,7 @@ public partial class CharacterFrameEditorView : UserControl
     {
         foreach (Image image in _onionSkinImages)
         {
-            image.Opacity = enabledOnionSkin ? _onionSkinOpacity : 0.0;
+            image.Opacity = enabledOnionSkin ? ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity : 0.0;
         }
     }
 }

@@ -52,7 +52,24 @@
                 </Image>
             </Button>
             <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
-            <CheckBox VerticalAlignment="Center" IsChecked="{Binding EnableOnionSkin, Mode=TwoWay}">Enable Onion Skin</CheckBox>
+            <CheckBox VerticalAlignment="Center" IsChecked="{Binding EnableOnionSkin, Mode=TwoWay}" Margin="0,0,10,0">Enable Onion Skin</CheckBox>
+            <Label VerticalAlignment="Center">Opacity:</Label>
+            <Slider 
+                Name="slOpacity" 
+                Minimum="0" 
+                Maximum="1" 
+                Width="100" 
+                TickFrequency="0.01" 
+                IsSnapToTickEnabled="True" 
+                VerticalAlignment="Center" 
+                Value="{Binding OnionSkinOpacity}"
+                IsEnabled="{Binding EnableOnionSkin}" />
+            <TextBox 
+                VerticalAlignment="Center"
+                Width="30"
+                IsEnabled="False"
+                Text="{Binding ElementName=slOpacity, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
+                TextAlignment="Center"/>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
