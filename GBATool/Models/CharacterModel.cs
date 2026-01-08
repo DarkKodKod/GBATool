@@ -11,10 +11,11 @@ public class CharacterCollision
     public string ID { get; set; } = string.Empty;
     public int Width { get; set; }
     public int Height { get; set; }
-    public int OffsetX { get; set; }
-    public int OffsetY { get; set; }
+    public int PosX { get; set; }
+    public int PosY { get; set; }
     public Color Color { get; set; }
     public int Mask { get; set; }
+    public int CustomMask { get; set; }
 }
 
 public class CharacterSprite

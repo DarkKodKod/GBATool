@@ -105,6 +105,7 @@ public class UpdateVerticalAxisSignal : Signal<int> { }
 public class NewCollisionIntoSpriteSignal : Signal<string, string> { }
 public class CollisionColorSelectedSignal : Signal<string, Color> { }
 public class DeleteCollisionSignal : Signal<string, string, string> { }
+public class UpdateSpriteCollisionInfoSignal : Signal<SpriteCollisionVO> { }
 public class UpdateSpriteBaseSignal : Signal<int> { }
 public class UpdateOriginPositionSignal : Signal<int, int> { }
 public class StopCharacterAnimationSignal : Signal<string> { }

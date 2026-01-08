@@ -385,10 +385,59 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener += OnCollisionColorSelected;
+        SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener += OnUpdateSpriteCollisionInfo;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
         OnionSkinOpacity = ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity;
+    }
+
+    private void LoadCollisions()
+    {
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        _dontSave = true;
+
+        CharacterCollisions.Clear();
+
+        foreach (KeyValuePair<string, CharacterCollision> item in frame.CollisionInfo)
+        {
+            SpriteCollisionVO collisionVO = new()
+            {
+                ID = item.Key,
+                Width = item.Value.Width,
+                Height = item.Value.Height,
+                PosX = item.Value.PosX,
+                PosY = item.Value.PosY,
+                Color = new SolidColorBrush(item.Value.Color),
+                Mask = (CollisionMask)item.Value.Mask,
+                CustomMask = item.Value.CustomMask,
+                AnimationID = AnimationID,
+                FrameID = FrameID
+            };
+
+            CharacterCollisions.Add(collisionVO);
+        }
+
+        SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
+
+        _dontSave = false;
+
     }
 
     private void LoadFrameSprites()
@@ -546,12 +595,14 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener -= OnCollisionColorSelected;
+        SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener -= OnUpdateSpriteCollisionInfo;
         #endregion
     }
 
     private void OnCharacterFrameEditorViewLoaded()
     {
         LoadFrameSprites();
+        LoadCollisions();
     }
 
     private void OnCollisionColorSelected(string collisionID, Color newColor)
@@ -568,6 +619,44 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
     }
 
+    private void OnUpdateSpriteCollisionInfo(SpriteCollisionVO collision)
+    {
+        if (_dontSave)
+            return;
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(collision.AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(collision.FrameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (!frame.CollisionInfo.TryGetValue(collision.ID, out CharacterCollision? value))
+        {
+            return;
+        }
+
+        value.Width = collision.Width;
+        value.Height = collision.Height;
+        value.PosX = collision.PosX;
+        value.PosY = collision.PosY;
+        value.Color = collision.Color.Color;
+        value.Mask = (int)collision.Mask;
+        value.CustomMask = collision.CustomMask;
+
+        FileHandler?.Save();
+    }
+
     private void OnNewCollisionIntoSprite(string animationID, string frameID)
     {
         Color newColor = Color.FromArgb(50, 255, 0, 0);
@@ -581,7 +670,9 @@ public class CharacterFrameEditorViewModel : ViewModel
             PosY = 0,
             Color = new SolidColorBrush(newColor),
             Mask = CollisionMask.Hitbox,
-            CustomMask = 0
+            CustomMask = 0,
+            AnimationID = AnimationID,
+            FrameID = FrameID
         };
 
         CharacterCollisions.Add(collisionVO);
@@ -609,15 +700,16 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         frame.CollisionInfo.Add(collisionVO.ID,
-            new CharacterCollision()
+            new()
             {
                 ID = collisionVO.ID,
                 Width = 0,
                 Height = 0,
-                OffsetX = 0,
-                OffsetY = 0,
+                PosX = 0,
+                PosY = 0,
                 Color = newColor,
-                Mask = (int)CollisionMask.Hitbox
+                Mask = (int)CollisionMask.Hitbox,
+                CustomMask = 0
             });
 
         FileHandler?.Save();
