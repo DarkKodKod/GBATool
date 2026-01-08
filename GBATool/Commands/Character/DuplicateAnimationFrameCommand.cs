@@ -51,7 +51,7 @@ public class DuplicateAnimationFrameCommand : Command
                         ID = newFrameID,
                         BankID = item.Value.BankID,
                         IsHeldFrame = item.Value.IsHeldFrame,
-                        CollisionInfo = new Dictionary<string, CharacterCollision?>(item.Value.CollisionInfo),
+                        CollisionInfo = new Dictionary<string, CharacterCollision>(item.Value.CollisionInfo),
                         Tiles = new Dictionary<string, CharacterSprite>(item.Value.Tiles)
                     };
 

@@ -120,9 +120,9 @@
                             </MultiBinding>
                         </Button.CommandParameter>
                         <Image Width="16" Height="16" 
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/resources/up.png">
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Source="/resources/up.png">
                             <Image.Style>
                                 <Style TargetType="Image">
                                     <Style.Triggers>

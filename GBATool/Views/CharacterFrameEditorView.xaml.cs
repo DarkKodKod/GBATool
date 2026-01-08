@@ -855,9 +855,9 @@ public partial class CharacterFrameEditorView : UserControl
         double left = e.Key == Key.Left ? -1 : e.Key == Key.Right ? 1 : 0;
         double top = e.Key == Key.Up ? -1 : e.Key == Key.Down ? 1 : 0;
 
-        if (left == 0  && top == 0)
-        { 
-            return; 
+        if (left == 0 && top == 0)
+        {
+            return;
         }
 
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
@@ -907,7 +907,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         e.Handled = updated;
 
-        if (selectedSprites.Count > 0) 
+        if (selectedSprites.Count > 0)
         {
             SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
         }

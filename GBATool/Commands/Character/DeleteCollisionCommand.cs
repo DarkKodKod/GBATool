@@ -1,9 +1,7 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
-using GBATool.VOs;
 using System.Windows;
-using System.Windows.Input;
 
 namespace GBATool.Commands.Character;
 
@@ -18,13 +16,17 @@ public class DeleteCollisionCommand : Command
             return;
         }
 
-        MouseButtonEventArgs? args = parameter as MouseButtonEventArgs;
-
-        FrameworkElement? source = args?.OriginalSource as FrameworkElement;
-
-        if (source?.DataContext is SpriteCollisionVO collision)
+        if (parameter == null)
         {
-            SignalManager.Get<DeleteCollisionSignal>().Dispatch(collision);
+            return;
         }
+
+        object[] values = (object[])parameter;
+
+        string animationID = (string)values[0];
+        string frameID = (string)values[1];
+        string collisionID = (string)values[2];
+
+        SignalManager.Get<DeleteCollisionSignal>().Dispatch(animationID, frameID, collisionID);
     }
 }

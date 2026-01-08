@@ -37,7 +37,7 @@ public class FrameModel
     public string ID { get; set; } = string.Empty;
     public Dictionary<string, CharacterSprite> Tiles { get; set; } = [];
     public string BankID { get; set; } = string.Empty;
-    public Dictionary<string, CharacterCollision?> CollisionInfo { get; set; } = [];
+    public Dictionary<string, CharacterCollision> CollisionInfo { get; set; } = [];
     public bool IsHeldFrame { get; set; } = false;
 }
 

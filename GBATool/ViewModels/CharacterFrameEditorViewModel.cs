@@ -3,7 +3,6 @@ using ArchitectureLibrary.Signals;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Banks;
 using GBATool.Commands.Character;
-using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
@@ -22,6 +21,8 @@ public class CharacterFrameEditorViewModel : ViewModel
     private FileModelVO[]? _banks;
     private int _selectedBank = -1;
     private string _tabId = string.Empty;
+    private string _animationID = string.Empty;
+    private string _frameID = string.Empty;
     private int _frameIndex;
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
@@ -42,7 +43,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
-    public DispatchSignalCommand<NewCollisionIntoSpriteSignal> AddNewCollisionIntoSpriteFrameCommand { get; } = new();
+    public AddNewCollisionIntoSpriteFrameCommand AddNewCollisionIntoSpriteFrameCommand { get; } = new();
     public DeleteCollisionCommand DeleteCollisionCommand { get; } = new();
     public ChangeCollisionColorCommand ChangeCollisionColorCommand { get; } = new();
     #endregion
@@ -276,8 +277,29 @@ public class CharacterFrameEditorViewModel : ViewModel
     }
 
     public CharacterModel? CharacterModel { get; set; }
-    public string AnimationID { get; set; } = string.Empty;
-    public string FrameID { get; set; } = string.Empty;
+
+    public string AnimationID
+    {
+        get => _animationID;
+        set
+        {
+            _animationID = value;
+
+            OnPropertyChanged(nameof(AnimationID));
+        }
+    }
+
+    public string FrameID
+    {
+        get => _frameID;
+        set
+        {
+            _frameID = value;
+
+            OnPropertyChanged(nameof(FrameID));
+        }
+    }
+
     public string PreviousFrameID { get; set; } = string.Empty;
     public int PreviousFrameIndex { get; set; }
 
@@ -341,10 +363,11 @@ public class CharacterFrameEditorViewModel : ViewModel
                 ID = "dummy",
                 Width = 0,
                 Height = 0,
-                OffsetX = 0,
-                OffsetY = 0,
+                PosX = 0,
+                PosY = 0,
                 Color = new SolidColorBrush(Color.FromRgb(255, 255, 255)),
-                Mask = 0
+                Mask = CollisionMask.Custom,
+                CustomMask = 0
             });
         }
     }
@@ -545,29 +568,95 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
     }
 
-    private void OnNewCollisionIntoSprite()
+    private void OnNewCollisionIntoSprite(string animationID, string frameID)
     {
+        Color newColor = Color.FromArgb(50, 255, 0, 0);
+
         SpriteCollisionVO collisionVO = new()
         {
             ID = Guid.NewGuid().ToString(),
             Width = 0,
             Height = 0,
-            OffsetX = 0,
-            OffsetY = 0,
-            Color = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0)),
-            Mask = 0
+            PosX = 0,
+            PosY = 0,
+            Color = new SolidColorBrush(newColor),
+            Mask = CollisionMask.Hitbox,
+            CustomMask = 0
         };
 
         CharacterCollisions.Add(collisionVO);
 
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
+
+        if (_dontSave)
+            return;
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        frame.CollisionInfo.Add(collisionVO.ID,
+            new CharacterCollision()
+            {
+                ID = collisionVO.ID,
+                Width = 0,
+                Height = 0,
+                OffsetX = 0,
+                OffsetY = 0,
+                Color = newColor,
+                Mask = (int)CollisionMask.Hitbox
+            });
+
+        FileHandler?.Save();
     }
 
-    private void OnDeleteCollision(SpriteCollisionVO collisionVO)
+    private void OnDeleteCollision(string animationID, string frameID, string collisionID)
     {
-        _ = CharacterCollisions.Remove(collisionVO);
+        CharacterCollisions = [.. CharacterCollisions.Where(c => c.ID != collisionID)];
 
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
+
+        if (_dontSave)
+            return;
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        if (!frame.CollisionInfo.ContainsKey(collisionID))
+        {
+            return;
+        }
+
+        frame.CollisionInfo.Remove(collisionID);
+
+        FileHandler?.Save();
     }
 
     private void OnAddOrUpdateSpriteIntoCharacterFrame(CharacterSprite sprite, string bankID)

@@ -14,6 +14,7 @@
              Unloaded="UserControl_Unloaded"
              PreviewKeyDown="UserControl_PreviewKeyDown"
              Loaded="UserControl_Loaded"
+             x:Name="characterFrameView"
              d:DesignHeight="790" d:DesignWidth="1050">
     <UserControl.DataContext>
         <vm:CharacterFrameEditorViewModel />
@@ -174,11 +175,12 @@
                                     <Border BorderBrush="Black" BorderThickness="1" Background="{Binding Color}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="80"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="30"/>
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
@@ -190,20 +192,21 @@
                                             <TextBox Text="{Binding Width}" Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="1">Height:</TextBlock>
 											<TextBox Text="{Binding Height}" Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
-                                            <TextBlock Grid.Column="0" Grid.Row="2">Offset X:</TextBlock>
-											<TextBox Text="{Binding OffsetX}" Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
-                                            <TextBlock Grid.Column="0" Grid.Row="3">Offset Y:</TextBlock>
-											<TextBox Text="{Binding OffsetY}" Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
-											<Image Width="16" 
-												   Height="16" 
-												   Source="/resources/delete.png"
-												   ToolTip="Delete collision"
-                                                   Grid.Column="2">
-												<i:Interaction.Behaviors>
-													<behaviors:EventToCommandBehavior Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.DeleteCollisionCommand}" Event="MouseUp" PassArguments="True" />
-												</i:Interaction.Behaviors>
-											</Image>
-											<TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
+                                            <TextBlock Grid.Column="0" Grid.Row="2">X:</TextBlock>
+											<TextBox Text="{Binding PosX}" Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="3">Y:</TextBlock>
+											<TextBox Text="{Binding PosY}" Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
+                                            <Button Background="Transparent" BorderThickness="0" Grid.Column="2" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.DeleteCollisionCommand}">
+                                                <Image Width="16" Height="16" Source="/resources/delete.png" ToolTip="Delete collision"/>
+                                                <Button.CommandParameter>
+                                                    <MultiBinding Converter="{StaticResource parametersConverter}">
+                                                        <Binding ElementName="characterFrameView" Path="DataContext.AnimationID"/>
+                                                        <Binding ElementName="characterFrameView" Path="DataContext.FrameID"/>
+                                                        <Binding Path="ID"/>
+                                                    </MultiBinding>
+                                                </Button.CommandParameter>
+                                            </Button>
+                                            <TextBlock Grid.Column="0" Grid.Row="4">Color:</TextBlock>
                                             <Button Grid.Column="1" Grid.Row="4" 
                                                     Background="{Binding Color, Mode=OneWay}" 
                                                     BorderThickness="1" 
@@ -215,8 +218,15 @@
                                                     </MultiBinding>
                                                 </Button.CommandParameter>
                                             </Button>
-                                            <TextBlock Grid.Column="0" Grid.Row="5">Mask:</TextBlock>
-											<TextBox Text="{Binding Mask}" Grid.Column="1" Grid.Row="5" TextAlignment="Right"/>
+                                            <TextBlock Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" >Mask:</TextBlock>
+                                            <ComboBox DisplayMemberPath="Description" Grid.Column="1" Grid.Row="5" 
+                                                      HorizontalAlignment="Stretch"
+                                                      ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:CollisionMask}}}"
+                                                      SelectedValue="{Binding Path=Mask}"
+                                                      SelectedValuePath="Value">
+                                            </ComboBox>
+                                            <TextBlock Grid.Column="0" Grid.Row="6" Visibility="{Binding Visibility}">Custom Mask:</TextBlock>
+                                            <TextBox Text="{Binding CustomMask}" Visibility="{Binding Visibility}" Grid.Column="1" Grid.Row="6" TextAlignment="Right"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -234,6 +244,12 @@
                                    HorizontalAlignment="Center"
                                    Source="/resources/add.png">
                             </Image>
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource parametersConverter}">
+                                    <Binding Path="AnimationID"/>
+                                    <Binding Path="FrameID"/>
+                                </MultiBinding>
+                            </Button.CommandParameter>
                         </Button>
                     </Grid>
                 </GroupBox>

@@ -61,6 +61,16 @@ public enum GraphicMode
     Mask = 2
 }
 
+public enum CollisionMask
+{
+    [Description("Hitbox")]
+    Hitbox = 0,
+    [Description("Hurtbox")]
+    Hurtbox = 1,
+    [Description("Custom")]
+    Custom = 2
+}
+
 public enum ObjectMode
 {
     [Description("Normal")]
