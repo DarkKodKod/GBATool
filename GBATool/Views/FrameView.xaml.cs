@@ -1,4 +1,6 @@
-﻿using ArchitectureLibrary.Signals;
+﻿using ArchitectureLibrary.Model;
+using ArchitectureLibrary.Signals;
+using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Collections.Generic;
@@ -20,6 +22,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     private string _crossData = string.Empty;
     private string _originGuide = string.Empty;
     private Visibility _mouseSelectionActive;
+    private Visibility _collisionVisibility;
     private int _mouseSelectionOriginX;
     private int _mouseSelectionOriginY;
     private int _mouseSelectionWidth;
@@ -29,9 +32,11 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
 
     #region get/set
-    public Canvas Canvas => canvasGrid;
+    public Canvas FrameCanvas => canvasGrid;
 
     public Canvas OnionCanvas => onionSelectedSprites;
+
+    public Canvas CollisionCanvas => collisionCanvas;
 
     public Visibility MouseSelectionActive
     {
@@ -41,6 +46,17 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
             _mouseSelectionActive = value;
 
             OnPropertyChanged(nameof(MouseSelectionActive));
+        }
+    }
+
+    public Visibility CollisionVisibility
+    {
+        get => _collisionVisibility;
+        set
+        {
+            _collisionVisibility = value;
+
+            OnPropertyChanged(nameof(CollisionVisibility));
         }
     }
 
@@ -149,11 +165,13 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener += OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener += OnSpriteFrameShowSelection;
+        SignalManager.Get<OptionShowCollisionsSignal>().Listener += OnOptionShowCollisions;
         #endregion
 
         SetCrossPosition(0, 0);
 
         MouseSelectionActive = Visibility.Collapsed;
+        CollisionVisibility = ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions ? Visibility.Visible : Visibility.Collapsed;
 
         parentOfSelectedSprites.Children.Clear();
         onionSelectedSprites.Children.Clear();
@@ -171,9 +189,15 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener -= OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener -= OnSpriteFrameShowSelection;
+        SignalManager.Get<OptionShowCollisionsSignal>().Listener -= OnOptionShowCollisions;
         #endregion
 
         MouseSelectionActive = Visibility.Collapsed;
+    }
+
+    private void OnOptionShowCollisions(bool visible)
+    {
+        CollisionVisibility = visible ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void SetCrossPosition(int centerPosX, int centerPosY)

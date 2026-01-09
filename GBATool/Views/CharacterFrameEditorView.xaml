@@ -84,25 +84,39 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <GroupBox Grid.Row="0" Grid.Column="0" Header="Frame" Margin="10,0,10,0" Padding="10">
-                <ScrollViewer
-                    PanningMode="Both"
-                    HorizontalScrollBarVisibility="Auto"
-                    VerticalScrollBarVisibility="Auto">
-                    <local:FrameView 
-                        Width="925"
-                        Height="605"
-                        x:Name="frameView" 
-                        AllowDrop="True"
-                        Drop="FrameView_Drop"
-                        DragOver="FrameView_DragOver"
-                        MouseMove="FrameView_MouseMove"
-                        DragLeave="FrameView_DragLeave"
-                        MouseDown="FrameView_MouseDown"
-                        MouseUp="FrameView_MouseUp"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"/>
-                </ScrollViewer>
+            <GroupBox Grid.Row="0" Grid.Column="0" Header="Frame" Margin="10,0,10,0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="5"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollViewer
+                        PanningMode="Both"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+                        <local:FrameView 
+                            Width="925"
+                            Height="605"
+                            x:Name="frameView" 
+                            AllowDrop="True"
+                            Drop="FrameView_Drop"
+                            DragOver="FrameView_DragOver"
+                            MouseMove="FrameView_MouseMove"
+                            DragLeave="FrameView_DragLeave"
+                            MouseDown="FrameView_MouseDown"
+                            MouseUp="FrameView_MouseUp"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                    </ScrollViewer>
+                </Grid>
             </GroupBox>
             <Grid Grid.Row="0" Grid.Column="1">
                 <Grid.RowDefinitions>

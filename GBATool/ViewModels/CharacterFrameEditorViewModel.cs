@@ -457,8 +457,12 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();
 
-        _dontSave = false;
+        if (CharacterCollisions.Count > 0)
+        {
+            SignalManager.Get<LoadWithCollisionControlsSignal>().Dispatch(CharacterCollisions, FrameID);
+        }
 
+        _dontSave = false;
     }
 
     private void LoadFrameSprites()
@@ -688,28 +692,12 @@ public class CharacterFrameEditorViewModel : ViewModel
         FileHandler?.Save();
     }
 
-    private void OnNewCollisionIntoSprite(string animationID, string frameID)
+    private void OnNewCollisionIntoSprite(string animationID, string frameID, SpriteCollisionVO collisionVO)
     {
         if (animationID != AnimationID || frameID != FrameID)
         {
             return;
         }
-
-        Color newColor = Color.FromArgb(50, 255, 0, 0);
-
-        SpriteCollisionVO collisionVO = new()
-        {
-            ID = Guid.NewGuid().ToString(),
-            Width = 0,
-            Height = 0,
-            PosX = 0,
-            PosY = 0,
-            Color = new SolidColorBrush(newColor),
-            Mask = CollisionMask.Hitbox,
-            CustomMask = 0,
-            AnimationID = AnimationID,
-            FrameID = FrameID
-        };
 
         CharacterCollisions.Add(collisionVO);
 
@@ -739,13 +727,13 @@ public class CharacterFrameEditorViewModel : ViewModel
             new()
             {
                 ID = collisionVO.ID,
-                Width = 0,
-                Height = 0,
-                PosX = 0,
-                PosY = 0,
-                Color = newColor,
-                Mask = (int)CollisionMask.Hitbox,
-                CustomMask = 0
+                Width = collisionVO.Width,
+                Height = collisionVO.Height,
+                PosX = collisionVO.PosX,
+                PosY = collisionVO.PosY,
+                Color = collisionVO.Color.Color,
+                Mask = (int)collisionVO.Mask,
+                CustomMask = collisionVO.CustomMask
             });
 
         FileHandler?.Save();

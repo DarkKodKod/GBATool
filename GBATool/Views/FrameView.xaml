@@ -79,6 +79,11 @@
                     Width="{StaticResource canvasWidth}" 
                     Height="{StaticResource canvasHeight}" 
                     Background="Transparent"/>
+            <Canvas x:Name="collisionCanvas"
+                    Visibility="{Binding CollisionVisibility}"
+                    Width="{StaticResource canvasWidth}" 
+                    Height="{StaticResource canvasHeight}" 
+                    Background="Transparent"/>
             </Canvas>
     </Grid>
 </UserControl>

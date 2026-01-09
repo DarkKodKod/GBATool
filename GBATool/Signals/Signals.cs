@@ -101,9 +101,10 @@ public class ResetFrameSpritesSelectionAreaSignal : Signal<Point> { }
 public class PreviousFrameCharacterAnimationSignal : Signal<string> { }
 public class PauseCharacterAnimationSignal : Signal<string> { }
 public class UpdateCollisionViewSignal : Signal { }
+public class LoadWithCollisionControlsSignal : Signal<List<SpriteCollisionVO>, string> { }
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
-public class NewCollisionIntoSpriteSignal : Signal<string, string> { }
+public class NewCollisionIntoSpriteSignal : Signal<string, string, SpriteCollisionVO> { }
 public class CollisionColorSelectedSignal : Signal<string, string, string, Color> { }
 public class DeleteCollisionSignal : Signal<string, string, string> { }
 public class UpdateSpriteCollisionInfoSignal : Signal<SpriteCollisionVO> { }
