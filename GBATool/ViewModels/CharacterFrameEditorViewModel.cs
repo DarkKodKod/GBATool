@@ -29,6 +29,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private string[] _selectedFrameSprites = [];
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
+    private bool _showCollisions;
     private bool _dontSave;
     private bool _isFlippedHorizontal;
     private bool _isFlippedVertical;
@@ -194,6 +195,25 @@ public class CharacterFrameEditorViewModel : ViewModel
             }
 
             OnPropertyChanged(nameof(OnionSkinOpacity));
+        }
+    }
+
+    public bool ShowCollisions
+    {
+        get => _showCollisions;
+        set
+        {
+            if (value != _showCollisions)
+            {
+                _showCollisions = value;
+
+                ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions = value;
+                ModelManager.Get<GBAToolConfigurationModel>().Save();
+
+                SignalManager.Get<OptionShowCollisionsSignal>().Dispatch(value);
+            }
+
+            OnPropertyChanged(nameof(ShowCollisions));
         }
     }
 
@@ -390,6 +410,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
         OnionSkinOpacity = ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity;
+        ShowCollisions = ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions;
     }
 
     private void LoadCollisions()

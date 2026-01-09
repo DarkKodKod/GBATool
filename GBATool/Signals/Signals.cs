@@ -24,6 +24,7 @@ public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> 
 public class MouseWheelSignal : Signal<MouseWheelVO> { }
 public class MouseImageSelectedSignal : Signal<Image, Point> { }
 public class OptionOnionSkinSignal : Signal<bool> { }
+public class OptionShowCollisionsSignal : Signal<bool> { }
 public class ProjectBuildCompleteSignal : Signal { }
 
 // MainWindowViewModel

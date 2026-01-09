@@ -11,19 +11,22 @@ namespace GBATool.Models;
 public class GBAToolConfigurationModel : ISingletonModel
 {
     public int MaxRencetProjectsCount { get; set; } = 9;
-    public string DefaultProjectPath { get; set; } = "";
+    public string DefaultProjectPath { get; set; } = string.Empty;
     public int WindowSizeX { get; set; } = 940;
     public int WindowSizeY { get; set; } = 618;
-    public bool FullScreen { get; set; } = false;
+    public bool FullScreen { get; set; }
     public string[] RecentProjects { get; set; }
-    public bool EnableOnionSkin { get; set; } = false;
+    public bool EnableOnionSkin { get; set; }
+    public bool ShowCollisions { get; set; }
     public double OnionSkinOpacity { get; set; } = 0.25;
-    public bool KeepBuildDialogOpen { get; set; } = false;
+    public bool KeepBuildDialogOpen { get; set; }
+    public string Version { get; private set; } = string.Empty;
 
+    private const string _modelVersioKey = "modelVersion";
     private const string _configfileNameKey = "configurationFileName";
-    private readonly string _configFileName = "";
+    private readonly string _configFileName = string.Empty;
 
-    private bool _loaded = false;
+    private bool _loaded;
 
     public GBAToolConfigurationModel()
     {
@@ -35,6 +38,8 @@ public class GBAToolConfigurationModel : ISingletonModel
         }
 
         _configFileName = @".\" + (string)Application.Current.FindResource(_configfileNameKey) + Toml.FileExtension;
+
+        Version = (string)Application.Current.FindResource(_modelVersioKey);
     }
 
     public void Copy(GBAToolConfigurationModel copy)
@@ -46,8 +51,10 @@ public class GBAToolConfigurationModel : ISingletonModel
         WindowSizeY = copy.WindowSizeY;
         FullScreen = copy.FullScreen;
         EnableOnionSkin = copy.EnableOnionSkin;
+        ShowCollisions = copy.ShowCollisions;
         OnionSkinOpacity = copy.OnionSkinOpacity;
         KeepBuildDialogOpen = copy.KeepBuildDialogOpen;
+        Version = copy.Version;
     }
 
     public void Load()

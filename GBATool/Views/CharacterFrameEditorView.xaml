@@ -72,6 +72,8 @@
                 IsEnabled="False"
                 Text="{Binding ElementName=slOpacity, Path=Value, UpdateSourceTrigger=PropertyChanged}" 
                 TextAlignment="Center"/>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Margin="30,0,30,0" />
+            <CheckBox VerticalAlignment="Center" IsChecked="{Binding ShowCollisions, Mode=TwoWay}" Margin="0,0,10,0">Show Collisions</CheckBox>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
