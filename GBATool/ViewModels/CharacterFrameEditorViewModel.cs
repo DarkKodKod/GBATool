@@ -605,8 +605,13 @@ public class CharacterFrameEditorViewModel : ViewModel
         LoadCollisions();
     }
 
-    private void OnCollisionColorSelected(string collisionID, Color newColor)
+    private void OnCollisionColorSelected(string animationID, string frameID, string collisionID, Color newColor)
     {
+        if (animationID != AnimationID || frameID != FrameID)
+        {
+            return;
+        }
+
         foreach (SpriteCollisionVO item in CharacterCollisions)
         {
             if (item.ID == collisionID)
@@ -621,6 +626,11 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     private void OnUpdateSpriteCollisionInfo(SpriteCollisionVO collision)
     {
+        if (collision.AnimationID != AnimationID || collision.FrameID != FrameID)
+        {
+            return;
+        }
+
         if (_dontSave)
             return;
 
@@ -659,6 +669,11 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     private void OnNewCollisionIntoSprite(string animationID, string frameID)
     {
+        if (animationID != AnimationID || frameID != FrameID)
+        {
+            return;
+        }
+
         Color newColor = Color.FromArgb(50, 255, 0, 0);
 
         SpriteCollisionVO collisionVO = new()
@@ -717,6 +732,11 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     private void OnDeleteCollision(string animationID, string frameID, string collisionID)
     {
+        if (animationID != AnimationID || frameID != FrameID)
+        {
+            return;
+        }
+
         CharacterCollisions = [.. CharacterCollisions.Where(c => c.ID != collisionID)];
 
         SignalManager.Get<UpdateCollisionViewSignal>().Dispatch();

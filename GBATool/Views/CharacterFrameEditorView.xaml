@@ -213,6 +213,8 @@
                                                     Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.ChangeCollisionColorCommand}">
                                                 <Button.CommandParameter>
                                                     <MultiBinding Converter="{StaticResource parametersConverter}">
+                                                        <Binding ElementName="characterFrameView" Path="DataContext.AnimationID"/>
+                                                        <Binding ElementName="characterFrameView" Path="DataContext.FrameID"/>
                                                         <Binding Path="ID" />
                                                         <Binding Path="Color" />
                                                     </MultiBinding>

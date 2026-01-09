@@ -17,8 +17,10 @@ public class ChangeCollisionColorCommand : Command
 
         object[] values = (object[])parameter;
 
-        string collisionID = (string)values[0];
-        SolidColorBrush oldColor = (SolidColorBrush)values[1];
+        string animationID = (string)values[0];
+        string frameID = (string)values[1];
+        string collisionID = (string)values[2];
+        SolidColorBrush oldColor = (SolidColorBrush)values[3];
 
         ColorDialog colorDialog = new()
         {
@@ -38,7 +40,7 @@ public class ChangeCollisionColorCommand : Command
                 return;
             }
 
-            SignalManager.Get<CollisionColorSelectedSignal>().Dispatch(collisionID, colorBrush);
+            SignalManager.Get<CollisionColorSelectedSignal>().Dispatch(animationID, frameID, collisionID, colorBrush);
         }
     }
 }
