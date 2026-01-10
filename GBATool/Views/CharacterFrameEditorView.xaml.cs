@@ -42,6 +42,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener += OnUpdateSpriteVisualProperties;
         SignalManager.Get<UpdateCollisionViewSignal>().Listener += OnUpdateCollisionView;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
+        SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         #endregion
 
         frameView.OnActivate();
@@ -85,6 +86,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener -= OnUpdateSpriteVisualProperties;
         SignalManager.Get<UpdateCollisionViewSignal>().Listener -= OnUpdateCollisionView;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
+        SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
         #endregion
     }
 
@@ -293,6 +295,32 @@ public partial class CharacterFrameEditorView : UserControl
 
                 _ = frameViewView.FrameCanvas.Children.Add(sprite.Image);
             }
+        }
+    }
+
+    private void OnDeleteCollision(string animationID, string frameID, string collisionID)
+    {
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        if (viewModel.AnimationID != animationID ||
+            viewModel.FrameID != frameID)
+        {
+            return;
+        }
+
+        if (_rectanglesInFrame.TryGetValue(collisionID, out Rectangle? rect))
+        {
+            frameViewView.CollisionCanvas.Children.Remove(rect);
+
+            _rectanglesInFrame.Remove(collisionID);
         }
     }
 
