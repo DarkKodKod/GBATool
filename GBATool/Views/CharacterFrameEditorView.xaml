@@ -29,11 +29,11 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <Button ToolTip="Back to frames view"
-                Width="80"
-                Height="30"
-                Margin="5,0,0,0"
-                HorizontalAlignment="Left"
-                Command="{Binding SwitchCharacterFrameViewCommand}">
+                    Width="80"
+                    Height="30"
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding SwitchCharacterFrameViewCommand}">
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource parametersConverter}">
                         <Binding Path="TabID" />
@@ -42,9 +42,9 @@
                     </MultiBinding>
                 </Button.CommandParameter>
                 <Image Width="16" Height="16" 
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Source="/resources/play.png">
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Source="/resources/play.png">
                     <Image.RenderTransform>
                         <ScaleTransform ScaleX="-1"/>
                     </Image.RenderTransform>

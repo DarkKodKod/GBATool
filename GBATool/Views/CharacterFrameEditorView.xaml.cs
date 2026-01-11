@@ -43,6 +43,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<UpdateCollisionViewSignal>().Listener += OnUpdateCollisionView;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
+        SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener += OnUpdateSpriteCollisionInfo;
         #endregion
 
         frameView.OnActivate();
@@ -87,6 +88,7 @@ public partial class CharacterFrameEditorView : UserControl
         SignalManager.Get<UpdateCollisionViewSignal>().Listener -= OnUpdateCollisionView;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
+        SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener -= OnUpdateSpriteCollisionInfo;
         #endregion
     }
 
@@ -295,6 +297,30 @@ public partial class CharacterFrameEditorView : UserControl
 
                 _ = frameViewView.FrameCanvas.Children.Add(sprite.Image);
             }
+        }
+    }
+
+    private void OnUpdateSpriteCollisionInfo(SpriteCollisionVO collision)
+    {
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
+        {
+            return;
+        }
+
+        if (viewModel.AnimationID != collision.AnimationID ||
+            viewModel.FrameID != collision.FrameID)
+        {
+            return;
+        }
+
+        if (_rectanglesInFrame.TryGetValue(collision.ID, out Rectangle? rect))
+        {
+            rect.Fill = collision.Color;
+            rect.Width = collision.Width;
+            rect.Height = collision.Height;
+
+            Canvas.SetLeft(rect, collision.PosX);
+            Canvas.SetTop(rect, collision.PosY);
         }
     }
 
