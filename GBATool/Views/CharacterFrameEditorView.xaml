@@ -205,13 +205,13 @@
                                                 <RowDefinition Height="auto" />
                                             </Grid.RowDefinitions>
                                             <TextBlock Grid.Column="0" Grid.Row="0">Width:</TextBlock>
-                                            <TextBox Text="{Binding Width}" Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="0" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="1">Height:</TextBlock>
-											<TextBox Text="{Binding Height}" Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="1" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="2">X:</TextBlock>
-											<TextBox Text="{Binding PosX}" Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding PosX, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="2" TextAlignment="Right"/>
                                             <TextBlock Grid.Column="0" Grid.Row="3">Y:</TextBlock>
-											<TextBox Text="{Binding PosY}" Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding PosY, UpdateSourceTrigger=PropertyChanged}" Grid.Column="1" Grid.Row="3" TextAlignment="Right"/>
                                             <Button Background="Transparent" BorderThickness="0" Grid.Column="2" Command="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type UserControl}}, Path=DataContext.DeleteCollisionCommand}">
                                                 <Image Width="16" Height="16" Source="/resources/delete.png" ToolTip="Delete collision"/>
                                                 <Button.CommandParameter>
@@ -244,7 +244,7 @@
                                                       SelectedValuePath="Value">
                                             </ComboBox>
                                             <TextBlock Grid.Column="0" Grid.Row="6" Visibility="{Binding Visibility}">Custom Mask:</TextBlock>
-                                            <TextBox Text="{Binding CustomMask}" Visibility="{Binding Visibility}" Grid.Column="1" Grid.Row="6" TextAlignment="Right"/>
+                                            <TextBox Text="{Binding CustomMask, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Visibility}" Grid.Column="1" Grid.Row="6" TextAlignment="Right"/>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
