@@ -23,7 +23,7 @@ public partial class CharacterFrameEditorView : UserControl
 {
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
     private readonly List<Image> _onionSkinImages = [];
-    private readonly Dictionary<Rectangle, CollisionControlVO> _rectanglesInFrame = [];
+    private readonly Dictionary<Rectangle, CollisionControlVO> _collisionsInFrame = [];
     private Point _initialMousePositionInCanvas;
     private string _bankID = string.Empty;
 
@@ -77,7 +77,7 @@ public partial class CharacterFrameEditorView : UserControl
         frameView.OnDeactivate();
 
         _spritesInFrames.Clear();
-        _rectanglesInFrame.Clear();
+        _collisionsInFrame.Clear();
 
         #region Signals
         SignalManager.Get<LoadWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
@@ -313,7 +313,7 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _rectanglesInFrame)
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
         {
             if (item.Value.ID == collision.ID)
             {
@@ -348,7 +348,7 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _rectanglesInFrame)
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
         {
             if (item.Value.ID == collisionID)
             {
@@ -357,7 +357,7 @@ public partial class CharacterFrameEditorView : UserControl
 
                 frameViewView.CollisionCanvas.Children.Remove(item.Value.Rectangle);
 
-                _rectanglesInFrame.Remove(item.Value.Rectangle);
+                _collisionsInFrame.Remove(item.Value.Rectangle);
             }
         }
     }
@@ -429,7 +429,7 @@ public partial class CharacterFrameEditorView : UserControl
         Canvas.SetLeft(rect, item.PosX);
         Canvas.SetTop(rect, item.PosY);
 
-        _rectanglesInFrame.Add(rect, collision);
+        _collisionsInFrame.Add(rect, collision);
 
         _ = frameViewView.CollisionCanvas.Children.Add(rect);
     }
@@ -821,7 +821,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (rects.Count > 0)
         {
-            if (_rectanglesInFrame.TryGetValue(rects.First(), out CollisionControlVO? collision))
+            if (_collisionsInFrame.TryGetValue(rects.First(), out CollisionControlVO? collision))
             {
                 selectedRectangles.Add(collision);
             }
@@ -876,7 +876,7 @@ public partial class CharacterFrameEditorView : UserControl
             {
                 foreach (Rectangle item in hitList2)
                 {
-                    if (_rectanglesInFrame.TryGetValue(item, out CollisionControlVO? collision))
+                    if (_collisionsInFrame.TryGetValue(item, out CollisionControlVO? collision))
                     {
                         collisions.Add(collision);
                     }
@@ -1070,9 +1070,9 @@ public partial class CharacterFrameEditorView : UserControl
         List<SpriteControlVO> selectedSprites = [];
         List<CollisionControlVO> selectedCollisions = [];
 
-        foreach (KeyValuePair<Image, SpriteControlVO> sprite in _spritesInFrames)
+        foreach (KeyValuePair<Image, SpriteControlVO> item in _spritesInFrames)
         {
-            if (viewModel.SelectedFrameSprites.Contains(sprite.Value.ID))
+            if (viewModel.SelectedFrameSprites.Contains(item.Value.ID))
             {
                 if (!updated)
                 {
@@ -1080,30 +1080,72 @@ public partial class CharacterFrameEditorView : UserControl
                     updated = true;
                 }
 
-                double x = Canvas.GetLeft(sprite.Key);
-                double y = Canvas.GetTop(sprite.Key);
+                double x = Canvas.GetLeft(item.Key);
+                double y = Canvas.GetTop(item.Key);
 
                 x += left;
                 y += top;
 
                 CharacterSprite characterSprite = new()
                 {
-                    ID = sprite.Value.ID,
+                    ID = item.Value.ID,
                     Position = new Point(x, y),
-                    FlipHorizontal = sprite.Value.FlipHorizontal,
-                    FlipVertical = sprite.Value.FlipVertical,
-                    SpriteID = sprite.Value.SpriteID,
-                    TileSetID = sprite.Value.TileSetID,
-                    Width = sprite.Value.Width,
-                    Height = sprite.Value.Height,
+                    FlipHorizontal = item.Value.FlipHorizontal,
+                    FlipVertical = item.Value.FlipVertical,
+                    SpriteID = item.Value.SpriteID,
+                    TileSetID = item.Value.TileSetID,
+                    Width = item.Value.Width,
+                    Height = item.Value.Height,
                 };
 
-                Canvas.SetLeft(sprite.Key, x);
-                Canvas.SetTop(sprite.Key, y);
+                Canvas.SetLeft(item.Key, x);
+                Canvas.SetTop(item.Key, y);
 
-                SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite, sprite.Value.BankID);
+                SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Dispatch(characterSprite, item.Value.BankID);
 
-                selectedSprites.Add(sprite.Value);
+                selectedSprites.Add(item.Value);
+            }
+        }
+
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
+        {
+            if (viewModel.SelectedFrameCollisions.Contains(item.Value.ID))
+            {
+                SpriteCollisionVO? collisionVO = viewModel.CharacterCollisions.Find(x => x.ID == item.Value.ID);
+
+                if (collisionVO == null)
+                    continue;
+
+                if (!updated)
+                {
+                    SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
+                    updated = true;
+                }
+
+                double x = Canvas.GetLeft(item.Key);
+                double y = Canvas.GetTop(item.Key);
+
+                x += left;
+                y += top;
+
+                SpriteCollisionVO vo = new()
+                {
+                    ActAsVO = true,
+                    ID = collisionVO.ID,
+                    Width = item.Value.Width,
+                    Height = item.Value.Height,
+                    PosX = (int)x,
+                    PosY = (int)y,
+                    Color = collisionVO.Color,
+                    Mask = collisionVO.Mask,
+                    CustomMask = collisionVO.CustomMask,
+                    AnimationID = collisionVO.AnimationID,
+                    FrameID = collisionVO.FrameID
+                };
+
+                SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(vo);
+
+                selectedCollisions.Add(item.Value);
             }
         }
 

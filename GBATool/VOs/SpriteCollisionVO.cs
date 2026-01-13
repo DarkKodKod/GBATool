@@ -21,20 +21,24 @@ public class SpriteCollisionVO : INotifyPropertyChanged
     public string ID { get; init; } = string.Empty;
     public string AnimationID { get; init; } = string.Empty;
     public string FrameID { get; init; } = string.Empty;
+    public bool ActAsVO { get; init; } = false; // This is because this object acts as VO and also as a property in a view
 
     public int Width
     {
         get => _width;
         set
         {
-            if (_width != value)
+            if (_width == value)
+                return;
+
+            _width = value;
+
+            if (!ActAsVO)
             {
-                _width = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(Width));
+                OnPropertyChanged(nameof(Width));
+            }
         }
     }
 
@@ -43,14 +47,17 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _height;
         set
         {
-            if (_height != value)
+            if (_height == value)
+                return;
+
+            _height = value;
+
+            if (!ActAsVO)
             {
-                _height = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(Height));
+                OnPropertyChanged(nameof(Height));
+            }
         }
     }
 
@@ -59,14 +66,17 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _posX;
         set
         {
-            if (_posX != value)
+            if (_posX == value)
+                return;
+
+            _posX = value;
+
+            if (!ActAsVO)
             {
-                _posX = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(PosX));
+                OnPropertyChanged(nameof(PosX));
+            }
         }
     }
 
@@ -75,14 +85,17 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _posY;
         set
         {
-            if (_posY != value)
+            if (_posY == value)
+                return;
+
+            _posY = value;
+
+            if (!ActAsVO)
             {
-                _posY = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(PosY));
+                OnPropertyChanged(nameof(PosY));
+            }
         }
     }
 
@@ -91,14 +104,17 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _color;
         set
         {
-            if (_color != value)
+            if (_color == value)
+                return;
+
+            _color = value;
+
+            if (!ActAsVO)
             {
-                _color = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(Color));
+                OnPropertyChanged(nameof(Color));
+            }
         }
     }
 
@@ -107,16 +123,19 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _collisionMask;
         set
         {
-            if (_collisionMask != value)
-            {
-                _collisionMask = value;
+            if (_collisionMask == value)
+                return;
 
+            _collisionMask = value;
+
+            if (!ActAsVO)
+            {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
+
+                OnPropertyChanged(nameof(Mask));
             }
 
             Visibility = value == CollisionMask.Custom ? Visibility.Visible : Visibility.Collapsed;
-
-            OnPropertyChanged(nameof(Mask));
         }
     }
 
@@ -125,14 +144,17 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         get => _customMask;
         set
         {
-            if (_customMask != value)
+            if (_customMask == value)
+                return;
+
+            _customMask = value;
+
+            if (!ActAsVO)
             {
-                _customMask = value;
-
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-            }
 
-            OnPropertyChanged(nameof(CustomMask));
+                OnPropertyChanged(nameof(CustomMask));
+            }
         }
     }
 
@@ -143,7 +165,10 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         {
             _visibility = value;
 
-            OnPropertyChanged(nameof(Visibility));
+            if (!ActAsVO)
+            {
+                OnPropertyChanged(nameof(Visibility));
+            }
         }
     }
 

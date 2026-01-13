@@ -27,6 +27,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private FileHandler? _fileHandler;
     private BankModel? _bankModel = null;
     private string[] _selectedFrameSprites = [];
+    private string[] _selectedFrameCollisions = [];
     private BankImageMetaData? _bankImageMetaData = null;
     private bool _enableOnionSkin;
     private bool _showCollisions;
@@ -159,6 +160,17 @@ public class CharacterFrameEditorViewModel : ViewModel
             }
 
             OnPropertyChanged(nameof(IsEnableMosaic));
+        }
+    }
+
+    public string[] SelectedFrameCollisions
+    {
+        get => _selectedFrameCollisions;
+        set
+        {
+            _selectedFrameCollisions = value;
+
+            OnPropertyChanged(nameof(SelectedFrameCollisions));
         }
     }
 
@@ -588,13 +600,19 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
     }
 
-    private void OnSelectFrameSprites(SpriteControlVO[] sprites, CollisionControlVO[] _)
+    private void OnSelectFrameSprites(SpriteControlVO[] sprites, CollisionControlVO[] collisions)
     {
         List<string> spritesIDs = [];
+        List<string> collisionsIDs = [];
 
         for (int i = 0; i < sprites.Length; i++)
         {
             spritesIDs.Add(sprites[i].ID);
+        }
+
+        for (int i = 0; i < collisions.Length; i++)
+        {
+            collisionsIDs.Add(collisions[i].ID);
         }
 
         EnableSpriteProperties = sprites.Length == 1;
@@ -605,6 +623,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         SelectedFrameSprites = [.. spritesIDs];
+        SelectedFrameCollisions = [.. collisionsIDs];
     }
 
     public override void OnDeactivate()
@@ -690,6 +709,21 @@ public class CharacterFrameEditorViewModel : ViewModel
         value.CustomMask = collision.CustomMask;
 
         FileHandler?.Save();
+
+        if (collision.ActAsVO)
+        {
+            foreach (SpriteCollisionVO item in CharacterCollisions)
+            {
+                if (item.ID == collision.ID)
+                {
+                    item.Width = collision.Width;
+                    item.Height = collision.Height;
+                    item.PosX = collision.PosX;
+                    item.PosY = collision.PosY;
+                    break;
+                }
+            }
+        }
     }
 
     private void OnNewCollisionIntoSprite(string animationID, string frameID, SpriteCollisionVO collisionVO)
