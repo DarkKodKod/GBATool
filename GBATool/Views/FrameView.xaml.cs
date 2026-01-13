@@ -160,9 +160,10 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<UpdateVerticalAxisSignal>().Listener += OnUpdateVerticalAxis;
         SignalManager.Get<UpdateOriginPositionSignal>().Listener += OnUpdateOriginPosition;
         SignalManager.Get<UpdateSpriteBaseSignal>().Listener += OnUpdateSpriteBase;
-        SignalManager.Get<SelectFrameSpritesSignal>().Listener += OnSelectFrameSprites;
+        SignalManager.Get<SelectFrameElementsSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener += OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteCollisionFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener += OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener += OnSpriteFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener += OnOptionShowCollisions;
@@ -174,6 +175,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         CollisionVisibility = ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions ? Visibility.Visible : Visibility.Collapsed;
 
         parentOfSelectedSprites.Children.Clear();
+        collisionCanvas.Children.Clear();
         onionSelectedSprites.Children.Clear();
         _selectedRectangles.Clear();
     }
@@ -184,9 +186,10 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<UpdateVerticalAxisSignal>().Listener -= OnUpdateVerticalAxis;
         SignalManager.Get<UpdateOriginPositionSignal>().Listener -= OnUpdateOriginPosition;
         SignalManager.Get<UpdateSpriteBaseSignal>().Listener -= OnUpdateSpriteBase;
-        SignalManager.Get<SelectFrameSpritesSignal>().Listener -= OnSelectFrameSprites;
+        SignalManager.Get<SelectFrameElementsSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener -= OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteCollisionFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener -= OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener -= OnSpriteFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener -= OnOptionShowCollisions;
@@ -259,7 +262,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void OnSelectFrameSprites(SpriteControlVO[] sprites)
+    private void OnSelectFrameSprites(SpriteControlVO[] sprites, CollisionControlVO[] collisions)
     {
         parentOfSelectedSprites.Children.Clear();
         _selectedRectangles.Clear();
@@ -285,6 +288,29 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
             Canvas.SetLeft(rectangle, imagePosX);
 
             _selectedRectangles.Add(sprites[i].ID, rectangle);
+        }
+
+        for (int i = 0; i < collisions.Length; i++)
+        {
+            Rectangle rectangle = new()
+            {
+                Visibility = Visibility.Visible,
+                Width = collisions[i].Width,
+                Height = collisions[i].Height,
+                Stroke = new SolidColorBrush(Color.FromArgb(255, 255, 0, 255)),
+                IsHitTestVisible = false,
+                StrokeThickness = 0.4
+            };
+
+            parentOfSelectedSprites.Children.Add(rectangle);
+
+            int imagePosY = (int)Canvas.GetTop(collisions[i].Rectangle);
+            int imagePosX = (int)Canvas.GetLeft(collisions[i].Rectangle);
+
+            Canvas.SetTop(rectangle, imagePosY);
+            Canvas.SetLeft(rectangle, imagePosX);
+
+            _selectedRectangles.Add(collisions[i].ID, rectangle);
         }
     }
 

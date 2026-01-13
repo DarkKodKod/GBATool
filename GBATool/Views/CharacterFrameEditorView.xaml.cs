@@ -23,7 +23,7 @@ public partial class CharacterFrameEditorView : UserControl
 {
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
     private readonly List<Image> _onionSkinImages = [];
-    private readonly Dictionary<string, Rectangle> _rectanglesInFrame = [];
+    private readonly Dictionary<Rectangle, CollisionControlVO> _rectanglesInFrame = [];
     private Point _initialMousePositionInCanvas;
     private string _bankID = string.Empty;
 
@@ -313,14 +313,20 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        if (_rectanglesInFrame.TryGetValue(collision.ID, out Rectangle? rect))
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _rectanglesInFrame)
         {
-            rect.Fill = collision.Color;
-            rect.Width = collision.Width;
-            rect.Height = collision.Height;
+            if (item.Value.ID == collision.ID)
+            {
+                if (item.Value.Rectangle == null)
+                    return;
 
-            Canvas.SetLeft(rect, collision.PosX);
-            Canvas.SetTop(rect, collision.PosY);
+                item.Value.Rectangle.Fill = collision.Color;
+                item.Value.Rectangle.Width = collision.Width;
+                item.Value.Rectangle.Height = collision.Height;
+
+                Canvas.SetLeft(item.Value.Rectangle, collision.PosX);
+                Canvas.SetTop(item.Value.Rectangle, collision.PosY);
+            }
         }
     }
 
@@ -342,11 +348,17 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        if (_rectanglesInFrame.TryGetValue(collisionID, out Rectangle? rect))
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _rectanglesInFrame)
         {
-            frameViewView.CollisionCanvas.Children.Remove(rect);
+            if (item.Value.ID == collisionID)
+            {
+                if (item.Value.Rectangle == null)
+                    return;
 
-            _rectanglesInFrame.Remove(collisionID);
+                frameViewView.CollisionCanvas.Children.Remove(item.Value.Rectangle);
+
+                _rectanglesInFrame.Remove(item.Value.Rectangle);
+            }
         }
     }
 
@@ -404,13 +416,20 @@ public partial class CharacterFrameEditorView : UserControl
             VerticalAlignment = VerticalAlignment.Top,
         };
 
+        CollisionControlVO collision = new()
+        {
+            Rectangle = rect,
+            ID = item.ID,
+            Height = item.Height,
+            Width = item.Width,
+            PositionX = item.PosX,
+            PositionY = item.PosY
+        };
+
         Canvas.SetLeft(rect, item.PosX);
         Canvas.SetTop(rect, item.PosY);
 
-        if (!_rectanglesInFrame.TryGetValue(item.ID, out _))
-        {
-            _rectanglesInFrame.Add(item.ID, rect);
-        }
+        _rectanglesInFrame.Add(rect, collision);
 
         _ = frameViewView.CollisionCanvas.Children.Add(rect);
     }
@@ -682,7 +701,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void FrameView_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.OriginalSource is not Canvas and not Image)
+        if (e.OriginalSource is not Canvas and not Rectangle)
         {
             return;
         }
@@ -701,35 +720,52 @@ public partial class CharacterFrameEditorView : UserControl
 
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
 
+        List<CollisionControlVO> selectedCollisions = [];
         List<SpriteControlVO> selectedSprites = [];
 
-        GetListSpriteControlSelected(frameViewView.FrameCanvas, _initialMousePositionInCanvas, ref selectedSprites);
+        bool canSelectCollisions = viewModel.ShowCollisions;
 
-        bool isOneOfThePreviouslySelected = false;
+        // this will prioritize the rectangles over the images
+        if (canSelectCollisions &&
+            e.OriginalSource is Rectangle)
+        {
+            GetListRectanglesSelected(frameViewView.collisionCanvas, _initialMousePositionInCanvas, ref selectedCollisions);
+        }
+        else
+        {
+            GetListSpriteControlSelected(frameViewView.FrameCanvas, _initialMousePositionInCanvas, ref selectedSprites);
+        }
+
+        bool wasItAlreadySelected = false;
 
         foreach (SpriteControlVO spriteVO in selectedSprites)
         {
             if (viewModel.SelectedFrameSprites.Contains(spriteVO.ID))
             {
-                isOneOfThePreviouslySelected = true;
+                wasItAlreadySelected = true;
             }
         }
 
         if (viewModel.SelectedFrameSprites.Length == 0 ||
-            !isOneOfThePreviouslySelected)
+            !wasItAlreadySelected)
         {
-            SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
+            SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
         }
     }
 
     private void FrameView_MouseUp(object sender, MouseButtonEventArgs e)
     {
-        if (e.OriginalSource is not Canvas and not Image)
+        if (e.OriginalSource is not Canvas and not Image and not Rectangle)
         {
             return;
         }
 
         if (frameView.DataContext is not FrameView frameViewView)
+        {
+            return;
+        }
+
+        if (DataContext is not CharacterFrameEditorViewModel viewModel)
         {
             return;
         }
@@ -740,56 +776,75 @@ public partial class CharacterFrameEditorView : UserControl
         }
 
         List<SpriteControlVO> selectedSprites = [];
+        List<CollisionControlVO> selectedCollisions = [];
+
+        bool canSelectCollisions = viewModel.ShowCollisions;
 
         if (frameViewView.MouseSelectionActive == Visibility.Visible)
         {
-            selectedSprites = CheckMouseAreaSelected(frameViewView);
+            (selectedSprites, selectedCollisions) = CheckMouseAreaSelected(frameViewView, canSelectCollisions);
         }
 
         Point pos = e.GetPosition(frameViewView.FrameCanvas);
 
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(pos);
 
+        if (canSelectCollisions && selectedCollisions.Count == 0)
+        {
+            GetListRectanglesSelected(frameViewView.collisionCanvas, pos, ref selectedCollisions);
+        }
+
         if (selectedSprites.Count == 0)
         {
             GetListSpriteControlSelected(frameViewView.FrameCanvas, pos, ref selectedSprites);
         }
 
-        SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
+        SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
     }
 
     private void GetListSpriteControlSelected(Canvas canvas, Point position, ref List<SpriteControlVO> selectedSprites)
     {
-        List<Image> images = GetSelectionMouseOver(canvas, position);
+        List<Image> images = GetSelectionMouseOver<Image>(canvas, position);
 
         if (images.Count > 0)
         {
             if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
             {
-                if (spriteControl != null)
-                {
-                    selectedSprites.Add(spriteControl);
-                }
+                selectedSprites.Add(spriteControl);
             }
         }
     }
 
-    private static List<Image> GetSelectionMouseOver(Canvas canvas, Point positionInCanvas)
+    private void GetListRectanglesSelected(Canvas canvas, Point position, ref List<CollisionControlVO> selectedRectangles)
     {
-        CanvasHitDetection<Image, EllipseGeometry> hitDetection = new(new(positionInCanvas, 1.0, 1.0), canvas);
-        List<Image> hitList = hitDetection.HitTest();
+        List<Rectangle> rects = GetSelectionMouseOver<Rectangle>(canvas, position);
+
+        if (rects.Count > 0)
+        {
+            if (_rectanglesInFrame.TryGetValue(rects.First(), out CollisionControlVO? collision))
+            {
+                selectedRectangles.Add(collision);
+            }
+        }
+    }
+
+    private static List<T> GetSelectionMouseOver<T>(Canvas canvas, Point positionInCanvas) where T : FrameworkElement, new()
+    {
+        CanvasHitDetection<T, EllipseGeometry> hitDetection = new(new(positionInCanvas, 1.0, 1.0), canvas);
+        List<T> hitList = hitDetection.HitTest();
 
         return hitList;
     }
 
-    private List<SpriteControlVO> CheckMouseAreaSelected(FrameView frameViewView)
+    private (List<SpriteControlVO>, List<CollisionControlVO>) CheckMouseAreaSelected(FrameView frameViewView, bool canSelectCollisions)
     {
         List<SpriteControlVO> sprites = [];
+        List<CollisionControlVO> collisions = [];
 
         if (frameViewView.MouseSelectionWidth == 0 ||
             frameViewView.MouseSelectionHeight == 0)
         {
-            return sprites;
+            return (sprites, collisions);
         }
 
         Rect rectangle = new(
@@ -812,7 +867,24 @@ public partial class CharacterFrameEditorView : UserControl
             }
         }
 
-        return sprites;
+        if (canSelectCollisions)
+        {
+            CanvasHitDetection<Rectangle, RectangleGeometry> hitDetection2 = new(new(rectangle), frameViewView.collisionCanvas);
+            List<Rectangle> hitList2 = hitDetection2.HitTest();
+
+            if (hitList2.Count > 0)
+            {
+                foreach (Rectangle item in hitList2)
+                {
+                    if (_rectanglesInFrame.TryGetValue(item, out CollisionControlVO? collision))
+                    {
+                        collisions.Add(collision);
+                    }
+                }
+            }
+        }
+
+        return (sprites, collisions);
     }
 
     private void FrameView_DragLeave(object sender, DragEventArgs e)
@@ -996,6 +1068,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         bool updated = false;
         List<SpriteControlVO> selectedSprites = [];
+        List<CollisionControlVO> selectedCollisions = [];
 
         foreach (KeyValuePair<Image, SpriteControlVO> sprite in _spritesInFrames)
         {
@@ -1036,9 +1109,9 @@ public partial class CharacterFrameEditorView : UserControl
 
         e.Handled = updated;
 
-        if (selectedSprites.Count > 0)
+        if (selectedSprites.Count > 0 || selectedCollisions.Count > 0)
         {
-            SignalManager.Get<SelectFrameSpritesSignal>().Dispatch([.. selectedSprites]);
+            SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
         }
     }
 }

@@ -398,7 +398,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
-        SignalManager.Get<SelectFrameSpritesSignal>().Listener += OnSelectFrameSprites;
+        SignalManager.Get<SelectFrameElementsSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
@@ -588,7 +588,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
     }
 
-    private void OnSelectFrameSprites(SpriteControlVO[] sprites)
+    private void OnSelectFrameSprites(SpriteControlVO[] sprites, CollisionControlVO[] _)
     {
         List<string> spritesIDs = [];
 
@@ -613,7 +613,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
-        SignalManager.Get<SelectFrameSpritesSignal>().Listener -= OnSelectFrameSprites;
+        SignalManager.Get<SelectFrameElementsSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
         SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
