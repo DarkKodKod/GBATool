@@ -247,7 +247,7 @@ public partial class CharacterFrameEditorView : UserControl
             {
                 if (_spritesInFrames.TryGetValue(item.SpriteControl.Image, out SpriteControlVO? spriteControl))
                 {
-                    SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Dispatch([spriteControl.ID]);
+                    SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch([spriteControl.ID]);
 
                     _ = _spritesInFrames.Remove(item.SpriteControl.Image);
                 }
@@ -403,7 +403,7 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        SolidColorBrush brush = new(Color.FromRgb(item.Color.Color.R, item.Color.Color.G, item.Color.Color.B));
+        SolidColorBrush brush = new(Color.FromArgb(item.Color.Color.A, item.Color.Color.R, item.Color.Color.G, item.Color.Color.B));
 
         Rectangle rect = new()
         {
@@ -988,7 +988,7 @@ public partial class CharacterFrameEditorView : UserControl
         {
             string[] ids = [.. characterDragObjects.Select(o => o.SpriteControl.ID)];
 
-            SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Dispatch(ids);
+            SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch(ids);
 
             Dictionary<Image, SpriteControlVO> spritesInFramesTmp = [];
 
@@ -1154,6 +1154,43 @@ public partial class CharacterFrameEditorView : UserControl
         if (selectedSprites.Count > 0 || selectedCollisions.Count > 0)
         {
             SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
+        }
+    }
+
+    private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListViewItem listViewItem)
+        {
+            return;
+        }
+
+        SpriteCollisionVO collision = (SpriteCollisionVO)lvFrameCollisions.ItemContainerGenerator.ItemFromContainer(listViewItem);
+
+        foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
+        {
+            if (item.Value.ID == collision.ID)
+            {
+                continue;
+            }
+
+            if (item.Value.Rectangle == null)
+            {
+                return;
+            }
+
+            CollisionControlVO collisionVO = new()
+            {
+                ID = item.Value.ID,
+                Rectangle = item.Value.Rectangle,
+                Width = item.Value.Width,
+                Height = item.Value.Height,
+                PositionX = item.Value.PositionX,
+                PositionY = item.Value.PositionY
+            };
+
+            SignalManager.Get<SelectFrameElementsSignal>().Dispatch([], [collisionVO]);
+
+            break;
         }
     }
 }

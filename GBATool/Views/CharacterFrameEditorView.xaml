@@ -184,6 +184,7 @@
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>

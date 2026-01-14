@@ -162,8 +162,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<UpdateSpriteBaseSignal>().Listener += OnUpdateSpriteBase;
         SignalManager.Get<SelectFrameElementsSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener += OnResetFrameSpritesSelectionArea;
-        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
-        SignalManager.Get<DeleteCollisionFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener += OnDeleteElementsFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener += OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener += OnSpriteFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener += OnOptionShowCollisions;
@@ -188,8 +187,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<UpdateSpriteBaseSignal>().Listener -= OnUpdateSpriteBase;
         SignalManager.Get<SelectFrameElementsSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener -= OnResetFrameSpritesSelectionArea;
-        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
-        SignalManager.Get<DeleteCollisionFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener -= OnDeleteElementsFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener -= OnSpriteFrameHideSelection;
         SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener -= OnSpriteFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener -= OnOptionShowCollisions;
@@ -198,9 +196,14 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         MouseSelectionActive = Visibility.Collapsed;
     }
 
-    private void OnOptionShowCollisions(bool visible)
+    private void OnOptionShowCollisions(bool visible, string[] collisionIDs)
     {
         CollisionVisibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+        if (!visible)
+        {
+            OnDeleteElementsFromCharacterFrame(collisionIDs);
+        }
     }
 
     private void SetCrossPosition(int centerPosX, int centerPosY)
@@ -221,17 +224,17 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         OriginGuide = $"M{centerPosX},{centerPosY}L200,{centerPosY}M{centerPosX},{centerPosY}L{centerPosX},200";
     }
 
-    private void OnDeleteSpriteFromCharacterFrame(string[] spriteIDs)
+    private void OnDeleteElementsFromCharacterFrame(string[] elementIDs)
     {
-        for (int i = 0; i < spriteIDs.Length; i++)
+        for (int i = 0; i < elementIDs.Length; i++)
         {
-            if (_selectedRectangles.TryGetValue(spriteIDs[i], out Rectangle? rect))
+            if (_selectedRectangles.TryGetValue(elementIDs[i], out Rectangle? rect))
             {
                 if (rect != null)
                 {
                     parentOfSelectedSprites.Children.Remove(rect);
 
-                    _selectedRectangles.Remove(spriteIDs[i]);
+                    _selectedRectangles.Remove(elementIDs[i]);
                 }
             }
         }

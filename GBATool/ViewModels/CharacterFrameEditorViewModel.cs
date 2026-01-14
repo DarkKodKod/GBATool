@@ -219,10 +219,15 @@ public class CharacterFrameEditorViewModel : ViewModel
             {
                 _showCollisions = value;
 
-                ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions = value;
+                ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions = _showCollisions;
                 ModelManager.Get<GBAToolConfigurationModel>().Save();
 
-                SignalManager.Get<OptionShowCollisionsSignal>().Dispatch(value);
+                SignalManager.Get<OptionShowCollisionsSignal>().Dispatch(_showCollisions, SelectedFrameCollisions);
+
+                if (!_showCollisions)
+                {
+                    SelectedFrameCollisions = [];
+                }
             }
 
             OnPropertyChanged(nameof(ShowCollisions));
@@ -412,7 +417,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<SelectFrameElementsSignal>().Listener += OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener += OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener += OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
@@ -634,7 +639,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<SelectFrameElementsSignal>().Listener -= OnSelectFrameSprites;
         SignalManager.Get<AddOrUpdateSpriteIntoCharacterFrameSignal>().Listener -= OnAddOrUpdateSpriteIntoCharacterFrame;
-        SignalManager.Get<DeleteSpritesFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
+        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
@@ -660,7 +665,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             if (item.ID == collisionID)
             {
-                item.Color = new SolidColorBrush(newColor);
+                item.Color = new SolidColorBrush(Color.FromArgb(SpriteCollisionVO.Transparency, newColor.R, newColor.G, newColor.B));
                 break;
             }
         }

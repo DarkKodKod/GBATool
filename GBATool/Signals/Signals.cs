@@ -24,7 +24,7 @@ public class WriteBuildOutputSignal : Signal<string, OutputMessageType, string> 
 public class MouseWheelSignal : Signal<MouseWheelVO> { }
 public class MouseImageSelectedSignal : Signal<Image, Point> { }
 public class OptionOnionSkinSignal : Signal<bool> { }
-public class OptionShowCollisionsSignal : Signal<bool> { }
+public class OptionShowCollisionsSignal : Signal<bool, string[]> { }
 public class ProjectBuildCompleteSignal : Signal { }
 
 // MainWindowViewModel
@@ -115,8 +115,7 @@ public class PlayCharacterAnimationSignal : Signal<string> { }
 public class AddOrUpdateSpriteIntoCharacterFrameSignal : Signal<CharacterSprite, string> { }
 public class LoadWithSpriteControlsSignal : Signal<List<SpriteControlVO>, string, string> { }
 public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
-public class DeleteSpritesFromCharacterFrameSignal : Signal<string[]> { }
-public class DeleteCollisionFromCharacterFrameSignal : Signal<string[]> { }
+public class DeleteElementsFromCharacterFrameSignal : Signal<string[]> { }
 public class SpriteFrameHideSelectionSignal : Signal { }
 public class SpriteFrameShowSelectionSignal : Signal<CharacterDragObjectVO[]> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }

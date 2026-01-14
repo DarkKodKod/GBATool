@@ -28,5 +28,6 @@ public class DeleteCollisionCommand : Command
         string collisionID = (string)values[2];
 
         SignalManager.Get<DeleteCollisionSignal>().Dispatch(animationID, frameID, collisionID);
+        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch([collisionID]);
     }
 }

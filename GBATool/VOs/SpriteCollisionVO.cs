@@ -9,6 +9,8 @@ namespace GBATool.VOs;
 
 public class SpriteCollisionVO : INotifyPropertyChanged
 {
+    public const int Transparency = 110;
+
     private CollisionMask _collisionMask;
     private Visibility _visibility;
     private int _customMask;

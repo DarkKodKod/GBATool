@@ -30,7 +30,7 @@ public class AddNewCollisionIntoSpriteFrameCommand : Command
             Height = 50,
             PosX = (CharacterUtils.CanvasWidth / 2) / 2,
             PosY = (CharacterUtils.CanvasHeight / 2) / 2,
-            Color = new SolidColorBrush(Color.FromArgb(50, 255, 0, 0)),
+            Color = new SolidColorBrush(Color.FromArgb(SpriteCollisionVO.Transparency, 255, 0, 0)),
             Mask = CollisionMask.Hitbox,
             CustomMask = 0,
             AnimationID = animationID,
