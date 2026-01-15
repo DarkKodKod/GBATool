@@ -149,7 +149,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
     private async Task WriteSpriteFileHeader(StreamWriter outputFile, CharacterModel model, string name)
     {
         await WriteHeader(outputFile, name);
-        await WriteSpritesDeclarations(outputFile, model);
+        await WriteBanksAndPalettesHeaders(outputFile, model);
         await WriteClassDeclarations(outputFile, model, name);
         await WriteFooter(outputFile, name);
     }
@@ -200,10 +200,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
     }
 
-    private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel characterModel)
+    private async Task WriteBanksAndPalettesHeaders(StreamWriter outputFile, CharacterModel characterModel)
     {
         string paletteName = string.Empty;
-        List<string> alreadyUsedDeclaration = [];
 
         PaletteModel? paletteModel = CharacterUtils.GetPaletteUsedByCharacter(characterModel);
 
@@ -415,9 +414,13 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("#include \"character.h\"");
 
         await outputFile.WriteAsync(Environment.NewLine);
+    }
 
-        await outputFile.WriteLineAsync("namespace bn::sprite_items");
-        await outputFile.WriteLineAsync("{");
+    private async Task WriteSpritesDeclarations(StreamWriter outputFile, CharacterModel characterModel)
+    {
+        await outputFile.WriteLineAsync("public: // Sprite items");
+
+        List<string> alreadyUsedDeclaration = [];
 
         int countAnimations = 0;
 
@@ -435,9 +438,10 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                 {
                     if (!alreadyUsedDeclaration.Exists(x => x == sprite.SpriteName))
                     {
-                        await outputFile.WriteLineAsync($"    constexpr inline sprite_item {sprite.SpriteName}(sprite_shape_size({sprite.SpriteShape}, {sprite.SpriteSize}),");
-                        await outputFile.WriteLineAsync($"           sprite_tiles_item(span<const tile>({sprite.Tiles}, {sprite.TilesSize}), {frame.BppMode}, compression_type::NONE, 1),");
-                        await outputFile.WriteLineAsync($"           sprite_palette_item(span<const color>({frame.Palette}, {frame.PaletteSize}), {frame.BppMode}, compression_type::NONE));");
+                        await outputFile.WriteLineAsync($"    static constexpr bn::sprite_item {sprite.SpriteName} = bn::sprite_item(");
+                        await outputFile.WriteLineAsync($"        bn::sprite_shape_size(bn::{sprite.SpriteShape}, bn::{sprite.SpriteSize}),");
+                        await outputFile.WriteLineAsync($"        bn::sprite_tiles_item(bn::span<const bn::tile>({sprite.Tiles}, {sprite.TilesSize}), bn::{frame.BppMode}, bn::compression_type::NONE, 1),");
+                        await outputFile.WriteLineAsync($"        bn::sprite_palette_item(bn::span<const bn::color>({frame.Palette}, {frame.PaletteSize}), bn::{frame.BppMode}, bn::compression_type::NONE));");
 
                         alreadyUsedDeclaration.Add(sprite.SpriteName);
                     }
@@ -463,7 +467,6 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
             }
         }
 
-        await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
     }
 
@@ -509,6 +512,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("protected:");
         await outputFile.WriteLineAsync($"    bn::vector<bn::sprite_ptr, {numberMaxSpritesPerFrame}> _frameSprites;");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await WriteSpritesDeclarations(outputFile, model);
         await outputFile.WriteLineAsync("};");
     }
 
@@ -585,7 +590,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
 
         for (int i = 0; i < sprites.Count; ++i)
         {
-            await outputFile.WriteAsync($"    {{ &bn::sprite_items::{sprites[i].spriteName}, {sprites[i].xpos}, {sprites[i].ypos}, {sprites[i].flippedX} }}");
+            await outputFile.WriteAsync($"    {{ &{className}::{sprites[i].spriteName}, {sprites[i].xpos}, {sprites[i].ypos}, {sprites[i].flippedX} }}");
 
             if (i < sprites.Count - 1)
                 await outputFile.WriteAsync(",");
