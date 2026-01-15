@@ -12,7 +12,7 @@ public class SpriteCollisionVO : INotifyPropertyChanged
     public const int Transparency = 110;
 
     private CollisionMask _collisionMask;
-    private Visibility _visibility;
+    private Visibility _visibility = Visibility.Collapsed;
     private int _customMask;
     private int _width;
     private int _height;

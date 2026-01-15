@@ -150,8 +150,8 @@ public partial class CharacterFrameEditorView : UserControl
 
             Point elementPosition = e.GetPosition(bankViewerView.Canvas);
 
-            List<CharacterDragObjectVO> arrayOfDataObjects = [];
-            arrayOfDataObjects.Add(new CharacterDragObjectVO(spriteControl, elementPosition.X - spriteInfo.OffsetX, elementPosition.Y - spriteInfo.OffsetY));
+            List<FrameElementDragObjectVO> arrayOfDataObjects = [];
+            arrayOfDataObjects.Add(new FrameElementDragObjectVO(spriteControl, elementPosition.X - spriteInfo.OffsetX, elementPosition.Y - spriteInfo.OffsetY));
 
             DataObject data = new(arrayOfDataObjects);
 
@@ -176,11 +176,11 @@ public partial class CharacterFrameEditorView : UserControl
 
         Point mousePosition = e.GetPosition(bankViewerView.Canvas);
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             if (item.SpriteControl.Image == null)
             {
@@ -214,11 +214,11 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             if (item.SpriteControl.Image == null)
             {
@@ -236,11 +236,11 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             // If the dragging object is comming from the FrameView then it needs to be removed from the Character model too
             if (item.SpriteControl.Image != null)
@@ -500,11 +500,11 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             if (!string.IsNullOrEmpty(_bankID) && item.SpriteControl.BankID != _bankID)
             {
@@ -552,7 +552,7 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void RemoveFromFrameViewTempImage(FrameView frameViewView, CharacterDragObjectVO item)
+    private void RemoveFromFrameViewTempImage(FrameView frameViewView, FrameElementDragObjectVO item)
     {
         if (item.SpriteControl.Image == null)
         {
@@ -673,11 +673,11 @@ public partial class CharacterFrameEditorView : UserControl
 
         Point mousePosition = e.GetPosition(frameViewView.FrameCanvas);
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             if (item.SpriteControl.Image == null)
             {
@@ -899,11 +899,11 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        object data = e.Data.GetData(typeof(List<CharacterDragObjectVO>));
+        object data = e.Data.GetData(typeof(List<FrameElementDragObjectVO>));
 
-        List<CharacterDragObjectVO> list = (List<CharacterDragObjectVO>)data;
+        List<FrameElementDragObjectVO> list = (List<FrameElementDragObjectVO>)data;
 
-        foreach (CharacterDragObjectVO item in list)
+        foreach (FrameElementDragObjectVO item in list)
         {
             RemoveFromFrameViewTempImage(frameViewView, item);
         }
@@ -951,7 +951,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void DragImages(Point positionInCanvas, string[] selectedFrameSprites, DependencyObject dragSource)
     {
-        List<CharacterDragObjectVO> characterDragObjects = [];
+        List<FrameElementDragObjectVO> characterDragObjects = [];
 
         for (int i = 0; i < selectedFrameSprites.Length; i++)
         {

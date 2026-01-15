@@ -248,7 +248,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void OnSpriteFrameShowSelection(CharacterDragObjectVO[] sprites)
+    private void OnSpriteFrameShowSelection(FrameElementDragObjectVO[] sprites)
     {
         for (int i = 0; i < sprites.Length; i++)
         {
