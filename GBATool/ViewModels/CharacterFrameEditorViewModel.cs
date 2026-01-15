@@ -681,7 +681,9 @@ public class CharacterFrameEditorViewModel : ViewModel
         }
 
         if (_dontSave)
+        {
             return;
+        }   
 
         var model = CharacterModel;
 
@@ -705,13 +707,54 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        value.Width = collision.Width;
-        value.Height = collision.Height;
-        value.PosX = collision.PosX;
-        value.PosY = collision.PosY;
-        value.Color = collision.Color.Color;
-        value.Mask = (int)collision.Mask;
-        value.CustomMask = collision.CustomMask;
+        bool needToSave = false;
+
+        if (value.Width != collision.Width)
+        {
+            value.Width = collision.Width;
+            needToSave = true;
+        }   
+        
+        if (value.Height != collision.Height)
+        {
+            value.Height = collision.Height;
+            needToSave = true;
+        }
+        
+        if (value.PosX != collision.PosX)
+        {
+            value.PosX = collision.PosX;
+            needToSave = true;
+        }
+
+        if (value.PosY != collision.PosY)
+        {
+            value.PosY = collision.PosY;
+            needToSave = true;
+        }
+        
+        if (value.Color != collision.Color.Color)
+        {
+            value.Color = collision.Color.Color;
+            needToSave = true;
+        }
+        
+        if (value.Mask != (int)collision.Mask)
+        {
+            value.Mask = (int)collision.Mask;
+            needToSave = true;
+        }
+        
+        if (value.CustomMask != collision.CustomMask)
+        {
+            value.CustomMask = collision.CustomMask;
+            needToSave = true;
+        }
+        
+        if (!needToSave)
+        {
+            return;
+        }
 
         FileHandler?.Save();
 
@@ -721,10 +764,12 @@ public class CharacterFrameEditorViewModel : ViewModel
             {
                 if (item.ID == collision.ID)
                 {
+                    item.ActAsVO = true; // once here we dont need to send the message of something has changed again
                     item.Width = collision.Width;
                     item.Height = collision.Height;
                     item.PosX = collision.PosX;
                     item.PosY = collision.PosY;
+                    item.ActAsVO = false; // go back to normal state
                     break;
                 }
             }

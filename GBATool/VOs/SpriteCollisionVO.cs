@@ -23,7 +23,7 @@ public class SpriteCollisionVO : INotifyPropertyChanged
     public string ID { get; init; } = string.Empty;
     public string AnimationID { get; init; } = string.Empty;
     public string FrameID { get; init; } = string.Empty;
-    public bool ActAsVO { get; init; } = false; // This is because this object acts as VO and also as a property in a view
+    public bool ActAsVO { get; set; } // This is because this object acts as VO and also as a property in a view
 
     public int Width
     {
@@ -38,9 +38,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(Width));
             }
+
+            OnPropertyChanged(nameof(Width));
         }
     }
 
@@ -57,9 +57,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(Height));
             }
+
+            OnPropertyChanged(nameof(Height));
         }
     }
 
@@ -76,9 +76,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(PosX));
             }
+
+            OnPropertyChanged(nameof(PosX));
         }
     }
 
@@ -95,9 +95,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(PosY));
             }
+
+            OnPropertyChanged(nameof(PosY));
         }
     }
 
@@ -114,9 +114,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(Color));
             }
+
+            OnPropertyChanged(nameof(Color));
         }
     }
 
@@ -133,9 +133,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(Mask));
             }
+
+            OnPropertyChanged(nameof(Mask));
 
             Visibility = value == CollisionMask.Custom ? Visibility.Visible : Visibility.Collapsed;
         }
@@ -154,9 +154,9 @@ public class SpriteCollisionVO : INotifyPropertyChanged
             if (!ActAsVO)
             {
                 SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(this);
-
-                OnPropertyChanged(nameof(CustomMask));
             }
+
+            OnPropertyChanged(nameof(CustomMask));
         }
     }
 
@@ -167,10 +167,7 @@ public class SpriteCollisionVO : INotifyPropertyChanged
         {
             _visibility = value;
 
-            if (!ActAsVO)
-            {
-                OnPropertyChanged(nameof(Visibility));
-            }
+            OnPropertyChanged(nameof(Visibility));
         }
     }
 

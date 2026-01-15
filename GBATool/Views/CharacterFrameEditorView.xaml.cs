@@ -318,14 +318,28 @@ public partial class CharacterFrameEditorView : UserControl
             if (item.Value.ID == collision.ID)
             {
                 if (item.Value.Rectangle == null)
+                {
                     return;
+                }
 
                 item.Value.Rectangle.Fill = collision.Color;
                 item.Value.Rectangle.Width = collision.Width;
                 item.Value.Rectangle.Height = collision.Height;
 
+                CollisionControlVO updatedVO = new()
+                {
+                    ID = item.Value.ID,
+                    Rectangle = item.Value.Rectangle,
+                    Width = collision.Width,
+                    Height = collision.Height,
+                    PositionX = collision.PosX,
+                    PositionY = collision.PosY
+                };
+
                 Canvas.SetLeft(item.Value.Rectangle, collision.PosX);
                 Canvas.SetTop(item.Value.Rectangle, collision.PosY);
+
+                _collisionsInFrame[item.Value.Rectangle] = updatedVO;
             }
         }
     }
@@ -1168,7 +1182,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
         {
-            if (item.Value.ID == collision.ID)
+            if (item.Value.ID != collision.ID)
             {
                 continue;
             }
