@@ -164,7 +164,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener += OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener += OnDeleteElementsFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener += OnSpriteFrameHideSelection;
-        SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener += OnSpriteFrameShowSelection;
+        SignalManager.Get<ElementFrameShowSelectionSignal>().Listener += OnElementFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener += OnOptionShowCollisions;
         #endregion
 
@@ -189,7 +189,7 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Listener -= OnResetFrameSpritesSelectionArea;
         SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener -= OnDeleteElementsFromCharacterFrame;
         SignalManager.Get<SpriteFrameHideSelectionSignal>().Listener -= OnSpriteFrameHideSelection;
-        SignalManager.Get<SpriteFrameShowSelectionSignal>().Listener -= OnSpriteFrameShowSelection;
+        SignalManager.Get<ElementFrameShowSelectionSignal>().Listener -= OnElementFrameShowSelection;
         SignalManager.Get<OptionShowCollisionsSignal>().Listener -= OnOptionShowCollisions;
         #endregion
 
@@ -248,19 +248,24 @@ public partial class FrameView : UserControl, INotifyPropertyChanged
         }
     }
 
-    private void OnSpriteFrameShowSelection(FrameElementDragObjectVO[] sprites)
+    private void OnElementFrameShowSelection(FrameElementDragObjectVO[] elements)
     {
-        for (int i = 0; i < sprites.Length; i++)
+        for (int i = 0; i < elements.Length; i++)
         {
-            if (_selectedRectangles.TryGetValue(sprites[i].SpriteControl.ID, out Rectangle? rectangle))
+            if (_selectedRectangles.TryGetValue(elements[i].DragableObject.ID, out Rectangle? rectangle))
             {
                 rectangle.Visibility = Visibility.Visible;
 
-                int imagePosY = (int)Canvas.GetTop(sprites[i].SpriteControl.Image);
-                int imagePosX = (int)Canvas.GetLeft(sprites[i].SpriteControl.Image);
-
-                Canvas.SetTop(rectangle, imagePosY);
-                Canvas.SetLeft(rectangle, imagePosX);
+                if (elements[i].DragableObject is SpriteControlVO spriteVO)
+                {
+                    Canvas.SetTop(rectangle, (int)Canvas.GetTop(spriteVO.Image));
+                    Canvas.SetLeft(rectangle, (int)Canvas.GetLeft(spriteVO.Image));
+                }
+                else if (elements[i].DragableObject is CollisionControlVO collisionVO)
+                {
+                    Canvas.SetTop(rectangle, (int)Canvas.GetTop(collisionVO.Rectangle));
+                    Canvas.SetLeft(rectangle, (int)Canvas.GetLeft(collisionVO.Rectangle));
+                }
             }
         }
     }

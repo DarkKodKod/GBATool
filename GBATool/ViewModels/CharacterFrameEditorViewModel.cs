@@ -683,7 +683,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         if (_dontSave)
         {
             return;
-        }   
+        }
 
         var model = CharacterModel;
 
@@ -713,14 +713,14 @@ public class CharacterFrameEditorViewModel : ViewModel
         {
             value.Width = collision.Width;
             needToSave = true;
-        }   
-        
+        }
+
         if (value.Height != collision.Height)
         {
             value.Height = collision.Height;
             needToSave = true;
         }
-        
+
         if (value.PosX != collision.PosX)
         {
             value.PosX = collision.PosX;
@@ -732,25 +732,25 @@ public class CharacterFrameEditorViewModel : ViewModel
             value.PosY = collision.PosY;
             needToSave = true;
         }
-        
+
         if (value.Color != collision.Color.Color)
         {
             value.Color = collision.Color.Color;
             needToSave = true;
         }
-        
+
         if (value.Mask != (int)collision.Mask)
         {
             value.Mask = (int)collision.Mask;
             needToSave = true;
         }
-        
+
         if (value.CustomMask != collision.CustomMask)
         {
             value.CustomMask = collision.CustomMask;
             needToSave = true;
         }
-        
+
         if (!needToSave)
         {
             return;

@@ -2,7 +2,7 @@
 
 namespace GBATool.VOs;
 
-public record SpriteControlVO
+public record SpriteControlVO : IFrameDraggable
 {
     public string ID { get; init; } = string.Empty;
     public Image? Image { get; init; }

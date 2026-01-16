@@ -117,7 +117,7 @@ public class LoadWithSpriteControlsSignal : Signal<List<SpriteControlVO>, string
 public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteControlVO>, string> { }
 public class DeleteElementsFromCharacterFrameSignal : Signal<string[]> { }
 public class SpriteFrameHideSelectionSignal : Signal { }
-public class SpriteFrameShowSelectionSignal : Signal<FrameElementDragObjectVO[]> { }
+public class ElementFrameShowSelectionSignal : Signal<FrameElementDragObjectVO[]> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }
 public class UpdateSpriteVisualPropertiesSignal : Signal<string, bool, bool> { }
 

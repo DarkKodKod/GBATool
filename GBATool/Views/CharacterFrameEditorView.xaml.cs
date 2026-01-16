@@ -182,23 +182,26 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            if (item.SpriteControl.Image == null)
+            if (item.DragableObject is SpriteControlVO spriteVO)
             {
-                continue;
+                if (spriteVO.Image == null)
+                {
+                    continue;
+                }
+
+                spriteVO.Image.IsHitTestVisible = false;
+
+                if (!bankViewerView.Canvas.Children.Contains(spriteVO.Image))
+                {
+                    _ = bankViewerView.Canvas.Children.Add(spriteVO.Image);
+                }
+
+                int exactPosX = (int)(mousePosition.X - item.OffsetX);
+                int exactPosY = (int)(mousePosition.Y - item.OffsetY);
+
+                Canvas.SetLeft(spriteVO.Image, exactPosX);
+                Canvas.SetTop(spriteVO.Image, exactPosY);
             }
-
-            item.SpriteControl.Image.IsHitTestVisible = false;
-
-            if (!bankViewerView.Canvas.Children.Contains(item.SpriteControl.Image))
-            {
-                _ = bankViewerView.Canvas.Children.Add(item.SpriteControl.Image);
-            }
-
-            int exactPosX = (int)(mousePosition.X - item.SpriteOffsetX);
-            int exactPosY = (int)(mousePosition.Y - item.SpriteOffsetY);
-
-            Canvas.SetLeft(item.SpriteControl.Image, exactPosX);
-            Canvas.SetTop(item.SpriteControl.Image, exactPosY);
         }
     }
 
@@ -220,12 +223,15 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            if (item.SpriteControl.Image == null)
+            if (item.DragableObject is SpriteControlVO spriteVO)
             {
-                continue;
-            }
+                if (spriteVO.Image == null)
+                {
+                    continue;
+                }
 
-            bankViewerView.Canvas.Children.Remove(item.SpriteControl.Image);
+                bankViewerView.Canvas.Children.Remove(spriteVO.Image);
+            }
         }
     }
 
@@ -242,20 +248,23 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            // If the dragging object is comming from the FrameView then it needs to be removed from the Character model too
-            if (item.SpriteControl.Image != null)
+            if (item.DragableObject is SpriteControlVO spriteVO)
             {
-                if (_spritesInFrames.TryGetValue(item.SpriteControl.Image, out SpriteControlVO? spriteControl))
+                // If the dragging object is comming from the FrameView then it needs to be removed from the Character model too
+                if (spriteVO.Image != null)
                 {
-                    SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch([spriteControl.ID]);
+                    if (_spritesInFrames.TryGetValue(spriteVO.Image, out SpriteControlVO? spriteControl))
+                    {
+                        SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch([spriteControl.ID]);
 
-                    _ = _spritesInFrames.Remove(item.SpriteControl.Image);
+                        _ = _spritesInFrames.Remove(spriteVO.Image);
+                    }
                 }
-            }
 
-            if (bankViewerView.Canvas.Children.Contains(item.SpriteControl.Image))
-            {
-                bankViewerView.Canvas.Children.Remove(item.SpriteControl.Image);
+                if (bankViewerView.Canvas.Children.Contains(spriteVO.Image))
+                {
+                    bankViewerView.Canvas.Children.Remove(spriteVO.Image);
+                }
             }
         }
     }
@@ -289,14 +298,16 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (SpriteControlVO vo in spriteVOList)
         {
-            SpriteControlVO? sprite = AddSpriteToFrameView(vo.ID, vo, vo.PositionX, vo.PositionY, vo.Image);
-
-            if (sprite != null && sprite.Image != null)
+            if (vo.Image == null)
             {
-                TransformImage(sprite.Image, vo.FlipHorizontal, vo.FlipVertical);
-
-                _ = frameViewView.FrameCanvas.Children.Add(sprite.Image);
+                continue;
             }
+
+            SpriteControlVO sprite = AddSpriteToFrameView(vo.ID, vo, vo.PositionX, vo.PositionY, vo.Image);
+
+            TransformImage(sprite.Image, vo.FlipHorizontal, vo.FlipVertical);
+
+            _ = frameViewView.FrameCanvas.Children.Add(sprite.Image);
         }
     }
 
@@ -333,7 +344,12 @@ public partial class CharacterFrameEditorView : UserControl
                     Width = collision.Width,
                     Height = collision.Height,
                     PositionX = collision.PosX,
-                    PositionY = collision.PosY
+                    PositionY = collision.PosY,
+                    Color = collision.Color,
+                    Mask = collision.Mask,
+                    CustomMask = collision.CustomMask,
+                    AnimationID = collision.AnimationID,
+                    FrameID = collision.FrameID
                 };
 
                 Canvas.SetLeft(item.Value.Rectangle, collision.PosX);
@@ -437,7 +453,12 @@ public partial class CharacterFrameEditorView : UserControl
             Height = item.Height,
             Width = item.Width,
             PositionX = item.PosX,
-            PositionY = item.PosY
+            PositionY = item.PosY,
+            Color = item.Color,
+            Mask = item.Mask,
+            CustomMask = item.CustomMask,
+            AnimationID = item.AnimationID,
+            FrameID = item.FrameID
         };
 
         Canvas.SetLeft(rect, item.PosX);
@@ -520,69 +541,139 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            if (!string.IsNullOrEmpty(_bankID) && item.SpriteControl.BankID != _bankID)
+            if (item.DragableObject is SpriteControlVO spriteVO)
             {
-                _ = MessageBox.Show("For now it is not possible to have a frame with sprites from two or more different banks", "Error", MessageBoxButton.OK);
-
-                RemoveFromFrameViewTempImage(frameViewView, item);
-                return;
-            }
-
-            if (string.IsNullOrEmpty(_bankID))
-            {
-                _bankID = item.SpriteControl.BankID;
-            }
-
-            if (frameViewView.FrameCanvas.Children.Contains(item.SpriteControl.Image))
-            {
-                string id = item.SpriteControl.ID;
-
-                if (id == "new")
+                if (!string.IsNullOrEmpty(_bankID) && spriteVO.BankID != _bankID)
                 {
-                    id = Guid.NewGuid().ToString();
+                    _ = MessageBox.Show("For now it is not possible to have a frame with sprites from two or more different banks", "Error", MessageBoxButton.OK);
+
+                    RemoveFromFrameViewTempElement(frameViewView, item);
+                    return;
                 }
 
-                Image image = new() { Source = item.SpriteControl.Image?.Source };
-
-                Point elementPosition = e.GetPosition(frameViewView.FrameCanvas);
-
-                int exactPosX = (int)(elementPosition.X - item.SpriteOffsetX);
-                int exactPosY = (int)(elementPosition.Y - item.SpriteOffsetY);
-
-                SpriteControlVO? sprite = AddSpriteToFrameView(id, item.SpriteControl, exactPosX, exactPosY, image);
-
-                if (sprite != null)
+                if (string.IsNullOrEmpty(_bankID))
                 {
-                    TransformImage(sprite.Image, item.SpriteControl.FlipHorizontal, item.SpriteControl.FlipVertical);
+                    _bankID = spriteVO.BankID;
+                }
+
+                if (frameViewView.FrameCanvas.Children.Contains(spriteVO.Image))
+                {
+                    string id = spriteVO.ID;
+
+                    if (id == "new")
+                    {
+                        id = Guid.NewGuid().ToString();
+                    }
+
+                    Image image = new() { Source = spriteVO.Image?.Source };
+
+                    Point elementPosition = e.GetPosition(frameViewView.FrameCanvas);
+
+                    int exactPosX = (int)(elementPosition.X - item.OffsetX);
+                    int exactPosY = (int)(elementPosition.Y - item.OffsetY);
+
+                    SpriteControlVO sprite = AddSpriteToFrameView(id, spriteVO, exactPosX, exactPosY, image);
+
+                    TransformImage(sprite.Image, spriteVO.FlipHorizontal, spriteVO.FlipVertical);
 
                     _ = frameViewView.FrameCanvas.Children.Add(sprite.Image);
+
+                    // remove the previous instance of the Image control in the canvas now that there is a new one to replace it.
+                    RemoveFromFrameViewTempElement(frameViewView, item);
+
+                    SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), spriteVO.BankID);
                 }
+            }
+            else if (item.DragableObject is CollisionControlVO collisionVO)
+            {
+                if (frameViewView.CollisionCanvas.Children.Contains(collisionVO.Rectangle))
+                {
+                    Point elementPosition = e.GetPosition(frameViewView.CollisionCanvas);
 
-                // remove the previous instance of the Image control in the canvas now that there is a new one to replace it.
-                RemoveFromFrameViewTempImage(frameViewView, item);
+                    int exactPosX = (int)(elementPosition.X - item.OffsetX);
+                    int exactPosY = (int)(elementPosition.Y - item.OffsetY);
 
-                SaveCharacterSpriteInformation(sprite, new Point(exactPosX, exactPosY), item.SpriteControl.BankID);
+                    CollisionControlVO collision = new()
+                    {
+                        Rectangle = collisionVO.Rectangle,
+                        ID = collisionVO.ID,
+                        Height = collisionVO.Height,
+                        Width = collisionVO.Width,
+                        PositionX = exactPosX,
+                        PositionY = exactPosY,
+                        Color = collisionVO.Color,
+                        Mask = collisionVO.Mask,
+                        CustomMask = collisionVO.CustomMask,
+                        AnimationID = collisionVO.AnimationID,
+                        FrameID = collisionVO.FrameID
+                    };
+
+                    Canvas.SetLeft(collisionVO.Rectangle, exactPosX);
+                    Canvas.SetTop(collisionVO.Rectangle, exactPosY);
+
+                    if (collisionVO.Rectangle != null)
+                    {
+                        if (!_collisionsInFrame.TryGetValue(collisionVO.Rectangle, out _))
+                        {
+                            _collisionsInFrame.Add(collisionVO.Rectangle, collision);
+                        }
+                    }
+
+                    SpriteCollisionVO vo = new()
+                    {
+                        ActAsVO = true,
+                        ID = collisionVO.ID,
+                        Width = collisionVO.Width,
+                        Height = collisionVO.Height,
+                        PosX = exactPosX,
+                        PosY = exactPosY,
+                        Color = collisionVO.Color,
+                        Mask = collisionVO.Mask,
+                        CustomMask = collisionVO.CustomMask,
+                        AnimationID = collisionVO.AnimationID,
+                        FrameID = collisionVO.FrameID
+                    };
+
+                    SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Dispatch(vo);
+                }
             }
         }
     }
 
-    private void RemoveFromFrameViewTempImage(FrameView frameViewView, FrameElementDragObjectVO item)
+    private void RemoveFromFrameViewTempElement(FrameView frameViewView, FrameElementDragObjectVO item)
     {
-        if (item.SpriteControl.Image == null)
+        if (item.DragableObject is SpriteControlVO spriteVO)
         {
-            return;
+            if (spriteVO.Image == null)
+            {
+                return;
+            }
+
+            if (_spritesInFrames.TryGetValue(spriteVO.Image, out _))
+            {
+                _ = _spritesInFrames.Remove(spriteVO.Image);
+            }
+
+            frameViewView.FrameCanvas.Children.Remove(spriteVO.Image);
+
+            if (_spritesInFrames.Count == 0)
+            {
+                _bankID = string.Empty;
+            }
         }
-
-        if (_spritesInFrames.TryGetValue(item.SpriteControl.Image, out _))
+        else if (item.DragableObject is CollisionControlVO collisionVO)
         {
-            _ = _spritesInFrames.Remove(item.SpriteControl.Image);
-        }
+            if (collisionVO.Rectangle == null)
+            {
+                return;
+            }
 
-        frameViewView.FrameCanvas.Children.Remove(item.SpriteControl.Image);
+            if (_collisionsInFrame.TryGetValue(collisionVO.Rectangle, out _))
+            {
+                _ = _collisionsInFrame.Remove(collisionVO.Rectangle);
+            }
 
-        if (_spritesInFrames.Count == 0)
-        {
-            _bankID = string.Empty;
+            frameViewView.CollisionCanvas.Children.Remove(collisionVO.Rectangle);
         }
     }
 
@@ -620,13 +711,8 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private SpriteControlVO? AddSpriteToFrameView(string id, SpriteControlVO draggingSprite, int exactPosX, int exactPosY, Image? image)
+    private SpriteControlVO AddSpriteToFrameView(string id, SpriteControlVO draggingSprite, int exactPosX, int exactPosY, Image image)
     {
-        if (image == null)
-        {
-            return null;
-        }
-
         SpriteControlVO sprite = new()
         {
             ID = id,
@@ -645,12 +731,9 @@ public partial class CharacterFrameEditorView : UserControl
         Canvas.SetLeft(sprite.Image, exactPosX);
         Canvas.SetTop(sprite.Image, exactPosY);
 
-        if (sprite.Image != null)
+        if (!_spritesInFrames.TryGetValue(sprite.Image, out _))
         {
-            if (!_spritesInFrames.TryGetValue(sprite.Image, out _))
-            {
-                _spritesInFrames.Add(sprite.Image, sprite);
-            }
+            _spritesInFrames.Add(sprite.Image, sprite);
         }
 
         return sprite;
@@ -693,23 +776,46 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            if (item.SpriteControl.Image == null)
+            if (item.DragableObject is SpriteControlVO spriteVO)
             {
-                continue;
-            }
+                if (spriteVO.Image == null)
+                {
+                    continue;
+                }
 
-            if (!frameViewView.FrameCanvas.Children.Contains(item.SpriteControl.Image))
+                if (!frameViewView.FrameCanvas.Children.Contains(spriteVO.Image))
+                {
+                    spriteVO.Image.IsHitTestVisible = false;
+
+                    _ = frameViewView.FrameCanvas.Children.Add(spriteVO.Image);
+                }
+
+                int exactPosX = (int)(mousePosition.X - item.OffsetX);
+                int exactPosY = (int)(mousePosition.Y - item.OffsetY);
+
+                Canvas.SetLeft(spriteVO.Image, exactPosX);
+                Canvas.SetTop(spriteVO.Image, exactPosY);
+            }
+            else if (item.DragableObject is CollisionControlVO collisionVO)
             {
-                item.SpriteControl.Image.IsHitTestVisible = false;
+                if (collisionVO.Rectangle == null)
+                {
+                    continue;
+                }
 
-                _ = frameViewView.FrameCanvas.Children.Add(item.SpriteControl.Image);
+                if (!frameViewView.CollisionCanvas.Children.Contains(collisionVO.Rectangle))
+                {
+                    collisionVO.Rectangle.IsHitTestVisible = false;
+
+                    _ = frameViewView.CollisionCanvas.Children.Add(collisionVO.Rectangle);
+                }
+
+                int exactPosX = (int)(mousePosition.X - item.OffsetX);
+                int exactPosY = (int)(mousePosition.Y - item.OffsetY);
+
+                Canvas.SetLeft(collisionVO.Rectangle, exactPosX);
+                Canvas.SetTop(collisionVO.Rectangle, exactPosY);
             }
-
-            int exactPosX = (int)(mousePosition.X - item.SpriteOffsetX);
-            int exactPosY = (int)(mousePosition.Y - item.SpriteOffsetY);
-
-            Canvas.SetLeft(item.SpriteControl.Image, exactPosX);
-            Canvas.SetTop(item.SpriteControl.Image, exactPosY);
         }
     }
 
@@ -740,28 +846,34 @@ public partial class CharacterFrameEditorView : UserControl
         bool canSelectCollisions = viewModel.ShowCollisions;
 
         // this will prioritize the rectangles over the images
-        if (canSelectCollisions &&
-            e.OriginalSource is Rectangle)
+        if (canSelectCollisions)
         {
-            GetListRectanglesSelected(frameViewView.collisionCanvas, _initialMousePositionInCanvas, ref selectedCollisions);
-        }
-        else
-        {
-            GetListSpriteControlSelected(frameViewView.FrameCanvas, _initialMousePositionInCanvas, ref selectedSprites);
+            GetListCollisionSelected(frameViewView.collisionCanvas, _initialMousePositionInCanvas, ref selectedCollisions);
         }
 
-        bool wasItAlreadySelected = false;
+        GetListSpriteControlSelected(frameViewView.FrameCanvas, _initialMousePositionInCanvas, ref selectedSprites);
+
+        bool spriteWasAlreadySelected = false;
+        bool collisionWasAlreadySelected = false;
 
         foreach (SpriteControlVO spriteVO in selectedSprites)
         {
             if (viewModel.SelectedFrameSprites.Contains(spriteVO.ID))
             {
-                wasItAlreadySelected = true;
+                spriteWasAlreadySelected = true;
             }
         }
 
-        if (viewModel.SelectedFrameSprites.Length == 0 ||
-            !wasItAlreadySelected)
+        foreach (CollisionControlVO collisionVO in selectedCollisions)
+        {
+            if (viewModel.SelectedFrameCollisions.Contains(collisionVO.ID))
+            {
+                collisionWasAlreadySelected = true;
+            }
+        }
+
+        if ((viewModel.SelectedFrameSprites.Length == 0 || !spriteWasAlreadySelected)
+            && (viewModel.SelectedFrameCollisions.Length == 0 || !collisionWasAlreadySelected))
         {
             SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
         }
@@ -805,7 +917,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (canSelectCollisions && selectedCollisions.Count == 0)
         {
-            GetListRectanglesSelected(frameViewView.collisionCanvas, pos, ref selectedCollisions);
+            GetListCollisionSelected(frameViewView.collisionCanvas, pos, ref selectedCollisions);
         }
 
         if (selectedSprites.Count == 0)
@@ -829,7 +941,7 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void GetListRectanglesSelected(Canvas canvas, Point position, ref List<CollisionControlVO> selectedRectangles)
+    private void GetListCollisionSelected(Canvas canvas, Point position, ref List<CollisionControlVO> selectedCollisions)
     {
         List<Rectangle> rects = GetSelectionMouseOver<Rectangle>(canvas, position);
 
@@ -837,7 +949,7 @@ public partial class CharacterFrameEditorView : UserControl
         {
             if (_collisionsInFrame.TryGetValue(rects.First(), out CollisionControlVO? collision))
             {
-                selectedRectangles.Add(collision);
+                selectedCollisions.Add(collision);
             }
         }
     }
@@ -903,7 +1015,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void FrameView_DragLeave(object sender, DragEventArgs e)
     {
-        if (e.OriginalSource is not Canvas and not Image)
+        if (e.OriginalSource is not Canvas and not Image and not Rectangle)
         {
             return;
         }
@@ -919,7 +1031,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         foreach (FrameElementDragObjectVO item in list)
         {
-            RemoveFromFrameViewTempImage(frameViewView, item);
+            RemoveFromFrameViewTempElement(frameViewView, item);
         }
     }
 
@@ -948,9 +1060,10 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        if (viewModel.SelectedFrameSprites.Length > 0)
+        if (viewModel.SelectedFrameSprites.Length > 0 ||
+            viewModel.SelectedFrameCollisions.Length > 0)
         {
-            DragImages(positionInCanvas, viewModel.SelectedFrameSprites, (DependencyObject)e.Source);
+            DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)e.Source);
         }
         else
         {
@@ -963,7 +1076,7 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void DragImages(Point positionInCanvas, string[] selectedFrameSprites, DependencyObject dragSource)
+    private void DragFrameElements(Point positionInCanvas, string[] selectedFrameSprites, string[] selectedFrameCollisions, DependencyObject dragSource)
     {
         List<FrameElementDragObjectVO> characterDragObjects = [];
 
@@ -987,6 +1100,26 @@ public partial class CharacterFrameEditorView : UserControl
             }
         }
 
+        for (int i = 0; i < selectedFrameCollisions.Length; i++)
+        {
+            string collisionID = selectedFrameCollisions[i];
+
+            foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
+            {
+                if (item.Value.ID != collisionID)
+                {
+                    continue;
+                }
+
+                double rectanglePosX = Canvas.GetLeft(item.Value.Rectangle);
+                double rectanglePosY = Canvas.GetTop(item.Value.Rectangle);
+
+                characterDragObjects.Add(new(item.Value, positionInCanvas.X - rectanglePosX, positionInCanvas.Y - rectanglePosY));
+
+                break;
+            }
+        }
+
         if (characterDragObjects.Count == 0)
         {
             return;
@@ -1000,10 +1133,11 @@ public partial class CharacterFrameEditorView : UserControl
 
         if (result == DragDropEffects.None)
         {
-            string[] ids = [.. characterDragObjects.Select(o => o.SpriteControl.ID)];
+            string[] ids = [.. characterDragObjects.Select(o => o.DragableObject.ID)];
 
             SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Dispatch(ids);
 
+            // update images
             Dictionary<Image, SpriteControlVO> spritesInFramesTmp = [];
 
             foreach (KeyValuePair<Image, SpriteControlVO> item in _spritesInFrames)
@@ -1020,10 +1154,28 @@ public partial class CharacterFrameEditorView : UserControl
             {
                 _spritesInFrames.Add(item.Key, item.Value);
             }
+
+            // update collisions
+            Dictionary<Rectangle, CollisionControlVO> collisionsInFramesTmp = [];
+
+            foreach (KeyValuePair<Rectangle, CollisionControlVO> item in _collisionsInFrame)
+            {
+                if (!ids.Contains(item.Value.ID))
+                {
+                    collisionsInFramesTmp.Add(item.Key, item.Value);
+                }
+            }
+
+            _collisionsInFrame.Clear();
+
+            foreach (KeyValuePair<Rectangle, CollisionControlVO> item in collisionsInFramesTmp)
+            {
+                _collisionsInFrame.Add(item.Key, item.Value);
+            }
         }
         else
         {
-            SignalManager.Get<SpriteFrameShowSelectionSignal>().Dispatch([.. characterDragObjects]);
+            SignalManager.Get<ElementFrameShowSelectionSignal>().Dispatch([.. characterDragObjects]);
         }
     }
 
@@ -1199,7 +1351,12 @@ public partial class CharacterFrameEditorView : UserControl
                 Width = item.Value.Width,
                 Height = item.Value.Height,
                 PositionX = item.Value.PositionX,
-                PositionY = item.Value.PositionY
+                PositionY = item.Value.PositionY,
+                Color = item.Value.Color,
+                Mask = item.Value.Mask,
+                CustomMask = item.Value.CustomMask,
+                AnimationID = item.Value.AnimationID,
+                FrameID = item.Value.FrameID
             };
 
             SignalManager.Get<SelectFrameElementsSignal>().Dispatch([], [collisionVO]);
