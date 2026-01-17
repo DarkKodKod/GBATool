@@ -428,6 +428,10 @@ public class CharacterFrameEditorViewModel : ViewModel
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
         OnionSkinOpacity = ModelManager.Get<GBAToolConfigurationModel>().OnionSkinOpacity;
         ShowCollisions = ModelManager.Get<GBAToolConfigurationModel>().ShowCollisions;
+
+        SelectedFrameSprites = [];
+        SelectedFrameCollisions = [];
+        EnableSpriteProperties = false;
     }
 
     private void LoadCollisions()
@@ -992,7 +996,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         FileHandler?.Save();
     }
 
-    private void OnDeleteSpriteFromCharacterFrame(string[] spriteIDs)
+    private void OnDeleteSpriteFromCharacterFrame(string[] elementIDs)
     {
         var model = CharacterModel;
 
@@ -1011,16 +1015,31 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
-
         bool anyDeletion = false;
 
-        for (int i = 0; i < spriteIDs.Length; i++)
+        bool areThereSprites = SelectedFrameSprites.Intersect(elementIDs).Any();
+
+        for (int i = 0; i < elementIDs.Length; i++)
         {
-            if (frame.Tiles.Remove(spriteIDs[i]))
+            if (frame.Tiles.Remove(elementIDs[i]))
             {
                 anyDeletion = true;
             }
+        }
+
+        string[] collisionsToDelete = [.. SelectedFrameCollisions.Intersect(elementIDs)];
+
+        for (int i = 0; i < collisionsToDelete.Length; i++)
+        {
+            SignalManager.Get<DeleteCollisionSignal>().Dispatch(AnimationID, FrameID, collisionsToDelete[i]);
+        }
+
+        SelectedFrameCollisions = [];
+        SelectedFrameSprites = [];
+
+        if (areThereSprites)
+        {
+            CharacterUtils.InvalidateFrameImageFromCache(frame.ID);
         }
 
         if (anyDeletion)
