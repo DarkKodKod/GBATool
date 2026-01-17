@@ -6,14 +6,9 @@ using GBATool.ViewModels;
 
 namespace GBATool.HistoryActions;
 
-public class PasteProjectItemHistoryAction : IHistoryAction
+public class PasteProjectItemHistoryAction(ProjectItem item) : IHistoryAction
 {
-    private readonly ProjectItem _item;
-
-    public PasteProjectItemHistoryAction(ProjectItem item)
-    {
-        _item = item;
-    }
+    private readonly ProjectItem _item = item;
 
     public void Redo()
     {

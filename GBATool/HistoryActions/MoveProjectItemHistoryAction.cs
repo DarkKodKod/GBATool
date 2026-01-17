@@ -5,22 +5,13 @@ using GBATool.ViewModels;
 
 namespace GBATool.HistoryActions;
 
-public class MoveProjectItemHistoryAction : IHistoryAction
+public class MoveProjectItemHistoryAction(ProjectItem dropTarget, ProjectItem item, ProjectItem origin, string newName, string oldName) : IHistoryAction
 {
-    private readonly ProjectItem _item;
-    private readonly ProjectItem _dropTarget;
-    private readonly ProjectItem _origin;
-    private readonly string _newName;
-    private readonly string _oldName;
-
-    public MoveProjectItemHistoryAction(ProjectItem dropTarget, ProjectItem item, ProjectItem origin, string newName, string oldName)
-    {
-        _item = item;
-        _dropTarget = dropTarget;
-        _origin = origin;
-        _newName = newName;
-        _oldName = oldName;
-    }
+    private readonly ProjectItem _item = item;
+    private readonly ProjectItem _dropTarget = dropTarget;
+    private readonly ProjectItem _origin = origin;
+    private readonly string _newName = newName;
+    private readonly string _oldName = oldName;
 
     public void Redo()
     {

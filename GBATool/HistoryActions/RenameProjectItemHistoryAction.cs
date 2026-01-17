@@ -3,18 +3,11 @@ using GBATool.ViewModels;
 
 namespace GBATool.HistoryActions;
 
-public class RenameProjectItemHistoryAction : IHistoryAction
+public class RenameProjectItemHistoryAction(ProjectItem item, string oldName) : IHistoryAction
 {
-    private readonly ProjectItem _item;
-    private readonly string _oldName;
-    private readonly string _newName;
-
-    public RenameProjectItemHistoryAction(ProjectItem item, string oldName)
-    {
-        _item = item;
-        _oldName = oldName;
-        _newName = item.DisplayName;
-    }
+    private readonly ProjectItem _item = item;
+    private readonly string _oldName = oldName;
+    private readonly string _newName = item.DisplayName;
 
     public void Redo()
     {

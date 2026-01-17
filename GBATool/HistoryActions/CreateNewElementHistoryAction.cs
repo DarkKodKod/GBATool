@@ -6,14 +6,9 @@ using GBATool.ViewModels;
 
 namespace GBATool.HistoryActions;
 
-public class CreateNewElementHistoryAction : IHistoryAction
+public class CreateNewElementHistoryAction(ProjectItem item) : IHistoryAction
 {
-    private readonly ProjectItem _item;
-
-    public CreateNewElementHistoryAction(ProjectItem item)
-    {
-        _item = item;
-    }
+    private readonly ProjectItem _item = item;
 
     public void Redo()
     {

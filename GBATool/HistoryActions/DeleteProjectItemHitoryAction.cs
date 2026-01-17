@@ -6,14 +6,9 @@ using GBATool.ViewModels;
 
 namespace GBATool.HistoryActions;
 
-public class DeleteProjectItemHitoryAction : IHistoryAction
+public class DeleteProjectItemHitoryAction(ProjectItem item) : IHistoryAction
 {
-    private readonly ProjectItem _item;
-
-    public DeleteProjectItemHitoryAction(ProjectItem item)
-    {
-        _item = item;
-    }
+    private readonly ProjectItem _item = item;
 
     public void Redo()
     {
