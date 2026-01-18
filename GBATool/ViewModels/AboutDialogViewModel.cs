@@ -1,7 +1,6 @@
 ﻿using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Utils;
-using System;
-using System.Reflection;
+using GBATool.Utils;
 using System.Windows;
 
 namespace GBATool.ViewModels;
@@ -49,15 +48,8 @@ public class AboutDialogViewModel : ViewModel
 
     public AboutDialogViewModel()
     {
-        Assembly assembly = Assembly.GetExecutingAssembly();
-        Version? version = assembly.GetName().Version;
-
         AppTitle = (string)Application.Current.FindResource(_projectNameKey);
         ModalTitle = "About " + AppTitle;
-
-        if (version != null)
-        {
-            Version = version.ToString();
-        }
+        Version = Util.GetRunningVersion()?.ToString() ?? string.Empty;
     }
 }
