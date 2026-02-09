@@ -1,4 +1,5 @@
-﻿using Nett;
+﻿using GBATool.Enums;
+using Nett;
 using System.Windows;
 
 namespace GBATool.Models;
@@ -20,4 +21,6 @@ public class MapModel : AFileModel
             return _fileExtension;
         }
     }
+
+    public MapType MapType { get; set; }
 }

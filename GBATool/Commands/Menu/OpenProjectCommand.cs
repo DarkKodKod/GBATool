@@ -22,7 +22,7 @@ public class OpenProjectCommand : Command
     private const string _folderCharactersKey = "folderCharacters";
     private const string _folderTileSetsKey = "folderTileSets";
     private const string _folderPalettesKey = "folderPalettes";
-    //private const string _folderMapsKey = "folderMaps";
+    private const string _folderMapsKey = "folderMaps";
     //private const string _folderWorldsKey = "folderWorlds";
     //private const string _folderEntitiesKey = "folderEntities";
 
@@ -30,7 +30,7 @@ public class OpenProjectCommand : Command
     private readonly string _folderCharacters;
     private readonly string _folderTileSets;
     private readonly string _folderPalettes;
-    //private readonly string _folderMaps;
+    private readonly string _folderMaps;
     //private readonly string _folderWorlds;
     //private readonly string _folderEntities;
 
@@ -40,7 +40,7 @@ public class OpenProjectCommand : Command
         _folderCharacters = (string)Application.Current.FindResource(_folderCharactersKey);
         _folderTileSets = (string)Application.Current.FindResource(_folderTileSetsKey);
         _folderPalettes = (string)Application.Current.FindResource(_folderPalettesKey);
-        //_folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
+        _folderMaps = (string)Application.Current.FindResource(_folderMapsKey);
         //_folderWorlds = (string)Application.Current.FindResource(_folderWorldsKey);
         //_folderEntities = (string)Application.Current.FindResource(_folderEntitiesKey);
     }
@@ -152,7 +152,7 @@ public class OpenProjectCommand : Command
                 directory.Name != _folderCharacters &&
                 directory.Name != _folderTileSets &&
                 directory.Name != _folderPalettes &&
-                //directory.Name != _folderMaps &&
+                directory.Name != _folderMaps &&
                 //directory.Name != _folderWorlds &&
                 //directory.Name != _folderEntities &&
                 parent == null)
@@ -166,7 +166,7 @@ public class OpenProjectCommand : Command
                 IsLoaded = true
             };
 
-            string ext = "";
+            string ext = string.Empty;
 
             if (extension == string.Empty)
             {

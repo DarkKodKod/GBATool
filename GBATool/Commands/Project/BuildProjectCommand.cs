@@ -97,6 +97,22 @@ public class BuildProjectCommand : Command
         }
         OutputWarnings(palettes.GetWarnings());
 
+        IBuilding backgrounds = BuildPalettes.Get(projectModel.Build.OutputFormatBackground);
+
+        if (backgrounds.GetFormat() != OutputFormat.None)
+        {
+            OutputInfo("Building backgrounds...");
+        }
+
+        ok = await backgrounds.Generate();
+        if (!ok)
+        {
+            OutputError("Problems generating backgrounds");
+            OutputError(backgrounds.GetErrors());
+            goto finish;
+        }
+        OutputWarnings(backgrounds.GetWarnings());
+
         OutputInfo("Build completed", "Green");
 
         finish:
