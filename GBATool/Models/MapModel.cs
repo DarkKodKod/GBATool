@@ -34,14 +34,17 @@ public class MapModel : AFileModel
     }
 
     [TomlIgnore]
-    public const int RegularTileMax = 64 * 64;
+    public const int RegularTileMin = 32 * 32;
+    [TomlIgnore]
+    public const int RegularTileMax = RegularTileMin * 4;
+    [TomlIgnore]
+    public const int AffineTileMax = RegularTileMax * 2;
 
     public MapType MapType { get; set; } = MapType.Regular;
     public Priority Priority { get; set; } = Priority.Highest;
     public BckgrRegularSize BckgrRegularSize { get; set; } = BckgrRegularSize.Regular32x32;
     public BckgrAffineSize BckgrAffineSize { get; set; } = BckgrAffineSize.Affine16x16;
-    public Tile[] RegularTiles { get; set; } = new Tile[RegularTileMax];
-    public Tile[] AffineTiles { get; set; } = new Tile[RegularTileMax * 2];
+    public List<Tile> Tiles { get; set; } = [];
     public bool EnableMosaic { get; set; }
     public bool AffineWrapping { get; set; }
     public List<string> PaletteIDs { get; set; } = [];

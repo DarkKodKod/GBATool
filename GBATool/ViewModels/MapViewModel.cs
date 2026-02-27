@@ -14,4 +14,14 @@ public class MapViewModel : ItemViewModel
 
     #region get/set
     #endregion
+
+    public override void OnActivate()
+    {
+        base.OnActivate();
+    }
+
+    public override void OnDeactivate()
+    {
+        base.OnDeactivate();
+    }
 }
