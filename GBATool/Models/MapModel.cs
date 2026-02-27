@@ -1,5 +1,6 @@
 ﻿using GBATool.Enums;
 using Nett;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace GBATool.Models;
@@ -9,8 +10,8 @@ public class Tile
     public string ID { get; set; } = string.Empty;
     public bool FlipHorizontal { get; set; }
     public bool FlipVertical { get; set; }
-    public string PaletteID { get; set; } = string.Empty;
     public int PaletteIndex { get; set; }
+    public string SpriteTileID { get; set; } = string.Empty;
     public string TileSetID { get; set; } = string.Empty;
 }
 
@@ -43,4 +44,5 @@ public class MapModel : AFileModel
     public Tile[] AffineTiles { get; set; } = new Tile[RegularTileMax * 2];
     public bool EnableMosaic { get; set; }
     public bool AffineWrapping { get; set; }
+    public List<string> PaletteIDs { get; set; } = [];
 }
