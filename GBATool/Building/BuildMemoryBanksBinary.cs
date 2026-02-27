@@ -144,6 +144,8 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         string outputAssetsPath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
         string outputSourceCodePath = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[1]);
 
+        string relativePathToBanks = Path.GetRelativePath(outputSourceCodePath, outputAssetsPath);
+
         string fullPath = Path.Combine(outputSourceCodePath, "blocks_metadata.asm");
 
         using StreamWriter outputFile = new(fullPath);
@@ -181,7 +183,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         {
             await outputFile.WriteLineAsync($"block_{bankName.ToLower()}:");
 
-            await outputFile.WriteLineAsync($"    file \"{Path.Combine(outputAssetsPath, bankName.ToLower() + ".bin")}\"");
+            await outputFile.WriteLineAsync($"    file \"{Path.Combine(relativePathToBanks, bankName.ToLower() + ".bin")}\"");
 
             await outputFile.WriteLineAsync($"__block_{bankName.ToLower()}:");
         }

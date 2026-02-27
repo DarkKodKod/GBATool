@@ -243,13 +243,13 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         switch (sprite.ObjectMode)
         {
             case ObjectMode.Affine:
-                objectMode = "ATTR_0_ROTATION_SCALING";
+                objectMode = "0000000100000000b";
                 break;
             case ObjectMode.Hidden:
-                objectMode = "ATTR_0_HIDE";
+                objectMode = "0000001000000000b";
                 break;
             case ObjectMode.AffineDouleSize:
-                objectMode = "ATTR_0_DOUBLE_SIZED";
+                objectMode = "0000001100000000b";
                 break;
         }
 
@@ -258,30 +258,30 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         switch (sprite.GraphicMode)
         {
             case GraphicMode.AlphaBlending:
-                gfxMode = "ATTR_0_SEMI_TRANSPARENT";
+                gfxMode = "0000010000000000b";
                 break;
             case GraphicMode.Mask:
-                gfxMode = "ATTR_0_TRANSPARENT_WIND";
+                gfxMode = "0000100000000000b";
                 break;
         }
 
-        string mosaic = sprite.EnableMosaic ? "ATTR_0_MOSAIC" : "0000000000000000b";
-        string colorMode = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "ATTR_0_COLOR_DEPTH" : "0000000000000000b";
+        string mosaic = sprite.EnableMosaic ? "0001000000000000b" : "0000000000000000b";
+        string colorMode = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "0010000000000000b" : "0000000000000000b";
 
         SpriteShape shape = SpriteShape.Shape00;
         SpriteSize size = SpriteSize.Size00;
 
         SpriteUtils.ConvertToShapeSize(sprite.Width, sprite.Height, ref shape, ref size);
 
-        string spriteShape = "ATTR_0_SPRITE_SIZE_00";
+        string spriteShape = "0000000000000000b";
 
         switch (shape)
         {
             case SpriteShape.Shape01:
-                spriteShape = "ATTR_0_SPRITE_SIZE_01";
+                spriteShape = "0100000000000000b";
                 break;
             case SpriteShape.Shape10:
-                spriteShape = "ATTR_0_SPRITE_SIZE_10";
+                spriteShape = "1000000000000000b";
                 break;
             case SpriteShape.Shape00:
             default:
@@ -311,18 +311,18 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         string xPositionFlipped = Util.ConvertIntToBits(flippedSpritePos, 0x1FF);
         xPositionFlipped += "b";
 
-        string spriteSize = "ATTR_1_SPRITE_SIZE_00";
+        string spriteSize = "0000000000000000b";
 
         switch (size)
         {
             case SpriteSize.Size01:
-                spriteSize = "ATTR_1_SPRITE_SIZE_01";
+                spriteSize = "0100000000000000b";
                 break;
             case SpriteSize.Size10:
-                spriteSize = "ATTR_1_SPRITE_SIZE_10";
+                spriteSize = "1000000000000000b";
                 break;
             case SpriteSize.Size11:
-                spriteSize = "ATTR_1_SPRITE_SIZE_11";
+                spriteSize = "1100000000000000b";
                 break;
             case SpriteSize.Size00:
             default:
@@ -335,8 +335,8 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
         if (sprite.ObjectMode == ObjectMode.Normal ||
             sprite.ObjectMode == ObjectMode.Hidden)
         {
-            string horizontalFlip = sprite.FlipHorizontal ? "ATTR_1_FLIP_HORIZONTAL" : "0000000000000000b";
-            string verticalFlip = sprite.FlipVertical ? "ATTR_1_FLIP_VERTICAL" : "0000000000000000b";
+            string horizontalFlip = sprite.FlipHorizontal ? "0001000000000000b" : "0000000000000000b";
+            string verticalFlip = sprite.FlipVertical ? "0010000000000000b" : "0000000000000000b";
 
             attribute1 = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPosition}";
             attribute1Flipped = $"{spriteSize} or {verticalFlip} or {horizontalFlip} or {xPositionFlipped}";
