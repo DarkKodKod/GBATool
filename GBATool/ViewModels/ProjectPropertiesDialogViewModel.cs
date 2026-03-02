@@ -23,6 +23,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
     private OutputFormat _selectedOutputFormatHeader = OutputFormat.None;
     private OutputFormat _selectedOutputFormatPalettes = OutputFormat.None;
     private OutputFormat _selectedOutputFormatCharacters = OutputFormat.None;
+    private OutputFormat _selectedOutputFormatMaps = OutputFormat.None;
     private OutputFormat _selectedOutputFormatScreenBlock = OutputFormat.None;
     private string _projectTitle = string.Empty;
     private int _softwareVersion = 0;
@@ -150,6 +151,20 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         {
             _selectedOutputFormatPalettes = value;
             OnPropertyChanged(nameof(SelectedOutputFormatPalettes));
+
+            UpdateVisibility();
+
+            _changed = true;
+        }
+    }
+
+    public OutputFormat SelectedOutputFormatMaps
+    {
+        get { return _selectedOutputFormatMaps; }
+        set
+        {
+            _selectedOutputFormatMaps = value;
+            OnPropertyChanged(nameof(SelectedOutputFormatMaps));
 
             UpdateVisibility();
 
@@ -285,6 +300,7 @@ public class ProjectPropertiesDialogViewModel : ViewModel
             project.Build.OutputFormatPalettes = SelectedOutputFormatPalettes;
             project.Build.OutputFormatCharacters = SelectedOutputFormatCharacters;
             project.Build.OutputFormatScreenBlock = SelectedOutputFormatScreenBlock;
+            project.Build.OutputFormatMaps = SelectedOutputFormatMaps;
 
             project.ProjectTitle = ProjectTitle;
             project.SoftwareVersion = (byte)SoftwareVersion;
@@ -346,9 +362,16 @@ public class ProjectPropertiesDialogViewModel : ViewModel
 
     private void UpdateVisibility()
     {
-        bool shouldShowCPPPahts = SelectedOutputFormatPalettes == OutputFormat.Butano || SelectedOutputFormatCharacters == OutputFormat.Butano || SelectedOutputFormatScreenBlock == OutputFormat.Butano;
+        bool shouldShowCPPPahts = SelectedOutputFormatPalettes == OutputFormat.Butano || 
+            SelectedOutputFormatCharacters == OutputFormat.Butano || 
+            SelectedOutputFormatScreenBlock == OutputFormat.Butano;
         bool shouldShowAssetPaths = SelectedOutputFormatScreenBlock == OutputFormat.Binary;
-        bool shouldShowSourceCodePaths = SelectedOutputFormatHeader == OutputFormat.Fasmarm || SelectedOutputFormatCharacters == OutputFormat.Fasmarm || SelectedOutputFormatPalettes == OutputFormat.Fasmarm || SelectedOutputFormatScreenBlock == OutputFormat.Binary;
+        bool shouldShowSourceCodePaths = 
+            SelectedOutputFormatHeader == OutputFormat.Fasmarm || 
+            SelectedOutputFormatCharacters == OutputFormat.Fasmarm || 
+            SelectedOutputFormatPalettes == OutputFormat.Fasmarm ||
+            SelectedOutputFormatMaps == OutputFormat.Fasmarm ||
+            SelectedOutputFormatScreenBlock == OutputFormat.Binary;
 
         VisibilityCPPs = shouldShowCPPPahts ? Visibility.Visible : Visibility.Collapsed;
         VisibilityHeaders = shouldShowCPPPahts ? Visibility.Visible : Visibility.Collapsed;
@@ -372,5 +395,6 @@ public class ProjectPropertiesDialogViewModel : ViewModel
         SelectedOutputFormatPalettes = project.Build.OutputFormatPalettes;
         SelectedOutputFormatCharacters = project.Build.OutputFormatCharacters;
         SelectedOutputFormatScreenBlock = project.Build.OutputFormatScreenBlock;
+        SelectedOutputFormatMaps = project.Build.OutputFormatMaps;
     }
 }

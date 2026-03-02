@@ -16,6 +16,7 @@ public class ProjectModel : ISingletonModel
         public string GeneratedCPPsPath { get; set; } = string.Empty;
         public OutputFormat OutputFormatHeader { get; set; } = OutputFormat.Fasmarm;
         public OutputFormat OutputFormatPalettes { get; set; } = OutputFormat.Fasmarm;
+        public OutputFormat OutputFormatMaps { get; set; } = OutputFormat.None;
         public OutputFormat OutputFormatCharacters { get; set; } = OutputFormat.Fasmarm;
         public OutputFormat OutputFormatScreenBlock { get; set; } = OutputFormat.Binary;
         public OutputFormat OutputFormatBackground { get; set; } = OutputFormat.None;
@@ -33,6 +34,7 @@ public class ProjectModel : ISingletonModel
             GeneratedCPPsPath = string.Empty;
             OutputFormatHeader = OutputFormat.Fasmarm;
             OutputFormatPalettes = OutputFormat.Fasmarm;
+            OutputFormatMaps = OutputFormat.None;
             OutputFormatCharacters = OutputFormat.Fasmarm;
             OutputFormatScreenBlock = OutputFormat.Binary;
             OutputFormatBackground = OutputFormat.None;
@@ -88,6 +90,7 @@ public class ProjectModel : ISingletonModel
         Build.GeneratedAssetsPath = copy.Build.GeneratedAssetsPath;
         Build.OutputFormatHeader = copy.Build.OutputFormatHeader;
         Build.OutputFormatPalettes = copy.Build.OutputFormatPalettes;
+        Build.OutputFormatMaps = copy.Build.OutputFormatMaps;
         Build.OutputFormatCharacters = copy.Build.OutputFormatCharacters;
         Build.OutputFormatScreenBlock = copy.Build.OutputFormatScreenBlock;
         Build.OutputFormatBackground = copy.Build.OutputFormatBackground;

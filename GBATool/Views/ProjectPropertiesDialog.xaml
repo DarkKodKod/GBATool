@@ -218,6 +218,7 @@
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <Label Content="Header:" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <ComboBox Grid.Column="1" 
@@ -246,9 +247,18 @@
                                   ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
                                   SelectedValue="{Binding Path=SelectedOutputFormatCharacters}"
                                   SelectedValuePath="Value"/>
-                        <Label Content="Screenblock :" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <Label Content="Maps:" Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         <ComboBox Grid.Column="1" 
                                   Grid.Row="3"
+                                  HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                  Width="120" 
+                                  DisplayMemberPath="Description"
+                                  ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:OutputFormat}}}"
+                                  SelectedValue="{Binding Path=SelectedOutputFormatMaps}"
+                                  SelectedValuePath="Value"/>
+                        <Label Content="Screenblock :" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        <ComboBox Grid.Column="1" 
+                                  Grid.Row="4"
                                   HorizontalAlignment="Left" VerticalAlignment="Center" 
                                   Width="120" 
                                   DisplayMemberPath="Description"

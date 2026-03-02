@@ -97,6 +97,22 @@ public class BuildProjectCommand : Command
         }
         OutputWarnings(palettes.GetWarnings());
 
+        IBuilding maps = BuildMaps.Get(projectModel.Build.OutputFormatMaps);
+
+        if (maps.GetFormat() != OutputFormat.None)
+        {
+            OutputInfo("Building maps...");
+        }
+
+        ok = await maps.Generate();
+        if (!ok)
+        {
+            OutputError("Problems generating maps");
+            OutputError(maps.GetErrors());
+            goto finish;
+        }
+        OutputWarnings(maps.GetWarnings());
+
         IBuilding backgrounds = BuildPalettes.Get(projectModel.Build.OutputFormatBackground);
 
         if (backgrounds.GetFormat() != OutputFormat.None)
