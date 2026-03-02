@@ -110,4 +110,22 @@ public class TileSetModel : AFileModel
 
         return false;
     }
+
+    public bool GetSpriteIndex(string spriteID, out int spriteIndex)
+    {
+        spriteIndex = -1;
+
+        for (int i = 0; i < Sprites.Count; i++)
+        {
+            SpriteModel sprite = Sprites[i];
+
+            if (sprite.ID == spriteID)
+            {
+                spriteIndex = i;
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

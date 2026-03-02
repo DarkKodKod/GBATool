@@ -3,7 +3,6 @@ using GBATool.Models;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GBATool.ViewModels;
 

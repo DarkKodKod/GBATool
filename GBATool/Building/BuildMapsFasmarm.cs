@@ -46,11 +46,13 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
                 continue;
             }
 
+            string name = item.Name.Replace(' ', '_').ToLower();
+
             string parentFolder = Util.GetAbsolutePathFromRelativeToProject(OutputPaths[0]);
 
-            using StreamWriter outputFile = new(Path.Combine(parentFolder, item.Name + ".asm"));
+            using StreamWriter outputFile = new(Path.Combine(parentFolder, name + ".asm"));
 
-            await WriteMaps(outputFile, model, item.Name.Replace(' ', '_'));
+            await WriteMaps(outputFile, model, name);
         }
 
         return GetErrors().Length == 0;
@@ -65,8 +67,10 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         }
         await outputFile.WriteAsync(Environment.NewLine);
 
-        await outputFile.WriteLineAsync("    align 4");
+        await outputFile.WriteLineAsync("    align 2");
         await outputFile.WriteLineAsync($"map_{name}:");
+
+        int countHexValues = 0;
 
         foreach (Tile tile in model.Tiles)
         {
@@ -77,32 +81,36 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
                 continue;
             }
 
-            int index = -1;
-
-            for (int i = 0; i < tileSetModel.Sprites.Count; i++)
-            {
-                SpriteModel sprite = tileSetModel.Sprites[i]; 
-
-                if (sprite.ID == tile.SpriteTileID)
-                {
-                    index = i;
-                    break;
-                }
-            }
-
-            if (index == -1)
+            if (!tileSetModel.GetSpriteIndex(tile.SpriteTileID, out int spriteIndex))
             {
                 continue;
             }
 
-            ushort tileIndex = (ushort)(index & 1023); // 1023 = 0000 0011 1111 1111b
+            ushort tileIndex = (ushort)(spriteIndex & 1023); // 1023 = 0000 0011 1111 1111b
             ushort horizontalFlip = (ushort)(tile.FlipHorizontal ? 1024 : 0); // 1023 = 0000 0100 0000 0000b
             ushort verticalFlip = (ushort)(tile.FlipVertical ? 2048 : 0); // 2048 = 0000 1000 0000 0000
             ushort paletteIndex = (ushort)(ushort.Clamp((ushort)tile.PaletteIndex, 0, 16) << 12);
 
             ushort tileValue = (ushort)(paletteIndex | verticalFlip | horizontalFlip | tileIndex);
 
-            await outputFile.WriteLineAsync($"    db 0x{tileValue:X4}");
+            if (countHexValues % 32 == 0)
+            {
+                if (countHexValues > 0)
+                    await outputFile.WriteAsync(Environment.NewLine);
+
+                await outputFile.WriteAsync($"    dh 0x{tileValue:X4},");
+            }
+            else
+            {
+                await outputFile.WriteAsync($"0x{tileValue:X4}");
+
+                if (countHexValues % 32 < 31)
+                {
+                    await outputFile.WriteAsync(',');
+                }
+            }
+
+            countHexValues++;
         }
     }
 }
