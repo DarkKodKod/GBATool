@@ -18,22 +18,17 @@ using TileBlocks = (int width, int height, int numberOfTiles);
 
 public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 {
-    private string[]? _outputPaths;
+    private readonly string[] _outputPaths = new string[2];
 
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Binary;
     protected override string[] OutputPaths
     {
         get
         {
-            if (_outputPaths == null)
-            {
-                _outputPaths = new string[2];
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-                _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
-                _outputPaths[1] = projectModel.Build.GeneratedSourcePath;
-            }
+            _outputPaths[0] = projectModel.Build.GeneratedAssetsPath;
+            _outputPaths[1] = projectModel.Build.GeneratedSourcePath;
 
             return _outputPaths;
         }

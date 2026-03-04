@@ -70,22 +70,17 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Butano;
 
     private const float FrameRate = 59.727500569606f;
-    private string[]? _outputPaths;
+    private readonly string[] _outputPaths = new string[2];
     private readonly List<AnimationDetails> _animationDetails = [];
 
     protected override string[] OutputPaths
     {
         get
         {
-            if (_outputPaths == null)
-            {
-                _outputPaths = new string[2];
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-
-                _outputPaths[0] = projectModel.Build.GeneratedHeadersPath;
-                _outputPaths[1] = projectModel.Build.GeneratedCPPsPath;
-            }
+            _outputPaths[0] = projectModel.Build.GeneratedHeadersPath;
+            _outputPaths[1] = projectModel.Build.GeneratedCPPsPath;
 
             return _outputPaths;
         }

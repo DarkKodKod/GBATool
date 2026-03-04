@@ -39,20 +39,15 @@ public sealed class BuildHeaderFasmarm : Building<BuildHeaderFasmarm>
     private static readonly int HeaderSizeForChecksum = 29;
     private static readonly string FileName = "header.asm";
 
-    private string[]? _outputPaths;
+    private readonly string[] _outputPaths = new string[1];
 
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
     protected override string[] OutputPaths
     {
         get
         {
-            if (_outputPaths == null)
-            {
-                _outputPaths = new string[1];
-
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-                _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
-            }
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
 
             return _outputPaths;
         }

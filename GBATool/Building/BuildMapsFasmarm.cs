@@ -13,18 +13,14 @@ namespace GBATool.Building;
 
 public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 {
-    private string[]? _outputPaths;
+    private readonly string[] _outputPaths = new string[1];
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
     protected override string[] OutputPaths
     {
         get
         {
-            if (_outputPaths == null)
-            {
-                _outputPaths = new string[1];
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-                _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
-            }
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
 
             return _outputPaths;
         }
@@ -42,6 +38,11 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             }
 
             if (string.IsNullOrEmpty(item.Name))
+            {
+                continue;
+            }
+
+            if (model.Tiles.Count == 0)
             {
                 continue;
             }
@@ -65,6 +66,44 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         {
             await outputFile.WriteLineAsync(item);
         }
+        await outputFile.WriteAsync(Environment.NewLine);
+
+        // Gather banks information
+        List<string> banks = [];
+        
+        foreach (Tile tile in model.Tiles)
+        {
+            FileModelVO? fileModelBankVO = ProjectFiles.GetFileModel(tile.BankID);
+
+            if (fileModelBankVO == null || string.IsNullOrEmpty(fileModelBankVO.Name))
+            {
+                continue;
+            }
+
+            if (!banks.Contains(fileModelBankVO.Name))
+            {
+                banks.Add(fileModelBankVO.Name);
+            }
+        }
+
+        await outputFile.WriteLineAsync("    align 4");
+        await outputFile.WriteLineAsync($"map_{name}_config_table:");
+        await outputFile.WriteLineAsync("    ; number of tileset");
+        await outputFile.WriteLineAsync($"    db 0x{banks.Count:X2}");
+        await outputFile.WriteLineAsync("    ; Reserved");
+        await outputFile.WriteLineAsync("    db 0x00, 0x00, 0x00");
+        await outputFile.WriteLineAsync("    ; pointer to the tilesets");
+
+        foreach (string bankName in banks)
+        {
+            await outputFile.WriteLineAsync($"    dw Block_{bankName.ToLower()}");
+        }
+
+        await outputFile.WriteLineAsync("    ; size of the map data");
+        await outputFile.WriteLineAsync($"    dw (__map_{name} - map_{name})");
+        await outputFile.WriteLineAsync("    ; map pointer");
+        await outputFile.WriteLineAsync($"    dw map_{name}");
+
         await outputFile.WriteAsync(Environment.NewLine);
 
         await outputFile.WriteLineAsync("    align 2");
@@ -104,7 +143,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             {
                 await outputFile.WriteAsync($"0x{tileValue:X4}");
 
-                if (countHexValues % 32 < 31)
+                if (countHexValues % 32 < 31 && countHexValues != model.Tiles.Count - 1)
                 {
                     await outputFile.WriteAsync(',');
                 }
@@ -112,5 +151,8 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
             countHexValues++;
         }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"__map_{name}:");
     }
 }

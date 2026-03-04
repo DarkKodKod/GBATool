@@ -14,19 +14,15 @@ namespace GBATool.Building;
 public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
 {
     private static readonly string FileName = "palettes.asm";
-    private string[]? _outputPaths;
+    private readonly string[] _outputPaths = new string[1];
 
     protected override OutputFormat OutputFormat { get; } = OutputFormat.Fasmarm;
     protected override string[] OutputPaths
     {
         get
         {
-            if (_outputPaths == null)
-            {
-                _outputPaths = new string[1];
-                ProjectModel projectModel = ModelManager.Get<ProjectModel>();
-                _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
-            }
+            ProjectModel projectModel = ModelManager.Get<ProjectModel>();
+            _outputPaths[0] = projectModel.Build.GeneratedSourcePath;
 
             return _outputPaths;
         }
@@ -91,7 +87,7 @@ public sealed class BuildPalettesFasmarm : Building<BuildPalettesFasmarm>
     private static void WritePalettesToOutputFile(ref SortedDictionary<string, int[]> pals, StreamWriter outputFile)
     {
         outputFile.Write(Environment.NewLine);
-        _ = outputFile.WriteLineAsync("    align 32");
+        _ = outputFile.WriteLineAsync("    align 1");
 
         foreach (KeyValuePair<string, int[]> palette in pals)
         {

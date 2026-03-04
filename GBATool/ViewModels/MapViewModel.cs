@@ -50,22 +50,22 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
-        List<FileModelVO> tileSetModels = ProjectFiles.GetModels<TileSetModel>();
+        List<FileModelVO> bankModels = ProjectFiles.GetModels<BankModel>();
 
-        FileModelVO? fileModel = tileSetModels.Find(t =>
+        FileModelVO? fileModel = bankModels.Find(t =>
         {
             if (t.Model != null)
             {
-                if (t.Model is TileSetModel tsm)
+                if (t.Model is BankModel bm)
                 {
-                    return tsm.Sprites.Count > 1;
+                    return bm.Sprites.Count > 1;
                 }
             }
 
             return false;
         });
 
-        if (fileModel?.Model is not TileSetModel tileSet)
+        if (fileModel?.Model is not BankModel bank)
         {
             return;
         }
@@ -78,8 +78,9 @@ public class MapViewModel : ItemViewModel
                 FlipHorizontal = false,
                 FlipVertical = false,
                 PaletteIndex = 0,
-                SpriteTileID = tileSet.Sprites[4].ID,
-                TileSetID = tileSet.GUID
+                SpriteTileID = bank.Sprites[4].SpriteID ?? string.Empty,
+                TileSetID = bank.Sprites[4].TileSetID ?? string.Empty,
+                BankID = bank.GUID
             });
             map.Tiles.Add(new()
             {
@@ -87,8 +88,9 @@ public class MapViewModel : ItemViewModel
                 FlipHorizontal = false,
                 FlipVertical = false,
                 PaletteIndex = 0,
-                SpriteTileID = tileSet.Sprites[15].ID,
-                TileSetID = tileSet.GUID
+                SpriteTileID = bank.Sprites[6].SpriteID ?? string.Empty,
+                TileSetID = bank.Sprites[6].TileSetID ?? string.Empty,
+                BankID = bank.GUID
             });
         }
 
