@@ -13,7 +13,7 @@ public class Tile
     public int PaletteIndex { get; set; }
     public string SpriteTileID { get; set; } = string.Empty;
     public string TileSetID { get; set; } = string.Empty;
-    public string BankID {  get; set; } = string.Empty;
+    public string BankID { get; set; } = string.Empty;
 }
 
 public class MapModel : AFileModel

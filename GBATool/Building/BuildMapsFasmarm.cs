@@ -70,7 +70,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
         // Gather banks information
         List<string> banks = [];
-        
+
         foreach (Tile tile in model.Tiles)
         {
             FileModelVO? fileModelBankVO = ProjectFiles.GetFileModel(tile.BankID);

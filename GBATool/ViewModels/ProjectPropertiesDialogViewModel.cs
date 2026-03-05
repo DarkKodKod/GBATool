@@ -362,13 +362,13 @@ public class ProjectPropertiesDialogViewModel : ViewModel
 
     private void UpdateVisibility()
     {
-        bool shouldShowCPPPahts = SelectedOutputFormatPalettes == OutputFormat.Butano || 
-            SelectedOutputFormatCharacters == OutputFormat.Butano || 
+        bool shouldShowCPPPahts = SelectedOutputFormatPalettes == OutputFormat.Butano ||
+            SelectedOutputFormatCharacters == OutputFormat.Butano ||
             SelectedOutputFormatScreenBlock == OutputFormat.Butano;
         bool shouldShowAssetPaths = SelectedOutputFormatScreenBlock == OutputFormat.Binary;
-        bool shouldShowSourceCodePaths = 
-            SelectedOutputFormatHeader == OutputFormat.Fasmarm || 
-            SelectedOutputFormatCharacters == OutputFormat.Fasmarm || 
+        bool shouldShowSourceCodePaths =
+            SelectedOutputFormatHeader == OutputFormat.Fasmarm ||
+            SelectedOutputFormatCharacters == OutputFormat.Fasmarm ||
             SelectedOutputFormatPalettes == OutputFormat.Fasmarm ||
             SelectedOutputFormatMaps == OutputFormat.Fasmarm ||
             SelectedOutputFormatScreenBlock == OutputFormat.Binary;
