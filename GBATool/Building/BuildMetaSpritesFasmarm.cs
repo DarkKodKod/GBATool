@@ -64,7 +64,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
             // write the companion literal pool file
             if (_configTables.Count > 0)
             {
-                using StreamWriter literalPoolOutputFile = new(Path.Combine(parentFolder, "literal_poool_" + item.Name + ".asm"));
+                using StreamWriter literalPoolOutputFile = new(Path.Combine(parentFolder, "literal_pool_" + item.Name + ".asm"));
 
                 await WriteLiteralPoolFile(literalPoolOutputFile);
 
@@ -207,7 +207,7 @@ public sealed class BuildMetaSpritesFasmarm : Building<BuildMetaSpritesFasmarm>
             await outputFile.WriteLineAsync("    align 4");
             await outputFile.WriteLineAsync(configTableName + ":");
 
-            _configTables.Add(($"{name}AnimConfigTable", configTableName));
+            _configTables.Add(($"{name.ToCamelCase()}AnimConfigTable", configTableName));
 
             for (int i = 0; i < animationIndices.Count; ++i)
             {
