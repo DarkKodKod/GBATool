@@ -70,6 +70,8 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
+        map.BankID = bank.GUID;
+
         for (int i = 0; i < 60; i++)
         {
             map.Tiles.Add(new()
@@ -79,8 +81,7 @@ public class MapViewModel : ItemViewModel
                 FlipVertical = false,
                 PaletteIndex = 0,
                 SpriteTileID = bank.Sprites[4].SpriteID ?? string.Empty,
-                TileSetID = bank.Sprites[4].TileSetID ?? string.Empty,
-                BankID = bank.GUID
+                TileSetID = bank.Sprites[4].TileSetID ?? string.Empty
             });
             map.Tiles.Add(new()
             {
@@ -89,8 +90,7 @@ public class MapViewModel : ItemViewModel
                 FlipVertical = false,
                 PaletteIndex = 0,
                 SpriteTileID = bank.Sprites[6].SpriteID ?? string.Empty,
-                TileSetID = bank.Sprites[6].TileSetID ?? string.Empty,
-                BankID = bank.GUID
+                TileSetID = bank.Sprites[6].TileSetID ?? string.Empty
             });
         }
 

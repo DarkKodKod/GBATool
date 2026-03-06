@@ -13,7 +13,6 @@ public class Tile
     public int PaletteIndex { get; set; }
     public string SpriteTileID { get; set; } = string.Empty;
     public string TileSetID { get; set; } = string.Empty;
-    public string BankID { get; set; } = string.Empty;
 }
 
 public class MapModel : AFileModel
@@ -49,4 +48,7 @@ public class MapModel : AFileModel
     public bool EnableMosaic { get; set; }
     public bool AffineWrapping { get; set; }
     public List<string> PaletteIDs { get; set; } = [];
+    public ScreenBaseBlock ScreenBaseBlock { get; set; } = ScreenBaseBlock.Block0;
+    public CharacterBaseBlock CharacterBaseBlock { get; set; } = CharacterBaseBlock.Block0;
+    public string BankID { get; set; } = string.Empty;
 }

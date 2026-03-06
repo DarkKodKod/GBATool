@@ -53,7 +53,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
             if (bank.BitsPerPixel == BitsPerPixel.f1bpp)
             {
-                AddWarning($"1BPP not supported for banks exporting at the moment.");
+                AddWarning("1BPP not supported for banks exporting at the moment.");
                 continue;
             }
 
