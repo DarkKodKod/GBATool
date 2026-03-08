@@ -102,14 +102,6 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
         await outputFile.WriteLineAsync("    align 4");
         await outputFile.WriteLineAsync($"map_{name}_config_table:");
-        await outputFile.WriteLineAsync("    ; pointer to the tilesets");
-        await outputFile.WriteLineAsync($"    dw Block_{bankName.ToLower()}");
-        await outputFile.WriteLineAsync("    ; size in bytes of the block used by this frame");
-        await outputFile.WriteLineAsync($"    dw Size_block_{bankName.ToLower()}");
-        await outputFile.WriteLineAsync("    ; size of the map data");
-        await outputFile.WriteLineAsync($"    dw (__map_{name} - map_{name})");
-        await outputFile.WriteLineAsync("    ; map pointer");
-        await outputFile.WriteLineAsync($"    dw map_{name}");
 
         string mapColorDepth = bankModel.BitsPerPixel == BitsPerPixel.f8bpp ? "0000000010000000b" : "0000000000000000b";
         string screenBaseBlock = Util.ConvertShortToBits((short)model.ScreenBaseBlock, 8) + "b";
@@ -119,8 +111,15 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             CharacterBaseBlock.Block3 => "0000000000001100b",
             CharacterBaseBlock.Block2 => "0000000000001000b",
             CharacterBaseBlock.Block1 => "0000000000000100b",
-            CharacterBaseBlock.Block0 => "0000000000000000b",
             _ => "0000000000000000b"
+        };
+
+        string characterBaseBlockAddress = model.CharacterBaseBlock switch
+        {
+            CharacterBaseBlock.Block3 => "0x0600C000",
+            CharacterBaseBlock.Block2 => "0x06008000",
+            CharacterBaseBlock.Block1 => "0x06004000",
+            _ => "0x06000000"
         };
 
         string mapSize = model.BckgrRegularSize switch
@@ -128,7 +127,6 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             BckgrRegularSize.Regular64x64 => "1100000000000000b",
             BckgrRegularSize.Regular64x32 => "0100000000000000b",
             BckgrRegularSize.Regular32x64 => "1000000000000000b",
-            BckgrRegularSize.Regular32x32 => "0000000000000000b",
             _ => "0000000000000000b"
         };
 
@@ -137,7 +135,6 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             Priority.Lowest => "0000000000000011b",
             Priority.Low => "0000000000000010b",
             Priority.High => "0000000000000001b",
-            Priority.Highest => "0000000000000000b",
             _ => "0000000000000000b"
         };
 
@@ -146,6 +143,16 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         await outputFile.WriteLineAsync($"    dh ({characterBaseBlock} or {mapSize} or {mapColorDepth} or {mapPriority} or {screenBaseBlock})");
         await outputFile.WriteLineAsync("    ; Padding");
         await outputFile.WriteLineAsync("    dh 0x0000");
+        await outputFile.WriteLineAsync("    ; pointer to the tilesets");
+        await outputFile.WriteLineAsync($"    dw Block_{bankName.ToLower()}");
+        await outputFile.WriteLineAsync("    ; character base block destination address");
+        await outputFile.WriteLineAsync($"    dw {characterBaseBlockAddress}");
+        await outputFile.WriteLineAsync("    ; size in bytes of the block used by this frame");
+        await outputFile.WriteLineAsync($"    dw Size_block_{bankName.ToLower()}");
+        await outputFile.WriteLineAsync("    ; size of the map data");
+        await outputFile.WriteLineAsync($"    dw (__map_{name} - map_{name})");
+        await outputFile.WriteLineAsync("    ; map pointer");
+        await outputFile.WriteLineAsync($"    dw map_{name}");
 
         await outputFile.WriteAsync(Environment.NewLine);
 
