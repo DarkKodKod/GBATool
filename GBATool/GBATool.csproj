@@ -269,4 +269,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\Map\" />
+  </ItemGroup>
+
 </Project>

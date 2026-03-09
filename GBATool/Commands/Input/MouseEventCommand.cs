@@ -1,13 +1,12 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
-using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows;
 using System.Windows.Input;
 
 namespace GBATool.Commands.Input;
 
-public class PreviewMouseMoveCommand : Command
+public class MouseEventCommand<T> : Command where T : ISignal1<MouseEventVO>, new()
 {
     public override void Execute(object? parameter)
     {
@@ -16,7 +15,7 @@ public class PreviewMouseMoveCommand : Command
             return;
         }
 
-        MouseMoveVO vo = new()
+        MouseEventVO vo = new(mouseEvent)
         {
             AbsolutePosition = mouseEvent.GetPosition(null),
             RelativePosition = Mouse.GetPosition((IInputElement)mouseEvent.Source),
@@ -25,6 +24,6 @@ public class PreviewMouseMoveCommand : Command
             LeftButton = mouseEvent.LeftButton
         };
 
-        SignalManager.Get<PreviewMouseMoveSignal>().Dispatch(vo);
+        SignalManager.Get<T>().Dispatch(vo);
     }
 }

@@ -6,21 +6,16 @@ using System.Windows.Input;
 
 namespace GBATool.Commands.Input;
 
-public class PreviewMouseWheelCommand : Command
+public class MouseWheelEventCommand : Command
 {
     public override void Execute(object? parameter)
     {
-        if (parameter == null)
-        {
-            return;
-        }
-
         if (parameter is not MouseWheelEventArgs wheelEvent)
         {
             return;
         }
 
-        MouseWheelVO vo = new()
+        MouseWheelVO vo = new(wheelEvent)
         {
             Delta = wheelEvent.Delta,
             OriginalSource = wheelEvent.OriginalSource,

@@ -1,5 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
-using GBATool.Commands.Utils;
+using GBATool.Commands.Input;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
@@ -106,9 +106,16 @@ public class MapViewModel : ItemViewModel
         MapModel? model = GetModel();
 
         if (model == null)
+        {
             return;
+        }
 
         LoadMapData();
+    }
+
+    private void LoadMapData()
+    {
+        //
     }
 
     public override void OnDeactivate()
@@ -155,7 +162,7 @@ public class MapViewModel : ItemViewModel
         //
     }
 
-    private void LoadMapData()
+    private void SaveMapData()
     {
         MapModel? map = GetModel();
 

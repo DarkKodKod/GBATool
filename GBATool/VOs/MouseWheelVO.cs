@@ -1,6 +1,8 @@
-﻿namespace GBATool.VOs;
+﻿using System.Windows.Input;
 
-public record MouseWheelVO : EventVO
+namespace GBATool.VOs;
+
+public record MouseWheelVO(MouseWheelEventArgs EventArgs) : EventVO
 {
     public int Delta { get; init; }
 }

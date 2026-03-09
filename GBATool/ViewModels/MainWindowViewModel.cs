@@ -49,7 +49,7 @@ public class MainWindowViewModel : ViewModel
     public CreateElementFromMenuCommand CreateElementFromMenuCommand { get; } = new();
     public PreviewMouseLeftButtonDownCommand PreviewMouseLeftButtonDownCommand { get; } = new();
     public DispatchSignalCommand<MouseLeftButtonUpSignal> PreviewMouseLeftButtonUpCommand { get; } = new();
-    public PreviewMouseMoveCommand PreviewMouseMoveCommand { get; } = new();
+    public MouseEventCommand<PreviewMouseMoveSignal> PreviewMouseMoveCommand { get; } = new();
     public DragEnterCommand DragEnterCommand { get; } = new();
     public DragOverCommand DragOverCommand { get; } = new();
     public DragLeaveCommand DragLeaveCommand { get; } = new();
@@ -338,7 +338,7 @@ public class MainWindowViewModel : ViewModel
         _startPoint = null;
     }
 
-    private void OnMouseMove(MouseMoveVO vo)
+    private void OnMouseMove(MouseEventVO vo)
     {
         if (_startPoint == null)
         {

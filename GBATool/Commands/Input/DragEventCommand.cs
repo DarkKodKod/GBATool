@@ -3,7 +3,7 @@ using ArchitectureLibrary.Signals;
 using GBATool.VOs;
 using System.Windows;
 
-namespace GBATool.Commands.Utils;
+namespace GBATool.Commands.Input;
 
 public class DragEventCommand<T> : Command where T : ISignal1<DragLeaveVO>, new()
 {

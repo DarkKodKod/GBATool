@@ -37,7 +37,7 @@ namespace GBATool.Views
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
             SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnMouseMove;
-            SignalManager.Get<MouseLeaveSignal>().Listener += OnMouseLeave;
+            SignalManager.Get<MouseLeaveEventSignal>().Listener += OnMouseLeave;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener += OnSpriteSize16x16;
             SignalManager.Get<SpriteSize16x32Signal>().Listener += OnSpriteSize16x32;
@@ -59,13 +59,13 @@ namespace GBATool.Views
             OnSpriteSelectCursor();
         }
 
-        private void OnMouseLeave(MouseLeaveVO vo)
+        private void OnMouseLeave(MouseEventVO vo)
         {
             _previousMousePosition = new(0, 0);
             _validPanningMovement = false;
         }
 
-        private void OnMouseMove(MouseMoveVO vo)
+        private void OnMouseMove(MouseEventVO vo)
         {
             if (vo.Sender is ScrollViewer)
             {
@@ -139,7 +139,7 @@ namespace GBATool.Views
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
             SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnMouseMove;
-            SignalManager.Get<MouseLeaveSignal>().Listener -= OnMouseLeave;
+            SignalManager.Get<MouseLeaveEventSignal>().Listener -= OnMouseLeave;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener -= OnSpriteSize16x16;
             SignalManager.Get<SpriteSize16x32Signal>().Listener -= OnSpriteSize16x32;

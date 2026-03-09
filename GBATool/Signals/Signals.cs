@@ -32,6 +32,8 @@ public class DragOverEventSignal : Signal<DragLeaveVO> { }
 public class MouseDownEventSignal : Signal<MouseButtonVO> { }
 public class MouseUpEventSignal : Signal<MouseButtonVO> { }
 public class MouseMoveEventSignal : Signal<MouseEventVO> { }
+public class MouseLeaveEventSignal : Signal<MouseEventVO> { }
+public class PreviewMouseMoveSignal : Signal<MouseEventVO> { }
 
 // MainWindowViewModel
 public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
@@ -40,8 +42,6 @@ public class ExitSuccessSignal : Signal { }
 public class UpdateAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
 public class MouseLeftButtonDownSignal : Signal<Point> { }
 public class MouseLeftButtonUpSignal : Signal { }
-public class PreviewMouseMoveSignal : Signal<MouseMoveVO> { }
-public class MouseLeaveSignal : Signal<MouseLeaveVO> { }
 public class ProjectItemSelectedSignal : Signal<ProjectItem> { }
 public class ProjectItemUnselectedSignal : Signal<ProjectItem> { }
 public class CloseProjectSuccessSignal : Signal { }
