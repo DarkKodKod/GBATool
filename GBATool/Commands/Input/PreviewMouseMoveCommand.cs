@@ -11,18 +11,20 @@ public class PreviewMouseMoveCommand : Command
 {
     public override void Execute(object? parameter)
     {
-        if (parameter is MouseEventArgs mouseEvent)
+        if (parameter is not MouseEventArgs mouseEvent)
         {
-            MouseMoveVO vo = new()
-            {
-                AbsolutePosition = mouseEvent.GetPosition(null),
-                RelativePosition = Mouse.GetPosition((IInputElement)mouseEvent.Source),
-                OriginalSource = mouseEvent.OriginalSource,
-                Sender = mouseEvent.Source,
-                LeftButton = mouseEvent.LeftButton
-            };
-
-            SignalManager.Get<MouseMoveSignal>().Dispatch(vo);
+            return;
         }
+
+        MouseMoveVO vo = new()
+        {
+            AbsolutePosition = mouseEvent.GetPosition(null),
+            RelativePosition = Mouse.GetPosition((IInputElement)mouseEvent.Source),
+            OriginalSource = mouseEvent.OriginalSource,
+            Sender = mouseEvent.Source,
+            LeftButton = mouseEvent.LeftButton
+        };
+
+        SignalManager.Get<PreviewMouseMoveSignal>().Dispatch(vo);
     }
 }

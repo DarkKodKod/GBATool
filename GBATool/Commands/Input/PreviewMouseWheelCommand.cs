@@ -15,16 +15,18 @@ public class PreviewMouseWheelCommand : Command
             return;
         }
 
-        if (parameter is MouseWheelEventArgs wheelEvent)
+        if (parameter is not MouseWheelEventArgs wheelEvent)
         {
-            MouseWheelVO vo = new()
-            {
-                Delta = wheelEvent.Delta,
-                OriginalSource = wheelEvent.OriginalSource,
-                Sender = wheelEvent.Source
-            };
-
-            SignalManager.Get<MouseWheelSignal>().Dispatch(vo);
+            return;
         }
+
+        MouseWheelVO vo = new()
+        {
+            Delta = wheelEvent.Delta,
+            OriginalSource = wheelEvent.OriginalSource,
+            Sender = wheelEvent.Source
+        };
+
+        SignalManager.Get<MouseWheelSignal>().Dispatch(vo);
     }
 }

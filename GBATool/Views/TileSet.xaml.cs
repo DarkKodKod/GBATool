@@ -36,7 +36,7 @@ namespace GBATool.Views
 
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
-            SignalManager.Get<MouseMoveSignal>().Listener += OnMouseMove;
+            SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnMouseMove;
             SignalManager.Get<MouseLeaveSignal>().Listener += OnMouseLeave;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener += OnSpriteSize16x16;
@@ -138,7 +138,7 @@ namespace GBATool.Views
         {
             #region Signals
             SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
-            SignalManager.Get<MouseMoveSignal>().Listener -= OnMouseMove;
+            SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnMouseMove;
             SignalManager.Get<MouseLeaveSignal>().Listener -= OnMouseLeave;
             SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;
             SignalManager.Get<SpriteSize16x16Signal>().Listener -= OnSpriteSize16x16;

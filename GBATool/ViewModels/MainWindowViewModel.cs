@@ -135,7 +135,7 @@ public class MainWindowViewModel : ViewModel
         SignalManager.Get<UpdateRecentProjectsSignal>().Listener += OnUpdateRecentProjects;
         SignalManager.Get<MouseLeftButtonDownSignal>().Listener += OnMouseLeftButtonDown;
         SignalManager.Get<MouseLeftButtonUpSignal>().Listener += OnMouseLeftButtonUp;
-        SignalManager.Get<MouseMoveSignal>().Listener += OnMouseMove;
+        SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnMouseMove;
         SignalManager.Get<UpdateAdornersSignal>().Listener += OnUpdateAdorners;
         SignalManager.Get<InitializeAdornersSignal>().Listener += OnInitializeAdorners;
         SignalManager.Get<DetachAdornersSignal>().Listener += OnDetachAdorners;

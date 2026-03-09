@@ -26,6 +26,12 @@ public class MouseImageSelectedSignal : Signal<Image, Point> { }
 public class OptionOnionSkinSignal : Signal<bool> { }
 public class OptionShowCollisionsSignal : Signal<bool, string[]> { }
 public class ProjectBuildCompleteSignal : Signal { }
+public class DragLeaveEventSignal : Signal<DragLeaveVO> { }
+public class DropEventSignal : Signal<DragLeaveVO> { }
+public class DragOverEventSignal : Signal<DragLeaveVO> { }
+public class MouseDownEventSignal : Signal<MouseButtonVO> { }
+public class MouseUpEventSignal : Signal<MouseButtonVO> { }
+public class MouseMoveEventSignal : Signal<MouseEventVO> { }
 
 // MainWindowViewModel
 public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
@@ -34,7 +40,7 @@ public class ExitSuccessSignal : Signal { }
 public class UpdateAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
 public class MouseLeftButtonDownSignal : Signal<Point> { }
 public class MouseLeftButtonUpSignal : Signal { }
-public class MouseMoveSignal : Signal<MouseMoveVO> { }
+public class PreviewMouseMoveSignal : Signal<MouseMoveVO> { }
 public class MouseLeaveSignal : Signal<MouseLeaveVO> { }
 public class ProjectItemSelectedSignal : Signal<ProjectItem> { }
 public class ProjectItemUnselectedSignal : Signal<ProjectItem> { }
@@ -147,3 +153,6 @@ public class TryCreatePaletteElementSignal : Signal<string, List<Color>> { }
 // Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }
 public class PaletteColorArrayChangeSignal : Signal<int[]> { }
+
+// Maps
+

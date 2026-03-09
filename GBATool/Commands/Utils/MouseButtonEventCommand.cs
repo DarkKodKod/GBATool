@@ -1,26 +1,25 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
-using GBATool.Signals;
 using GBATool.VOs;
 using System.Windows.Input;
 
-namespace GBATool.Commands.Input;
+namespace GBATool.Commands.Utils;
 
-public class MouseLeaveCommand : Command
+public class MouseButtonEventCommand<T> : Command where T : ISignal1<MouseButtonVO>, new()
 {
     public override void Execute(object? parameter)
     {
-        if (parameter is not MouseEventArgs mouseEvent)
+        if (parameter is not MouseButtonEventArgs mouseEvent)
         {
             return;
         }
 
-        MouseLeaveVO vo = new()
+        MouseButtonVO vo = new(mouseEvent)
         {
             OriginalSource = mouseEvent.OriginalSource,
             Sender = mouseEvent.Source
         };
 
-        SignalManager.Get<MouseLeaveSignal>().Dispatch(vo);
+        SignalManager.Get<T>().Dispatch(vo);
     }
 }

@@ -366,7 +366,7 @@ public class TileSetViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<BrowseFileSuccessSignal>().Listener += OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
-        SignalManager.Get<MouseMoveSignal>().Listener += OnMouseMove;
+        SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnMouseMove;
         SignalManager.Get<MouseLeaveSignal>().Listener += OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener += OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
@@ -569,7 +569,7 @@ public class TileSetViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<BrowseFileSuccessSignal>().Listener -= OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
-        SignalManager.Get<MouseMoveSignal>().Listener -= OnMouseMove;
+        SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnMouseMove;
         SignalManager.Get<MouseLeaveSignal>().Listener -= OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener -= OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;

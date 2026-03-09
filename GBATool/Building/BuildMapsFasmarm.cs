@@ -9,6 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+// Information taken from pages:
+// - https://gbadev.net/gbadoc/registers.html#REG_BGCNT
+// - https://gbadev.net/gbadoc/backgrounds.html
+
 namespace GBATool.Building;
 
 public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
