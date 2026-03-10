@@ -48,8 +48,8 @@
                         IsHitTestVisible="False">
                     <Border.Background>
                         <VisualBrush TileMode="Tile"
-                                         Viewport="0,0,8,8" ViewportUnits="Absolute" 
-                                         Viewbox="0,0,8,8" ViewboxUnits="Absolute">
+                                     Viewport="0,0,8,8" ViewportUnits="Absolute" 
+                                     Viewbox="0,0,8,8" ViewboxUnits="Absolute">
                             <VisualBrush.Visual>
                                 <Rectangle Stroke="Magenta" StrokeThickness="0.1" Height="100" Width="100"/>
                             </VisualBrush.Visual>

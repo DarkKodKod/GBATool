@@ -46,12 +46,14 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
                 continue;
             }
 
-            if (model.Tiles.Count == 0)
+            string name = item.Name.Replace(' ', '_').ToLower();
+
+            if (model.Tiles.Count == 0 ||
+                string.IsNullOrEmpty(model.BankID))
             {
+                AddWarning($"Maps, {name}, is empty.");
                 continue;
             }
-
-            string name = item.Name.Replace(' ', '_').ToLower();
 
             if (model.MapType == MapType.Affine)
             {

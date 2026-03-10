@@ -1,5 +1,6 @@
 ﻿using GBATool.Enums;
 using Nett;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -13,6 +14,17 @@ public class Tile
     public int PaletteIndex { get; set; }
     public string SpriteTileID { get; set; } = string.Empty;
     public string TileSetID { get; set; } = string.Empty;
+
+    public bool IsEmpty()
+    {
+        return string.IsNullOrEmpty(SpriteTileID) || string.IsNullOrEmpty(TileSetID);
+    }
+
+    public void Clean()
+    {
+        SpriteTileID = string.Empty;
+        TileSetID = string.Empty;
+    }
 }
 
 public class MapModel : AFileModel
@@ -51,4 +63,20 @@ public class MapModel : AFileModel
     public ScreenBaseBlock ScreenBaseBlock { get; set; } = ScreenBaseBlock.Block0;
     public CharacterBaseBlock CharacterBaseBlock { get; set; } = CharacterBaseBlock.Block0;
     public string BankID { get; set; } = string.Empty;
+
+    public bool IsScreenEmpty()
+    {
+        return Tiles.Count == 0;
+    }
+
+    public void CreateEmptyScreen()
+    {
+        for (int i = 0; i < RegularTileMax; i++)
+        {
+            Tiles.Add(new()
+            {
+                ID = Guid.NewGuid().ToString()
+            });
+        }
+    }
 }
