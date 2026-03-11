@@ -5,6 +5,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
@@ -305,27 +306,42 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
-        if (model.IsScreenEmpty())
-        {
-            model.CreateEmptyScreen();
-            Save();
-        }
-
         _doNotSave = true;
 
         MapType = model.MapType;
         Priority = model.Priority;
         BckgrRegularSize = model.BckgrRegularSize;
         BckgrAffineSize = model.BckgrAffineSize;
-        Tiles = model.Tiles;
+        Tiles = model.Tiles.ToList();
         EnableMosaic = model.EnableMosaic;
         AffineWrapping = model.AffineWrapping;
-        PaletteIDs = model.PaletteIDs;
+        PaletteIDs = model.PaletteIDs.ToList();
         ScreenBaseBlock = model.ScreenBaseBlock;
         CharacterBaseBlock = model.CharacterBaseBlock;
         BankID = model.BankID;
 
         _doNotSave = false;
+
+        Save();
+    }
+
+    private void Save()
+    {
+        MapModel? map = GetModel();
+
+        if (map == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < map.Tiles.Length; i++)
+        {
+            map.Tiles[i].PaletteIndex = 3;
+            map.Tiles[i].FlipVertical = true;
+            map.Tiles[i].SpriteTileID = "gato";
+        }
+
+        ProjectItem?.FileHandler?.Save();
     }
 
     public override void OnDeactivate()
@@ -505,17 +521,5 @@ public class MapViewModel : ItemViewModel
     private void OnDragLeaveEvent(DragLeaveVO vO)
     {
         //
-    }
-
-    private void Save()
-    {
-        MapModel? map = GetModel();
-
-        if (map == null)
-        {
-            return;
-        }
-
-        ProjectItem?.FileHandler?.Save();
     }
 }

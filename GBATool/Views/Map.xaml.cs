@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows;
 
 namespace GBATool.Views
 {
@@ -10,6 +11,16 @@ namespace GBATool.Views
         public Map()
         {
             InitializeComponent();
+        }
+
+        private void MapView_Loaded(object sender, RoutedEventArgs e)
+        {
+            bankViewer.OnActivate();
+        }
+
+        private void MapView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            bankViewer.OnDeactivate();
         }
     }
 }

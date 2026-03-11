@@ -48,7 +48,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
             string name = item.Name.Replace(' ', '_').ToLower();
 
-            if (model.Tiles.Count == 0 ||
+            if (model.Tiles.Length == 0 ||
                 string.IsNullOrEmpty(model.BankID))
             {
                 AddWarning($"Maps, {name}, is empty.");
@@ -184,7 +184,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             ushort tileIndex = (ushort)(spriteIndex & 1023); // 1023 = 0000 0011 1111 1111b
             ushort horizontalFlip = (ushort)(tile.FlipHorizontal ? 1024 : 0); // 1023 = 0000 0100 0000 0000b
             ushort verticalFlip = (ushort)(tile.FlipVertical ? 2048 : 0); // 2048 = 0000 1000 0000 0000
-            ushort paletteIndex = (ushort)(ushort.Clamp((ushort)tile.PaletteIndex, 0, 16) << 12);
+            ushort paletteIndex = (ushort)(ushort.Clamp(tile.PaletteIndex, 0, 16) << 12);
 
             ushort tileValue = (ushort)(paletteIndex | verticalFlip | horizontalFlip | tileIndex);
 
@@ -199,7 +199,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             {
                 await outputFile.WriteAsync($"0x{tileValue:X4}");
 
-                if (countHexValues % 32 < 31 && countHexValues != model.Tiles.Count - 1)
+                if (countHexValues % 32 < 31 && countHexValues != model.Tiles.Length - 1)
                 {
                     await outputFile.WriteAsync(',');
                 }
