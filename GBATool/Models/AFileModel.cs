@@ -1,7 +1,7 @@
-﻿using Nett;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
+using Tomlyn;
 
 namespace GBATool.Models;
 
@@ -26,7 +26,8 @@ public abstract class AFileModel
     {
         try
         {
-            Toml.WriteFile(this, Path.Combine(path, name + FileExtension));
+            TomlSerializerOptions options = new();
+            File.WriteAllText(Path.Combine(path, name + FileExtension), TomlSerializer.Serialize(this, options));
         }
         catch (IOException ex)
         {

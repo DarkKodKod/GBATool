@@ -1,8 +1,8 @@
 ﻿using GBATool.Enums;
 using GBATool.Utils;
-using Nett;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;
 
@@ -14,7 +14,7 @@ public class PaletteModel : AFileModel
 
     public static readonly int MaxColor = BitsPerPixel.f4bpp.GetNumberOfColors();
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get

@@ -3,10 +3,10 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
 using GBATool.ViewModels;
-using Nett;
 using System;
 using System.IO;
 using System.Threading;
+using Tomlyn;
 
 namespace GBATool.FileSystem;
 
@@ -213,7 +213,8 @@ public static class ProjectItemFileSystem
             {
                 string filePath = Path.Combine(path, name + model.FileExtension);
 
-                Toml.WriteFile(model, filePath);
+                TomlSerializerOptions options = new();
+                File.WriteAllText(filePath, TomlSerializer.Serialize(model, options));
 
                 item.FileHandler.FileModel = model;
 

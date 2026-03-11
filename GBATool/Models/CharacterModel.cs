@@ -1,6 +1,6 @@
 ﻿using GBATool.Enums;
-using Nett;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media;
 
@@ -56,7 +56,7 @@ public class CharacterModel : AFileModel
 {
     private const string _extensionKey = "extensionCharacters";
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get

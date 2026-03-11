@@ -2,7 +2,10 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Enums;
 using GBATool.Signals;
-using Nett;
+using System.IO;
+using System.Text;
+using System.Text.Json.Serialization;
+using Tomlyn;
 
 namespace GBATool.Models;
 
@@ -48,8 +51,8 @@ public class ProjectModel : ISingletonModel
     public string ProjectInitials { get; set; } = string.Empty;
     public string DeveloperId { get; set; } = string.Empty;
 
-    [TomlIgnore] public string ProjectFilePath { get; set; } = string.Empty;
-    [TomlIgnore] public string ProjectPath { get; set; } = string.Empty;
+    [JsonIgnore] public string ProjectFilePath { get; set; } = string.Empty;
+    [JsonIgnore] public string ProjectPath { get; set; } = string.Empty;
     public BuildConfig Build { get; set; } = new();
     public SpritePattern SpritePatternFormat { get; set; } = SpritePattern.Format1D;
 
@@ -76,8 +79,13 @@ public class ProjectModel : ISingletonModel
         return !string.IsNullOrEmpty(ProjectFilePath) && !string.IsNullOrEmpty(ProjectPath);
     }
 
-    public void Copy(ProjectModel copy)
+    public void Copy(ProjectModel? copy)
     {
+        if (copy == null)
+        {
+            return;
+        }
+
         Name = copy.Name;
         Version = copy.Version;
         SpritePatternFormat = copy.SpritePatternFormat;
@@ -103,7 +111,9 @@ public class ProjectModel : ISingletonModel
         ProjectPath = path;
         ProjectFilePath = filePath;
 
-        Copy(Toml.ReadFile<ProjectModel>(ProjectFilePath));
+        TomlSerializerOptions options = new();
+        string fileContent = File.ReadAllText(ProjectFilePath, Encoding.UTF8);
+        Copy(TomlSerializer.Deserialize<ProjectModel>(fileContent, options));
     }
 
     public void Save(string path)
@@ -120,7 +130,8 @@ public class ProjectModel : ISingletonModel
             return;
         }
 
-        Toml.WriteFile(this, ProjectFilePath);
+        TomlSerializerOptions options = new();
+        File.WriteAllText(ProjectFilePath, TomlSerializer.Serialize(this, options));
 
         SignalManager.Get<ProjectConfigurationSavedSignal>().Dispatch();
     }

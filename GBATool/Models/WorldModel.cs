@@ -1,4 +1,4 @@
-﻿using Nett;
+﻿using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace GBATool.Models;
@@ -7,7 +7,7 @@ public class WorldModel : AFileModel
 {
     private const string _extensionKey = "extensionWorlds";
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get

@@ -2,9 +2,9 @@
 using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Utils;
-using Nett;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace GBATool.Models;
@@ -21,7 +21,7 @@ public class BankModel : AFileModel
 {
     private const string _extensionKey = "extensionBanks";
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get
@@ -40,7 +40,7 @@ public class BankModel : AFileModel
     public int TransparentColor { get; set; } = 0;
     public List<SpriteRef> Sprites { get; set; } = [];
 
-    [TomlIgnore]
+    [JsonIgnore]
     public bool IsFull { get; private set; }
 
     public bool GetTileIndex(string spriteID, ref int index)

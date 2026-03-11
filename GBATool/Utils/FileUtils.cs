@@ -1,10 +1,10 @@
 ﻿using GBATool.Enums;
 using GBATool.Models;
-using Nett;
 using System;
 using System.Buffers;
 using System.IO;
 using System.Threading.Tasks;
+using Tomlyn;
 
 namespace GBATool.Utils;
 
@@ -26,25 +26,25 @@ public static class FileUtils
             switch (type)
             {
                 case ProjectItemType.Bank:
-                    model = Toml.ReadStream<BankModel>(stream);
+                    model = TomlSerializer.Deserialize<BankModel>(stream);
                     break;
                 case ProjectItemType.Character:
-                    model = Toml.ReadStream<CharacterModel>(stream);
+                    model = TomlSerializer.Deserialize<CharacterModel>(stream);
                     break;
                 case ProjectItemType.Map:
-                    model = Toml.ReadStream<MapModel>(stream);
+                    model = TomlSerializer.Deserialize<MapModel>(stream);
                     break;
                 case ProjectItemType.TileSet:
-                    model = Toml.ReadStream<TileSetModel>(stream);
+                    model = TomlSerializer.Deserialize<TileSetModel>(stream);
                     break;
                 case ProjectItemType.Palette:
-                    model = Toml.ReadStream<PaletteModel>(stream);
+                    model = TomlSerializer.Deserialize<PaletteModel>(stream);
                     break;
                 case ProjectItemType.World:
-                    model = Toml.ReadStream<WorldModel>(stream);
+                    model = TomlSerializer.Deserialize<WorldModel>(stream);
                     break;
                 case ProjectItemType.Entity:
-                    model = Toml.ReadStream<EntityModel>(stream);
+                    model = TomlSerializer.Deserialize<EntityModel>(stream);
                     break;
             }
         }

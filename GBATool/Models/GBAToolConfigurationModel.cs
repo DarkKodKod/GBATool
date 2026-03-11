@@ -2,9 +2,10 @@
 using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.VOs;
-using Nett;
 using System.IO;
+using System.Text;
 using System.Windows;
+using Tomlyn;
 
 namespace GBATool.Models;
 
@@ -37,13 +38,18 @@ public class GBAToolConfigurationModel : ISingletonModel
             RecentProjects[i] = "";
         }
 
-        _configFileName = @".\" + (string)Application.Current.FindResource(_configfileNameKey) + Toml.FileExtension;
+        _configFileName = @".\" + (string)Application.Current.FindResource(_configfileNameKey) + ".toml";
 
         Version = (string)Application.Current.FindResource(_modelVersioKey);
     }
 
-    public void Copy(GBAToolConfigurationModel copy)
+    public void Copy(GBAToolConfigurationModel? copy)
     {
+        if (copy == null)
+        {
+            return;
+        }
+
         DefaultProjectPath = copy.DefaultProjectPath;
         RecentProjects = copy.RecentProjects;
         MaxRencetProjectsCount = copy.MaxRencetProjectsCount;
@@ -63,7 +69,9 @@ public class GBAToolConfigurationModel : ISingletonModel
 
         if (exists)
         {
-            Copy(Toml.ReadFile<GBAToolConfigurationModel>(_configFileName));
+            TomlSerializerOptions options = new();
+            string fileContent = File.ReadAllText(_configFileName, Encoding.UTF8);
+            Copy(TomlSerializer.Deserialize<GBAToolConfigurationModel>(fileContent, options));
         }
         else
         {
@@ -85,7 +93,8 @@ public class GBAToolConfigurationModel : ISingletonModel
             return;
         }
 
-        Toml.WriteFile(this, _configFileName);
+        TomlSerializerOptions options = new();
+        File.WriteAllText(_configFileName, TomlSerializer.Serialize(this, options));
     }
 
     /// <summary>

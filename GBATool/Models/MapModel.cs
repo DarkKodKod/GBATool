@@ -1,6 +1,6 @@
 ﻿using GBATool.Enums;
-using Nett;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace GBATool.Models;
@@ -38,7 +38,7 @@ public class MapModel : AFileModel
 {
     private const string _extensionKey = "extensionMaps";
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get
@@ -52,11 +52,11 @@ public class MapModel : AFileModel
         }
     }
 
-    [TomlIgnore]
+    [JsonIgnore]
     public const int RegularTileMin = 32 * 32;
-    [TomlIgnore]
+    [JsonIgnore]
     public const int RegularTileMax = RegularTileMin * 4;
-    [TomlIgnore]
+    [JsonIgnore]
     public const int AffineTileMax = RegularTileMax * 2;
 
     public MapType MapType { get; set; } = MapType.Regular;

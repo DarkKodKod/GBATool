@@ -2,8 +2,8 @@
 using GBATool.Enums;
 using GBATool.Signals;
 using GBATool.Utils;
-using Nett;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -15,7 +15,7 @@ public class TileSetModel : AFileModel
 
     private const string _extensionKey = "extensionTileSets";
 
-    [TomlIgnore]
+    [JsonIgnore]
     public override string FileExtension
     {
         get
