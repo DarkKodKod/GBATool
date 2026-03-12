@@ -214,7 +214,7 @@ public static class ProjectItemFileSystem
                 string filePath = Path.Combine(path, name + model.FileExtension);
 
                 TomlSerializerOptions options = new();
-                File.WriteAllText(filePath, TomlSerializer.Serialize(model, options));
+                File.WriteAllText(filePath, TomlSerializer.Serialize(model, model.GetType(), options));
 
                 item.FileHandler.FileModel = model;
 

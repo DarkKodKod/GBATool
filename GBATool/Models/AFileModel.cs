@@ -27,7 +27,8 @@ public abstract class AFileModel
         try
         {
             TomlSerializerOptions options = new();
-            File.WriteAllText(Path.Combine(path, name + FileExtension), TomlSerializer.Serialize(this, options));
+            string toml = TomlSerializer.Serialize(this, GetType(), options);
+            File.WriteAllText(Path.Combine(path, name + FileExtension), toml);
         }
         catch (IOException ex)
         {
