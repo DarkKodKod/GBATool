@@ -1,4 +1,5 @@
 ﻿using GBATool.Enums;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Windows;
@@ -22,7 +23,7 @@ public struct Tile
     public string SpriteTileID { get; set; }
     public string TileSetID { get; set; }
 
-    public bool IsEmpty()
+    public readonly bool IsEmpty()
     {
         return string.IsNullOrEmpty(SpriteTileID) || string.IsNullOrEmpty(TileSetID);
     }
@@ -63,7 +64,11 @@ public class MapModel : AFileModel
     public Priority Priority { get; set; } = Priority.Highest;
     public BckgrRegularSize BckgrRegularSize { get; set; } = BckgrRegularSize.Regular32x32;
     public BckgrAffineSize BckgrAffineSize { get; set; } = BckgrAffineSize.Affine16x16;
-    public Tile[] Tiles { get; set; } = new Tile[RegularTileMax];
+    public Tile[] Tiles0 { get; set; } = new Tile[RegularTileMin];
+    public Tile[] Tiles1 { get; set; } = new Tile[RegularTileMin];
+    public Tile[] Tiles2 { get; set; } = new Tile[RegularTileMin];
+    public Tile[] Tiles3 { get; set; } = new Tile[RegularTileMin];
+    public List<Tile> AffineTiles { get; set; } = [];
     public bool EnableMosaic { get; set; }
     public bool AffineWrapping { get; set; }
     public string[] PaletteIDs { get; set; } = [.. Enumerable.Repeat(string.Empty, 16)];

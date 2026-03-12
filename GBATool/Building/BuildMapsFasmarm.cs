@@ -48,10 +48,9 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
             string name = item.Name.Replace(' ', '_').ToLower();
 
-            if (model.Tiles.Length == 0 ||
-                string.IsNullOrEmpty(model.BankID))
+            if (string.IsNullOrEmpty(model.BankID))
             {
-                AddWarning($"Maps, {name}, is empty.");
+                AddWarning($"Maps, {name}, doesnt have a bank id associated with it. Skip it");
                 continue;
             }
 
@@ -128,13 +127,28 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             _ => "0x06000000"
         };
 
-        string mapSize = model.BckgrRegularSize switch
+        string mapSize;
+
+        if (model.MapType == MapType.Regular)
         {
-            BckgrRegularSize.Regular64x64 => "1100000000000000b",
-            BckgrRegularSize.Regular64x32 => "0100000000000000b",
-            BckgrRegularSize.Regular32x64 => "1000000000000000b",
-            _ => "0000000000000000b"
-        };
+            mapSize = model.BckgrRegularSize switch
+            {
+                BckgrRegularSize.Regular64x64 => "1100000000000000b",
+                BckgrRegularSize.Regular32x64 => "1000000000000000b",
+                BckgrRegularSize.Regular64x32 => "0100000000000000b",
+                _ => "0000000000000000b" // 32x32
+            };
+        }
+        else
+        {
+            mapSize = model.BckgrAffineSize switch
+            {
+                BckgrAffineSize.Affine128x128 => "1100000000000000b",
+                BckgrAffineSize.Affine64x64 => "1000000000000000b",
+                BckgrAffineSize.Affine32x32 => "0100000000000000b",
+                _ => "0000000000000000b" // 16x16
+            };
+        }   
 
         string mapPriority = model.Priority switch
         {
@@ -165,9 +179,54 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         await outputFile.WriteLineAsync("    align 2");
         await outputFile.WriteLineAsync($"map_{name}:");
 
+        if (model.MapType == MapType.Regular)
+        {
+            if (model.BckgrRegularSize == BckgrRegularSize.Regular32x32)
+            {
+                await WriteMapTiles(outputFile, model.Tiles0);
+            }
+            else if (model.BckgrRegularSize == BckgrRegularSize.Regular32x64)
+            {
+                await WriteMapTiles(outputFile, model.Tiles0);
+                await WriteMapTiles(outputFile, model.Tiles2);
+            }
+            else if (model.BckgrRegularSize == BckgrRegularSize.Regular64x32)
+            {
+                await WriteMapTiles(outputFile, model.Tiles0);
+                await WriteMapTiles(outputFile, model.Tiles1);
+            }
+            else if (model.BckgrRegularSize == BckgrRegularSize.Regular64x64)
+            {
+                await WriteMapTiles(outputFile, model.Tiles0);
+                await WriteMapTiles(outputFile, model.Tiles1);
+                await WriteMapTiles(outputFile, model.Tiles2);
+                await WriteMapTiles(outputFile, model.Tiles3);
+            }
+        }
+        else
+        {
+            int size = model.BckgrAffineSize switch
+            {
+                BckgrAffineSize.Affine128x128 => 128*128,
+                BckgrAffineSize.Affine64x64 => 64*64,
+                BckgrAffineSize.Affine32x32 => 32*32,
+                _ => 16*16
+            };
+
+            Tile[] tiles = new Tile[size];
+            Array.Copy(model.AffineTiles.ToArray(), tiles, size);
+            await WriteMapTiles(outputFile, tiles);
+        }
+
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync($"__map_{name}:");
+    }
+
+    private static async Task WriteMapTiles(StreamWriter outputFile, Tile[] mapTiles)
+    {
         int countHexValues = 0;
 
-        foreach (Tile tile in model.Tiles)
+        foreach (Tile tile in mapTiles)
         {
             TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(tile.TileSetID);
 
@@ -191,7 +250,9 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             if (countHexValues % 32 == 0)
             {
                 if (countHexValues > 0)
+                {
                     await outputFile.WriteAsync(Environment.NewLine);
+                }   
 
                 await outputFile.WriteAsync($"    dh 0x{tileValue:X4},");
             }
@@ -199,7 +260,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             {
                 await outputFile.WriteAsync($"0x{tileValue:X4}");
 
-                if (countHexValues % 32 < 31 && countHexValues != model.Tiles.Length - 1)
+                if (countHexValues % 32 < 31 && countHexValues != mapTiles.Length - 1)
                 {
                     await outputFile.WriteAsync(',');
                 }
@@ -207,9 +268,6 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
 
             countHexValues++;
         }
-
-        await outputFile.WriteAsync(Environment.NewLine);
-        await outputFile.WriteLineAsync($"__map_{name}:");
     }
 
     private static async Task WriteLiteralPoolFile(StreamWriter outputFile, string name)

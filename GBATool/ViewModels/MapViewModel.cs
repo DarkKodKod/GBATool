@@ -312,7 +312,7 @@ public class MapViewModel : ItemViewModel
         Priority = model.Priority;
         BckgrRegularSize = model.BckgrRegularSize;
         BckgrAffineSize = model.BckgrAffineSize;
-        Tiles = model.Tiles.ToList();
+        Tiles = model.Tiles0.ToList();
         EnableMosaic = model.EnableMosaic;
         AffineWrapping = model.AffineWrapping;
         PaletteIDs = model.PaletteIDs.ToList();
@@ -321,27 +321,6 @@ public class MapViewModel : ItemViewModel
         BankID = model.BankID;
 
         _doNotSave = false;
-
-        Save();
-    }
-
-    private void Save()
-    {
-        MapModel? map = GetModel();
-
-        if (map == null)
-        {
-            return;
-        }
-
-        for (int i = 0; i < map.Tiles.Length; i++)
-        {
-            map.Tiles[i].PaletteIndex = 3;
-            map.Tiles[i].FlipVertical = true;
-            map.Tiles[i].SpriteTileID = "gato";
-        }
-
-        ProjectItem?.FileHandler?.Save();
     }
 
     public override void OnDeactivate()
