@@ -89,31 +89,297 @@
                 VerticalAlignment="Stretch">
                 <TabItem Header="Configuration">
                 </TabItem>
-                <TabItem Header="Tiles">
+				<TabItem Header="Bank">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="10"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="10"/>
+						</Grid.ColumnDefinitions>
+						<Grid Grid.Column="1">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="5"/>
+								<RowDefinition Height="auto"/>
+								<RowDefinition Height="5"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+							<StackPanel Orientation="Horizontal" Grid.Row="1">
+								<ComboBox Width="200"
+                                          ItemsSource="{Binding Banks}" 
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedBank, Mode=TwoWay}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+							</StackPanel>
+							<ScrollViewer
+								VerticalAlignment="Top"
+                                Grid.Row="3"
+                                PanningMode="Both"
+                                HorizontalScrollBarVisibility="Auto"
+                                VerticalScrollBarVisibility="Visible" >
+								<local:BankViewerView 
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    AllowDrop="True"
+                                    Force2DView="True"
+                                    x:Name="bankViewer"/>
+							</ScrollViewer>
+						</Grid>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Tiles" IsSelected="True">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="300"/>
                             <RowDefinition Height="auto"/>
+							<RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="10"/>
                         </Grid.ColumnDefinitions>
-                        <ScrollViewer
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            PanningMode="Both"
-                            HorizontalScrollBarVisibility="Auto"
-                            VerticalScrollBarVisibility="Visible" >
-                            <local:BankViewerView 
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                AllowDrop="True"
-                                Force2DView="True"
-                                x:Name="bankViewer"/>
-                        </ScrollViewer>
-                    </Grid>
+					    <GroupBox Header="Palettes" Grid.Row="0" Grid.Column="1">
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="22"/>
+									<ColumnDefinition Width="auto"/>
+									<ColumnDefinition Width="300"/>
+								</Grid.ColumnDefinitions>
+								<Label Content="0" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="0"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="0" PaletteIndex="0" Padding="5,0,0,5" x:Name="palette0" Grid.Column="2"/>
+								<Label Content="1" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="1"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="1" PaletteIndex="1" Padding="5,0,0,5" x:Name="palette1" Grid.Column="2"/>
+								<Label Content="2" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="2"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="2" PaletteIndex="2" Padding="5,0,0,5" x:Name="palette2" Grid.Column="2"/>
+								<Label Content="3" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="3"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="3" PaletteIndex="3" Padding="5,0,0,5" x:Name="palette3" Grid.Column="2"/>
+								<Label Content="4" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="4"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="4" PaletteIndex="4" Padding="5,0,0,5" x:Name="palette4" Grid.Column="2"/>
+								<Label Content="5" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="5"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="5" PaletteIndex="5" Padding="5,0,0,5" x:Name="palette5" Grid.Column="2"/>
+								<Label Content="6" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="6"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="6" PaletteIndex="6" Padding="5,0,0,5" x:Name="palette6" Grid.Column="2"/>
+								<Label Content="7" Grid.Column="0" Grid.Row="7" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="7"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="7" PaletteIndex="7" Padding="5,0,0,5" x:Name="palette7" Grid.Column="2"/>
+								<Label Content="8" Grid.Column="0" Grid.Row="8" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="8"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="8" PaletteIndex="8" Padding="5,0,0,5" x:Name="palette8" Grid.Column="2"/>
+								<Label Content="9" Grid.Column="0" Grid.Row="9" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="9"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="9" PaletteIndex="9" Padding="5,0,0,5" x:Name="palette9" Grid.Column="2"/>
+								<Label Content="10" Grid.Column="0" Grid.Row="10" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="10"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="10" PaletteIndex="10" Padding="5,0,0,5" x:Name="palette10" Grid.Column="2"/>
+								<Label Content="11" Grid.Column="0" Grid.Row="11" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="11"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="11" PaletteIndex="11" Padding="5,0,0,5" x:Name="palette11" Grid.Column="2"/>
+								<Label Content="12" Grid.Column="0" Grid.Row="12" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="12"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="12" PaletteIndex="12" Padding="5,0,0,5" x:Name="palette12" Grid.Column="2"/>
+								<Label Content="13" Grid.Column="0" Grid.Row="13" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="13"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="13" PaletteIndex="13" Padding="5,0,0,5" x:Name="palette13" Grid.Column="2"/>
+								<Label Content="14" Grid.Column="0" Grid.Row="14" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="14"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="14" PaletteIndex="14" Padding="5,0,0,5" x:Name="palette14" Grid.Column="2"/>
+								<Label Content="15" Grid.Column="0" Grid.Row="15" HorizontalAlignment="Center"/>
+								<ComboBox Width="150" Grid.Row="15"
+                                          Margin="1"
+										  Grid.Column="1"
+                                          ItemsSource="{Binding Palettes}" 
+                                          DisplayMemberPath="FullName"
+                                          SelectedValuePath="Index"
+                                          SelectedValue="{Binding Path=SelectedPalette}">
+									<i:Interaction.Behaviors>
+										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
+									</i:Interaction.Behaviors>
+								</ComboBox>
+								<local:PaletteViewer Grid.Row="15" PaletteIndex="15" Padding="5,0,0,5" x:Name="palette15" Grid.Column="2"/>
+							</Grid>
+						</GroupBox>
+						<GroupBox Header="Tile" Grid.Row="1" Grid.Column="1">
+
+						</GroupBox>
+					</Grid>
                 </TabItem>
                 <TabItem Header="Entities">
                 </TabItem>

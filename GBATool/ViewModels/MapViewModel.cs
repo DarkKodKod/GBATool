@@ -1,6 +1,8 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Commands.Banks;
 using GBATool.Commands.Input;
 using GBATool.Enums;
+using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
@@ -14,7 +16,9 @@ namespace GBATool.ViewModels;
 public class MapViewModel : ItemViewModel
 {
     private Visibility _gridVisibility = Visibility.Visible;
-    private ImageSource? _mapImage;
+    private ImageSource? _mapImage = null;
+    private FileModelVO[]? _banks;
+    private int _selectedBank = -1;
     private bool _doNotSave;
     private int _canvasHeght = 256;
     private int _canvasWidth = 256;
@@ -30,6 +34,8 @@ public class MapViewModel : ItemViewModel
     private ScreenBaseBlock _screenBaseBlock = ScreenBaseBlock.Block0;
     private CharacterBaseBlock _characterBaseBlock = CharacterBaseBlock.Block0;
     private string _bankID = string.Empty;
+    private FileModelVO[]? _palettes;
+    private int _selectedPalette = -1;
 
     public MapModel? GetModel()
     {
@@ -43,9 +49,32 @@ public class MapViewModel : ItemViewModel
     public MouseButtonEventCommand<MouseDownEventSignal> MouseDownEventCommand { get; } = new();
     public MouseButtonEventCommand<MouseUpEventSignal> MouseUpEventCommand { get; } = new();
     public MouseEventCommand<MouseMoveEventSignal> MouseMoveEventCommand { get; } = new();
+    public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
     #endregion
 
     #region get/set
+    public FileModelVO[]? Banks
+    {
+        get => _banks;
+        set
+        {
+            _banks = value;
+
+            OnPropertyChanged(nameof(Banks));
+        }
+    }
+
+    public int SelectedBank
+    {
+        get => _selectedBank;
+        set
+        {
+            _selectedBank = value;
+
+            OnPropertyChanged(nameof(SelectedBank));
+        }
+    }
+
     public Visibility GridVisibility
     {
         get => _gridVisibility;
@@ -284,13 +313,74 @@ public class MapViewModel : ItemViewModel
             OnPropertyChanged(nameof(BankID));
         }
     }
+
+    public FileModelVO[]? Palettes
+    {
+        get => _palettes;
+        set
+        {
+            _palettes = value;
+
+            OnPropertyChanged(nameof(Palettes));
+        }
+    }
+
+    public int SelectedPalette
+    {
+        get => _selectedPalette;
+        set
+        {
+            if (_selectedPalette != value)
+            {
+                _selectedPalette = value;
+
+                UpdateAndSavePalette(value);
+            }
+
+            OnPropertyChanged(nameof(SelectedPalette));
+        }
+    }
     #endregion
+
+    public MapViewModel()
+    {
+        FileModelVO[] filemodelVo = [.. ProjectFiles.GetModels<BankModel>()];
+
+        IEnumerable<FileModelVO> banks = filemodelVo;
+
+        Banks = new FileModelVO[banks.Count()];
+
+        int index = 0;
+
+        foreach (FileModelVO item in banks)
+        {
+            item.Index = index;
+
+            Banks[index] = item;
+
+            index++;
+        }
+
+        List<FileModelVO> list =
+        [
+            new()
+            {
+                Index = -1,
+                Name = "None",
+                Model = null
+            },
+            .. ProjectFiles.GetModels<PaletteModel>(),
+        ];
+
+        Palettes = [.. list];
+    }
 
     public override void OnActivate()
     {
         base.OnActivate();
 
         #region Signals
+        SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener += OnDragLeaveEvent;
         SignalManager.Get<DropEventSignal>().Listener += OnDropEventS;
         SignalManager.Get<DragOverEventSignal>().Listener += OnDragOverEvent;
@@ -326,6 +416,7 @@ public class MapViewModel : ItemViewModel
     public override void OnDeactivate()
     {
         #region Signals
+        SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener -= OnDragLeaveEvent;
         SignalManager.Get<DropEventSignal>().Listener -= OnDropEventS;
         SignalManager.Get<DragOverEventSignal>().Listener -= OnDragOverEvent;
@@ -335,6 +426,48 @@ public class MapViewModel : ItemViewModel
         #endregion
 
         base.OnDeactivate();
+    }
+
+    private void SelectBank(string bankID)
+    {
+        for (int i = 0; i < Banks?.Length; i++)
+        {
+            if (Banks[i].Model is not BankModel bank)
+            {
+                continue;
+            }
+
+            if (bank.GUID == bankID)
+            {
+                SelectedBank = i;
+                return;
+            }
+        }
+    }
+
+    private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
+    {
+        SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
+
+        if (Banks == null || Banks.Length == 0)
+        {
+            return;
+        }
+
+        if (Banks[SelectedBank].Model is not BankModel model)
+        {
+            return;
+        }
+
+        BankID = model.GUID;
+
+        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
+        SignalManager.Get<RemoveSpriteSelectionFromBank>().Dispatch();
+    }
+
+    private void UpdateAndSavePalette(int newValue)
+    {
+        // todo
     }
 
     private void UpdateAndSaveBankID(string value)
