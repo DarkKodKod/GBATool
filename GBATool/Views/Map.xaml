@@ -173,7 +173,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[0]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -186,7 +186,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[1]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -199,7 +199,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[2]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -212,7 +212,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[3]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -225,7 +225,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[4]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -238,7 +238,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[5]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -251,7 +251,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[6]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -264,7 +264,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[7]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -277,7 +277,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[8]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -290,7 +290,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[9]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -303,7 +303,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[10]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -316,7 +316,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[11]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -329,7 +329,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[12]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -342,7 +342,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[13]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -355,7 +355,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[14]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>
@@ -368,7 +368,7 @@
                                           ItemsSource="{Binding Palettes}" 
                                           DisplayMemberPath="FullName"
                                           SelectedValuePath="Index"
-                                          SelectedValue="{Binding Path=SelectedPalette}">
+                                          SelectedValue="{Binding SelectedPalettes[15]}">
 									<i:Interaction.Behaviors>
 										<behaviors:EventToCommandBehavior Command="{Binding FileModelVOSelectionChangedCommand}" Event="SelectionChanged" PassArguments="True" />
 									</i:Interaction.Behaviors>

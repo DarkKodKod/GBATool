@@ -7,6 +7,7 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -34,8 +35,8 @@ public class MapViewModel : ItemViewModel
     private ScreenBaseBlock _screenBaseBlock = ScreenBaseBlock.Block0;
     private CharacterBaseBlock _characterBaseBlock = CharacterBaseBlock.Block0;
     private string _bankID = string.Empty;
-    private FileModelVO[]? _palettes;
-    private int _selectedPalette = -1;
+    private List<FileModelVO> _palettes = [];
+    private ObservableCollection<int> _selectedPalettes = [];
 
     public MapModel? GetModel()
     {
@@ -314,7 +315,7 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public FileModelVO[]? Palettes
+    public List<FileModelVO> Palettes
     {
         get => _palettes;
         set
@@ -325,19 +326,17 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public int SelectedPalette
+    public ObservableCollection<int> SelectedPalettes
     {
-        get => _selectedPalette;
+        get => _selectedPalettes;
         set
         {
-            if (_selectedPalette != value)
+            if (_selectedPalettes != value)
             {
-                _selectedPalette = value;
+                _selectedPalettes = value;
 
-                UpdateAndSavePalette(value);
+                OnPropertyChanged(nameof(Palettes));
             }
-
-            OnPropertyChanged(nameof(SelectedPalette));
         }
     }
     #endregion
@@ -447,6 +446,11 @@ public class MapViewModel : ItemViewModel
 
     private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
     {
+        if (fileModel.Model is not BankModel)
+        {
+            return;
+        }
+
         SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
 
         if (Banks == null || Banks.Length == 0)
