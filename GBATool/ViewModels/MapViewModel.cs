@@ -7,12 +7,38 @@ using GBATool.Models;
 using GBATool.Signals;
 using GBATool.VOs;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
 namespace GBATool.ViewModels;
+
+public class BankIndex : INotifyPropertyChanged
+{
+    private int _index;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propname)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
+    }
+
+    public int PaletteIndex { get; init; }
+
+    public int Index
+    {
+        get => _index;
+        set
+        {
+            _index = value;
+
+            OnPropertyChanged(nameof(Index));
+
+            SignalManager.Get<ChangeMapPaletteSignal>().Dispatch(value, PaletteIndex);
+        }
+    }
+}
 
 public class MapViewModel : ItemViewModel
 {
@@ -31,12 +57,11 @@ public class MapViewModel : ItemViewModel
     private List<Tile> _tiles = [];
     private bool _enableMosaic;
     private bool _affineWrapping;
-    private List<string> _paletteIDs = [];
+    private BindingList<BankIndex> _paletteIDs = [];
     private ScreenBaseBlock _screenBaseBlock = ScreenBaseBlock.Block0;
     private CharacterBaseBlock _characterBaseBlock = CharacterBaseBlock.Block0;
     private string _bankID = string.Empty;
     private List<FileModelVO> _palettes = [];
-    private ObservableCollection<int> _selectedPalettes = [];
 
     public MapModel? GetModel()
     {
@@ -256,17 +281,6 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public List<string> PaletteIDs
-    {
-        get => _paletteIDs;
-        set
-        {
-            _paletteIDs = value;
-
-            OnPropertyChanged(nameof(PaletteIDs));
-        }
-    }
-
     public ScreenBaseBlock ScreenBaseBlock
     {
         get => _screenBaseBlock;
@@ -326,16 +340,16 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public ObservableCollection<int> SelectedPalettes
+    public BindingList<BankIndex> PaletteIDs
     {
-        get => _selectedPalettes;
+        get => _paletteIDs;
         set
         {
-            if (_selectedPalettes != value)
+            if (_paletteIDs != value)
             {
-                _selectedPalettes = value;
+                _paletteIDs = value;
 
-                OnPropertyChanged(nameof(Palettes));
+                OnPropertyChanged(nameof(PaletteIDs));
             }
         }
     }
@@ -372,6 +386,16 @@ public class MapViewModel : ItemViewModel
         ];
 
         Palettes = [.. list];
+
+        PaletteIDs.ListChanged += (s, e) =>
+        {
+            OnPropertyChanged("Item[]");
+        };
+
+        for (int i = 0; i < 16; i++)
+        {
+            PaletteIDs.Add(new() { Index = -1, PaletteIndex = i });
+        }
     }
 
     public override void OnActivate()
@@ -386,6 +410,7 @@ public class MapViewModel : ItemViewModel
         SignalManager.Get<MouseDownEventSignal>().Listener += OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener += OnMouseMoveEvent;
+        SignalManager.Get<ChangeMapPaletteSignal>().Listener += OnChangeMapPalette;
         #endregion
 
         MapModel? model = GetModel();
@@ -401,13 +426,26 @@ public class MapViewModel : ItemViewModel
         Priority = model.Priority;
         BckgrRegularSize = model.BckgrRegularSize;
         BckgrAffineSize = model.BckgrAffineSize;
-        Tiles = model.Tiles0.ToList();
+        Tiles = [.. model.Tiles0];
         EnableMosaic = model.EnableMosaic;
         AffineWrapping = model.AffineWrapping;
-        PaletteIDs = model.PaletteIDs.ToList();
         ScreenBaseBlock = model.ScreenBaseBlock;
         CharacterBaseBlock = model.CharacterBaseBlock;
         BankID = model.BankID;
+
+        for (int i = 0; i < model.PaletteIDs.Length; ++i)
+        {
+            string paletteID = model.PaletteIDs[i];
+
+            int index = Palettes.FindIndex(o => o.Model?.GUID == paletteID);
+
+            if (index >= 0)
+            {
+                PaletteIDs[i].Index = index;
+            }
+        }
+
+        SelectBank(BankID);
 
         _doNotSave = false;
     }
@@ -422,6 +460,7 @@ public class MapViewModel : ItemViewModel
         SignalManager.Get<MouseDownEventSignal>().Listener -= OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener -= OnMouseMoveEvent;
+        SignalManager.Get<ChangeMapPaletteSignal>().Listener -= OnChangeMapPalette;
         #endregion
 
         base.OnDeactivate();
@@ -446,32 +485,54 @@ public class MapViewModel : ItemViewModel
 
     private void OnFileModelVOSelectionChanged(FileModelVO fileModel)
     {
-        if (fileModel.Model is not BankModel)
+        if (fileModel.Model is BankModel)
         {
-            return;
+            SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
+
+            if (Banks == null || Banks.Length == 0)
+            {
+                return;
+            }
+
+            if (Banks[SelectedBank].Model is not BankModel model)
+            {
+                return;
+            }
+
+            BankID = model.GUID;
+
+            SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
+            SignalManager.Get<RemoveSpriteSelectionFromBank>().Dispatch();
         }
-
-        SignalManager.Get<CleanUpSpriteListSignal>().Dispatch();
-
-        if (Banks == null || Banks.Length == 0)
-        {
-            return;
-        }
-
-        if (Banks[SelectedBank].Model is not BankModel model)
-        {
-            return;
-        }
-
-        BankID = model.GUID;
-
-        SignalManager.Get<SetBankModelToBankViewerSignal>().Dispatch(model);
-        SignalManager.Get<RemoveSpriteSelectionFromBank>().Dispatch();
     }
 
-    private void UpdateAndSavePalette(int newValue)
+    private void OnChangeMapPalette(int newPaletteIndex, int paletteObjectIndex)
     {
-        // todo
+        if (!Enumerable.Range(0, 15).Contains(paletteObjectIndex))
+        {
+            return;
+        }
+
+        MapModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        FileModelVO? palette = Palettes.ElementAtOrDefault(newPaletteIndex);
+
+        if (palette == null)
+        {
+            return;
+        }
+
+        model.PaletteIDs[paletteObjectIndex] = palette.Model?.GUID ?? string.Empty;
+
+        if (!_doNotSave)
+        {
+            ProjectItem?.FileHandler?.Save();
+        }
     }
 
     private void UpdateAndSaveBankID(string value)

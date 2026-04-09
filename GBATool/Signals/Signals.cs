@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace GBATool.Signals;
 
-// Generics
+#region Generics
 public class BrowseFolderSuccessSignal : Signal<Control, string> { }
 public class BrowseFileSuccessSignal : Signal<string, bool> { }
 public class SetUpWindowPropertiesSignal : Signal<WindowVO> { }
@@ -34,8 +34,9 @@ public class MouseUpEventSignal : Signal<MouseButtonVO> { }
 public class MouseMoveEventSignal : Signal<MouseEventVO> { }
 public class MouseLeaveEventSignal : Signal<MouseEventVO> { }
 public class PreviewMouseMoveSignal : Signal<MouseEventVO> { }
+#endregion
 
-// MainWindowViewModel
+#region MainWindowViewModel
 public class SizeChangedSignal : Signal<SizeChangedEventArgs, bool> { }
 public class LoadConfigSuccessSignal : Signal { }
 public class ExitSuccessSignal : Signal { }
@@ -54,19 +55,22 @@ public class CreateProjectSuccessSignal : Signal<string> { }
 public class InitializeAdornersSignal : Signal<TreeViewItem, DragEventArgs> { }
 public class DetachAdornersSignal : Signal { }
 public class GotoProjectItemSignal : Signal<string> { }
+#endregion
 
-// File system
+#region File system
 public class RegisterFileHandlerSignal : Signal<ProjectItem, string?> { }
 public class RenameFileSignal : Signal<ProjectItem> { }
+#endregion
 
-// Edit
+#region Edit
 public class PasteElementSignal : Signal<ProjectItem, ProjectItem> { }
 public class MoveElementSignal : Signal<ProjectItem, ProjectItem> { }
 public class DeleteElementSignal : Signal<ProjectItem> { }
 public class FindAndCreateElementSignal : Signal<ProjectItem> { }
 public class CreateNewElementSignal : Signal<ProjectItem> { }
+#endregion
 
-// TileSet
+#region TileSet
 public class UpdateTileSetImageSignal : Signal { }
 public class SpriteSelectCursorSignal : Signal { }
 public class SpriteSize16x16Signal : Signal { }
@@ -83,14 +87,16 @@ public class SpriteSize8x32Signal : Signal { }
 public class SpriteSize8x8Signal : Signal { }
 public class ConfirmSpriteDeletionSignal : Signal<SpriteVO> { }
 public class SelectSpriteSignal : Signal<SpriteVO> { }
+#endregion
 
-// SpriteList
+#region SpriteList
 public class UpdateSpriteListSignal : Signal { }
 public class CleanUpSpriteListSignal : Signal { }
 public class AddSpriteSignal : Signal<SpriteVO> { }
 public class DeletingSpriteSignal : Signal<SpriteVO> { }
+#endregion
 
-// Character
+#region Character
 public class ColorPaletteControlSelectedSignal : Signal<int[]> { }
 public class CleanColorPaletteControlSelectedSignal : Signal { }
 public class AnimationTabNewSignal : Signal { }
@@ -126,8 +132,9 @@ public class SpriteFrameHideSelectionSignal : Signal { }
 public class ElementFrameShowSelectionSignal : Signal<FrameElementDragObjectVO[]> { }
 public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }
 public class UpdateSpriteVisualPropertiesSignal : Signal<string, bool, bool> { }
+#endregion
 
-// Banks
+#region Banks
 public class FileModelVOSelectionChangedSignal : Signal<FileModelVO> { }
 public class AddNewTileSetLinkSignal : Signal<BankLinkVO> { }
 public class CleanupTileSetLinksSignal : Signal { }
@@ -149,10 +156,13 @@ public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
 public class ReturnTransparentColorFromBankSignal : Signal<Color> { }
 public class TryCreatePaletteElementSignal : Signal<string, List<Color>> { }
+#endregion
 
-// Palettes
+#region Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }
 public class PaletteColorArrayChangeSignal : Signal<int[]> { }
+#endregion
 
-// Maps
-
+#region Maps
+public class ChangeMapPaletteSignal : Signal<int, int> { }
+#endregion
