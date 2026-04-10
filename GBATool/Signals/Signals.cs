@@ -160,7 +160,7 @@ public class TryCreatePaletteElementSignal : Signal<string, List<Color>> { }
 
 #region Palettes
 public class ColorPaletteSelectedSignal : Signal<Color, int, int> { }
-public class PaletteColorArrayChangeSignal : Signal<int[]> { }
+public class PaletteColorArrayChangeSignal : Signal<int[], int> { }
 #endregion
 
 #region Maps

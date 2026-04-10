@@ -18,7 +18,7 @@ public class PaletteViewModel : ItemViewModel
 
         if (model != null)
         {
-            SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(model.Colors);
+            SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(model.Colors, 0); // PaletteView is always one element with index 0
         }
     }
 

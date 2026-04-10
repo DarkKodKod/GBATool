@@ -77,8 +77,13 @@ namespace GBATool.Views
             #endregion
         }
 
-        private void OnPaletteColorArrayChange(int[] colors)
+        private void OnPaletteColorArrayChange(int[] colors, int paletteIndex)
         {
+            if(PaletteIndex != paletteIndex)
+            {
+                return;
+            }
+
             SolidColorBrush[] tempList = new SolidColorBrush[16];
 
             for (int i = 0; i < 16; i++)

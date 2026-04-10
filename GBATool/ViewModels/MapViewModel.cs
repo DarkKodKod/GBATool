@@ -394,7 +394,7 @@ public class MapViewModel : ItemViewModel
 
         for (int i = 0; i < 16; i++)
         {
-            PaletteIDs.Add(new() { Index = -1, PaletteIndex = i });
+            PaletteIDs.Add(new() { PaletteIndex = i });
         }
     }
 
@@ -439,10 +439,11 @@ public class MapViewModel : ItemViewModel
 
             int index = Palettes.FindIndex(o => o.Model?.GUID == paletteID);
 
-            if (index >= 0)
-            {
-                PaletteIDs[i].Index = index;
-            }
+            if (index > 0)
+                index--;
+
+            // index -1 is valid because the PaletteIDs array accepts -1 as the first empty element.
+            PaletteIDs[i].Index = index;
         }
 
         SelectBank(BankID);
@@ -520,14 +521,32 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
-        FileModelVO? palette = Palettes.ElementAtOrDefault(newPaletteIndex);
+        FileModelVO? palette = null;
 
-        if (palette == null)
+        if (newPaletteIndex == -1)
+        {
+            palette = new FileModelVO() { Model = new PaletteModel() };
+        }
+        else
+        {
+            foreach (FileModelVO item in Palettes)
+            {
+                if (item.Index == newPaletteIndex)
+                {
+                    palette = item;
+                    break;
+                }
+            }
+        }
+             
+        if (palette?.Model is not PaletteModel paletteModel)
         {
             return;
         }
 
-        model.PaletteIDs[paletteObjectIndex] = palette.Model?.GUID ?? string.Empty;
+        model.PaletteIDs[paletteObjectIndex] = paletteModel.GUID ?? string.Empty;
+
+        SignalManager.Get<PaletteColorArrayChangeSignal>().Dispatch(paletteModel.Colors, paletteObjectIndex);
 
         if (!_doNotSave)
         {

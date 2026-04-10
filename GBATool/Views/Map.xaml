@@ -12,8 +12,6 @@
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              Name="MapView"
-             Loaded="MapView_Loaded"
-             Unloaded="MapView_Unloaded"
              mc:Ignorable="d" 
              d:DesignHeight="890" d:DesignWidth="1300">
     <UserControl.DataContext>
