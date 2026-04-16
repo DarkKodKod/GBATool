@@ -133,12 +133,12 @@
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
-							<RowDefinition Height="*"/>
+							<RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="10"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
 					    <GroupBox Header="Palettes" Grid.Row="0" Grid.Column="1">
 							<Grid>
@@ -378,7 +378,6 @@
 						<GroupBox Header="Tile" 
 								  Grid.Row="1" 
 								  Grid.Column="1"
-								  Margin="10,0,10,0" 
 							      Padding="10">
 							<GroupBox.Style>
 								<Style>
