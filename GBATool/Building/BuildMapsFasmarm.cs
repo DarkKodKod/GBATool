@@ -7,6 +7,7 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 // Information taken from pages:
@@ -183,24 +184,38 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         {
             if (model.BckgrRegularSize == BckgrRegularSize.Regular32x32)
             {
-                await WriteMapTiles(outputFile, model.Tiles0);
+                KeyValuePair<string, Tile[]> map = model.Tiles.ElementAt(0);
+                await WriteMapTiles(outputFile, map.Value);
             }
             else if (model.BckgrRegularSize == BckgrRegularSize.Regular32x64)
             {
-                await WriteMapTiles(outputFile, model.Tiles0);
-                await WriteMapTiles(outputFile, model.Tiles2);
+                KeyValuePair<string, Tile[]> map0 = model.Tiles.ElementAt(0);
+                await WriteMapTiles(outputFile, map0.Value);
+                
+                KeyValuePair<string, Tile[]> map2 = model.Tiles.ElementAt(2);
+                await WriteMapTiles(outputFile, map2.Value);
             }
             else if (model.BckgrRegularSize == BckgrRegularSize.Regular64x32)
             {
-                await WriteMapTiles(outputFile, model.Tiles0);
-                await WriteMapTiles(outputFile, model.Tiles1);
+                KeyValuePair<string, Tile[]> map0 = model.Tiles.ElementAt(0);
+                await WriteMapTiles(outputFile, map0.Value);
+
+                KeyValuePair<string, Tile[]> map1 = model.Tiles.ElementAt(1);
+                await WriteMapTiles(outputFile, map1.Value);
             }
             else if (model.BckgrRegularSize == BckgrRegularSize.Regular64x64)
             {
-                await WriteMapTiles(outputFile, model.Tiles0);
-                await WriteMapTiles(outputFile, model.Tiles1);
-                await WriteMapTiles(outputFile, model.Tiles2);
-                await WriteMapTiles(outputFile, model.Tiles3);
+                KeyValuePair<string, Tile[]> map0 = model.Tiles.ElementAt(0);
+                await WriteMapTiles(outputFile, map0.Value);
+
+                KeyValuePair<string, Tile[]> map1 = model.Tiles.ElementAt(1);
+                await WriteMapTiles(outputFile, map1.Value);
+
+                KeyValuePair<string, Tile[]> map2 = model.Tiles.ElementAt(2);
+                await WriteMapTiles(outputFile, map2.Value);
+
+                KeyValuePair<string, Tile[]> map3 = model.Tiles.ElementAt(3);
+                await WriteMapTiles(outputFile, map3.Value);
             }
         }
         else

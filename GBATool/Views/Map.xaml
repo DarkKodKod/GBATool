@@ -7,6 +7,7 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:behaviors="clr-namespace:GBATool.Utils.Behaviors"
              xmlns:fx="clr-namespace:ArchitectureLibrary.FXs;assembly=ArchitectureLibrary"
+			 xmlns:ex="clr-namespace:ArchitectureLibrary.WPF.Extensions;assembly=ArchitectureLibrary"
              xmlns:uc="clr-namespace:GBATool.Views"
              xmlns:vm="clr-namespace:GBATool.ViewModels"
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
@@ -374,8 +375,41 @@
 								<local:PaletteViewer Grid.Row="15" PaletteIndex="15" Padding="5,0,0,5" x:Name="palette15" Grid.Column="2"/>
 							</Grid>
 						</GroupBox>
-						<GroupBox Header="Tile" Grid.Row="1" Grid.Column="1">
-
+						<GroupBox Header="Tile" 
+								  Grid.Row="1" 
+								  Grid.Column="1"
+								  Margin="10,0,10,0" 
+							      Padding="10">
+							<GroupBox.Style>
+								<Style>
+									<Setter Property="Control.IsEnabled" Value="true" />
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding Path=SelectedTile}" Value="{x:Null}">
+											<Setter Property="Control.IsEnabled" Value="false" />
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</GroupBox.Style>
+							<Grid>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="auto" />
+									<RowDefinition Height="5" />
+									<RowDefinition Height="auto" />
+								</Grid.RowDefinitions>
+								<StackPanel Orientation="Horizontal" Grid.Row="0">
+									<CheckBox IsChecked="{Binding SelectedTile.IsFlippedHorizontal, Mode=TwoWay}" HorizontalAlignment="Left">Flip Horizontal</CheckBox>
+									<CheckBox IsChecked="{Binding SelectedTile.IsFlippedVertical, Mode=TwoWay}" HorizontalAlignment="Left" Margin="30,0,0,0">Flip Vertical</CheckBox>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal" Grid.Row="2">
+									<Label>Palette index:</Label>
+									<!--ComboBox DisplayMemberPath="Description"
+										      HorizontalAlignment="Left" VerticalAlignment="Center" 
+											  ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:ObjectMode}}}"
+											  SelectedValue="{Binding Path=ObjectMode}"
+											  SelectedValuePath="Value">
+									</ComboBox-->
+								</StackPanel>
+							</Grid>
 						</GroupBox>
 					</Grid>
                 </TabItem>

@@ -5,7 +5,9 @@ using GBATool.Enums;
 using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
+using GBATool.Utils;
 using GBATool.VOs;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -13,6 +15,50 @@ using System.Windows;
 using System.Windows.Media;
 
 namespace GBATool.ViewModels;
+
+public class TileObject : INotifyPropertyChanged
+{
+    private bool _isFlippedHorizontal;
+    private bool _isFlippedVertical;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propname)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propname));
+    }
+
+    public int Index { get; set; }
+    public string MapID { get; set; } = string.Empty;
+
+    public bool IsFlippedHorizontal
+    {
+        get => _isFlippedHorizontal;
+        set
+        {
+            if (_isFlippedHorizontal != value)
+            {
+                _isFlippedHorizontal = value;
+            }
+
+            OnPropertyChanged(nameof(IsFlippedHorizontal));
+        }
+    }
+
+    public bool IsFlippedVertical
+    {
+        get => _isFlippedVertical;
+        set
+        {
+            if (_isFlippedVertical != value)
+            {
+                _isFlippedVertical = value;
+            }
+
+            OnPropertyChanged(nameof(IsFlippedVertical));
+        }
+    }
+}
 
 public class BankIndex : INotifyPropertyChanged
 {
@@ -54,7 +100,10 @@ public class MapViewModel : ItemViewModel
     private Priority _priority = Priority.Highest;
     private BckgrRegularSize _bckgrRegularSize = BckgrRegularSize.Regular32x32;
     private BckgrAffineSize _bckgrAffineSize = BckgrAffineSize.Affine16x16;
-    private List<Tile> _tiles = [];
+    private BindingList<TileObject> _tiles0 = [];
+    private BindingList<TileObject> _tiles1 = [];
+    private BindingList<TileObject> _tiles2 = [];
+    private BindingList<TileObject> _tiles3 = [];
     private bool _enableMosaic;
     private bool _affineWrapping;
     private BindingList<BankIndex> _paletteIDs = [];
@@ -62,6 +111,7 @@ public class MapViewModel : ItemViewModel
     private CharacterBaseBlock _characterBaseBlock = CharacterBaseBlock.Block0;
     private string _bankID = string.Empty;
     private List<FileModelVO> _palettes = [];
+    private TileObject? _selectedTile = null;
 
     public MapModel? GetModel()
     {
@@ -79,6 +129,17 @@ public class MapViewModel : ItemViewModel
     #endregion
 
     #region get/set
+    public TileObject? SelectedTile
+    {
+        get => _selectedTile;
+        set
+        {
+            _selectedTile = value;
+
+            OnPropertyChanged(nameof(SelectedTile));
+        }
+    }
+
     public FileModelVO[]? Banks
     {
         get => _banks;
@@ -238,14 +299,47 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public List<Tile> Tiles
+    public BindingList<TileObject> Tiles0
     {
-        get => _tiles;
+        get => _tiles0;
         set
         {
-            _tiles = value;
+            _tiles0 = value;
 
-            OnPropertyChanged(nameof(Tiles));
+            OnPropertyChanged(nameof(Tiles0));
+        }
+    }
+
+    public BindingList<TileObject> Tiles1
+    {
+        get => _tiles1;
+        set
+        {
+            _tiles1 = value;
+
+            OnPropertyChanged(nameof(Tiles1));
+        }
+    }
+
+    public BindingList<TileObject> Tiles2
+    {
+        get => _tiles2;
+        set
+        {
+            _tiles2 = value;
+
+            OnPropertyChanged(nameof(Tiles2));
+        }
+    }
+
+    public BindingList<TileObject> Tiles3
+    {
+        get => _tiles3;
+        set
+        {
+            _tiles3 = value;
+
+            OnPropertyChanged(nameof(Tiles3));
         }
     }
 
@@ -420,13 +514,86 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
+        if (model.Tiles.Count == 0)
+        {
+            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
+            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
+            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
+            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
+
+            ProjectItem?.FileHandler?.Save();
+        }
+
         _doNotSave = true;
 
         MapType = model.MapType;
         Priority = model.Priority;
         BckgrRegularSize = model.BckgrRegularSize;
         BckgrAffineSize = model.BckgrAffineSize;
-        Tiles = [.. model.Tiles0];
+
+        int mapIndex = 0;
+        foreach (KeyValuePair<string, Tile[]> map in model.Tiles)
+        {
+            switch (mapIndex)
+            {
+                case 0:
+                    {
+                        int tileIndex = 0;
+                        foreach (var item in map.Value)
+                        {
+                            Tiles0.Add(new()
+                            {
+                                Index = tileIndex++,
+                                MapID = map.Key
+                            });
+                        }
+                    }
+                    break;
+                case 1:
+                    {
+                        int tileIndex = 0;
+                        foreach (var item in map.Value)
+                        {
+                            Tiles1.Add(new()
+                            {
+                                Index = tileIndex++,
+                                MapID = map.Key
+                            });
+                        }
+                    }
+                    break;
+                case 2:
+                    {
+                        int tileIndex = 0;
+                        foreach (var item in map.Value)
+                        {
+                            Tiles2.Add(new()
+                            {
+                                Index = tileIndex++,
+                                MapID = map.Key
+                            });
+                        }
+                    }
+                    break;
+                case 3:
+                    {
+                        int tileIndex = 0;
+                        foreach (var item in map.Value)
+                        {
+                            Tiles3.Add(new()
+                            {
+                                Index = tileIndex++,
+                                MapID = map.Key
+                            });
+                        }
+                    }
+                    break;
+                default: break;
+            }
+
+            mapIndex++;
+        }
+
         EnableMosaic = model.EnableMosaic;
         AffineWrapping = model.AffineWrapping;
         ScreenBaseBlock = model.ScreenBaseBlock;
@@ -440,7 +607,9 @@ public class MapViewModel : ItemViewModel
             int index = Palettes.FindIndex(o => o.Model?.GUID == paletteID);
 
             if (index > 0)
+            {
                 index--;
+            }   
 
             // index -1 is valid because the PaletteIDs array accepts -1 as the first empty element.
             PaletteIDs[i].Index = index;
@@ -717,5 +886,30 @@ public class MapViewModel : ItemViewModel
     private void OnDragLeaveEvent(DragLeaveVO vO)
     {
         //
+    }
+
+    private void SaveTileProperties(TileObject tile)
+    {
+        if (_doNotSave)
+            return;
+
+        MapModel? model = GetModel();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        MapUtils.InvalidateImageFromCache(tile.MapID);
+
+//        sprite.FlipHorizontal = IsFlippedHorizontal;
+//        sprite.FlipVertical = IsFlippedVertical;
+//        sprite.GraphicMode = GraphicMode;
+//        sprite.ObjectMode = ObjectMode;
+//        sprite.EnableMosaic = IsEnableMosaic;
+//
+//        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Dispatch(sprite.SpriteID, sprite.FlipHorizontal, sprite.FlipVertical);
+
+        ProjectItem?.FileHandler?.Save();
     }
 }
