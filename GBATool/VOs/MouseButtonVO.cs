@@ -4,4 +4,5 @@ namespace GBATool.VOs;
 
 public record MouseButtonVO(MouseButtonEventArgs EventArgs) : EventVO
 {
+    public MouseButtonEventArgs MouseEvent { get; init; } = EventArgs;
 }

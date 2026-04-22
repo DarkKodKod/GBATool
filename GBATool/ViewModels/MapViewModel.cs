@@ -870,7 +870,19 @@ public class MapViewModel : ItemViewModel
 
     private void OnMouseDownEvent(MouseButtonVO vO)
     {
-        //
+        if (!IsActive)
+        {
+            return;
+        }
+
+        if (vO.Sender is not IInputElement sender)
+        { 
+            return; 
+        }
+
+        Point point = vO.MouseEvent.GetPosition(sender);
+
+        int cellIndex = MapUtils.GetCellIndexFromPoint(point);
     }
 
     private void OnDragOverEvent(DragLeaveVO vO)

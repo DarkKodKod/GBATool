@@ -11,6 +11,7 @@ public abstract class AFileModel
 
     public string GUID { get; set; }
     public string Version { get; set; }
+    public bool DoNotExport { get; set; }
 
     protected string _fileExtension = string.Empty;
 

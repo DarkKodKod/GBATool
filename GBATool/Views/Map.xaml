@@ -42,7 +42,15 @@
                         Background="DarkGray"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
-                    <Canvas.RenderTransform>
+					<i:Interaction.Behaviors>
+						<behaviors:EventToCommandBehavior Command="{Binding DropEventCommand}" Event="Drop" PassArguments="True" />
+						<behaviors:EventToCommandBehavior Command="{Binding DragOverEventCommand}" Event="DragOver" PassArguments="True" />
+						<behaviors:EventToCommandBehavior Command="{Binding DragLeaveEventCommand}" Event="DragLeave" PassArguments="True" />
+						<behaviors:EventToCommandBehavior Command="{Binding MouseMoveEventCommand}" Event="MouseMove" PassArguments="True" />
+						<behaviors:EventToCommandBehavior Command="{Binding MouseDownEventCommand}" Event="MouseDown" PassArguments="True" />
+						<behaviors:EventToCommandBehavior Command="{Binding MouseUpEventCommand}" Event="MouseUp" PassArguments="True" />
+					</i:Interaction.Behaviors>
+					<Canvas.RenderTransform>
                         <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
                     </Canvas.RenderTransform>
                     <Border Visibility="{Binding GridVisibility}"
@@ -62,22 +70,14 @@
                                 Background="Transparent">
                         </Canvas>
                     </Border>
-                    <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+					<Image RenderOptions.BitmapScalingMode="NearestNeighbor"
                            Width="{Binding CanvasWidth}" 
                            Height="{Binding CanvasHeight}" 
                            Source="{Binding MapImage}"
                            Name="imgMap"
                            AllowDrop="True"
                            Stretch="UniformToFill">
-                        <i:Interaction.Behaviors>
-                            <behaviors:EventToCommandBehavior Command="{Binding DropEventCommand}" Event="Drop" PassArguments="True" />
-                            <behaviors:EventToCommandBehavior Command="{Binding DragOverEventCommand}" Event="DragOver" PassArguments="True" />
-                            <behaviors:EventToCommandBehavior Command="{Binding DragLeaveEventCommand}" Event="DragLeave" PassArguments="True" />
-                            <behaviors:EventToCommandBehavior Command="{Binding MouseMoveEventCommand}" Event="MouseMove" PassArguments="True" />
-                            <behaviors:EventToCommandBehavior Command="{Binding MouseDownEventCommand}" Event="MouseDown" PassArguments="True" />
-                            <behaviors:EventToCommandBehavior Command="{Binding MouseUpEventCommand}" Event="MouseUp" PassArguments="True" />
-                        </i:Interaction.Behaviors>
-                    </Image>
+					</Image>
                 </Canvas>
             </ScrollViewer>
         </Grid>
