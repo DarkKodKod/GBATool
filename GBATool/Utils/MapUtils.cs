@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -11,6 +11,39 @@ public static class MapUtils
 
     public static int CellSize = 8;
     public static int MapSizeWidth = 32;
+
+    public static List<int> GetCellsIndicesFromRect(Rect rect)
+    {
+        List<int> indices = [];
+
+        double pointX = rect.Left;
+        double pointY = rect.Top;
+        double endPointX = rect.Right;
+        double endPointY = rect.Bottom;
+
+        bool canContinue = true;
+        while (canContinue)
+        {
+            int index = GetCellIndexFromPoint(new Point(pointX, pointY));
+            
+            indices.Add(index);
+
+            pointX += CellSize;
+
+            if (pointX > endPointX)
+            {
+                pointX = rect.Left;
+                pointY += CellSize;
+            }
+
+            if (pointY > endPointY) 
+            {
+                canContinue = false;
+            }
+        }
+
+        return indices;
+    }
 
     public static int GetCellIndexFromPoint(Point point)
     {
