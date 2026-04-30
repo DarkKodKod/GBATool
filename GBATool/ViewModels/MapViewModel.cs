@@ -6,13 +6,17 @@ using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
+using GBATool.Views;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace GBATool.ViewModels;
 
@@ -20,6 +24,7 @@ public class TileObject : INotifyPropertyChanged
 {
     private bool _isFlippedHorizontal;
     private bool _isFlippedVertical;
+    private int _paletteIndex;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -30,6 +35,20 @@ public class TileObject : INotifyPropertyChanged
 
     public int Index { get; set; }
     public string MapID { get; set; } = string.Empty;
+
+    public int PaletetteIndex
+    {
+        get => _paletteIndex;
+        set
+        {
+            if (_paletteIndex != value)
+            {
+                _paletteIndex = value;
+            }
+
+            OnPropertyChanged(nameof(PaletetteIndex));
+        }
+    }
 
     public bool IsFlippedHorizontal
     {
@@ -112,6 +131,13 @@ public class MapViewModel : ItemViewModel
     private string _bankID = string.Empty;
     private List<FileModelVO> _palettes = [];
     private TileObject? _selectedTile = null;
+    private Visibility _mouseSelectionActive;
+    private int _mouseSelectionOriginX;
+    private int _mouseSelectionOriginY;
+    private int _mouseSelectionWidth;
+    private int _mouseSelectionHeight;
+    private Point _initialMousePositionInCanvas;
+    private string[] _selectedTilesIDs = [];
 
     public MapModel? GetModel()
     {
@@ -299,6 +325,61 @@ public class MapViewModel : ItemViewModel
         }
     }
 
+    public Visibility MouseSelectionActive
+    {
+        get => _mouseSelectionActive;
+        set
+        {
+            _mouseSelectionActive = value;
+
+            OnPropertyChanged(nameof(MouseSelectionActive));
+        }
+    }
+
+    public int MouseSelectionOriginX
+    {
+        get => _mouseSelectionOriginX;
+        set
+        {
+            _mouseSelectionOriginX = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginX));
+        }
+    }
+
+    public int MouseSelectionOriginY
+    {
+        get => _mouseSelectionOriginY;
+        set
+        {
+            _mouseSelectionOriginY = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginY));
+        }
+    }
+
+    public int MouseSelectionWidth
+    {
+        get => _mouseSelectionWidth;
+        set
+        {
+            _mouseSelectionWidth = value;
+
+            OnPropertyChanged(nameof(MouseSelectionWidth));
+        }
+    }
+
+    public int MouseSelectionHeight
+    {
+        get => _mouseSelectionHeight;
+        set
+        {
+            _mouseSelectionHeight = value;
+
+            OnPropertyChanged(nameof(MouseSelectionHeight));
+        }
+    }
+
     public BindingList<TileObject> Tiles0
     {
         get => _tiles0;
@@ -340,6 +421,17 @@ public class MapViewModel : ItemViewModel
             _tiles3 = value;
 
             OnPropertyChanged(nameof(Tiles3));
+        }
+    }
+
+    public string[] SelectedTilesIDs
+    {
+        get => _selectedTilesIDs;
+        set
+        {
+            _selectedTilesIDs = value;
+
+            OnPropertyChanged(nameof(SelectedTilesIDs));
         }
     }
 
@@ -496,6 +588,8 @@ public class MapViewModel : ItemViewModel
     {
         base.OnActivate();
 
+        MouseSelectionActive = Visibility.Collapsed;
+
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener += OnDragLeaveEvent;
@@ -505,6 +599,7 @@ public class MapViewModel : ItemViewModel
         SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener += OnMouseMoveEvent;
         SignalManager.Get<ChangeMapPaletteSignal>().Listener += OnChangeMapPalette;
+        SignalManager.Get<ResetSelectionAreaSignal>().Listener += OnResetSelectionArea;
         #endregion
 
         MapModel? model = GetModel();
@@ -622,6 +717,8 @@ public class MapViewModel : ItemViewModel
 
     public override void OnDeactivate()
     {
+        MouseSelectionActive = Visibility.Collapsed;
+
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener -= OnDragLeaveEvent;
@@ -631,9 +728,19 @@ public class MapViewModel : ItemViewModel
         SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener -= OnMouseMoveEvent;
         SignalManager.Get<ChangeMapPaletteSignal>().Listener -= OnChangeMapPalette;
+        SignalManager.Get<ResetSelectionAreaSignal>().Listener -= OnResetSelectionArea;
         #endregion
 
         base.OnDeactivate();
+    }
+
+    private void OnResetSelectionArea(Point position)
+    {
+        MouseSelectionActive = Visibility.Collapsed;
+        MouseSelectionOriginX = (int)position.X;
+        MouseSelectionOriginY = (int)position.Y;
+        MouseSelectionWidth = 0;
+        MouseSelectionHeight = 0;
     }
 
     private void SelectBank(string bankID)
@@ -860,12 +967,67 @@ public class MapViewModel : ItemViewModel
 
     private void OnMouseMoveEvent(MouseEventVO vO)
     {
-        //
+        if (vO.Sender is not IInputElement sender)
+        {
+            return;
+        }
+
+        if (vO.EventArgs.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        Point positionInCanvas = vO.EventArgs.GetPosition(sender);
+
+        if (Util.AboutEqual(positionInCanvas.X, _initialMousePositionInCanvas.X) &&
+           Util.AboutEqual(positionInCanvas.Y, _initialMousePositionInCanvas.Y))
+        {
+            return;
+        }
+
+        if (SelectedTilesIDs.Length > 0)
+        {
+            //DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)vO.EventArgs.Source);
+        }
+        else
+        {
+            SignalManager.Get<TryCaptureMouseSignal>().Dispatch();
+
+            UpdateMouseSelectionArea(positionInCanvas);
+        }
     }
 
     private void OnMouseUpEvent(MouseButtonVO vO)
     {
-        //
+        if (vO.Sender is not IInputElement sender)
+        {
+            return;
+        }
+
+        if (vO.OriginalSource is not Canvas and not Image and not Rectangle)
+        {
+            return;
+        }
+
+        SignalManager.Get<TryReleaseMouseSignal>().Dispatch();
+
+        List<TileObject> selectedTiles = [];
+
+        if (MouseSelectionActive == Visibility.Visible)
+        {
+//            selectedTiles = CheckMouseAreaSelected(frameViewView);
+        }
+
+        Point pos = vO.MouseEvent.GetPosition(sender);
+
+        SignalManager.Get<ResetSelectionAreaSignal>().Dispatch(pos);
+
+        if (selectedTiles.Count == 0)
+        {
+//            GetListSpriteControlSelected(frameViewView.FrameCanvas, pos, ref selectedSprites);
+        }
+
+        SignalManager.Get<SelectTilesSignal>().Dispatch([.. selectedTiles]);
     }
 
     private void OnMouseDownEvent(MouseButtonVO vO)
@@ -880,9 +1042,41 @@ public class MapViewModel : ItemViewModel
             return; 
         }
 
+        if (vO.OriginalSource is not Canvas and not Rectangle)
+        {
+            return;
+        }
+
         Point point = vO.MouseEvent.GetPosition(sender);
 
-        int cellIndex = MapUtils.GetCellIndexFromPoint(point);
+        _initialMousePositionInCanvas = point;
+
+        SignalManager.Get<ResetSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
+
+        List<TileObject> selectedTiles = [];
+
+        GetTilesSelected(_initialMousePositionInCanvas, ref selectedTiles);
+
+        bool spriteWasAlreadySelected = false;
+
+        foreach (TileObject tile in selectedTiles)
+        {
+            if (SelectedTilesIDs.Contains(tile.MapID)) // TODO: it needs to be unique and map id is not enough
+            {
+                spriteWasAlreadySelected = true;
+            }
+        }
+
+        if ((SelectedTilesIDs.Length == 0 || !spriteWasAlreadySelected))
+        {
+            SignalManager.Get<SelectTilesSignal>().Dispatch([.. selectedTiles]);
+        }
+
+        /*
+         int cellIndex = MapUtils.GetCellIndexFromPoint(point);
+
+        SelectedTile = Tiles0[cellIndex];
+         */
     }
 
     private void OnDragOverEvent(DragLeaveVO vO)
@@ -923,5 +1117,48 @@ public class MapViewModel : ItemViewModel
 //        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Dispatch(sprite.SpriteID, sprite.FlipHorizontal, sprite.FlipVertical);
 
         ProjectItem?.FileHandler?.Save();
+    }
+
+    private void UpdateMouseSelectionArea(Point positionInCanvas)
+    {
+        if (MouseSelectionActive == Visibility.Collapsed)
+        {
+            MouseSelectionActive = Visibility.Visible;
+        }
+
+        if (_initialMousePositionInCanvas.X < positionInCanvas.X)
+        {
+            MouseSelectionOriginX = (int)_initialMousePositionInCanvas.X;
+            MouseSelectionWidth = (int)(positionInCanvas.X - _initialMousePositionInCanvas.X);
+        }
+        else
+        {
+            MouseSelectionOriginX = (int)positionInCanvas.X;
+            MouseSelectionWidth = (int)(_initialMousePositionInCanvas.X - positionInCanvas.X);
+        }
+
+        if (_initialMousePositionInCanvas.Y < positionInCanvas.Y)
+        {
+            MouseSelectionOriginY = (int)(_initialMousePositionInCanvas.Y);
+            MouseSelectionHeight = (int)(positionInCanvas.Y - _initialMousePositionInCanvas.Y);
+        }
+        else
+        {
+            MouseSelectionOriginY = (int)(positionInCanvas.Y);
+            MouseSelectionHeight = (int)(_initialMousePositionInCanvas.Y - positionInCanvas.Y);
+        }
+    }
+
+    private void GetTilesSelected(Point position, ref List<TileObject> selectedTiles)
+    {
+//        List<Image> images = GetSelectionMouseOver<Image>(canvas, position);
+//
+//        if (images.Count > 0)
+//        {
+//            if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
+//            {
+//                selectedSprites.Add(spriteControl);
+//            }
+//        }
     }
 }

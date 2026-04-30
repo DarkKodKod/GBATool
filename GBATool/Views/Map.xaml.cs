@@ -1,5 +1,7 @@
-﻿using GBATool.Utils;
-using System.Windows;
+﻿using ArchitectureLibrary.Signals;
+using GBATool.Signals;
+using GBATool.Utils;
+using System;
 using System.Windows.Controls;
 
 namespace GBATool.Views
@@ -12,6 +14,11 @@ namespace GBATool.Views
         public Map()
         {
             InitializeComponent();
+
+            #region Signals
+            SignalManager.Get<TryCaptureMouseSignal>().Listener += OnTryCaptureMouse;
+            SignalManager.Get<TryReleaseMouseSignal>().Listener += OnTryReleaseMouse;
+            #endregion
 
             bankViewer.OnActivate();
 
@@ -53,6 +60,27 @@ namespace GBATool.Views
             palette13.OnDeactivate();
             palette14.OnDeactivate();
             palette15.OnDeactivate();
+
+            #region Signals
+            SignalManager.Get<TryCaptureMouseSignal>().Listener -= OnTryCaptureMouse;
+            SignalManager.Get<TryReleaseMouseSignal>().Listener -= OnTryReleaseMouse;
+            #endregion
+        }
+
+        private void OnTryCaptureMouse()
+        {
+            if (!canvas.IsMouseCaptured)
+            {
+                canvas.CaptureMouse();
+            }
+        }
+
+        private void OnTryReleaseMouse()
+        {
+            if (canvas.IsMouseCaptured)
+            {
+                canvas.ReleaseMouseCapture();
+            }
         }
     }
 }

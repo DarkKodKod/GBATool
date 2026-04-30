@@ -23,6 +23,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\Map\**" />
+    <EmbeddedResource Remove="Commands\Map\**" />
+    <None Remove="Commands\Map\**" />
+    <Page Remove="Commands\Map\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="icon.ico" />
     <None Remove="Resources\add.png" />
     <None Remove="Resources\build.png" />
@@ -267,10 +274,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\Map\" />
   </ItemGroup>
 
 </Project>

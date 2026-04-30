@@ -34,6 +34,7 @@ public class MouseUpEventSignal : Signal<MouseButtonVO> { }
 public class MouseMoveEventSignal : Signal<MouseEventVO> { }
 public class MouseLeaveEventSignal : Signal<MouseEventVO> { }
 public class PreviewMouseMoveSignal : Signal<MouseEventVO> { }
+public class SelectionChangedEventSignal : Signal<SelectionChangedVO> { }
 #endregion
 
 #region MainWindowViewModel
@@ -165,4 +166,8 @@ public class PaletteColorArrayChangeSignal : Signal<int[], int> { }
 
 #region Maps
 public class ChangeMapPaletteSignal : Signal<int, int> { }
+public class TryCaptureMouseSignal : Signal { }
+public class TryReleaseMouseSignal : Signal { }
+public class ResetSelectionAreaSignal : Signal<Point> { }
+public class SelectTilesSignal : Signal<TileObject[]> { }
 #endregion

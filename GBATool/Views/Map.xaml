@@ -21,6 +21,24 @@
     <UserControl.Resources>
         <cv:EnumMatchToBooleanConverter x:Key="enumConverter" />
         <cv:WidthConverter x:Key="widthConverter" />
+		<x:Array x:Key="PaletteIndices" Type="system:Int32">
+			<system:Int32>0</system:Int32>
+			<system:Int32>1</system:Int32>
+			<system:Int32>2</system:Int32>
+			<system:Int32>3</system:Int32>
+			<system:Int32>4</system:Int32>
+			<system:Int32>5</system:Int32>
+			<system:Int32>6</system:Int32>
+			<system:Int32>7</system:Int32>
+			<system:Int32>8</system:Int32>
+			<system:Int32>9</system:Int32>
+			<system:Int32>10</system:Int32>
+			<system:Int32>11</system:Int32>
+			<system:Int32>12</system:Int32>
+			<system:Int32>13</system:Int32>
+			<system:Int32>14</system:Int32>
+			<system:Int32>15</system:Int32>
+		</x:Array>
     </UserControl.Resources>
     <Grid Background="LightGray">
         <Grid.ColumnDefinitions>
@@ -78,7 +96,18 @@
                            AllowDrop="True"
                            Stretch="UniformToFill">
 					</Image>
-                </Canvas>
+					<Rectangle
+						x:Name="rectSelectedArea"
+						Visibility="{Binding MouseSelectionActive}"
+						Width="{Binding MouseSelectionWidth}"
+						Height="{Binding MouseSelectionHeight}"
+						Stroke="White"
+						IsHitTestVisible="False"
+						Canvas.Left="{Binding MouseSelectionOriginX}"
+						Canvas.Top="{Binding MouseSelectionOriginY}"
+						StrokeThickness="0.4"
+						StrokeDashArray="2,1" />
+				</Canvas>
             </ScrollViewer>
         </Grid>
         <Grid Grid.Column="2">
@@ -401,12 +430,10 @@
 								</StackPanel>
 								<StackPanel Orientation="Horizontal" Grid.Row="2">
 									<Label>Palette index:</Label>
-									<!--ComboBox DisplayMemberPath="Description"
-										      HorizontalAlignment="Left" VerticalAlignment="Center" 
-											  ItemsSource="{Binding Source={ex:EnumBindingSource {x:Type enum:ObjectMode}}}"
-											  SelectedValue="{Binding Path=ObjectMode}"
-											  SelectedValuePath="Value">
-									</ComboBox-->
+									<ComboBox HorizontalAlignment="Left" VerticalAlignment="Center" 
+											  ItemsSource="{StaticResource PaletteIndices}"
+											  SelectedValue="{Binding SelectedTile.PaletetteIndex, Mode=TwoWay}">
+									</ComboBox>
 								</StackPanel>
 							</Grid>
 						</GroupBox>
