@@ -6,7 +6,6 @@ using GBATool.FileSystem;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.Utils;
-using GBATool.Views;
 using GBATool.VOs;
 using System;
 using System.Collections.Generic;
@@ -137,7 +136,7 @@ public class MapViewModel : ItemViewModel
     private int _mouseSelectionWidth;
     private int _mouseSelectionHeight;
     private Point _initialMousePositionInCanvas;
-    private string[] _selectedTilesIDs = [];
+    private (string, int)[] _selectedTiles = [];
 
     public MapModel? GetModel()
     {
@@ -424,14 +423,14 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    public string[] SelectedTilesIDs
+    public (string, int)[] SelectedTiles
     {
-        get => _selectedTilesIDs;
+        get => _selectedTiles;
         set
         {
-            _selectedTilesIDs = value;
+            _selectedTiles = value;
 
-            OnPropertyChanged(nameof(SelectedTilesIDs));
+            OnPropertyChanged(nameof(SelectedTiles));
         }
     }
 
@@ -593,13 +592,14 @@ public class MapViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener += OnDragLeaveEvent;
-        SignalManager.Get<DropEventSignal>().Listener += OnDropEventS;
+        SignalManager.Get<DropEventSignal>().Listener += OnDropEvent;
         SignalManager.Get<DragOverEventSignal>().Listener += OnDragOverEvent;
         SignalManager.Get<MouseDownEventSignal>().Listener += OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener += OnMouseMoveEvent;
         SignalManager.Get<ChangeMapPaletteSignal>().Listener += OnChangeMapPalette;
         SignalManager.Get<ResetSelectionAreaSignal>().Listener += OnResetSelectionArea;
+        SignalManager.Get<SelectTilesSignal>().Listener += OnSelectTiles;
         #endregion
 
         MapModel? model = GetModel();
@@ -722,13 +722,14 @@ public class MapViewModel : ItemViewModel
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
         SignalManager.Get<DragLeaveEventSignal>().Listener -= OnDragLeaveEvent;
-        SignalManager.Get<DropEventSignal>().Listener -= OnDropEventS;
+        SignalManager.Get<DropEventSignal>().Listener -= OnDropEvent;
         SignalManager.Get<DragOverEventSignal>().Listener -= OnDragOverEvent;
         SignalManager.Get<MouseDownEventSignal>().Listener -= OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener -= OnMouseMoveEvent;
         SignalManager.Get<ChangeMapPaletteSignal>().Listener -= OnChangeMapPalette;
         SignalManager.Get<ResetSelectionAreaSignal>().Listener -= OnResetSelectionArea;
+        SignalManager.Get<SelectTilesSignal>().Listener -= OnSelectTiles;
         #endregion
 
         base.OnDeactivate();
@@ -985,7 +986,7 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
-        if (SelectedTilesIDs.Length > 0)
+        if (SelectedTiles.Length > 0)
         {
             //DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)vO.EventArgs.Source);
         }
@@ -1015,7 +1016,7 @@ public class MapViewModel : ItemViewModel
 
         if (MouseSelectionActive == Visibility.Visible)
         {
-//            selectedTiles = CheckMouseAreaSelected(frameViewView);
+            selectedTiles = CheckMouseAreaSelected();
         }
 
         Point pos = vO.MouseEvent.GetPosition(sender);
@@ -1024,7 +1025,7 @@ public class MapViewModel : ItemViewModel
 
         if (selectedTiles.Count == 0)
         {
-//            GetListSpriteControlSelected(frameViewView.FrameCanvas, pos, ref selectedSprites);
+            GetSelectedTile(pos, ref selectedTiles);
         }
 
         SignalManager.Get<SelectTilesSignal>().Dispatch([.. selectedTiles]);
@@ -1053,30 +1054,7 @@ public class MapViewModel : ItemViewModel
 
         SignalManager.Get<ResetSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
 
-        List<TileObject> selectedTiles = [];
-
-        GetTilesSelected(_initialMousePositionInCanvas, ref selectedTiles);
-
-        bool spriteWasAlreadySelected = false;
-
-        foreach (TileObject tile in selectedTiles)
-        {
-            if (SelectedTilesIDs.Contains(tile.MapID)) // TODO: it needs to be unique and map id is not enough
-            {
-                spriteWasAlreadySelected = true;
-            }
-        }
-
-        if ((SelectedTilesIDs.Length == 0 || !spriteWasAlreadySelected))
-        {
-            SignalManager.Get<SelectTilesSignal>().Dispatch([.. selectedTiles]);
-        }
-
-        /*
-         int cellIndex = MapUtils.GetCellIndexFromPoint(point);
-
-        SelectedTile = Tiles0[cellIndex];
-         */
+        SignalManager.Get<SelectTilesSignal>().Dispatch([]);
     }
 
     private void OnDragOverEvent(DragLeaveVO vO)
@@ -1084,7 +1062,7 @@ public class MapViewModel : ItemViewModel
         //
     }
 
-    private void OnDropEventS(DragLeaveVO vO)
+    private void OnDropEvent(DragLeaveVO vO)
     {
         //
     }
@@ -1149,16 +1127,55 @@ public class MapViewModel : ItemViewModel
         }
     }
 
-    private void GetTilesSelected(Point position, ref List<TileObject> selectedTiles)
+    private void GetSelectedTile(Point position, ref List<TileObject> selectedTiles)
     {
-//        List<Image> images = GetSelectionMouseOver<Image>(canvas, position);
-//
-//        if (images.Count > 0)
-//        {
-//            if (_spritesInFrames.TryGetValue(images.First(), out SpriteControlVO? spriteControl))
-//            {
-//                selectedSprites.Add(spriteControl);
-//            }
-//        }
+        int cellIndex = MapUtils.GetCellIndexFromPoint(position);
+
+        if (!selectedTiles.Contains(Tiles0[cellIndex]))
+        {
+            selectedTiles.Add(Tiles0[cellIndex]);
+        }
+    }
+
+    private List<TileObject> CheckMouseAreaSelected()
+    {
+        List<TileObject> tiles = [];
+
+        if (MouseSelectionWidth == 0 || MouseSelectionHeight == 0)
+        {
+            return tiles;
+        }
+
+        Rect rectangle = new(
+            MouseSelectionOriginX,
+            MouseSelectionOriginY,
+            MouseSelectionWidth,
+            MouseSelectionHeight);
+
+        List<int> tilesInRect = MapUtils.GetCellsIndicesFromRect(rectangle);
+        
+        if (tilesInRect.Count > 0)
+        {
+            foreach (int cellIndex in tilesInRect)
+            {
+                tiles.Add(Tiles0[cellIndex]);
+            }
+        }
+
+        return tiles;
+    }
+
+    private void OnSelectTiles(TileObject[] tiles)
+    {
+        List<(string, int)> selectedTiles = [];
+
+        for (int i = 0; i < tiles.Length; i++)
+        {
+            selectedTiles.Add((tiles[i].MapID, tiles[i].Index));
+        }
+
+        SelectedTile = tiles.Length == 1 ? tiles[0] : null;
+
+        SelectedTiles = [.. selectedTiles];
     }
 }
