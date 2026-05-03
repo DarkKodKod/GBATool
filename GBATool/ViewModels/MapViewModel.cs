@@ -34,6 +34,7 @@ public class TileObject : INotifyPropertyChanged
 
     public int Index { get; set; }
     public string MapID { get; set; } = string.Empty;
+    public int MapIndex { get; set; }
 
     public int PaletetteIndex
     {
@@ -137,6 +138,11 @@ public class MapViewModel : ItemViewModel
     private int _mouseSelectionHeight;
     private Point _initialMousePositionInCanvas;
     private (string, int)[] _selectedTiles = [];
+    private Visibility _tilesSelectedActive;
+    private int _tilesSelectedWidth;
+    private int _tilesSelectedHeight;
+    private int _tilesSelectedOriginX;
+    private int _tilesSelectedOriginY;
 
     public MapModel? GetModel()
     {
@@ -343,6 +349,57 @@ public class MapViewModel : ItemViewModel
             _mouseSelectionOriginX = value;
 
             OnPropertyChanged(nameof(MouseSelectionOriginX));
+        }
+    }
+
+    public Visibility TilesSelectedActive
+    {
+        get => _tilesSelectedActive;
+        set
+        {
+            _tilesSelectedActive = value;
+
+            OnPropertyChanged(nameof(TilesSelectedActive));
+        }
+    }
+    public int TilesSelectedWidth
+    {
+        get => _tilesSelectedWidth;
+        set
+        {
+            _tilesSelectedWidth = value;
+
+            OnPropertyChanged(nameof(TilesSelectedWidth));
+        }
+    }
+    public int TilesSelectedHeight
+    {
+        get => _tilesSelectedHeight;
+        set
+        {
+            _tilesSelectedHeight = value;
+
+            OnPropertyChanged(nameof(TilesSelectedHeight));
+        }
+    }
+    public int TilesSelectedOriginX
+    {
+        get => _tilesSelectedOriginX;
+        set
+        {
+            _tilesSelectedOriginX = value;
+
+            OnPropertyChanged(nameof(TilesSelectedOriginX));
+        }
+    }
+    public int TilesSelectedOriginY
+    {
+        get => _tilesSelectedOriginY;
+        set
+        {
+            _tilesSelectedOriginY = value;
+
+            OnPropertyChanged(nameof(TilesSelectedOriginY));
         }
     }
 
@@ -588,6 +645,7 @@ public class MapViewModel : ItemViewModel
         base.OnActivate();
 
         MouseSelectionActive = Visibility.Collapsed;
+        TilesSelectedActive = Visibility.Collapsed;
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
@@ -611,10 +669,7 @@ public class MapViewModel : ItemViewModel
 
         if (model.Tiles.Count == 0)
         {
-            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
-            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
-            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
-            model.Tiles.Add(Guid.NewGuid().ToString(), new Tile[MapModel.RegularTileMin]);
+            model.InsertNewTiles();
 
             ProjectItem?.FileHandler?.Save();
         }
@@ -634,12 +689,13 @@ public class MapViewModel : ItemViewModel
                 case 0:
                     {
                         int tileIndex = 0;
-                        foreach (var item in map.Value)
+                        foreach (Tile item in map.Value)
                         {
                             Tiles0.Add(new()
                             {
                                 Index = tileIndex++,
-                                MapID = map.Key
+                                MapID = map.Key,
+                                MapIndex = item.MapIndex
                             });
                         }
                     }
@@ -647,12 +703,13 @@ public class MapViewModel : ItemViewModel
                 case 1:
                     {
                         int tileIndex = 0;
-                        foreach (var item in map.Value)
+                        foreach (Tile item in map.Value)
                         {
                             Tiles1.Add(new()
                             {
                                 Index = tileIndex++,
-                                MapID = map.Key
+                                MapID = map.Key,
+                                MapIndex = item.MapIndex
                             });
                         }
                     }
@@ -660,12 +717,13 @@ public class MapViewModel : ItemViewModel
                 case 2:
                     {
                         int tileIndex = 0;
-                        foreach (var item in map.Value)
+                        foreach (Tile item in map.Value)
                         {
                             Tiles2.Add(new()
                             {
                                 Index = tileIndex++,
-                                MapID = map.Key
+                                MapID = map.Key,
+                                MapIndex = item.MapIndex
                             });
                         }
                     }
@@ -673,12 +731,13 @@ public class MapViewModel : ItemViewModel
                 case 3:
                     {
                         int tileIndex = 0;
-                        foreach (var item in map.Value)
+                        foreach (Tile item in map.Value)
                         {
                             Tiles3.Add(new()
                             {
                                 Index = tileIndex++,
-                                MapID = map.Key
+                                MapID = map.Key,
+                                MapIndex = item.MapIndex
                             });
                         }
                     }
@@ -718,6 +777,7 @@ public class MapViewModel : ItemViewModel
     public override void OnDeactivate()
     {
         MouseSelectionActive = Visibility.Collapsed;
+        TilesSelectedActive = Visibility.Collapsed;
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
@@ -1177,5 +1237,11 @@ public class MapViewModel : ItemViewModel
         SelectedTile = tiles.Length == 1 ? tiles[0] : null;
 
         SelectedTiles = [.. selectedTiles];
+
+        TilesSelectedActive = Visibility.Visible;
+        TilesSelectedWidth = 16;
+        TilesSelectedHeight = 16;
+        TilesSelectedOriginX = 20;
+        TilesSelectedOriginY = 60;
     }
 }

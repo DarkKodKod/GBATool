@@ -1,4 +1,6 @@
 ﻿using GBATool.Enums;
+using GBATool.Views;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -6,7 +8,7 @@ using System.Windows;
 
 namespace GBATool.Models;
 
-public struct Tile
+public class Tile
 {
     public Tile()
     {
@@ -15,6 +17,8 @@ public struct Tile
         PaletteIndex = 0;
         SpriteTileID = string.Empty;
         TileSetID = string.Empty;
+        MapID = string.Empty;
+        MapIndex = 0;
     }
 
     public bool FlipHorizontal { get; set; }
@@ -22,8 +26,10 @@ public struct Tile
     public byte PaletteIndex { get; set; }
     public string SpriteTileID { get; set; }
     public string TileSetID { get; set; }
+    public string MapID { get; set; }
+    public int MapIndex { get; set; }
 
-    public readonly bool IsEmpty()
+    public bool IsEmpty()
     {
         return string.IsNullOrEmpty(SpriteTileID) || string.IsNullOrEmpty(TileSetID);
     }
@@ -32,6 +38,7 @@ public struct Tile
     {
         SpriteTileID = string.Empty;
         TileSetID = string.Empty;
+        MapID = string.Empty;
     }
 }
 
@@ -72,4 +79,21 @@ public class MapModel : AFileModel
     public ScreenBaseBlock ScreenBaseBlock { get; set; } = ScreenBaseBlock.Block0;
     public CharacterBaseBlock CharacterBaseBlock { get; set; } = CharacterBaseBlock.Block0;
     public string BankID { get; set; } = string.Empty;
+
+    public void InsertNewTiles()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            string mapID = Guid.NewGuid().ToString();
+
+            List<Tile> tiles = [];
+
+            for (int j = 0; j < RegularTileMin; j++)
+            {
+                tiles.Add(new Tile() { MapID = mapID, MapIndex = i });
+            }
+
+            Tiles.Add(mapID, [.. tiles]);
+        }
+    }
 }

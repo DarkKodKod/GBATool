@@ -107,6 +107,16 @@
 						Canvas.Top="{Binding MouseSelectionOriginY}"
 						StrokeThickness="0.4"
 						StrokeDashArray="2,1" />
+					<Rectangle
+						x:Name="rectSelectedTiles"
+						Visibility="{Binding TilesSelectedActive}"
+						Width="{Binding TilesSelectedWidth}"
+						Height="{Binding TilesSelectedHeight}"
+						Stroke="Red"
+						IsHitTestVisible="False"
+						Canvas.Left="{Binding TilesSelectedOriginX}"
+						Canvas.Top="{Binding TilesSelectedOriginY}"
+						StrokeThickness="0.4" />
 				</Canvas>
             </ScrollViewer>
         </Grid>
