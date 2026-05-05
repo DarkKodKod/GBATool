@@ -1227,10 +1227,44 @@ public class MapViewModel : ItemViewModel
 
     private void OnSelectTiles(TileObject[] tiles)
     {
+        if (tiles.Length == 0)
+        {
+            TilesSelectedActive = Visibility.Collapsed;
+
+            SelectedTiles = [];
+
+            return;
+        }
+
         List<(string, int)> selectedTiles = [];
+
+        int width = 0;
+        int height = 0;
+        int continuousIndex = 0;
 
         for (int i = 0; i < tiles.Length; i++)
         {
+            if (continuousIndex == 0)
+            {
+                width += 8;
+                height += 8;
+                continuousIndex = tiles[i].Index;
+            }
+            else if (continuousIndex + 1 == tiles[i].Index)
+            {
+                continuousIndex++;
+
+                if (height == 8)
+                {
+                    width += 8;
+                }
+            }
+            else
+            {
+                continuousIndex = tiles[i].Index;
+                height += 8;
+            }
+
             selectedTiles.Add((tiles[i].MapID, tiles[i].Index));
         }
 
@@ -1238,10 +1272,12 @@ public class MapViewModel : ItemViewModel
 
         SelectedTiles = [.. selectedTiles];
 
+        Point origin = MapUtils.GetCellPointFromIndex(tiles[0].Index, tiles[0].MapIndex);
+
         TilesSelectedActive = Visibility.Visible;
-        TilesSelectedWidth = 16;
-        TilesSelectedHeight = 16;
-        TilesSelectedOriginX = 20;
-        TilesSelectedOriginY = 60;
+        TilesSelectedWidth = width;
+        TilesSelectedHeight = height;
+        TilesSelectedOriginX = (int)origin.X;
+        TilesSelectedOriginY = (int)origin.Y;
     }
 }

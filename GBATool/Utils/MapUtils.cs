@@ -52,6 +52,14 @@ public static class MapUtils
         return cellIndex;
     }
 
+    public static Point GetCellPointFromIndex(int cellIndex, int mapIndex)
+    {
+        int x = (cellIndex % MapSizeWidth) * CellSize;
+        int y = (cellIndex * CellSize - x) / MapSizeWidth;
+
+        return new Point(x, y);
+    }
+
     public static void InvalidateImageFromCache(string mapID)
     {
         if (_frameBitmapCache.ContainsKey(mapID))
