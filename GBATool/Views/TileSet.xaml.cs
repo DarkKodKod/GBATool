@@ -25,7 +25,7 @@ namespace GBATool.Views
 
         private System.Windows.Point _previousMousePosition = new(0, 0);
         private bool _validPanningMovement = false;
-        private BitArray _buttonSelected = new(1);
+        private BitArray _buttonSelected = new(14);
         private BitArray _tmpButtonSelected = new(14);
 
         public TileSet()

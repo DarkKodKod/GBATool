@@ -317,13 +317,20 @@ public class TileSetViewModel : ItemViewModel
         int x = (int)Math.Round(pos.X);
         int y = (int)Math.Round(pos.Y);
 
-        SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
+        if (Shape == SpriteShape.Custom || Size == SpriteSize.Custom)
+        {
+            //
+        }
+        else
+        {
+            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
 
-        SelectionRectVisibility = Visibility.Visible;
-        SelectionRectLeft = x;
-        SelectionRectWidth = width;
-        SelectionRectHeight = height;
-        SelectionRectTop = y;
+            SelectionRectVisibility = Visibility.Visible;
+            SelectionRectLeft = x;
+            SelectionRectWidth = width;
+            SelectionRectHeight = height;
+            SelectionRectTop = y;
+        }   
     }
 
     private void OnMouseWheel(MouseWheelVO vo)
@@ -486,11 +493,23 @@ public class TileSetViewModel : ItemViewModel
             return;
         }
 
-        int width = 0;
-        int height = 0;
+        if (Shape == SpriteShape.Custom || Size == SpriteSize.Custom)
+        {
+            //
+        }
+        else
+        {
+            int width = 0;
+            int height = 0;
 
-        SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
+            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
 
+            CropAccordingToSize(model, image, point, width, height);
+        }
+    }
+
+    private void CropAccordingToSize(TileSetModel model, Image image, Point point, int width, int height)
+    {
         WriteableBitmap writeableBmp = BitmapFactory.ConvertToPbgra32Format(image.Source as BitmapSource);
 
         int x = (int)Math.Round(point.X);
