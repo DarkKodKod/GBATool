@@ -49,6 +49,7 @@
     <None Remove="Resources\cursor8x16.png" />
     <None Remove="Resources\cursor8x32.png" />
     <None Remove="Resources\cursor8x8.png" />
+    <None Remove="Resources\cursorCustom.png" />
     <None Remove="Resources\cursorPointer.png" />
     <None Remove="Resources\delete.png" />
     <None Remove="Resources\down.png" />
@@ -164,6 +165,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\cursor8x8.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\cursorCustom.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\cursorPointer.png">

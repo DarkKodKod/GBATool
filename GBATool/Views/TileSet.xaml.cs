@@ -25,8 +25,8 @@ namespace GBATool.Views
 
         private System.Windows.Point _previousMousePosition = new(0, 0);
         private bool _validPanningMovement = false;
-        private BitArray _buttonSelected = new(13);
-        private BitArray _tmpButtonSelected = new(13);
+        private BitArray _buttonSelected = new(1);
+        private BitArray _tmpButtonSelected = new(14);
 
         public TileSet()
         {
@@ -51,6 +51,7 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener += OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
+            SignalManager.Get<SpriteSizeCustomSignal>().Listener += OnSpriteSizeCustom;
             SignalManager.Get<AddSpriteSignal>().Listener += OnAddSprite;
             SignalManager.Get<DeletingSpriteSignal>().Listener += OnDeletingSprite;
             SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
@@ -153,6 +154,7 @@ namespace GBATool.Views
             SignalManager.Get<SpriteSize8x16Signal>().Listener -= OnSpriteSize8x16;
             SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
             SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
+            SignalManager.Get<SpriteSizeCustomSignal>().Listener -= OnSpriteSizeCustom;
             SignalManager.Get<AddSpriteSignal>().Listener -= OnAddSprite;
             SignalManager.Get<DeletingSpriteSignal>().Listener -= OnDeletingSprite;
             SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
@@ -234,6 +236,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize16x16()
@@ -257,6 +260,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize16x32()
@@ -280,6 +284,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize16x8()
@@ -303,6 +308,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize32x16()
@@ -326,6 +332,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize32x32()
@@ -349,6 +356,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize32x64()
@@ -372,6 +380,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = true;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize32x8()
@@ -395,6 +404,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize64x32()
@@ -418,6 +428,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize64x64()
@@ -441,6 +452,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize8x16()
@@ -464,6 +476,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = true;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void OnSpriteSize8x32()
@@ -487,6 +500,31 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = true;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
+        }
+
+        private void OnSpriteSizeCustom()
+        {
+            if (!_tmpButtonSelected.HasAnySet())
+            {
+                _buttonSelected.SetAll(false);
+                _buttonSelected[13] = true;
+            }
+
+            tbSelect.IsChecked = false;
+            tb8x8.IsChecked = false;
+            tb16x16.IsChecked = false;
+            tb32x32.IsChecked = false;
+            tb16x32.IsChecked = false;
+            tb16x8.IsChecked = false;
+            tb32x16.IsChecked = false;
+            tb32x8.IsChecked = false;
+            tb64x32.IsChecked = false;
+            tb64x64.IsChecked = false;
+            tb8x16.IsChecked = false;
+            tb8x32.IsChecked = false;
+            tb32x64.IsChecked = false;
+            tbCustom.IsChecked = true;
         }
 
         private void OnSpriteSize8x8()
@@ -510,6 +548,7 @@ namespace GBATool.Views
             tb8x16.IsChecked = false;
             tb8x32.IsChecked = false;
             tb32x64.IsChecked = false;
+            tbCustom.IsChecked = false;
         }
 
         private void ScrollViewer_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -541,6 +580,7 @@ namespace GBATool.Views
                 tb8x16.IsChecked = false;
                 tb8x32.IsChecked = false;
                 tb32x64.IsChecked = false;
+                tbCustom.IsChecked = false;
 
                 e.Handled = true;
             }
@@ -565,6 +605,7 @@ namespace GBATool.Views
                 tb8x16.IsChecked = _buttonSelected[10];
                 tb8x32.IsChecked = _buttonSelected[11];
                 tb32x64.IsChecked = _buttonSelected[12];
+                tbCustom.IsChecked = _buttonSelected[13];
 
                 _tmpButtonSelected.SetAll(false);
 

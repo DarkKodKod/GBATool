@@ -20,6 +20,7 @@ public static class SpriteUtils
                 case 8: shape = SpriteShape.Shape00; size = SpriteSize.Size00; break;
                 case 16: shape = SpriteShape.Shape10; size = SpriteSize.Size00; break;
                 case 32: shape = SpriteShape.Shape10; size = SpriteSize.Size01; break;
+                default: shape = SpriteShape.Custom; size = SpriteSize.Custom; break;
             }
         }
         else if (width == 16)
@@ -29,6 +30,7 @@ public static class SpriteUtils
                 case 8: shape = SpriteShape.Shape01; size = SpriteSize.Size00; break;
                 case 16: shape = SpriteShape.Shape00; size = SpriteSize.Size01; break;
                 case 32: shape = SpriteShape.Shape10; size = SpriteSize.Size10; break;
+                default: shape = SpriteShape.Custom; size = SpriteSize.Custom; break;
             }
         }
         else if (width == 32)
@@ -39,6 +41,7 @@ public static class SpriteUtils
                 case 16: shape = SpriteShape.Shape01; size = SpriteSize.Size10; break;
                 case 32: shape = SpriteShape.Shape00; size = SpriteSize.Size10; break;
                 case 64: shape = SpriteShape.Shape10; size = SpriteSize.Size11; break;
+                default: shape = SpriteShape.Custom; size = SpriteSize.Custom; break;
             }
         }
         else if (width == 64)
@@ -47,12 +50,26 @@ public static class SpriteUtils
             {
                 case 32: shape = SpriteShape.Shape01; size = SpriteSize.Size11; break;
                 case 64: shape = SpriteShape.Shape00; size = SpriteSize.Size11; break;
+                default: shape = SpriteShape.Custom; size = SpriteSize.Custom; break;
             }
+        }
+        else
+        {
+            shape = SpriteShape.Custom;
+            size = SpriteSize.Custom;
         }
     }
 
     public static void ConvertToWidthHeight(SpriteShape shape, SpriteSize size, ref int width, ref int height)
     {
+        if (shape == SpriteShape.Custom || size == SpriteSize.Custom) 
+        {
+            width = 0;
+            height = 0;
+
+            return;
+        }
+
         //shape\size  00	01	    10	    11
         //   00	      8x8	16x16	32x32	64x64
         //   01	      16x8	32x8	32x16	64x32
@@ -98,6 +115,11 @@ public static class SpriteUtils
 
     public static int Count8x8Tiles(SpriteShape shape, SpriteSize size)
     {
+        if (shape == SpriteShape.Custom || size == SpriteSize.Custom)
+        {
+            return 0;
+        }
+
         //shape\size  00	01	    10	    11
         //   00	      8x8	16x16	32x32	64x64
         //   01	      16x8	32x8	32x16	64x32

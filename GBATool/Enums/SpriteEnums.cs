@@ -10,7 +10,8 @@ public enum SpriteShape
 {
     Shape00 = 0,
     Shape01 = 1,
-    Shape10 = 2
+    Shape10 = 2,
+    Custom = 3
 }
 
 public enum SpriteSize
@@ -18,7 +19,8 @@ public enum SpriteSize
     Size00 = 0,
     Size01 = 1,
     Size10 = 2,
-    Size11 = 3
+    Size11 = 3,
+    Custom = 4
 }
 
 public enum BitsPerPixel

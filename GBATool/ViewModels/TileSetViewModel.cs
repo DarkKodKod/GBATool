@@ -58,6 +58,7 @@ public class TileSetViewModel : ItemViewModel
     public DispatchSignalCommand<SpriteSize8x16Signal> SpriteSize8x16Command { get; } = new();
     public DispatchSignalCommand<SpriteSize8x32Signal> SpriteSize8x32Command { get; } = new();
     public DispatchSignalCommand<SpriteSize8x8Signal> SpriteSize8x8Command { get; } = new();
+    public DispatchSignalCommand<SpriteSizeCustomSignal> SpriteSizeCustomCommand { get; } = new();
     public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
     #endregion
 
@@ -382,6 +383,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<SpriteSize8x16Signal>().Listener += OnSpriteSize8x16;
         SignalManager.Get<SpriteSize8x32Signal>().Listener += OnSpriteSize8x32;
         SignalManager.Get<SpriteSize8x8Signal>().Listener += OnSpriteSize8x8;
+        SignalManager.Get<SpriteSizeCustomSignal>().Listener += OnSpriteSizeCustom;
         SignalManager.Get<MouseImageSelectedSignal>().Listener += OnMouseImageSelected;
         SignalManager.Get<SelectSpriteSignal>().Listener += OnSelectSprite;
         SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener += OnConfirmSpriteDeletion;
@@ -585,6 +587,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<SpriteSize8x16Signal>().Listener -= OnSpriteSize8x16;
         SignalManager.Get<SpriteSize8x32Signal>().Listener -= OnSpriteSize8x32;
         SignalManager.Get<SpriteSize8x8Signal>().Listener -= OnSpriteSize8x8;
+        SignalManager.Get<SpriteSizeCustomSignal>().Listener -= OnSpriteSizeCustom;
         SignalManager.Get<MouseImageSelectedSignal>().Listener -= OnMouseImageSelected;
         SignalManager.Get<SelectSpriteSignal>().Listener -= OnSelectSprite;
         SignalManager.Get<ConfirmSpriteDeletionSignal>().Listener -= OnConfirmSpriteDeletion;
@@ -826,6 +829,18 @@ public class TileSetViewModel : ItemViewModel
         IsSelecting = false;
         Shape = SpriteShape.Shape10;
         Size = SpriteSize.Size01;
+    }
+
+    private void OnSpriteSizeCustom()
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        IsSelecting = false;
+        Shape = SpriteShape.Custom;
+        Size = SpriteSize.Custom;
     }
 
     private void OnSpriteSize8x8()
