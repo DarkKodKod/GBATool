@@ -551,6 +551,14 @@ public partial class CharacterFrameEditorView : UserControl
                     return;
                 }
 
+                if (spriteVO.Width == 0 || spriteVO.Height == 0)
+                {
+                    _ = MessageBox.Show("Sprites with custom size are not allowed to be use as part of the Character", "Error", MessageBoxButton.OK);
+
+                    RemoveFromFrameViewTempElement(frameViewView, item);
+                    return;
+                }
+
                 if (string.IsNullOrEmpty(_bankID))
                 {
                     _bankID = spriteVO.BankID;

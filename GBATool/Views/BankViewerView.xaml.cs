@@ -550,7 +550,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
             foreach (SpriteModel sprite in _metaData.bankSprites)
             {
-                spriteTilesTotal = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+                if (sprite.Shape == SpriteShape.Custom || sprite.Size == SpriteSize.Custom)
+                {
+                    spriteTilesTotal = (sprite.Width / 8) * (sprite.Height / 8);
+                }
+                else
+                {
+                    spriteTilesTotal = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+                }   
 
                 if (sprite.ID == spriteModel?.ID)
                 {
@@ -570,6 +577,12 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             int width = 0;
             int height = 0;
             SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+
+            if (width == 0 || height == 0)
+            {
+                width = spriteModel.Width;
+                height = spriteModel.Height;
+            }
 
             // Going through the list again to find the first occurrence of this item
             (int firstIndex, string _, string _) = _metaData.SpriteIndices.Find(item => item.Item2 == spriteModel.ID);

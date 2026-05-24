@@ -86,8 +86,15 @@ public class TileSetModel : AFileModel
         return true;
     }
 
-    public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size, string tileSetID)
+    public bool StoreNewSprite(string spriteID, int posX, int posY, SpriteShape shape, SpriteSize size, string tileSetID, int width, int height)
     {
+        // if the size and shape is known then there is no need to store the values
+        if (shape != SpriteShape.Custom && size != SpriteSize.Custom)
+        {
+            width = 0;
+            height = 0;
+        }
+
         SpriteModel newSprite = new()
         {
             ID = spriteID,
@@ -96,7 +103,9 @@ public class TileSetModel : AFileModel
             PosX = posX,
             PosY = posY,
             TileSetID = tileSetID,
-            Alias = spriteID
+            Alias = spriteID,
+            Width = width,
+            Height = height,
         };
 
         SpriteModel? find = Sprites.Find((item) => item == newSprite);

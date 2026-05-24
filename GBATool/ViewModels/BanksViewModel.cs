@@ -484,6 +484,12 @@ public class BanksViewModel : ItemViewModel
 
             SpriteUtils.ConvertToWidthHeight(tileSetSprite.Shape, tileSetSprite.Size, ref width, ref height);
 
+            if (width == 0 || height == 0)
+            {
+                width = tileSetSprite.Width;
+                height = tileSetSprite.Height;
+            }
+
             WriteableBitmap cropped = writeableBmp.Crop(tileSetSprite.PosX, tileSetSprite.PosY, width, height);
 
             // Scaling here otherwise is too small for display

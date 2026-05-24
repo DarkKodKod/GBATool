@@ -37,6 +37,12 @@ public class TileSetViewModel : ItemViewModel
     private double _selectionRectTop;
     private string _alias = string.Empty;
     private SpriteModel? _selectedSprite;
+    private Point _customSizeInitialPosition;
+    private int _customSizeX;
+    private int _customSizeY;
+    private int _customSizeWidth;
+    private int _customSizeHeight;
+    private Image? _customSizeImage = null;
 
     private readonly int GridVisibilityThreshold = 750;
 
@@ -44,6 +50,7 @@ public class TileSetViewModel : ItemViewModel
     public MouseWheelEventCommand PreviewMouseWheelCommand { get; } = new();
     public MouseEventCommand<PreviewMouseMoveSignal> PreviewMouseMoveCommand { get; } = new();
     public MouseEventCommand<MouseLeaveEventSignal> MouseLeaveCommand { get; } = new();
+    public MouseButtonEventCommand<MouseUpEventSignal> PreviewMouseUpCommand { get; } = new();
     public BrowseFileCommand BrowseFileCommand { get; } = new();
     public DispatchSignalCommand<SpriteSelectCursorSignal> SpriteSelectCursorCommand { get; } = new();
     public DispatchSignalCommand<SpriteSize16x16Signal> SpriteSize16x16Command { get; } = new();
@@ -311,26 +318,93 @@ public class TileSetViewModel : ItemViewModel
 
         int width = 0;
         int height = 0;
+        int x = 0;
+        int y = 0;
 
         Point pos = Mouse.GetPosition(canvas);
 
-        int x = (int)Math.Round(pos.X);
-        int y = (int)Math.Round(pos.Y);
-
         if (Shape == SpriteShape.Custom || Size == SpriteSize.Custom)
         {
-            //
+            if (vo.LeftButton != MouseButtonState.Pressed)
+            {
+                return;
+            }
+
+            if (_customSizeInitialPosition.X < pos.X)
+            {
+                x = (int)Math.Round(_customSizeInitialPosition.X);
+                width = (int)Math.Round(pos.X - _customSizeInitialPosition.X);
+            }
+            else
+            {
+                x = (int)Math.Round(pos.X);
+                width = (int)Math.Round(_customSizeInitialPosition.X - pos.X);
+            }
+
+            if (_customSizeInitialPosition.Y < pos.Y)
+            {
+                y = (int)Math.Round(_customSizeInitialPosition.Y);
+                height = (int)Math.Round(pos.Y - _customSizeInitialPosition.Y);
+            }
+            else
+            {
+                y = (int)Math.Round(pos.Y);
+                height = (int)Math.Round(_customSizeInitialPosition.Y - pos.Y);
+            }
+
+            width = SpriteUtils.RoundNextMultipleOf8Up(width);
+            height = SpriteUtils.RoundNextMultipleOf8Up(height);
+
+            _customSizeX = x;
+            _customSizeY = y;
+            _customSizeWidth = width;
+            _customSizeHeight = height;
         }
         else
         {
-            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
+            x = (int)Math.Round(pos.X);
+            y = (int)Math.Round(pos.Y);
 
-            SelectionRectVisibility = Visibility.Visible;
-            SelectionRectLeft = x;
-            SelectionRectWidth = width;
-            SelectionRectHeight = height;
-            SelectionRectTop = y;
-        }   
+            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);  
+        }
+
+        SelectionRectVisibility = Visibility.Visible;
+        SelectionRectLeft = x;
+        SelectionRectWidth = width;
+        SelectionRectHeight = height;
+        SelectionRectTop = y;
+    }
+
+    private void OnMouseUpEvent(MouseButtonVO vo)
+    {
+        if (!IsActive)
+        {
+            return;
+        }
+
+        if (IsSelecting)
+        {
+            return;
+        }
+
+        if (Shape != SpriteShape.Custom && Size != SpriteSize.Custom)
+        {
+            return;
+        }
+
+        TileSetModel? model = GetModel<TileSetModel>();
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (_customSizeImage == null)
+        {
+            return;
+        }
+
+        CropAccordingToSize(model, _customSizeImage, new Point(_customSizeX, _customSizeY), _customSizeWidth, _customSizeHeight);
     }
 
     private void OnMouseWheel(MouseWheelVO vo)
@@ -375,6 +449,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<BrowseFileSuccessSignal>().Listener += OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener += OnMouseWheel;
         SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnMouseMove;
+        SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUpEvent;
         SignalManager.Get<MouseLeaveEventSignal>().Listener += OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener += OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener += OnSpriteSelectCursor;
@@ -448,16 +523,12 @@ public class TileSetViewModel : ItemViewModel
         }
 
         _selectedSprite = null;
-        Alias = "";
+        Alias = string.Empty;
 
         foreach (SpriteModel item in model.Sprites)
         {
             if (item.ID == sprite.SpriteID)
             {
-                int width = 0;
-                int height = 0;
-                SpriteUtils.ConvertToWidthHeight(item.Shape, item.Size, ref width, ref height);
-
                 _selectedSprite = item;
 
                 if (string.IsNullOrEmpty(item.Alias))
@@ -495,7 +566,9 @@ public class TileSetViewModel : ItemViewModel
 
         if (Shape == SpriteShape.Custom || Size == SpriteSize.Custom)
         {
-            //
+            // this will be use to display a rentangle for selection
+            _customSizeInitialPosition = point;
+            _customSizeImage = image;
         }
         else
         {
@@ -530,6 +603,8 @@ public class TileSetViewModel : ItemViewModel
                 PosY = y,
                 Shape = Shape,
                 Size = Size,
+                Width = width,
+                Height = height,
                 TileSetID = model.GUID
             }) == sprite);
 
@@ -551,7 +626,7 @@ public class TileSetViewModel : ItemViewModel
 
         SpriteUtils.ConvertToShapeSize(width, height, ref shape, ref size);
 
-        bool ret = model.StoreNewSprite(spriteID, posX, posY, shape, size, model.GUID);
+        bool ret = model.StoreNewSprite(spriteID, posX, posY, shape, size, model.GUID, width, height);
 
         if (ret == true)
         {
@@ -577,7 +652,7 @@ public class TileSetViewModel : ItemViewModel
         if (ret == true)
         {
             _selectedSprite = null;
-            Alias = "";
+            Alias = string.Empty;
 
             ProjectItem?.FileHandler?.Save();
         }
@@ -591,6 +666,7 @@ public class TileSetViewModel : ItemViewModel
         SignalManager.Get<BrowseFileSuccessSignal>().Listener -= OnBrowseFileSuccess;
         SignalManager.Get<MouseWheelSignal>().Listener -= OnMouseWheel;
         SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnMouseMove;
+        SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUpEvent;
         SignalManager.Get<MouseLeaveEventSignal>().Listener -= OnMouseLeave;
         SignalManager.Get<UpdateTileSetImageSignal>().Listener -= OnUpdateTileSetImage;
         SignalManager.Get<SpriteSelectCursorSignal>().Listener -= OnSpriteSelectCursor;
@@ -640,6 +716,12 @@ public class TileSetViewModel : ItemViewModel
             int height = 0;
 
             SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+            if (width == 0 || height == 0)
+            {
+                width = sprite.Width;
+                height = sprite.Height;
+            }
 
             WriteableBitmap cropped = writeableBmp.Crop(sprite.PosX, sprite.PosY, width, height);
 
@@ -692,7 +774,7 @@ public class TileSetViewModel : ItemViewModel
         {
             ProjectModel projectModel = ModelManager.Get<ProjectModel>();
 
-            string path = System.IO.Path.Combine(projectModel.ProjectPath, model.ImagePath);
+            string path = Path.Combine(projectModel.ProjectPath, model.ImagePath);
 
             ImagePath = path;
         }

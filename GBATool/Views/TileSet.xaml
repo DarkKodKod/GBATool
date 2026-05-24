@@ -145,6 +145,7 @@
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseWheelCommand}" Event="PreviewMouseWheel" PassArguments="True" />
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand}" Event="PreviewMouseMove" PassArguments="True" />
+					<behaviors:EventToCommandBehavior Command="{Binding PreviewMouseUpCommand}" Event="PreviewMouseUp" PassArguments="True" />
                     <behaviors:EventToCommandBehavior Command="{Binding MouseLeaveCommand}" Event="MouseLeave" PassArguments="True" />
                 </i:Interaction.Behaviors>
                 <Canvas Name="cvsImage"

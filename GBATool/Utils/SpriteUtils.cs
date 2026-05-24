@@ -184,4 +184,9 @@ public static class SpriteUtils
         encoder.Frames.Add(BitmapFrame.Create(image));
         encoder.Save(stream);
     }
+
+    public static int RoundNextMultipleOf8Up(int x)
+    {
+        return ((x + 7) >> 3) << 3;
+    }
 }

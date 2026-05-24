@@ -1,4 +1,5 @@
 ﻿using GBATool.Enums;
+using System.Text.Json.Serialization;
 
 namespace GBATool.Models;
 
@@ -11,6 +12,10 @@ public class SpriteModel
     public int PosY { get; set; }
     public string TileSetID { get; set; } = string.Empty;
     public string Alias { get; set; } = string.Empty;
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Width { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Height { get; set; }
 
     public override bool Equals(object? obj)
     {
@@ -23,12 +28,14 @@ public class SpriteModel
             && PosY.Equals(((SpriteModel)obj).PosY)
             && Shape.Equals(((SpriteModel)obj).Shape)
             && Size.Equals(((SpriteModel)obj).Size)
+            && Width.Equals(((SpriteModel)obj).Width)
+            && Height.Equals(((SpriteModel)obj).Height)
             && TileSetID.Equals(((SpriteModel)obj).TileSetID);
     }
 
     public override int GetHashCode()
     {
-        return System.HashCode.Combine(PosX, PosY, Shape, Size, TileSetID);
+        return System.HashCode.Combine(PosX, PosY, Width, Height, Shape, Size, TileSetID);
     }
 
     //null == null     //true

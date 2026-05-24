@@ -83,6 +83,12 @@ public static class BankUtils
 
             SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
 
+            if (width == 0 || height == 0)
+            {
+                width = sprite.Width;
+                height = sprite.Height;
+            }
+
             if (widthNextPosition + width > canvasWidth)
             {
                 widthNextPosition = 0;
