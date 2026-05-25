@@ -5,6 +5,8 @@ namespace GBATool.Models;
 
 public class SpriteModel
 {
+    public static readonly int MaxTileSize = 96;
+
     public string ID { get; set; } = string.Empty;
     public SpriteShape Shape { get; set; }
     public SpriteSize Size { get; set; }

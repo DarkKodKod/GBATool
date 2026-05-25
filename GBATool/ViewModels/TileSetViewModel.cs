@@ -404,6 +404,15 @@ public class TileSetViewModel : ItemViewModel
             return;
         }
 
+        int numberOfTiles = (_customSizeWidth / 8) * (_customSizeHeight / 8);
+
+        if (numberOfTiles > SpriteModel.MaxTileSize)
+        {
+            _ = MessageBox.Show($"This custom size is using {numberOfTiles} but you can not create a custom size bigger than {SpriteModel.MaxTileSize} tiles", "Error", MessageBoxButton.OK);
+
+            return;
+        }
+
         CropAccordingToSize(model, _customSizeImage, new Point(_customSizeX, _customSizeY), _customSizeWidth, _customSizeHeight);
     }
 
