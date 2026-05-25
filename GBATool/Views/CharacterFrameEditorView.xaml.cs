@@ -24,7 +24,7 @@ public partial class CharacterFrameEditorView : UserControl
     private readonly Dictionary<Image, SpriteControlVO> _spritesInFrames = [];
     private readonly List<Image> _onionSkinImages = [];
     private readonly Dictionary<Rectangle, CollisionControlVO> _collisionsInFrame = [];
-    private Point _initialMousePositionInCanvas;
+    private Point? _initialMousePositionInCanvas = null;
     private string _bankID = string.Empty;
 
     public CharacterFrameEditorView()
@@ -827,66 +827,6 @@ public partial class CharacterFrameEditorView : UserControl
         }
     }
 
-    private void FrameView_MouseDown(object sender, MouseButtonEventArgs e)
-    {
-        if (e.OriginalSource is not Canvas and not Rectangle)
-        {
-            return;
-        }
-
-        if (frameView.DataContext is not FrameView frameViewView)
-        {
-            return;
-        }
-
-        if (DataContext is not CharacterFrameEditorViewModel viewModel)
-        {
-            return;
-        }
-
-        _initialMousePositionInCanvas = e.GetPosition(frameViewView.FrameCanvas);
-
-        SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
-
-        List<CollisionControlVO> selectedCollisions = [];
-        List<SpriteControlVO> selectedSprites = [];
-
-        bool canSelectCollisions = viewModel.ShowCollisions;
-
-        // this will prioritize the rectangles over the images
-        if (canSelectCollisions)
-        {
-            GetListCollisionSelected(frameViewView.collisionCanvas, _initialMousePositionInCanvas, ref selectedCollisions);
-        }
-
-        GetListSpriteControlSelected(frameViewView.FrameCanvas, _initialMousePositionInCanvas, ref selectedSprites);
-
-        bool spriteWasAlreadySelected = false;
-        bool collisionWasAlreadySelected = false;
-
-        foreach (SpriteControlVO spriteVO in selectedSprites)
-        {
-            if (viewModel.SelectedFrameSprites.Contains(spriteVO.ID))
-            {
-                spriteWasAlreadySelected = true;
-            }
-        }
-
-        foreach (CollisionControlVO collisionVO in selectedCollisions)
-        {
-            if (viewModel.SelectedFrameCollisions.Contains(collisionVO.ID))
-            {
-                collisionWasAlreadySelected = true;
-            }
-        }
-
-        if ((viewModel.SelectedFrameSprites.Length == 0 || !spriteWasAlreadySelected)
-            && (viewModel.SelectedFrameCollisions.Length == 0 || !collisionWasAlreadySelected))
-        {
-            SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
-        }
-    }
-
     private void FrameView_MouseUp(object sender, MouseButtonEventArgs e)
     {
         if (e.OriginalSource is not Canvas and not Image and not Rectangle)
@@ -934,6 +874,8 @@ public partial class CharacterFrameEditorView : UserControl
         }
 
         SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
+
+        _initialMousePositionInCanvas = null;
     }
 
     private void GetListSpriteControlSelected(Canvas canvas, Point position, ref List<SpriteControlVO> selectedSprites)
@@ -1045,7 +987,7 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void FrameView_MouseMove(object sender, MouseEventArgs e)
     {
-        if (e.LeftButton != MouseButtonState.Pressed)
+        if (e.OriginalSource is not Canvas and not Rectangle and not Image)
         {
             return;
         }
@@ -1060,27 +1002,89 @@ public partial class CharacterFrameEditorView : UserControl
             return;
         }
 
-        Point positionInCanvas = e.GetPosition(frameViewView.FrameCanvas);
-
-        if (Util.AboutEqual(positionInCanvas.X, _initialMousePositionInCanvas.X) &&
-            Util.AboutEqual(positionInCanvas.Y, _initialMousePositionInCanvas.Y))
+        if (e.LeftButton != MouseButtonState.Pressed)
         {
+            _initialMousePositionInCanvas = null;
+
             return;
         }
 
-        if (viewModel.SelectedFrameSprites.Length > 0 ||
-            viewModel.SelectedFrameCollisions.Length > 0)
+        Point positionInCanvas = e.GetPosition(frameViewView.FrameCanvas);
+
+        // first time pressing?
+        if (_initialMousePositionInCanvas == null)
         {
-            DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)e.Source);
+            _initialMousePositionInCanvas = positionInCanvas;
+
+            SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(positionInCanvas);
+
+            List<CollisionControlVO> selectedCollisions = [];
+            List<SpriteControlVO> selectedSprites = [];
+
+            bool canSelectCollisions = viewModel.ShowCollisions;
+
+            // this will prioritize the rectangles over the images
+            if (canSelectCollisions)
+            {
+                GetListCollisionSelected(frameViewView.collisionCanvas, positionInCanvas, ref selectedCollisions);
+            }
+
+            GetListSpriteControlSelected(frameViewView.FrameCanvas, positionInCanvas, ref selectedSprites);
+
+            bool spriteWasAlreadySelected = false;
+            bool collisionWasAlreadySelected = false;
+
+            foreach (SpriteControlVO spriteVO in selectedSprites)
+            {
+                if (viewModel.SelectedFrameSprites.Contains(spriteVO.ID))
+                {
+                    spriteWasAlreadySelected = true;
+                }
+            }
+
+            foreach (CollisionControlVO collisionVO in selectedCollisions)
+            {
+                if (viewModel.SelectedFrameCollisions.Contains(collisionVO.ID))
+                {
+                    collisionWasAlreadySelected = true;
+                }
+            }
+
+            if ((viewModel.SelectedFrameSprites.Length == 0 || !spriteWasAlreadySelected)
+                && (viewModel.SelectedFrameCollisions.Length == 0 || !collisionWasAlreadySelected))
+            {
+                SignalManager.Get<SelectFrameElementsSignal>().Dispatch([.. selectedSprites], [.. selectedCollisions]);
+            }
         }
         else
         {
-            if (!frameViewView.FrameCanvas.IsMouseCaptured)
+            // Moving
+
+            if (_initialMousePositionInCanvas is not Point pt)
             {
-                frameViewView.FrameCanvas.CaptureMouse();
+                return;
             }
 
-            UpdateMouseSelectionArea(frameViewView, positionInCanvas);
+            if (Util.AboutEqual(positionInCanvas.X, pt.X) &&
+                Util.AboutEqual(positionInCanvas.Y, pt.Y))
+            {
+                return;
+            }
+
+            if (viewModel.SelectedFrameSprites.Length > 0 ||
+                viewModel.SelectedFrameCollisions.Length > 0)
+            {
+                DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)e.Source);
+            }
+            else
+            {
+                if (!frameViewView.FrameCanvas.IsMouseCaptured)
+                {
+                    frameViewView.FrameCanvas.CaptureMouse();
+                }
+
+                UpdateMouseSelectionArea(frameViewView, positionInCanvas);
+            }
         }
     }
 
@@ -1189,31 +1193,36 @@ public partial class CharacterFrameEditorView : UserControl
 
     private void UpdateMouseSelectionArea(FrameView frameViewView, Point positionInCanvas)
     {
+        if (_initialMousePositionInCanvas is not Point pt)
+        {
+            return;
+        }
+
         if (frameViewView.MouseSelectionActive == Visibility.Collapsed)
         {
             frameViewView.MouseSelectionActive = Visibility.Visible;
         }
 
-        if (_initialMousePositionInCanvas.X < positionInCanvas.X)
+        if (pt.X < positionInCanvas.X)
         {
-            frameViewView.MouseSelectionOriginX = (int)_initialMousePositionInCanvas.X;
-            frameViewView.MouseSelectionWidth = (int)(positionInCanvas.X - _initialMousePositionInCanvas.X);
+            frameViewView.MouseSelectionOriginX = (int)pt.X;
+            frameViewView.MouseSelectionWidth = (int)(positionInCanvas.X - pt.X);
         }
         else
         {
             frameViewView.MouseSelectionOriginX = (int)positionInCanvas.X;
-            frameViewView.MouseSelectionWidth = (int)(_initialMousePositionInCanvas.X - positionInCanvas.X);
+            frameViewView.MouseSelectionWidth = (int)(pt.X - positionInCanvas.X);
         }
 
-        if (_initialMousePositionInCanvas.Y < positionInCanvas.Y)
+        if (pt.Y < positionInCanvas.Y)
         {
-            frameViewView.MouseSelectionOriginY = (int)(_initialMousePositionInCanvas.Y);
-            frameViewView.MouseSelectionHeight = (int)(positionInCanvas.Y - _initialMousePositionInCanvas.Y);
+            frameViewView.MouseSelectionOriginY = (int)(pt.Y);
+            frameViewView.MouseSelectionHeight = (int)(positionInCanvas.Y - pt.Y);
         }
         else
         {
             frameViewView.MouseSelectionOriginY = (int)(positionInCanvas.Y);
-            frameViewView.MouseSelectionHeight = (int)(_initialMousePositionInCanvas.Y - positionInCanvas.Y);
+            frameViewView.MouseSelectionHeight = (int)(pt.Y - positionInCanvas.Y);
         }
     }
 
@@ -1250,7 +1259,11 @@ public partial class CharacterFrameEditorView : UserControl
             {
                 if (!updated)
                 {
-                    SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
+                    if (_initialMousePositionInCanvas is Point pt)
+                    {
+                        SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(pt);
+                    }
+                    
                     updated = true;
                 }
 
@@ -1288,11 +1301,17 @@ public partial class CharacterFrameEditorView : UserControl
                 SpriteCollisionVO? collisionVO = viewModel.CharacterCollisions.Find(x => x.ID == item.Value.ID);
 
                 if (collisionVO == null)
+                {
                     continue;
+                }   
 
                 if (!updated)
                 {
-                    SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
+                    if (_initialMousePositionInCanvas is Point pt)
+                    {
+                        SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(pt);
+                    }
+
                     updated = true;
                 }
 
