@@ -49,13 +49,17 @@ public static class ImageProcessing
                         {
                             if (paletteColor.Equals(color))
                             {
-                                if (bpp == BitsPerPixel.f4bpp)
+                                switch (bpp)
                                 {
-                                    Set4BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
-                                }
-                                else
-                                {
-                                    Set8BitsAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                    case BitsPerPixel.f4bpp:
+                                        Set4BitAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                        break;
+                                    case BitsPerPixel.f8bpp:
+                                        Set8BitAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                        break;
+                                    case BitsPerPixel.f1bpp:
+                                        Set1BitAccordingToIndex(pixelIndex, colorIndex, ref bytes);
+                                        break;
                                 }
 
                                 colorFoundInPalette = true;
@@ -86,7 +90,7 @@ public static class ImageProcessing
         return bytes;
     }
 
-    private static void Set4BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
+    private static void Set4BitAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
         int outputIndex = (pixelIndex * 4) / 8;
 
@@ -99,8 +103,13 @@ public static class ImageProcessing
         output[outputIndex] |= store;
     }
 
-    private static void Set8BitsAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
+    private static void Set8BitAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
         output[pixelIndex] = (byte)colorIndex;
+    }
+
+    private static void Set1BitAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
+    {
+        // TODO
     }
 }
