@@ -110,6 +110,10 @@ public static class ImageProcessing
 
     private static void Set1BitAccordingToIndex(int pixelIndex, int colorIndex, ref byte[] output)
     {
-        // TODO
+        int outputIndex = pixelIndex / 8;
+
+        byte store = (byte)((byte)colorIndex << (pixelIndex % 8));
+
+        output[outputIndex] |= store;
     }
 }
