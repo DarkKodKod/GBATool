@@ -123,8 +123,7 @@ public sealed class BuildMemoryBanksButano : Building<BuildMemoryBanksButano>
 
         if (!ret)
         {
-            AddWarning($"No palette configure for bank [{name}], is going to be skipped");
-            return;
+            BankUtils.GenerateTemporalPalette(bank, ref palette);
         }
 
         foreach (SpriteModel sprite in metaData.bankSprites)

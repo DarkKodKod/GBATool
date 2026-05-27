@@ -218,13 +218,29 @@ public class BankModel : AFileModel
 
             if (is1DImage)
             {
-                countTiles += SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+                if (sprite.Shape == SpriteShape.Custom || sprite.Size == SpriteSize.Custom)
+                {
+                    countTiles += (sprite.Width / 8) * (sprite.Height / 8);
+                }
+                else
+                {
+                    countTiles += SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
+                }   
             }
             else
             {
                 int width = 0;
                 int height = 0;
-                SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+
+                if (sprite.Shape == SpriteShape.Custom || sprite.Size == SpriteSize.Custom)
+                {
+                    width = sprite.Width;
+                    height = sprite.Height;
+                }
+                else
+                {
+                    SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
+                }   
 
                 width /= BankUtils.SizeOfCellInPixels;
                 height /= BankUtils.SizeOfCellInPixels;

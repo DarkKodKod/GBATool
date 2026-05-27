@@ -49,13 +49,9 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
         foreach (FileModelVO vo in bankModelVOs)
         {
             if (vo.Model is not BankModel bank)
-                continue;
-
-            if (bank.BitsPerPixel == BitsPerPixel.f1bpp)
             {
-                AddWarning("1BPP not supported for banks exporting at the moment.");
                 continue;
-            }
+            }   
 
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 
@@ -75,8 +71,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
 
             if (!ret)
             {
-                AddWarning($"No palette configure for bank [{vo.Name}], is going to be skipped");
-                continue;
+                BankUtils.GenerateTemporalPalette(bank, ref palette);
             }
 
             byte[]? imageData = null;

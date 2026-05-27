@@ -112,7 +112,7 @@ public static class ImageProcessing
     {
         int outputIndex = pixelIndex / 8;
 
-        byte store = (byte)((byte)colorIndex << (pixelIndex % 8));
+        byte store = (byte)(colorIndex << (pixelIndex % 8));
 
         output[outputIndex] |= store;
     }

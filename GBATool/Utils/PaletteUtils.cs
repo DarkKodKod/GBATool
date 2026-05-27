@@ -1,10 +1,13 @@
-﻿using GBATool.Models;
+﻿using GBATool.Enums;
+using GBATool.Models;
 using GBATool.VOs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace GBATool.Utils;
 
@@ -55,5 +58,57 @@ public static class PaletteUtils
         }
 
         return $"palette_{sb}{fileModelVO.Name.Replace(' ', '_').ToLower()}";
+    }
+
+    public static List<Color> GeneratePaletteColorList(IEnumerable<SpriteModel> bankSprites, Color transparentColor, BitsPerPixel bitPerPixel)
+    {
+        int maxNumberOfColor = bitPerPixel.GetNumberOfColors();
+
+        List<Color> colorArray = new([transparentColor]);
+
+        foreach (SpriteModel spriteModel in bankSprites)
+        {
+            (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(spriteModel.TileSetID);
+
+            if (sourceBitmapCached == null)
+            {
+                continue;
+            }
+
+            WriteableBitmap sourceBitmap = sourceBitmapCached.CloneCurrentValue();
+
+            int width = 0;
+            int height = 0;
+
+            if (spriteModel.Shape == SpriteShape.Custom || spriteModel.Size == SpriteSize.Custom)
+            {
+                width = spriteModel.Width;
+                height = spriteModel.Height;
+            }
+            else
+            {
+                SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+            }
+
+            WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Color color = cropped.GetPixel(x, y);
+
+                    if (!colorArray.Contains(color))
+                    {
+                        if (colorArray.Count < maxNumberOfColor)
+                        {
+                            colorArray.Add(color);
+                        }
+                    }
+                }
+            }
+        }
+
+        return colorArray;
     }
 }

@@ -576,12 +576,15 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
             int width = 0;
             int height = 0;
-            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
 
-            if (width == 0 || height == 0)
+            if (spriteModel.Shape == SpriteShape.Custom || spriteModel.Size == SpriteSize.Custom)
             {
                 width = spriteModel.Width;
                 height = spriteModel.Height;
+            }
+            else
+            {
+                SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
             }
 
             // Going through the list again to find the first occurrence of this item
@@ -723,7 +726,15 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         int width = 0;
         int height = 0;
 
-        SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+        if (spriteModel.Shape == SpriteShape.Custom || spriteModel.Size == SpriteSize.Custom)
+        {
+            width = spriteModel.Width;
+            height = spriteModel.Height;
+        }
+        else
+        {
+            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
+        }   
 
         (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
 
@@ -741,44 +752,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
     private void OnGeneratePaletteFromBank(string name, IEnumerable<SpriteModel> bankSprites, Color transparentColor, BitsPerPixel bitPerPixel)
     {
-        int maxNumberOfColor = bitPerPixel.GetNumberOfColors();
-
-        List<Color> colorArray = new([transparentColor]);
-
-        foreach (SpriteModel spriteModel in bankSprites)
-        {
-            (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(spriteModel.TileSetID);
-
-            if (sourceBitmapCached == null)
-            {
-                continue;
-            }
-
-            WriteableBitmap sourceBitmap = sourceBitmapCached.CloneCurrentValue();
-
-            int width = 0;
-            int height = 0;
-
-            SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
-
-            WriteableBitmap cropped = sourceBitmap.Crop(spriteModel.PosX, spriteModel.PosY, width, height);
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    Color color = cropped.GetPixel(x, y);
-
-                    if (!colorArray.Contains(color))
-                    {
-                        if (colorArray.Count < maxNumberOfColor)
-                        {
-                            colorArray.Add(color);
-                        }
-                    }
-                }
-            }
-        }
+        List<Color> colorArray = PaletteUtils.GeneratePaletteColorList(bankSprites, transparentColor, bitPerPixel);
 
         if (colorArray.Count > 1)
         {

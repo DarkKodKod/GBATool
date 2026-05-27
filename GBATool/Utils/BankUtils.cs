@@ -182,6 +182,40 @@ public static class BankUtils
         return metaData;
     }
 
+    public static void GenerateTemporalPalette(BankModel bankModel, ref List<Color> palette)
+    {
+        List<SpriteModel> spriteModels = [];
+
+        foreach (SpriteRef sprite in bankModel.Sprites)
+        {
+            if (string.IsNullOrEmpty(sprite.TileSetID))
+            {
+                continue;
+            }
+
+            TileSetModel? tileSetModel = ProjectFiles.GetModel<TileSetModel>(sprite.TileSetID);
+
+            if (tileSetModel == null)
+            {
+                continue;
+            }
+
+            SpriteModel? sm = tileSetModel.Sprites.Find(x => x.ID == sprite.SpriteID);
+
+            if (sm == null)
+            {
+                continue;
+            }
+
+            spriteModels.Add(sm);
+        }
+
+        palette = PaletteUtils.GeneratePaletteColorList(
+            spriteModels, 
+            PaletteUtils.GetColorFromInt(bankModel.TransparentColor), 
+            bankModel.BitsPerPixel);
+    }
+
     public static bool GetPaletteIfExistInCharacters(BankModel bankModel, ref List<Color> palette)
     {
         List<FileModelVO> models = ProjectFiles.GetModels<CharacterModel>();
