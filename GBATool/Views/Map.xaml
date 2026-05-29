@@ -57,6 +57,7 @@
                 <Canvas Width="{Binding CanvasWidth}" 
                         Height="{Binding CanvasHeight}" 
                         x:Name="canvas"
+						RenderOptions.BitmapScalingMode="NearestNeighbor"
                         Background="DarkGray"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
@@ -127,7 +128,7 @@
                 VerticalAlignment="Stretch">
                 <TabItem Header="Configuration">
                 </TabItem>
-				<TabItem Header="Bank">
+				<TabItem Header="Bank" IsSelected="True">
 					<Grid>
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="10"/>
@@ -157,18 +158,19 @@
                                 Grid.Row="3"
                                 PanningMode="Both"
                                 HorizontalScrollBarVisibility="Auto"
-                                VerticalScrollBarVisibility="Visible" >
-								<local:BankViewerView 
+                                VerticalScrollBarVisibility="Visible">
+								<local:BankViewerView
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    AllowDrop="True"
+									IndividualSelection="True"
+                                    AllowDrop="False"
                                     Force2DView="True"
                                     x:Name="bankViewer"/>
 							</ScrollViewer>
 						</Grid>
 					</Grid>
 				</TabItem>
-				<TabItem Header="Tiles" IsSelected="True">
+				<TabItem Header="Tiles">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>

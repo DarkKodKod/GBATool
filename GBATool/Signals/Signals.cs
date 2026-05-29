@@ -158,6 +158,7 @@ public class MoveUpSelectedSpriteElementSignal : Signal<int> { }
 public class SetColorFromColorPickerSignal : Signal<Control, Color> { }
 public class ReturnTransparentColorFromBankSignal : Signal<Color> { }
 public class TryCreatePaletteElementSignal : Signal<string, List<Color>> { }
+public class UseBitmapAsCursorSignal : Signal<Image> { }
 #endregion
 
 #region Palettes

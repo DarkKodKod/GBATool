@@ -42,6 +42,7 @@
 			       Stretch="UniformToFill">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding ImageMouseDownCommand}" Event="MouseDown" PassArguments="True" />
+					<behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand}" Event="PreviewMouseMove" PassArguments="True" />
                 </i:Interaction.Behaviors>
             </Image>
             <Rectangle Width="{Binding SpriteRectWidth}"

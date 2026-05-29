@@ -1,5 +1,6 @@
 ﻿using ArchitectureLibrary.Model;
 using ArchitectureLibrary.Signals;
+using GBATool.Commands.Input;
 using GBATool.Commands.Utils;
 using GBATool.Enums;
 using GBATool.FileSystem;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -53,10 +55,17 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         "Force2DView",
         typeof(bool),
         typeof(BankViewerView),
-        new PropertyMetadata(false));
+        new PropertyMetadata(default(bool)));
+
+    public static readonly DependencyProperty IndividualSelectionProperty = DependencyProperty.Register(
+        "IndividualSelection",
+        typeof(bool),
+        typeof(BankViewerView),
+        new PropertyMetadata(default(bool)));
 
     #region Commands
     public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
+    public MouseEventCommand<PreviewMouseMoveSignal> PreviewMouseMoveCommand { get; } = new();
     #endregion
 
     #region get/set
@@ -73,6 +82,12 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
             OnPropertyChanged(nameof(SelectedSprite));
         }
+    }
+
+    public bool IndividualSelection
+    {
+        get => (bool)GetValue(IndividualSelectionProperty);
+        set => SetValue(IndividualSelectionProperty, value);
     }
 
     public bool Force2DView
@@ -331,6 +346,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<AdjustCanvasBankSizeSignal>().Listener += OnAdjustCanvasBankSize;
         SignalManager.Get<ReloadBankViewImageSignal>().Listener += OnReloadBankViewImage;
         SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener += OnRemoveSpriteSelectionFromBank;
+        SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnPreviewMouseMove;
         #endregion
 
         SelectedSprite = null;
@@ -351,6 +367,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<AdjustCanvasBankSizeSignal>().Listener -= OnAdjustCanvasBankSize;
         SignalManager.Get<ReloadBankViewImageSignal>().Listener -= OnReloadBankViewImage;
         SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener -= OnRemoveSpriteSelectionFromBank;
+        SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnPreviewMouseMove;
         #endregion
     }
 
@@ -421,6 +438,77 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SpriteRectVisibility3 = Visibility.Collapsed;
     }
 
+    private void OnPreviewMouseMove(MouseEventVO vo)
+    {
+        if (!IndividualSelection)
+        {
+            return;
+        }
+
+        if (vo.Sender == null)
+        {
+            return;
+        }
+
+        if (vo.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        Image? image = Util.FindAncestor<Image>((DependencyObject)vo.Sender);
+
+        if (image == null || image.Name != "imgBank")
+        {
+            return;
+        }
+
+        if (_metaData == null)
+        {
+            return;
+        }
+
+        Point pos = Mouse.GetPosition(image);
+
+        int x = (int)Math.Floor(pos.X / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
+        int y = (int)Math.Floor(pos.Y / BankUtils.SizeOfCellInPixels) * BankUtils.SizeOfCellInPixels;
+
+        int canvasWidthInCells = CanvasWidth / BankUtils.SizeOfCellInPixels;
+        int lengthHeight = CanvasHeight / BankUtils.SizeOfCellInPixels;
+        int yPos = (y / BankUtils.SizeOfCellInPixels);
+        int xPos = (x / BankUtils.SizeOfCellInPixels);
+
+        int cellIndex = (canvasWidthInCells * yPos) + xPos;
+
+        (_, string spriteID, _) = _metaData.SpriteIndices.Find(item => item.Item1 == cellIndex);
+
+        if (string.IsNullOrEmpty(spriteID))
+        {
+            return;
+        }
+
+        SpriteRectLeft = x;
+        SpriteRectWidth = BankUtils.SizeOfCellInPixels;
+        SpriteRectHeight = BankUtils.SizeOfCellInPixels;
+        SpriteRectTop = y;
+        SpriteRectVisibility = Visibility.Visible;
+
+        WriteableBitmap cropped = _metaData.image.Crop(
+            (int)SpriteRectLeft,
+            (int)SpriteRectTop,
+            (int)SpriteRectWidth,
+            (int)SpriteRectHeight);
+
+        using (cropped.GetBitmapContext())
+        {
+            Image imageCtrl = new()
+            {
+                Source = cropped
+            };
+
+            SignalManager.Get<UseBitmapAsCursorSignal>().Dispatch(imageCtrl);
+        }
+    }
+
     private void OnMouseImageSelected(Image image, Point point)
     {
         if (image.Name != "imgBank")
@@ -431,7 +519,10 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SelectedSpriteFromBank = null;
         _cacheSelectedSpriteFromBank = null;
 
-        SelectSpriteFromBankImage(point);
+        if (!IndividualSelection)
+        {
+            SelectSpriteFromBankImage(point);
+        }   
     }
 
     private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
@@ -487,7 +578,9 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         _metaData = BankUtils.CreateImage(model, Force2DView, CanvasWidth, CanvasHeight);
 
         if (_metaData == null)
+        {
             return;
+        }   
 
         BankImage = _metaData.image;
 
