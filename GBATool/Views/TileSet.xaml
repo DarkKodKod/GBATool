@@ -9,8 +9,9 @@
              xmlns:cv="clr-namespace:ArchitectureLibrary.WPF.Converters;assembly=ArchitectureLibrary"
              xmlns:local="clr-namespace:GBATool.Views"
              mc:Ignorable="d"
-             xmlns:vm="clr-namespace:GBATool.ViewModels"
-             KeyDown="UserControl_KeyDown"
+             xmlns:vm="clr-namespace:GBATool.ViewModels" 
+			 xmlns:controls="clr-namespace:ArchitectureLibrary.WPF.Controls;assembly=ArchitectureLibrary"
+			 KeyDown="UserControl_KeyDown"
              KeyUp="UserControl_KeyUp"
              d:DesignHeight="450" d:DesignWidth="1100">
     <UserControl.Resources>
@@ -134,14 +135,16 @@
                     </Button.CommandParameter>
                 </Button>
             </DockPanel>
-            <ScrollViewer Grid.Row="2"
-                          Name="scrollViewer"
-                          PanningMode="Both"
-                          Background="DarkGray"
-                          VerticalScrollBarVisibility="Auto" 
-                          PreviewMouseUp="ScrollViewer_PreviewMouseUp"
-                          MouseEnter="ScrollViewer_MouseEnter"
-                          HorizontalScrollBarVisibility="Auto">
+			<controls:ALScrollViewer 
+				DisableMouseWheel="true"
+				Grid.Row="2"
+                Name="scrollViewer"
+                PanningMode="Both"
+                Background="DarkGray"
+                VerticalScrollBarVisibility="Visible" 
+                PreviewMouseUp="ScrollViewer_PreviewMouseUp"
+                MouseEnter="ScrollViewer_MouseEnter"
+                HorizontalScrollBarVisibility="Visible">
                 <i:Interaction.Behaviors>
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseWheelCommand}" Event="PreviewMouseWheel" PassArguments="True" />
                     <behaviors:EventToCommandBehavior Command="{Binding PreviewMouseMoveCommand}" Event="PreviewMouseMove" PassArguments="True" />
@@ -197,7 +200,7 @@
                                Canvas.Left="{Binding SelectionRectLeft}"
                                Visibility="{Binding SelectionRectVisibility}"/>
                 </Canvas>
-            </ScrollViewer>
+            </controls:ALScrollViewer>
             <Label Grid.Row="2" 
                    Margin="15"
                    Content="{Binding ImageScale}" 
