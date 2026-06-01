@@ -150,9 +150,6 @@ public class MapViewModel : ItemViewModel
     }
 
     #region Commands
-    public DragEventCommand<DragLeaveEventSignal> DragLeaveEventCommand { get; } = new();
-    public DragEventCommand<DropEventSignal> DropEventCommand { get; } = new();
-    public DragEventCommand<DragOverEventSignal> DragOverEventCommand { get; } = new();
     public MouseButtonEventCommand<MouseDownEventSignal> MouseDownEventCommand { get; } = new();
     public MouseButtonEventCommand<MouseUpEventSignal> MouseUpEventCommand { get; } = new();
     public MouseEventCommand<MouseMoveEventSignal> MouseMoveEventCommand { get; } = new();
@@ -649,9 +646,6 @@ public class MapViewModel : ItemViewModel
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener += OnFileModelVOSelectionChanged;
-        SignalManager.Get<DragLeaveEventSignal>().Listener += OnDragLeaveEvent;
-        SignalManager.Get<DropEventSignal>().Listener += OnDropEvent;
-        SignalManager.Get<DragOverEventSignal>().Listener += OnDragOverEvent;
         SignalManager.Get<MouseDownEventSignal>().Listener += OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener += OnMouseMoveEvent;
@@ -781,9 +775,6 @@ public class MapViewModel : ItemViewModel
 
         #region Signals
         SignalManager.Get<FileModelVOSelectionChangedSignal>().Listener -= OnFileModelVOSelectionChanged;
-        SignalManager.Get<DragLeaveEventSignal>().Listener -= OnDragLeaveEvent;
-        SignalManager.Get<DropEventSignal>().Listener -= OnDropEvent;
-        SignalManager.Get<DragOverEventSignal>().Listener -= OnDragOverEvent;
         SignalManager.Get<MouseDownEventSignal>().Listener -= OnMouseDownEvent;
         SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUpEvent;
         SignalManager.Get<MouseMoveEventSignal>().Listener -= OnMouseMoveEvent;
@@ -1038,6 +1029,14 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
+        if (vO.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "mapCanvas")
+            {
+                return;
+            }
+        }
+
         Point positionInCanvas = vO.EventArgs.GetPosition(sender);
 
         if (Util.AboutEqual(positionInCanvas.X, _initialMousePositionInCanvas.X) &&
@@ -1068,6 +1067,14 @@ public class MapViewModel : ItemViewModel
         if (vO.OriginalSource is not Canvas and not Image and not Rectangle)
         {
             return;
+        }
+
+        if (vO.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "mapCanvas")
+            {
+                return;
+            }
         }
 
         SignalManager.Get<TryReleaseMouseSignal>().Dispatch();
@@ -1108,6 +1115,14 @@ public class MapViewModel : ItemViewModel
             return;
         }
 
+        if (vO.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "mapCanvas")
+            {
+                return;
+            }
+        }
+
         Point point = vO.MouseEvent.GetPosition(sender);
 
         _initialMousePositionInCanvas = point;
@@ -1115,21 +1130,6 @@ public class MapViewModel : ItemViewModel
         SignalManager.Get<ResetSelectionAreaSignal>().Dispatch(_initialMousePositionInCanvas);
 
         SignalManager.Get<SelectTilesSignal>().Dispatch([]);
-    }
-
-    private void OnDragOverEvent(DragLeaveVO vO)
-    {
-        //
-    }
-
-    private void OnDropEvent(DragLeaveVO vO)
-    {
-        //
-    }
-
-    private void OnDragLeaveEvent(DragLeaveVO vO)
-    {
-        //
     }
 
     private void SaveTileProperties(TileObject tile)

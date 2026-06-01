@@ -71,22 +71,22 @@ namespace GBATool.Views
 
         private void OnUseBitmapAsCursor(Image image)
         {
-            canvas.Children.Add(image);
+            mapCanvas.Children.Add(image);
         }
 
         private void OnTryCaptureMouse()
         {
-            if (!canvas.IsMouseCaptured)
+            if (!mapCanvas.IsMouseCaptured)
             {
-                canvas.CaptureMouse();
+                mapCanvas.CaptureMouse();
             }
         }
 
         private void OnTryReleaseMouse()
         {
-            if (canvas.IsMouseCaptured)
+            if (mapCanvas.IsMouseCaptured)
             {
-                canvas.ReleaseMouseCapture();
+                mapCanvas.ReleaseMouseCapture();
             }
         }
     }

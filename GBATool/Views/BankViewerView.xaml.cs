@@ -66,6 +66,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
     #region Commands
     public ImageMouseDownCommand ImageMouseDownCommand { get; } = new();
     public MouseEventCommand<PreviewMouseMoveSignal> PreviewMouseMoveCommand { get; } = new();
+    public MouseButtonEventCommand<MouseUpEventSignal> MouseUpCommand { get; } = new();
     #endregion
 
     #region get/set
@@ -347,6 +348,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ReloadBankViewImageSignal>().Listener += OnReloadBankViewImage;
         SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener += OnRemoveSpriteSelectionFromBank;
         SignalManager.Get<PreviewMouseMoveSignal>().Listener += OnPreviewMouseMove;
+        SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUp;
         #endregion
 
         SelectedSprite = null;
@@ -368,6 +370,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<ReloadBankViewImageSignal>().Listener -= OnReloadBankViewImage;
         SignalManager.Get<RemoveSpriteSelectionFromBank>().Listener -= OnRemoveSpriteSelectionFromBank;
         SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnPreviewMouseMove;
+        SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUp;
         #endregion
     }
 
@@ -438,6 +441,17 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SpriteRectVisibility3 = Visibility.Collapsed;
     }
 
+    private void OnMouseUp(MouseButtonVO e)
+    {
+        if (e.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "imgBank")
+            {
+                return;
+            }
+        }
+    }
+
     private void OnPreviewMouseMove(MouseEventVO vo)
     {
         if (!IndividualSelection)
@@ -448,6 +462,14 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         if (vo.Sender == null)
         {
             return;
+        }
+
+        if (vo.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "imgBank")
+            {
+                return;
+            }
         }
 
         if (vo.LeftButton != MouseButtonState.Pressed)

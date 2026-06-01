@@ -56,15 +56,12 @@
             <ScrollViewer Grid.Row="1">
                 <Canvas Width="{Binding CanvasWidth}" 
                         Height="{Binding CanvasHeight}" 
-                        x:Name="canvas"
+                        x:Name="mapCanvas"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
                         Background="DarkGray"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
 					<i:Interaction.Behaviors>
-						<behaviors:EventToCommandBehavior Command="{Binding DropEventCommand}" Event="Drop" PassArguments="True" />
-						<behaviors:EventToCommandBehavior Command="{Binding DragOverEventCommand}" Event="DragOver" PassArguments="True" />
-						<behaviors:EventToCommandBehavior Command="{Binding DragLeaveEventCommand}" Event="DragLeave" PassArguments="True" />
 						<behaviors:EventToCommandBehavior Command="{Binding MouseMoveEventCommand}" Event="MouseMove" PassArguments="True" />
 						<behaviors:EventToCommandBehavior Command="{Binding MouseDownEventCommand}" Event="MouseDown" PassArguments="True" />
 						<behaviors:EventToCommandBehavior Command="{Binding MouseUpEventCommand}" Event="MouseUp" PassArguments="True" />
