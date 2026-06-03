@@ -19,6 +19,7 @@ namespace GBATool.Views
             SignalManager.Get<TryCaptureMouseSignal>().Listener += OnTryCaptureMouse;
             SignalManager.Get<TryReleaseMouseSignal>().Listener += OnTryReleaseMouse;
             SignalManager.Get<UseBitmapAsCursorSignal>().Listener += OnUseBitmapAsCursor;
+            SignalManager.Get<UseEmptyCursorSignal>().Listener += OnUseEmptyCursor;
             #endregion
 
             bankViewer.OnActivate();
@@ -66,7 +67,13 @@ namespace GBATool.Views
             SignalManager.Get<TryCaptureMouseSignal>().Listener -= OnTryCaptureMouse;
             SignalManager.Get<TryReleaseMouseSignal>().Listener -= OnTryReleaseMouse;
             SignalManager.Get<UseBitmapAsCursorSignal>().Listener -= OnUseBitmapAsCursor;
+            SignalManager.Get<UseEmptyCursorSignal>().Listener -= OnUseEmptyCursor;
             #endregion
+        }
+
+        private void OnUseEmptyCursor()
+        {
+            //
         }
 
         private void OnUseBitmapAsCursor(Image image)

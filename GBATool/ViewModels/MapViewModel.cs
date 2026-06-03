@@ -143,6 +143,13 @@ public class MapViewModel : ItemViewModel
     private int _tilesSelectedHeight;
     private int _tilesSelectedOriginX;
     private int _tilesSelectedOriginY;
+    private MapFunctionality _currentMapFunctionality = MapFunctionality.Select;
+
+    public enum MapFunctionality
+    {
+        Select,
+        Paint
+    }
 
     public MapModel? GetModel()
     {
@@ -165,6 +172,17 @@ public class MapViewModel : ItemViewModel
             _selectedTile = value;
 
             OnPropertyChanged(nameof(SelectedTile));
+        }
+    }
+
+    public MapFunctionality CurrentMapFunctionality
+    { 
+        get => _currentMapFunctionality; 
+        set
+        {
+            _currentMapFunctionality = value;
+
+            OnPropertyChanged(nameof(CurrentMapFunctionality));
         }
     }
 
@@ -1039,22 +1057,27 @@ public class MapViewModel : ItemViewModel
 
         Point positionInCanvas = vO.EventArgs.GetPosition(sender);
 
-        if (Util.AboutEqual(positionInCanvas.X, _initialMousePositionInCanvas.X) &&
-           Util.AboutEqual(positionInCanvas.Y, _initialMousePositionInCanvas.Y))
+        switch (CurrentMapFunctionality)
+        {
+            case MapFunctionality.Select:
+                MouseMoveSelection(positionInCanvas);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void MouseMoveSelection(Point currentMousePosition)
+    {
+        if (Util.AboutEqual(currentMousePosition.X, _initialMousePositionInCanvas.X) &&
+           Util.AboutEqual(currentMousePosition.Y, _initialMousePositionInCanvas.Y))
         {
             return;
         }
 
-        if (SelectedTiles.Length > 0)
-        {
-            //DragFrameElements(positionInCanvas, viewModel.SelectedFrameSprites, viewModel.SelectedFrameCollisions, (DependencyObject)vO.EventArgs.Source);
-        }
-        else
-        {
-            SignalManager.Get<TryCaptureMouseSignal>().Dispatch();
+        SignalManager.Get<TryCaptureMouseSignal>().Dispatch();
 
-            UpdateMouseSelectionArea(positionInCanvas);
-        }
+        UpdateMouseSelectionArea(currentMousePosition);
     }
 
     private void OnMouseUpEvent(MouseButtonVO vO)

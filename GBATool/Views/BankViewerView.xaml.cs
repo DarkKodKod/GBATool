@@ -441,18 +441,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SpriteRectVisibility3 = Visibility.Collapsed;
     }
 
-    private void OnMouseUp(MouseButtonVO e)
-    {
-        if (e.OriginalSource is FrameworkElement fe)
-        {
-            if (fe.Name != "imgBank")
-            {
-                return;
-            }
-        }
-    }
-
-    private void OnPreviewMouseMove(MouseEventVO vo)
+    private void OnMouseUp(MouseButtonVO vo)
     {
         if (!IndividualSelection)
         {
@@ -460,6 +449,11 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         }
 
         if (vo.Sender == null)
+        {
+            return;
+        }
+
+        if (_metaData == null)
         {
             return;
         }
@@ -472,19 +466,9 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             }
         }
 
-        if (vo.LeftButton != MouseButtonState.Pressed)
-        {
-            return;
-        }
-
         Image? image = Util.FindAncestor<Image>((DependencyObject)vo.Sender);
 
-        if (image == null || image.Name != "imgBank")
-        {
-            return;
-        }
-
-        if (_metaData == null)
+        if (image == null)
         {
             return;
         }
@@ -505,29 +489,62 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
         if (string.IsNullOrEmpty(spriteID))
         {
+            SignalManager.Get<UseEmptyCursorSignal>().Dispatch();
+        }
+        else
+        {
+            SpriteRectLeft = x;
+            SpriteRectWidth = BankUtils.SizeOfCellInPixels;
+            SpriteRectHeight = BankUtils.SizeOfCellInPixels;
+            SpriteRectTop = y;
+            SpriteRectVisibility = Visibility.Visible;
+
+            WriteableBitmap cropped = _metaData.image.Crop(
+                (int)SpriteRectLeft,
+                (int)SpriteRectTop,
+                (int)SpriteRectWidth,
+                (int)SpriteRectHeight);
+
+            using (cropped.GetBitmapContext())
+            {
+                Image imageCtrl = new()
+                {
+                    Source = cropped
+                };
+
+                SignalManager.Get<UseBitmapAsCursorSignal>().Dispatch(imageCtrl);
+            }
+        }   
+    }
+
+    private void OnPreviewMouseMove(MouseEventVO vo)
+    {
+        if (!IndividualSelection)
+        {
             return;
         }
 
-        SpriteRectLeft = x;
-        SpriteRectWidth = BankUtils.SizeOfCellInPixels;
-        SpriteRectHeight = BankUtils.SizeOfCellInPixels;
-        SpriteRectTop = y;
-        SpriteRectVisibility = Visibility.Visible;
-
-        WriteableBitmap cropped = _metaData.image.Crop(
-            (int)SpriteRectLeft,
-            (int)SpriteRectTop,
-            (int)SpriteRectWidth,
-            (int)SpriteRectHeight);
-
-        using (cropped.GetBitmapContext())
+        if (vo.Sender == null)
         {
-            Image imageCtrl = new()
-            {
-                Source = cropped
-            };
+            return;
+        }
 
-            SignalManager.Get<UseBitmapAsCursorSignal>().Dispatch(imageCtrl);
+        if (vo.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        if (_metaData == null)
+        {
+            return;
+        }
+
+        if (vo.OriginalSource is FrameworkElement fe)
+        {
+            if (fe.Name != "imgBank")
+            {
+                return;
+            }
         }
     }
 
