@@ -48,6 +48,12 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
     private BankImageMetaData? _metaData = null;
     private BankModel? _bankModel = null;
     private SpriteModel? _selectedSprite = null;
+    private Visibility _mouseSelectionActive;
+    private int _mouseSelectionOriginX;
+    private int _mouseSelectionOriginY;
+    private int _mouseSelectionWidth;
+    private int _mouseSelectionHeight;
+    private Point? _initialMousePositionInCanvas = null;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -82,6 +88,61 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             _selectedSprite = value;
 
             OnPropertyChanged(nameof(SelectedSprite));
+        }
+    }
+
+    public Visibility MouseSelectionActive
+    {
+        get => _mouseSelectionActive;
+        set
+        {
+            _mouseSelectionActive = value;
+
+            OnPropertyChanged(nameof(MouseSelectionActive));
+        }
+    }
+
+    public int MouseSelectionOriginX
+    {
+        get => _mouseSelectionOriginX;
+        set
+        {
+            _mouseSelectionOriginX = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginX));
+        }
+    }
+
+    public int MouseSelectionOriginY
+    {
+        get => _mouseSelectionOriginY;
+        set
+        {
+            _mouseSelectionOriginY = value;
+
+            OnPropertyChanged(nameof(MouseSelectionOriginY));
+        }
+    }
+
+    public int MouseSelectionWidth
+    {
+        get => _mouseSelectionWidth;
+        set
+        {
+            _mouseSelectionWidth = value;
+
+            OnPropertyChanged(nameof(MouseSelectionWidth));
+        }
+    }
+
+    public int MouseSelectionHeight
+    {
+        get => _mouseSelectionHeight;
+        set
+        {
+            _mouseSelectionHeight = value;
+
+            OnPropertyChanged(nameof(MouseSelectionHeight));
         }
     }
 
@@ -351,6 +412,8 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<MouseUpEventSignal>().Listener += OnMouseUp;
         #endregion
 
+        MouseSelectionActive = Visibility.Collapsed;
+
         SelectedSprite = null;
     }
 
@@ -372,6 +435,8 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         SignalManager.Get<PreviewMouseMoveSignal>().Listener -= OnPreviewMouseMove;
         SignalManager.Get<MouseUpEventSignal>().Listener -= OnMouseUp;
         #endregion
+
+        MouseSelectionActive = Visibility.Collapsed;
     }
 
     private void OnRemoveSpriteSelectionFromBank()
@@ -448,6 +513,8 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             return;
         }
 
+        _initialMousePositionInCanvas = null;
+
         if (vo.Sender == null)
         {
             return;
@@ -499,6 +566,12 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             SpriteRectTop = y;
             SpriteRectVisibility = Visibility.Visible;
 
+            MouseSelectionActive = Visibility.Collapsed;
+            MouseSelectionOriginX = 0;
+            MouseSelectionOriginY = 0;
+            MouseSelectionWidth = 0;
+            MouseSelectionHeight = 0;
+
             WriteableBitmap cropped = _metaData.image.Crop(
                 (int)SpriteRectLeft,
                 (int)SpriteRectTop,
@@ -545,6 +618,71 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
             {
                 return;
             }
+        }
+
+        Image? image = Util.FindAncestor<Image>((DependencyObject)vo.Sender);
+
+        if (image == null)
+        {
+            return;
+        }
+
+        Point pos = vo.EventArgs.GetPosition(image);
+
+        if (_initialMousePositionInCanvas == null)
+        {
+            _initialMousePositionInCanvas = pos;
+
+            MouseSelectionActive = Visibility.Collapsed;
+            MouseSelectionOriginX = (int)pos.X;
+            MouseSelectionOriginY = (int)pos.Y;
+            MouseSelectionWidth = 0;
+            MouseSelectionHeight = 0;
+        }
+
+        UpdateMouseSelectionArea(pos);
+    }
+
+    private void UpdateMouseSelectionArea(Point currentPositionInCanvas)
+    {
+        if (_initialMousePositionInCanvas == null)
+        {
+            return;
+        }
+
+        Point point = _initialMousePositionInCanvas ?? new Point();
+
+        if (Util.AboutEqual(currentPositionInCanvas.X, point.X) &&
+           Util.AboutEqual(currentPositionInCanvas.Y, point.Y))
+        {
+            return;
+        }
+
+        if (MouseSelectionActive == Visibility.Collapsed)
+        {
+            MouseSelectionActive = Visibility.Visible;
+        }
+
+        if (point.X < currentPositionInCanvas.X)
+        {
+            MouseSelectionOriginX = (int)point.X;
+            MouseSelectionWidth = (int)(currentPositionInCanvas.X - point.X);
+        }
+        else
+        {
+            MouseSelectionOriginX = (int)currentPositionInCanvas.X;
+            MouseSelectionWidth = (int)(point.X - currentPositionInCanvas.X);
+        }
+
+        if (point.Y < currentPositionInCanvas.Y)
+        {
+            MouseSelectionOriginY = (int)(point.Y);
+            MouseSelectionHeight = (int)(currentPositionInCanvas.Y - point.Y);
+        }
+        else
+        {
+            MouseSelectionOriginY = (int)(currentPositionInCanvas.Y);
+            MouseSelectionHeight = (int)(point.Y - currentPositionInCanvas.Y);
         }
     }
 

@@ -148,7 +148,10 @@ public class MapViewModel : ItemViewModel
     public enum MapFunctionality
     {
         Select,
-        Paint
+        Move,
+        Paint,
+        BucketPaint,
+        Erase
     }
 
     public MapModel? GetModel()

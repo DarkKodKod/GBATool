@@ -1,7 +1,6 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.Utils;
-using System;
 using System.Windows.Controls;
 
 namespace GBATool.Views

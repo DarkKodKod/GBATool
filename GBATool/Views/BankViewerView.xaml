@@ -70,6 +70,17 @@
                        Canvas.Top="{Binding SpriteRectTop3}"
                        Canvas.Left="{Binding SpriteRectLeft3}"
                        Visibility="{Binding SpriteRectVisibility3}"/>
+			<Rectangle
+				x:Name="rectSelectedArea"
+				Visibility="{Binding MouseSelectionActive}"
+				Width="{Binding MouseSelectionWidth}"
+				Height="{Binding MouseSelectionHeight}"
+				Stroke="White"
+				IsHitTestVisible="False"
+				Canvas.Left="{Binding MouseSelectionOriginX}"
+				Canvas.Top="{Binding MouseSelectionOriginY}"
+				StrokeThickness="0.4"
+				StrokeDashArray="2,1" />
         </Canvas>
     </Border>
 </UserControl>
