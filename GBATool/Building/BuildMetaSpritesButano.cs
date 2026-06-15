@@ -49,6 +49,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         public int Priority;
         public bool Looping;
         public int Repeats;
+        public int VerticalAxis;
         public List<FrameDetails> Frames;
     }
 
@@ -379,7 +380,8 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
                     Priority = (int)characterModel.Priority,
                     Looping = animation.Looping,
                     Repeats = animation.Repeat,
-                    Speed = animation.Speed
+                    Speed = animation.Speed,
+                    VerticalAxis = characterModel.VerticalAxis - (int)characterModel.RelativeOrigin.X,
                 });
         }
 
@@ -724,7 +726,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync($"        bn::span<const {className}::Animation>(animations, {_animationDetails.Count}), ");
         await outputFile.WriteLineAsync($"        bn::span<const {className}::Frame>(frames, {frames.Count}), ");
         await outputFile.WriteLineAsync($"        bn::span<const {className}::Sprite>(sprites, {sprites.Count}),");
-        await outputFile.WriteLineAsync("        collisions, _frameSprites");
+        await outputFile.WriteLineAsync($"        collisions, _frameSprites, {(_animationDetails.Count != 0 ? _animationDetails[0].VerticalAxis : 0)}");
         await outputFile.WriteLineAsync("    )");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("}");
@@ -896,7 +898,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    Character(const bn::span<const Animation>& animations, const bn::span<const Frame>& frames,");
         await outputFile.WriteLineAsync("        const bn::span<const Sprite>& sprites, const bn::span<const CollisionsPerFrame>& collisions_per_animation,");
-        await outputFile.WriteLineAsync("        bn::ivector<bn::sprite_ptr>& currentFrameSprites);");
+        await outputFile.WriteLineAsync("        bn::ivector<bn::sprite_ptr>& currentFrameSprites, int verticalAxis);");
         await outputFile.WriteLineAsync("    Character(const Character&) = delete;");
         await outputFile.WriteLineAsync("    Character(const Character&&) = delete;");
         await outputFile.WriteLineAsync("    bn::fixed_point _position;");
@@ -923,6 +925,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    bn::span<const CollisionsPerFrame> _collisions_per_animation;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    bn::ivector<bn::sprite_ptr>& _currentFrameSprites;");
+        await outputFile.WriteLineAsync("    const int _verticalAxis;");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("    int _current_sprite_start_index;");
         await outputFile.WriteLineAsync("    bool _animation_running;");
@@ -953,7 +956,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("Character::Character(const bn::span<const Animation>& animations, const bn::span<const Frame>& frames,");
         await outputFile.WriteLineAsync("    const bn::span<const Sprite>& sprites, const bn::span<const CollisionsPerFrame>& collisions_per_animation,");
-        await outputFile.WriteLineAsync("    bn::ivector<bn::sprite_ptr>& currentFrameSprites) :");
+        await outputFile.WriteLineAsync("    bn::ivector<bn::sprite_ptr>& currentFrameSprites, int verticalAxis) :");
         await outputFile.WriteLineAsync("    _currentAnimation(AnimationID::NONE)");
         await outputFile.WriteLineAsync("    , _frameCounter(0)");
         await outputFile.WriteLineAsync("    , _frameIndex(0)");
@@ -969,6 +972,7 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteLineAsync("    , _sprites(sprites)");
         await outputFile.WriteLineAsync("    , _collisions_per_animation(collisions_per_animation)");
         await outputFile.WriteLineAsync("    , _currentFrameSprites(currentFrameSprites)");
+        await outputFile.WriteLineAsync("    , _verticalAxis(verticalAxis)");
         await outputFile.WriteLineAsync("    , _animation_running(false)");
         await outputFile.WriteLineAsync("{");
         await outputFile.WriteLineAsync("}");
@@ -1415,7 +1419,9 @@ public sealed class BuildMetaSpritesButano : Building<BuildMetaSpritesButano>
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("auto Character::Collisions::RelativeRect::get_absolute_rect(const Character& self) const -> bn::top_left_fixed_rect");
         await outputFile.WriteLineAsync("{");
-        await outputFile.WriteLineAsync("    return bn::top_left_fixed_rect(_x + self.top_left_x(), _y + self.top_left_y(), _width, _height);");
+        await outputFile.WriteLineAsync("    const bn::fixed x = (self.is_facing_right() ? (int)_x : 2 * self._verticalAxis - ((int)_x + _width)) + self.top_left_x();");
+        await outputFile.WriteAsync(Environment.NewLine);
+        await outputFile.WriteLineAsync("    return bn::top_left_fixed_rect(x, _y + self.top_left_y(), _width, _height);");
         await outputFile.WriteLineAsync("}");
         await outputFile.WriteAsync(Environment.NewLine);
         await outputFile.WriteLineAsync("auto Character::Collisions::get_rects_with_mask(Mask mask) const -> const bn::span<const RelativeRect>&");
