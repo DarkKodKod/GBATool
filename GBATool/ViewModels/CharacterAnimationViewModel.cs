@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
+using ArchitectureLibrary.Utils;
 using ArchitectureLibrary.ViewModel;
 using GBATool.Commands.Character;
 using GBATool.Models;
@@ -45,6 +46,8 @@ public class CharacterAnimationViewModel : ViewModel
     #endregion
 
     #region get/set
+    public string AnimationID { get => _animationID; }
+
     public bool IsPlaying
     {
         get => _isPlaying;
@@ -328,7 +331,7 @@ public class CharacterAnimationViewModel : ViewModel
 
         FrameImage = image;
 
-        WriteableBitmap? firstFrameWithImage = GetImageFromTheFirstValidFrame(model, animation, frameIndex);
+        WriteableBitmap? firstFrameWithImage = GetImageFromTheFirstValidFrame(model, animation);
 
         double aspectWidth = CanvasWidth / image.Width;
         double aspectHeight = CanvasHeight / image.Height;
@@ -345,41 +348,13 @@ public class CharacterAnimationViewModel : ViewModel
 
         if (firstFrameWithImage != null)
         {
-            SendInformationToTheViewAboutTheMetaSprite(model, animation, firstFrameWithImage.Width, firstFrameWithImage.Height, minAspectRation);
+            Rectangle<double> rect = animation.GetFrameBoundingBox(FrameID);
+
+            SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Dispatch(rect.X, rect.Y, minAspectRation);
         }
     }
 
-    private void SendInformationToTheViewAboutTheMetaSprite(CharacterModel model, CharacterAnimation animation, double imageWidth, double imageHeight, double scale)
-    {
-        double? tmpOffsetX = null;
-        double? tmpOffsetY = null;
-
-        FrameModel frameModel = animation.Frames[FrameID];
-
-        foreach (KeyValuePair<string, CharacterSprite> item in frameModel.Tiles)
-        {
-            if (tmpOffsetX == null || (model.RelativeOrigin.X - item.Value.Position.X) > tmpOffsetX)
-            {
-                tmpOffsetX = model.RelativeOrigin.X - item.Value.Position.X;
-            }
-
-            if (tmpOffsetY == null || (model.RelativeOrigin.Y - item.Value.Position.Y) > tmpOffsetY)
-            {
-                tmpOffsetY = model.RelativeOrigin.Y - item.Value.Position.Y;
-            }
-        }
-
-        double offsetX = tmpOffsetX ?? 0;
-        double offsetY = tmpOffsetY ?? 0;
-
-        SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Dispatch(
-            offsetX * scale,
-            offsetY * scale,
-            imageWidth * scale,
-            imageHeight * scale);
-    }
-
-    private WriteableBitmap? GetImageFromTheFirstValidFrame(CharacterModel model, CharacterAnimation animation, int currentFrameIndex)
+    private WriteableBitmap? GetImageFromTheFirstValidFrame(CharacterModel model, CharacterAnimation animation)
     {
         foreach (KeyValuePair<string, FrameModel> frame in animation.Frames)
         {

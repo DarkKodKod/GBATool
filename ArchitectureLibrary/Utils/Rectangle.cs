@@ -1,0 +1,60 @@
+﻿using System;
+using System.Numerics;
+
+namespace ArchitectureLibrary.Utils;
+
+public class Rectangle<T> where T : struct, INumber<T>
+{
+    public T X { get; set; }
+    public T Y { get; set; }
+    public T Width { get; set; }
+    public T Height { get; set; }
+
+    public Rectangle()
+    {
+    }
+
+    public Rectangle(T x, T y, T width, T height)
+    {
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
+    }
+
+    public static bool operator ==(Rectangle<T> r1, Rectangle<T> r2)
+    {
+        return r1.X == r2.X &&
+               r1.Y == r2.Y &&
+               r1.Width == r2.Width &&
+               r1.Height == r2.Height;
+    }
+
+    public static bool operator !=(Rectangle<T> r1, Rectangle<T> r2)
+    {
+        return !(r1 == r2);
+    }
+
+    public static Rectangle<T> operator +(Rectangle<T> r, (T numX, T numY) shift)
+    {
+        return new Rectangle<T>(r.X + shift.numX, r.Y + shift.numY, r.Width, r.Height);
+    }
+
+    public static Rectangle<T> operator *(Rectangle<T> r, T scale)
+    {
+        return new Rectangle<T>(r.X, r.Y, r.Width * scale, r.Height * scale);
+    }
+
+
+    public void ScaleFromOrigin(T scalar)
+    {
+        X *= scalar;
+        Y *= scalar;
+        Width *= scalar;
+        Height *= scalar;
+    }
+
+    public override bool Equals(object? obj) => obj is Rectangle<T> other && this == other;
+    public override int GetHashCode() => HashCode.Combine(X, Y, Width, Height);
+    public override string ToString() => $"[X: {X}, Y: {Y}, W: {Width}, H: {Height}]";
+}

@@ -1,4 +1,5 @@
-﻿using GBATool.Enums;
+﻿using ArchitectureLibrary.Utils;
+using GBATool.Enums;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Windows;
@@ -50,6 +51,30 @@ public class CharacterAnimation
     public int Repeat { get; set; } = 1;
     public bool Looping { get; set; } = true;
     public Dictionary<string, FrameModel> Frames { get; set; } = [];
+
+    /// <summary>
+    /// Returns the bounding fox for a frame
+    /// </summary>
+    public Rectangle<double> GetFrameBoundingBox(string frameID)
+    {
+        double minX = double.MaxValue;
+        double minY = double.MaxValue;
+        double maxX = double.MinValue;
+        double maxY = double.MinValue;
+
+        foreach (KeyValuePair<string, CharacterSprite> item in Frames[frameID].Tiles)
+        {
+            double tileX = item.Value.Position.X;
+            double tileY = item.Value.Position.Y;
+            
+            if (tileX < minX) minX = tileX;
+            if (tileY < minY) minY = tileY;
+            if (tileX > maxX) maxX = tileX + item.Value.Width;
+            if (tileY > maxY) maxY = tileY + item.Value.Height;
+        }
+
+        return new Rectangle<double>(minX, minY, maxX - minX, maxY - minY);
+    }
 }
 
 public class CharacterModel : AFileModel

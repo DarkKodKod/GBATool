@@ -132,7 +132,7 @@ public class FillWithPreviousFrameSpriteControlsSignal : Signal<List<SpriteContr
 public class DeleteElementsFromCharacterFrameSignal : Signal<string[]> { }
 public class SpriteFrameHideSelectionSignal : Signal { }
 public class ElementFrameShowSelectionSignal : Signal<FrameElementDragObjectVO[]> { }
-public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double, double> { }
+public class InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal : Signal<double, double, double> { }
 public class UpdateSpriteVisualPropertiesSignal : Signal<string, bool, bool> { }
 #endregion
 

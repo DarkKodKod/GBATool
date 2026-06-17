@@ -1,10 +1,12 @@
 ﻿using ArchitectureLibrary.Signals;
+using GBATool.Models;
 using GBATool.Signals;
 using GBATool.ViewModels;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using ArchitectureLibrary.Utils;
 
 namespace GBATool.Views;
 
@@ -13,6 +15,12 @@ namespace GBATool.Views;
 /// </summary>
 public partial class CharacterAnimationView : UserControl
 {
+    private bool _imageReady;
+    private double _distanceLeft;
+    private double _distanceTop;
+    private double _centerX;
+    private double _centerY;
+
     public List<CharacterFrameView> FrameViewList { get; set; } = [];
 
     public CharacterAnimationView()
@@ -22,6 +30,8 @@ public partial class CharacterAnimationView : UserControl
 
     public void OnActivate()
     {
+        _imageReady = false;
+
         SignalManager.Get<NewAnimationFrameSignal>().Listener += OnNewAnimationFrame;
         SignalManager.Get<DeleteAnimationFrameSignal>().Listener += OnDeleteAnimationFrame;
         SignalManager.Get<InformationToCorrectlyDisplayTheMetaSpriteCenteredSignal>().Listener += OnInformationToCorrectlyDisplayTheMetaSpriteCentered;
@@ -121,22 +131,32 @@ public partial class CharacterAnimationView : UserControl
         }
     }
 
-    private void OnInformationToCorrectlyDisplayTheMetaSpriteCentered(double offsetX, double offsetY, double imageWidth, double imageHeight)
+    private void OnInformationToCorrectlyDisplayTheMetaSpriteCentered(double imageMostLeft, double imageMostTop, double scale)
     {
-        UpdateImagePosition(previewImage, imageWidth, imageHeight, offsetX, offsetY);
+        if (!_imageReady)
+        {
+            return;
+        }
+
+        UpdateImagePosition(previewImage, imageMostLeft, imageMostTop, scale);
     }
 
-    private void UpdateImagePosition(Image image, double imageWidth, double imageHeight, double offsetX, double offsetY)
+    private void UpdateImagePosition(Image image, double imageMostLeft, double imageMostTop, double scale)
     {
-        double left = (parentCanvas.ActualWidth / 2) - (imageWidth / 2) - offsetX;
-        Canvas.SetLeft(image, left);
+        imageMostLeft *= scale;
+        imageMostTop *= scale;
 
-        double top = (parentCanvas.ActualHeight / 2) - (imageHeight / 2) - offsetY;
+        double top = imageMostTop - _distanceTop + _centerY;
+        double left = imageMostLeft - _distanceLeft + _centerX;
+        
+        Canvas.SetLeft(image, left);
         Canvas.SetTop(image, top);
     }
 
     private void PreviewImage_Loaded(object sender, RoutedEventArgs e)
     {
+        _imageReady = true;
+
         if (sender is not Image image)
         {
             return;
@@ -147,9 +167,38 @@ public partial class CharacterAnimationView : UserControl
             return;
         }
 
-        double imageWidth = image.ActualWidth * transform.ScaleX;
-        double imageHeight = image.ActualHeight * transform.ScaleY;
+        if (DataContext is not CharacterAnimationViewModel viewModel)
+        {
+            return;
+        }
 
-        UpdateImagePosition(image, imageWidth, imageHeight, 0.0, 0.0);
+        if (string.IsNullOrEmpty(viewModel.AnimationID))
+        {
+            return;
+        }
+
+        CharacterModel? model = viewModel.CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(viewModel.AnimationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        Rectangle<double> rect = animation.GetFrameBoundingBox(viewModel.FrameID);
+
+        double scale = transform.ScaleX;
+
+        _centerX = (parentCanvas.ActualWidth - (rect.Width * scale)) / 2;
+        _centerY = (parentCanvas.ActualHeight - (rect.Height * scale)) / 2;
+
+        _distanceLeft = rect.X * scale;
+        _distanceTop = rect.Y * scale;
+        
+        UpdateImagePosition(image, rect.X, rect.Y, scale);
     }
 }
