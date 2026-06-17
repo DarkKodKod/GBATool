@@ -119,6 +119,8 @@ public class LoadWithCollisionControlsSignal : Signal<List<SpriteCollisionVO>, s
 public class NextFrameCharacterAnimationSignal : Signal<string> { }
 public class UpdateVerticalAxisSignal : Signal<int> { }
 public class NewCollisionIntoSpriteSignal : Signal<string, string, SpriteCollisionVO> { }
+public class CopyCollisionsSignal : Signal<string, string> { }
+public class PasteCollisionsSignal : Signal<string, string> { }
 public class CollisionColorSelectedSignal : Signal<string, string, string, Color> { }
 public class DeleteCollisionSignal : Signal<string, string, string> { }
 public class UpdateSpriteCollisionInfoSignal : Signal<SpriteCollisionVO> { }

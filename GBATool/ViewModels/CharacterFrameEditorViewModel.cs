@@ -12,7 +12,9 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace GBATool.ViewModels;
 
@@ -42,10 +44,14 @@ public class CharacterFrameEditorViewModel : ViewModel
     private SpriteCollisionVO? _characterCollision = null;
     private List<SpriteCollisionVO> _characterCollisions = [];
 
+    private static List<SpriteCollisionVO> _copiedSpriteCollisions = new();
+
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
     public FileModelVOSelectionChangedCommand FileModelVOSelectionChangedCommand { get; } = new();
     public AddNewCollisionIntoSpriteFrameCommand AddNewCollisionIntoSpriteFrameCommand { get; } = new();
+    public CopyCollisionsCommand CopyCollisionsCommand { get; } = new();
+    public PasteCollisionsCommand PasteCollisionsCommand { get; } = new();
     public DeleteCollisionCommand DeleteCollisionCommand { get; } = new();
     public ChangeCollisionColorCommand ChangeCollisionColorCommand { get; } = new();
     #endregion
@@ -421,6 +427,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener += OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener += OnDeleteCollision;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener += OnNewCollisionIntoSprite;
+        SignalManager.Get<CopyCollisionsSignal>().Listener += OnCopyCollisions;
+        SignalManager.Get<PasteCollisionsSignal>().Listener += OnPasteCollisions;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener += OnCollisionColorSelected;
         SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener += OnUpdateSpriteCollisionInfo;
         #endregion
@@ -646,6 +654,8 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<DeleteElementsFromCharacterFrameSignal>().Listener -= OnDeleteSpriteFromCharacterFrame;
         SignalManager.Get<CharacterFrameEditorViewLoadedSignal>().Listener -= OnCharacterFrameEditorViewLoaded;
         SignalManager.Get<DeleteCollisionSignal>().Listener -= OnDeleteCollision;
+        SignalManager.Get<CopyCollisionsSignal>().Listener -= OnCopyCollisions;
+        SignalManager.Get<PasteCollisionsSignal>().Listener -= OnPasteCollisions;
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener -= OnCollisionColorSelected;
         SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener -= OnUpdateSpriteCollisionInfo;
@@ -825,6 +835,95 @@ public class CharacterFrameEditorViewModel : ViewModel
             });
 
         FileHandler?.Save();
+    }
+
+    private void OnCopyCollisions(string animationID, string frameID)
+    {
+        if (animationID != AnimationID || frameID != FrameID)
+        {
+            return;
+        }
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+        _copiedSpriteCollisions.Clear();
+        
+        foreach(var col in CharacterCollisions)
+        {
+            SpriteCollisionVO collisionVO = new()
+            {
+                ID = Guid.NewGuid().ToString(),
+                Width = col.Width,
+                Height = col.Height,
+                PosX = col.PosX,
+                PosY = col.PosY,
+                Color = new SolidColorBrush(col.Color.Color),
+                Mask = col.Mask,
+                CustomMask = col.CustomMask,
+                AnimationID = "",
+                FrameID = ""
+            };
+            _copiedSpriteCollisions.Add(collisionVO);
+        }
+    }
+
+    private void OnPasteCollisions(string animationID, string frameID)
+    {
+        if (animationID != AnimationID || frameID != FrameID)
+        {
+            return;
+        }
+
+        var model = CharacterModel;
+
+        if (model == null)
+        {
+            return;
+        }
+
+        if (!model.Animations.TryGetValue(animationID, out CharacterAnimation? animation))
+        {
+            return;
+        }
+
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        {
+            return;
+        }
+
+
+        foreach (var col in _copiedSpriteCollisions)
+        {
+            SpriteCollisionVO collisionVO = new()
+            {
+                ID = Guid.NewGuid().ToString(),
+                Width = col.Width,
+                Height = col.Height,
+                PosX = col.PosX,
+                PosY = col.PosY,
+                Color = new SolidColorBrush(col.Color.Color),
+                Mask = col.Mask,
+                CustomMask = col.CustomMask,
+                AnimationID = AnimationID,
+                FrameID = FrameID
+            };
+            OnNewCollisionIntoSprite(animationID, frameID, collisionVO);
+        }
     }
 
     private void OnDeleteCollision(string animationID, string frameID, string collisionID)
