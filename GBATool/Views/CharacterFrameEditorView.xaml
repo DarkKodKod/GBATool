@@ -269,6 +269,44 @@
                                 </MultiBinding>
                             </Button.CommandParameter>
                         </Button>
+                        <Button 
+    Grid.Row="2" 
+    Width="50"
+    Command="{Binding CopyCollisionsCommand}"
+    ToolTip="Copy collisions"
+    HorizontalAlignment="Right" 
+    VerticalAlignment="Center">
+                            <Image Width="16" Height="16" 
+           VerticalAlignment="Center"
+           HorizontalAlignment="Center"
+           Source="/resources/duplicate.png">
+                            </Image>
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource parametersConverter}">
+                                    <Binding Path="AnimationID"/>
+                                    <Binding Path="FrameID"/>
+                                </MultiBinding>
+                            </Button.CommandParameter>
+                        </Button>
+                        <Button 
+Grid.Row="2" 
+Width="50"
+Command="{Binding PasteCollisionsCommand}"
+ToolTip="Paste collisions"
+HorizontalAlignment="Left" 
+VerticalAlignment="Center">
+                            <Image Width="16" Height="16" 
+       VerticalAlignment="Center"
+       HorizontalAlignment="Center"
+       Source="/resources/paste.png">
+                            </Image>
+                            <Button.CommandParameter>
+                                <MultiBinding Converter="{StaticResource parametersConverter}">
+                                    <Binding Path="AnimationID"/>
+                                    <Binding Path="FrameID"/>
+                                </MultiBinding>
+                            </Button.CommandParameter>
+                        </Button>
                     </Grid>
                 </GroupBox>
             </Grid>
