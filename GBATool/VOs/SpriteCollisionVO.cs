@@ -23,7 +23,7 @@ public class SpriteCollisionVO : INotifyPropertyChanged
     public string ID { get; init; } = string.Empty;
     public string AnimationID { get; init; } = string.Empty;
     public string FrameID { get; init; } = string.Empty;
-    public bool ActAsVO { get; set; } // This is because this object acts as VO and also as a property in a view
+    public bool ActAsVO { get; set; } // This is because this object acts as Value Object and also as a property in a view
 
     public int Width
     {

@@ -36,7 +36,7 @@ public partial class CharacterFrameEditorView : UserControl
     {
         #region Signals
         SignalManager.Get<LoadWithSpriteControlsSignal>().Listener += OnFillWithSpriteControls;
-        SignalManager.Get<LoadWithCollisionControlsSignal>().Listener += OnLoadWithCollisionControls;
+        SignalManager.Get<AddCollisionsOnCanvasSignal>().Listener += OnAddCollisionsOnCanvas;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener += OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener += OnOptionOnionSkin;
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener += OnUpdateSpriteVisualProperties;
@@ -81,7 +81,7 @@ public partial class CharacterFrameEditorView : UserControl
 
         #region Signals
         SignalManager.Get<LoadWithSpriteControlsSignal>().Listener -= OnFillWithSpriteControls;
-        SignalManager.Get<LoadWithCollisionControlsSignal>().Listener -= OnLoadWithCollisionControls;
+        SignalManager.Get<AddCollisionsOnCanvasSignal>().Listener -= OnAddCollisionsOnCanvas;
         SignalManager.Get<FillWithPreviousFrameSpriteControlsSignal>().Listener -= OnFillWithPreviousFrameSpriteControls;
         SignalManager.Get<OptionOnionSkinSignal>().Listener -= OnOptionOnionSkin;
         SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Listener -= OnUpdateSpriteVisualProperties;
@@ -408,7 +408,7 @@ public partial class CharacterFrameEditorView : UserControl
         AddCollisionToCanvas(collisionVO);
     }
 
-    private void OnLoadWithCollisionControls(List<SpriteCollisionVO> collisions, string frameID)
+    private void OnAddCollisionsOnCanvas(List<SpriteCollisionVO> collisions, string frameID)
     {
         if (DataContext is not CharacterFrameEditorViewModel viewModel)
         {

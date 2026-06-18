@@ -12,9 +12,7 @@ using GBATool.VOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace GBATool.ViewModels;
 
@@ -43,8 +41,13 @@ public class CharacterFrameEditorViewModel : ViewModel
     private GraphicMode _graphicMode = GraphicMode.Normal;
     private SpriteCollisionVO? _characterCollision = null;
     private List<SpriteCollisionVO> _characterCollisions = [];
+    
+    /// <summary>
+    /// This variable is set from the tab that is active representing the current animation
+    /// </summary>
+    private string ActiveAnimationID = string.Empty;
 
-    private static List<SpriteCollisionVO> _copiedSpriteCollisions = new();
+    private static readonly List<SpriteCollisionVO> _copiedSpriteCollisions = [];
 
     #region Commands
     public SwitchCharacterFrameViewCommand SwitchCharacterFrameViewCommand { get; } = new();
@@ -431,6 +434,7 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<PasteCollisionsSignal>().Listener += OnPasteCollisions;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener += OnCollisionColorSelected;
         SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener += OnUpdateSpriteCollisionInfo;
+        SignalManager.Get<SwitchAnimationTabSignal>().Listener += OnSwitchAnimationTab;
         #endregion
 
         EnableOnionSkin = ModelManager.Get<GBAToolConfigurationModel>().EnableOnionSkin;
@@ -444,6 +448,11 @@ public class CharacterFrameEditorViewModel : ViewModel
 
     private void LoadCollisions()
     {
+        if (ActiveAnimationID != AnimationID)
+        {
+            return;
+        }
+
         var model = CharacterModel;
 
         if (model == null)
@@ -488,7 +497,7 @@ public class CharacterFrameEditorViewModel : ViewModel
 
         if (CharacterCollisions.Count > 0)
         {
-            SignalManager.Get<LoadWithCollisionControlsSignal>().Dispatch(CharacterCollisions, FrameID);
+            SignalManager.Get<AddCollisionsOnCanvasSignal>().Dispatch(CharacterCollisions, FrameID);
         }
 
         _dontSave = false;
@@ -659,7 +668,13 @@ public class CharacterFrameEditorViewModel : ViewModel
         SignalManager.Get<NewCollisionIntoSpriteSignal>().Listener -= OnNewCollisionIntoSprite;
         SignalManager.Get<CollisionColorSelectedSignal>().Listener -= OnCollisionColorSelected;
         SignalManager.Get<UpdateSpriteCollisionInfoSignal>().Listener -= OnUpdateSpriteCollisionInfo;
+        SignalManager.Get<SwitchAnimationTabSignal>().Listener -= OnSwitchAnimationTab;
         #endregion
+    }
+
+    private void OnSwitchAnimationTab(string activeTab)
+    {
+        ActiveAnimationID = activeTab;
     }
 
     private void OnCharacterFrameEditorViewLoaded()
@@ -856,28 +871,27 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? _))
         {
             return;
         }
 
         _copiedSpriteCollisions.Clear();
-        
-        foreach(var col in CharacterCollisions)
+
+        foreach (SpriteCollisionVO col in CharacterCollisions)
         {
             SpriteCollisionVO collisionVO = new()
             {
-                ID = Guid.NewGuid().ToString(),
+                ActAsVO = true,
                 Width = col.Width,
                 Height = col.Height,
                 PosX = col.PosX,
                 PosY = col.PosY,
                 Color = new SolidColorBrush(col.Color.Color),
                 Mask = col.Mask,
-                CustomMask = col.CustomMask,
-                AnimationID = "",
-                FrameID = ""
+                CustomMask = col.CustomMask
             };
+
             _copiedSpriteCollisions.Add(collisionVO);
         }
     }
@@ -901,16 +915,18 @@ public class CharacterFrameEditorViewModel : ViewModel
             return;
         }
 
-        if (!animation.Frames.TryGetValue(frameID, out FrameModel? frame))
+        if (!animation.Frames.TryGetValue(frameID, out FrameModel? _))
         {
             return;
         }
 
+        List<SpriteCollisionVO> newCollisionsVOs = [];
 
-        foreach (var col in _copiedSpriteCollisions)
+        foreach (SpriteCollisionVO col in _copiedSpriteCollisions)
         {
             SpriteCollisionVO collisionVO = new()
             {
+                ActAsVO = true,
                 ID = Guid.NewGuid().ToString(),
                 Width = col.Width,
                 Height = col.Height,
@@ -922,7 +938,15 @@ public class CharacterFrameEditorViewModel : ViewModel
                 AnimationID = AnimationID,
                 FrameID = FrameID
             };
+
+            newCollisionsVOs.Add(collisionVO);
+
             OnNewCollisionIntoSprite(animationID, frameID, collisionVO);
+        }
+
+        if (newCollisionsVOs.Count > 0)
+        {
+            SignalManager.Get<AddCollisionsOnCanvasSignal>().Dispatch(newCollisionsVOs, FrameID);
         }
     }
 
