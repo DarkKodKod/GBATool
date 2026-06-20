@@ -211,8 +211,8 @@ public static class BankUtils
         }
 
         palette = PaletteUtils.GeneratePaletteColorList(
-            spriteModels, 
-            PaletteUtils.GetColorFromInt(bankModel.TransparentColor), 
+            spriteModels,
+            PaletteUtils.GetColorFromInt(bankModel.TransparentColor),
             bankModel.BitsPerPixel);
     }
 

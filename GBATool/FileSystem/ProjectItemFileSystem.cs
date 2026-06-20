@@ -214,7 +214,7 @@ public static class ProjectItemFileSystem
                 string filePath = Path.Combine(path, name + model.FileExtension);
 
                 string? parentFolder = Path.GetDirectoryName(filePath);
-                
+
                 if (parentFolder != null)
                 {
                     if (!Directory.Exists(parentFolder))

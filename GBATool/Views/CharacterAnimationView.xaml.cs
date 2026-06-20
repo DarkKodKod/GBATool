@@ -1,4 +1,5 @@
 ﻿using ArchitectureLibrary.Signals;
+using ArchitectureLibrary.Utils;
 using GBATool.Models;
 using GBATool.Signals;
 using GBATool.ViewModels;
@@ -6,7 +7,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ArchitectureLibrary.Utils;
 
 namespace GBATool.Views;
 
@@ -148,7 +148,7 @@ public partial class CharacterAnimationView : UserControl
 
         double top = imageMostTop - _distanceTop + _centerY;
         double left = imageMostLeft - _distanceLeft + _centerX;
-        
+
         Canvas.SetLeft(image, left);
         Canvas.SetTop(image, top);
     }
@@ -198,7 +198,7 @@ public partial class CharacterAnimationView : UserControl
 
         _distanceLeft = rect.X * scale;
         _distanceTop = rect.Y * scale;
-        
+
         UpdateImagePosition(image, rect.X, rect.Y, scale);
     }
 }

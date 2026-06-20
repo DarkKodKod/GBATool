@@ -225,7 +225,7 @@ public class BankModel : AFileModel
                 else
                 {
                     countTiles += SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
-                }   
+                }
             }
             else
             {
@@ -240,7 +240,7 @@ public class BankModel : AFileModel
                 else
                 {
                     SpriteUtils.ConvertToWidthHeight(sprite.Shape, sprite.Size, ref width, ref height);
-                }   
+                }
 
                 width /= BankUtils.SizeOfCellInPixels;
                 height /= BankUtils.SizeOfCellInPixels;

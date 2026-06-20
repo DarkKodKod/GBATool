@@ -365,7 +365,7 @@ public class TileSetViewModel : ItemViewModel
             x = (int)Math.Round(pos.X);
             y = (int)Math.Round(pos.Y);
 
-            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);  
+            SpriteUtils.ConvertToWidthHeight(Shape, Size, ref width, ref height);
         }
 
         SelectionRectVisibility = Visibility.Visible;

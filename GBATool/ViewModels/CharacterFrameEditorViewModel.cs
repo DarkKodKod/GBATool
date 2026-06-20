@@ -41,7 +41,7 @@ public class CharacterFrameEditorViewModel : ViewModel
     private GraphicMode _graphicMode = GraphicMode.Normal;
     private SpriteCollisionVO? _characterCollision = null;
     private List<SpriteCollisionVO> _characterCollisions = [];
-    
+
     /// <summary>
     /// This variable is set from the tab that is active representing the current animation
     /// </summary>

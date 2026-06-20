@@ -1,11 +1,6 @@
 ﻿using ArchitectureLibrary.Commands;
 using ArchitectureLibrary.Signals;
-using GBATool.Enums;
 using GBATool.Signals;
-using GBATool.Utils;
-using GBATool.VOs;
-using System;
-using System.Windows.Media;
 
 namespace GBATool.Commands.Character;
 

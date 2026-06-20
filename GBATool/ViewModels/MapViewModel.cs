@@ -179,8 +179,8 @@ public class MapViewModel : ItemViewModel
     }
 
     public MapFunctionality CurrentMapFunctionality
-    { 
-        get => _currentMapFunctionality; 
+    {
+        get => _currentMapFunctionality;
         set
         {
             _currentMapFunctionality = value;
@@ -778,7 +778,7 @@ public class MapViewModel : ItemViewModel
             if (index > 0)
             {
                 index--;
-            }   
+            }
 
             // index -1 is valid because the PaletteIDs array accepts -1 as the first empty element.
             PaletteIDs[i].Index = index;
@@ -887,7 +887,7 @@ public class MapViewModel : ItemViewModel
                 }
             }
         }
-             
+
         if (palette?.Model is not PaletteModel paletteModel)
         {
             return;
@@ -1132,8 +1132,8 @@ public class MapViewModel : ItemViewModel
         }
 
         if (vO.Sender is not IInputElement sender)
-        { 
-            return; 
+        {
+            return;
         }
 
         if (vO.OriginalSource is not Canvas and not Rectangle)
@@ -1172,13 +1172,13 @@ public class MapViewModel : ItemViewModel
 
         MapUtils.InvalidateImageFromCache(tile.MapID);
 
-//        sprite.FlipHorizontal = IsFlippedHorizontal;
-//        sprite.FlipVertical = IsFlippedVertical;
-//        sprite.GraphicMode = GraphicMode;
-//        sprite.ObjectMode = ObjectMode;
-//        sprite.EnableMosaic = IsEnableMosaic;
-//
-//        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Dispatch(sprite.SpriteID, sprite.FlipHorizontal, sprite.FlipVertical);
+        //        sprite.FlipHorizontal = IsFlippedHorizontal;
+        //        sprite.FlipVertical = IsFlippedVertical;
+        //        sprite.GraphicMode = GraphicMode;
+        //        sprite.ObjectMode = ObjectMode;
+        //        sprite.EnableMosaic = IsEnableMosaic;
+        //
+        //        SignalManager.Get<UpdateSpriteVisualPropertiesSignal>().Dispatch(sprite.SpriteID, sprite.FlipHorizontal, sprite.FlipVertical);
 
         ProjectItem?.FileHandler?.Save();
     }
@@ -1239,7 +1239,7 @@ public class MapViewModel : ItemViewModel
             MouseSelectionHeight);
 
         List<int> tilesInRect = MapUtils.GetCellsIndicesFromRect(rectangle);
-        
+
         if (tilesInRect.Count > 0)
         {
             foreach (int cellIndex in tilesInRect)

@@ -62,7 +62,7 @@ public static class SpriteUtils
 
     public static void ConvertToWidthHeight(SpriteShape shape, SpriteSize size, ref int width, ref int height)
     {
-        if (shape == SpriteShape.Custom || size == SpriteSize.Custom) 
+        if (shape == SpriteShape.Custom || size == SpriteSize.Custom)
         {
             width = 0;
             height = 0;

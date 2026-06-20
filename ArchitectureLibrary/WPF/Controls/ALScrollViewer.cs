@@ -8,9 +8,9 @@ public class ALScrollViewer : ScrollViewer
 {
     public static readonly DependencyProperty DisableMouseWheelProperty =
         DependencyProperty.RegisterAttached(
-            "DisableMouseWheel", 
-            typeof(bool), 
-            typeof(ALScrollViewer), 
+            "DisableMouseWheel",
+            typeof(bool),
+            typeof(ALScrollViewer),
             new PropertyMetadata(default(bool)));
 
     public bool DisableMouseWheel

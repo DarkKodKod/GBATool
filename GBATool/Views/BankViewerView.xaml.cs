@@ -587,7 +587,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
 
                 SignalManager.Get<UseBitmapAsCursorSignal>().Dispatch(imageCtrl);
             }
-        }   
+        }
     }
 
     private void OnPreviewMouseMove(MouseEventVO vo)
@@ -699,7 +699,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         if (!IndividualSelection)
         {
             SelectSpriteFromBankImage(point);
-        }   
+        }
     }
 
     private void OnBankSpriteDeleted(SpriteModel spriteToDelete)
@@ -757,7 +757,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         if (_metaData == null)
         {
             return;
-        }   
+        }
 
         BankImage = _metaData.image;
 
@@ -827,7 +827,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
                 else
                 {
                     spriteTilesTotal = SpriteUtils.Count8x8Tiles(sprite.Shape, sprite.Size);
-                }   
+                }
 
                 if (sprite.ID == spriteModel?.ID)
                 {
@@ -1004,7 +1004,7 @@ public partial class BankViewerView : UserControl, INotifyPropertyChanged
         else
         {
             SpriteUtils.ConvertToWidthHeight(spriteModel.Shape, spriteModel.Size, ref width, ref height);
-        }   
+        }
 
         (_, WriteableBitmap? sourceBitmapCached) = TileSetUtils.GetSourceBitmapFromCache(tileSetModel);
 

@@ -51,7 +51,7 @@ public sealed class BuildMemoryBanksBinary : Building<BuildMemoryBanksBinary>
             if (vo.Model is not BankModel bank)
             {
                 continue;
-            }   
+            }
 
             TileBlocks cellsCount = bank.GetBoundingBoxSize();
 

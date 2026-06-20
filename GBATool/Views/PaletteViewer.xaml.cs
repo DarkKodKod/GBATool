@@ -79,7 +79,7 @@ namespace GBATool.Views
 
         private void OnPaletteColorArrayChange(int[] colors, int paletteIndex)
         {
-            if(PaletteIndex != paletteIndex)
+            if (PaletteIndex != paletteIndex)
             {
                 return;
             }

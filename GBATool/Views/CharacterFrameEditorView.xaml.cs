@@ -1263,7 +1263,7 @@ public partial class CharacterFrameEditorView : UserControl
                     {
                         SignalManager.Get<ResetFrameSpritesSelectionAreaSignal>().Dispatch(pt);
                     }
-                    
+
                     updated = true;
                 }
 
@@ -1303,7 +1303,7 @@ public partial class CharacterFrameEditorView : UserControl
                 if (collisionVO == null)
                 {
                     continue;
-                }   
+                }
 
                 if (!updated)
                 {

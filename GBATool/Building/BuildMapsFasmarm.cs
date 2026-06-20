@@ -149,7 +149,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
                 BckgrAffineSize.Affine32x32 => "0100000000000000b",
                 _ => "0000000000000000b" // 16x16
             };
-        }   
+        }
 
         string mapPriority = model.Priority switch
         {
@@ -191,7 +191,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
             {
                 KeyValuePair<string, Tile[]> map0 = model.Tiles.ElementAt(0);
                 await WriteMapTiles(outputFile, map0.Value);
-                
+
                 KeyValuePair<string, Tile[]> map2 = model.Tiles.ElementAt(2);
                 await WriteMapTiles(outputFile, map2.Value);
             }
@@ -222,10 +222,10 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
         {
             int size = model.BckgrAffineSize switch
             {
-                BckgrAffineSize.Affine128x128 => 128*128,
-                BckgrAffineSize.Affine64x64 => 64*64,
-                BckgrAffineSize.Affine32x32 => 32*32,
-                _ => 16*16
+                BckgrAffineSize.Affine128x128 => 128 * 128,
+                BckgrAffineSize.Affine64x64 => 64 * 64,
+                BckgrAffineSize.Affine32x32 => 32 * 32,
+                _ => 16 * 16
             };
 
             Tile[] tiles = new Tile[size];
@@ -267,7 +267,7 @@ public sealed class BuildMapsFasmarm : Building<BuildMapsFasmarm>
                 if (countHexValues > 0)
                 {
                     await outputFile.WriteAsync(Environment.NewLine);
-                }   
+                }
 
                 await outputFile.WriteAsync($"    dh 0x{tileValue:X4},");
             }

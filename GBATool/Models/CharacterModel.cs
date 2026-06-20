@@ -66,7 +66,7 @@ public class CharacterAnimation
         {
             double tileX = item.Value.Position.X;
             double tileY = item.Value.Position.Y;
-            
+
             if (tileX < minX) minX = tileX;
             if (tileY < minY) minY = tileY;
             if (tileX > maxX) maxX = tileX + item.Value.Width;
