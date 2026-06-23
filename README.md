@@ -1,4 +1,6 @@
-# GBATool
+![](/Images/gbaforge_logo_small.png)
+
+# GBAForge
 Tool written in C# and WPF using the MVVM design pattern to create and manage asset for a Game Boy Advance game by Felipe Reinaud. Resources files are in TOML format, [https://github.com/toml-lang/toml](https://github.com/toml-lang/toml). 
 
 ### Table of Content  
@@ -74,13 +76,13 @@ Toolbar Has the option to create a new project (explained in [Getting started](#
 
 ## 2. Getting started
 
-Once GBATool is opened for the first time, it will create in the root of the executable, the file **config.toml**, but only if some of the configuration of the tool changes like the window size.
+Once GBAForge is opened for the first time, it will create in the root of the executable, the file **config.toml**, but only if some of the configuration of the tool changes like the window size.
 
 ![](/Images/newproject.png)
 
 To craete a new project click File > New > New Project (Ctrl + Shift + N) or ![](/Images/newproject_toolbar.png) in the toolbar. From there is possible to name the project and a location. After the button *Create project* is pressed it will create at the specified location the file *name of the project*.proj in [TOML](https://github.com/toml-lang/toml) format, and the folders *Banks*, *Characters*, *TileSets*.
 
-GBATool will always open the last opened project. 
+GBAForge will always open the last opened project. 
 
 <a name="ProjectProperties"/>
 
