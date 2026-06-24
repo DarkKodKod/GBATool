@@ -11,7 +11,7 @@
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <PackageIcon></PackageIcon>
-    <RepositoryUrl>https://github.com/DarkKodKod/GBATool</RepositoryUrl>
+    <RepositoryUrl>https://github.com/DarkKodKod/GBAForge</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -20,6 +20,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>$(AssemblyVersion)</FileVersion>
     <Version>$(AssemblyVersion)</Version>
+    <AssemblyName>GBAForge</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

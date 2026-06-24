@@ -311,7 +311,7 @@ public static class Util
         headerInfo.Add($"{commentCharacter} Version {version}");
 
 
-        headerInfo.Add($"{commentCharacter} https://github.com/DarkKodKod/GBATool");
+        headerInfo.Add($"{commentCharacter} https://github.com/DarkKodKod/GBAForge");
 
         return headerInfo;
     }

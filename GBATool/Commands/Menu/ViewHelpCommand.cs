@@ -8,6 +8,6 @@ public class ViewHelpCommand : Command
     public override void Execute(object? parameter)
     {
         using OpenLinkCommand openLink = new();
-        openLink.Execute("https://github.com/DarkKodKod/GBATool");
+        openLink.Execute("https://github.com/DarkKodKod/GBAForge");
     }
 }

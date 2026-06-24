@@ -37,7 +37,7 @@
                 <TextBlock Text="{Binding Version}" />
             </StackPanel>
             <TextBlock HorizontalAlignment="Center">
-				<Hyperlink Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/DarkKodKod/GBATool">https://github.com/DarkKodKod/GBATool</Hyperlink>
+				<Hyperlink Command="{Binding OpenLinkCommand}" CommandParameter="https://github.com/DarkKodKod/GBAForge">https://github.com/DarkKodKod/GBAForge</Hyperlink>
             </TextBlock>
             <Label HorizontalAlignment="Center">By Felipe Reinaud</Label>
             <TextBlock HorizontalAlignment="Center">
