@@ -10,6 +10,8 @@ public class Rectangle<T> where T : struct, INumber<T>
     public T Width { get; set; }
     public T Height { get; set; }
 
+    public static readonly Rectangle<T> Empty = new(default, default, default, default);
+
     public Rectangle()
     {
     }
@@ -44,7 +46,6 @@ public class Rectangle<T> where T : struct, INumber<T>
     {
         return new Rectangle<T>(r.X, r.Y, r.Width * scale, r.Height * scale);
     }
-
 
     public void ScaleFromOrigin(T scalar)
     {

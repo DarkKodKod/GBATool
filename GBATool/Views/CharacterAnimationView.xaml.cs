@@ -177,6 +177,11 @@ public partial class CharacterAnimationView : UserControl
             return;
         }
 
+        if (string.IsNullOrEmpty(viewModel.FrameID))
+        {
+            return;
+        }
+
         CharacterModel? model = viewModel.CharacterModel;
 
         if (model == null)

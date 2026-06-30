@@ -57,6 +57,11 @@ public class CharacterAnimation
     /// </summary>
     public Rectangle<double> GetFrameBoundingBox(string frameID)
     {
+        if (string.IsNullOrEmpty(frameID))
+        {
+            return Rectangle<double>.Empty;
+        }
+
         double minX = double.MaxValue;
         double minY = double.MaxValue;
         double maxX = double.MinValue;
