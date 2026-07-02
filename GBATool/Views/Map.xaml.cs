@@ -1,7 +1,9 @@
 ﻿using ArchitectureLibrary.Signals;
 using GBATool.Signals;
 using GBATool.Utils;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace GBATool.Views
 {
@@ -72,12 +74,12 @@ namespace GBATool.Views
 
         private void OnUseEmptyCursor()
         {
-            //
+            cursorImage.Source = null;
         }
 
         private void OnUseBitmapAsCursor(Image image)
         {
-            mapCanvas.Children.Add(image);
+            cursorImage.Source = image.Source;
         }
 
         private void OnTryCaptureMouse()
@@ -94,6 +96,34 @@ namespace GBATool.Views
             {
                 mapCanvas.ReleaseMouseCapture();
             }
+        }
+
+        private void MapCanvas_MouseEnter(object sender, MouseEventArgs e)
+        {
+            cursorImage.Visibility = Visibility.Visible;
+        }
+
+        private void MapCanvas_MouseLeave(object sender, MouseEventArgs e)
+        {
+            cursorImage.Visibility = Visibility.Collapsed;
+        }
+
+        private void MapCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.OriginalSource is not Canvas canvas)
+            {
+                return;
+            }
+
+            if (cursorImage.Source == null)
+            {
+                return;
+            }
+
+            Point positionInCanvas = e.GetPosition(canvas);
+
+            Canvas.SetLeft(cursorImage, positionInCanvas.X);
+            Canvas.SetTop(cursorImage, positionInCanvas.Y);
         }
     }
 }

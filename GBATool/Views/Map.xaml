@@ -59,6 +59,9 @@
                         x:Name="mapCanvas"
 						RenderOptions.BitmapScalingMode="NearestNeighbor"
                         Background="DarkGray"
+                        MouseEnter="MapCanvas_MouseEnter" 
+						MouseLeave="MapCanvas_MouseLeave"
+						MouseMove="MapCanvas_MouseMove" 
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top">
 					<i:Interaction.Behaviors>
@@ -115,7 +118,13 @@
 						Canvas.Left="{Binding TilesSelectedOriginX}"
 						Canvas.Top="{Binding TilesSelectedOriginY}"
 						StrokeThickness="0.4" />
-				</Canvas>
+                    <Image RenderOptions.BitmapScalingMode="NearestNeighbor"
+                           Name="cursorImage"
+                           Visibility="Visible"
+                           IsHitTestVisible="False"
+                           Stretch="UniformToFill">
+                    </Image>
+                </Canvas>
             </ScrollViewer>
         </Grid>
         <Grid Grid.Column="2">
